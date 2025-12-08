@@ -1,18 +1,19 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MainTabNavigator from "@/navigation/MainTabNavigator";
-import ModalScreen from "@/screens/ModalScreen";
+import AzkarDetailScreen from "@/screens/AzkarDetailScreen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
+import type { AzkarCategory } from "@/data/azkar";
 
 export type RootStackParamList = {
   Main: undefined;
-  Modal: undefined;
+  AzkarDetail: { category: AzkarCategory };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function RootStackNavigator() {
-  const screenOptions = useScreenOptions();
+  const screenOptions = useScreenOptions({ transparent: false });
 
   return (
     <Stack.Navigator screenOptions={screenOptions}>
@@ -22,11 +23,11 @@ export default function RootStackNavigator() {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="Modal"
-        component={ModalScreen}
+        name="AzkarDetail"
+        component={AzkarDetailScreen}
         options={{
           presentation: "modal",
-          headerTitle: "Modal",
+          headerTitle: "Azkar",
         }}
       />
     </Stack.Navigator>

@@ -1,12 +1,13 @@
 import { Text, type TextProps } from "react-native";
 
 import { useTheme } from "@/hooks/useTheme";
-import { Typography } from "@/constants/theme";
+import { Typography, Colors } from "@/constants/theme";
 
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
   darkColor?: string;
-  type?: "h1" | "h2" | "h3" | "h4" | "body" | "small" | "link";
+  type?: "h1" | "h2" | "h3" | "h4" | "body" | "bodyLarge" | "small" | "caption" | "link" | "arabic" | "arabicLarge" | "quran";
+  secondary?: boolean;
 };
 
 export function ThemedText({
@@ -14,6 +15,7 @@ export function ThemedText({
   lightColor,
   darkColor,
   type = "body",
+  secondary = false,
   ...rest
 }: ThemedTextProps) {
   const { theme, isDark } = useTheme();
@@ -31,6 +33,10 @@ export function ThemedText({
       return theme.link;
     }
 
+    if (secondary) {
+      return isDark ? Colors.dark.textSecondary : Colors.light.textSecondary;
+    }
+
     return theme.text;
   };
 
@@ -46,16 +52,36 @@ export function ThemedText({
         return Typography.h4;
       case "body":
         return Typography.body;
+      case "bodyLarge":
+        return Typography.bodyLarge;
       case "small":
         return Typography.small;
+      case "caption":
+        return Typography.caption;
       case "link":
         return Typography.link;
+      case "arabic":
+        return Typography.arabic;
+      case "arabicLarge":
+        return Typography.arabicLarge;
+      case "quran":
+        return Typography.quran;
       default:
         return Typography.body;
     }
   };
 
+  const isArabic = type === "arabic" || type === "arabicLarge" || type === "quran";
+
   return (
-    <Text style={[{ color: getColor() }, getTypeStyle(), style]} {...rest} />
+    <Text 
+      style={[
+        { color: getColor() }, 
+        getTypeStyle(), 
+        isArabic && { textAlign: "right", writingDirection: "rtl" },
+        style
+      ]} 
+      {...rest} 
+    />
   );
 }

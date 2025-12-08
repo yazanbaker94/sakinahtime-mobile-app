@@ -2,26 +2,34 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Feather } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
-import { Platform, StyleSheet } from "react-native";
-import HomeStackNavigator from "@/navigation/HomeStackNavigator";
-import ProfileStackNavigator from "@/navigation/ProfileStackNavigator";
+import { Platform, StyleSheet, View } from "react-native";
+import QiblaScreen from "@/screens/QiblaScreen";
+import PrayerTimesScreen from "@/screens/PrayerTimesScreen";
+import QuranScreen from "@/screens/QuranScreen";
+import AzkarScreen from "@/screens/AzkarScreen";
 import { useTheme } from "@/hooks/useTheme";
+import { useScreenOptions } from "@/hooks/useScreenOptions";
+import { Colors } from "@/constants/theme";
 
 export type MainTabParamList = {
-  HomeTab: undefined;
-  ProfileTab: undefined;
+  QiblaTab: undefined;
+  PrayerTimesTab: undefined;
+  QuranTab: undefined;
+  AzkarTab: undefined;
 };
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
 export default function MainTabNavigator() {
   const { theme, isDark } = useTheme();
+  const screenOptions = useScreenOptions();
 
   return (
     <Tab.Navigator
-      initialRouteName="HomeTab"
+      initialRouteName="QiblaTab"
       screenOptions={{
-        tabBarActiveTintColor: theme.tabIconSelected,
+        ...screenOptions,
+        tabBarActiveTintColor: isDark ? Colors.dark.primary : Colors.light.primary,
         tabBarInactiveTintColor: theme.tabIconDefault,
         tabBarStyle: {
           position: "absolute",
@@ -40,26 +48,49 @@ export default function MainTabNavigator() {
               style={StyleSheet.absoluteFill}
             />
           ) : null,
-        headerShown: false,
       }}
     >
       <Tab.Screen
-        name="HomeTab"
-        component={HomeStackNavigator}
+        name="QiblaTab"
+        component={QiblaScreen}
         options={{
-          title: "Home",
+          title: "Qibla",
+          headerTitle: "Qibla Direction",
           tabBarIcon: ({ color, size }) => (
-            <Feather name="home" size={size} color={color} />
+            <Feather name="compass" size={size} color={color} />
           ),
         }}
       />
       <Tab.Screen
-        name="ProfileTab"
-        component={ProfileStackNavigator}
+        name="PrayerTimesTab"
+        component={PrayerTimesScreen}
         options={{
-          title: "Profile",
+          title: "Prayer",
+          headerTitle: "Prayer Times",
           tabBarIcon: ({ color, size }) => (
-            <Feather name="user" size={size} color={color} />
+            <Feather name="clock" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="QuranTab"
+        component={QuranScreen}
+        options={{
+          title: "Quran",
+          headerTitle: "Al-Quran",
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="book-open" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="AzkarTab"
+        component={AzkarScreen}
+        options={{
+          title: "Azkar",
+          headerTitle: "Azkar",
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="heart" size={size} color={color} />
           ),
         }}
       />
