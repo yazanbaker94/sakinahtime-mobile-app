@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { View, StyleSheet, ScrollView, FlatList, Pressable, Dimensions } from "react-native";
+import { View, StyleSheet, ScrollView, FlatList, Pressable, Dimensions, ActivityIndicator } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -7,11 +7,9 @@ import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Spacing, Colors, BorderRadius } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
-import { surahs, surahAlFatiha, Surah, Verse } from "@/data/quran";
+import { surahs, Surah } from "@/data/quran";
+import { useSurah, combineVerses, CombinedVerse } from "@/hooks/useQuran";
 import { Feather } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import type { RootStackParamList } from "@/navigation/RootStackNavigator";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -20,12 +18,15 @@ export default function QuranScreen() {
   const tabBarHeight = useBottomTabBarHeight();
   const insets = useSafeAreaInsets();
   const { theme, isDark } = useTheme();
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const [selectedSurah, setSelectedSurah] = useState<Surah>(surahs[0]);
   const [showSurahList, setShowSurahList] = useState(false);
 
-  const verses = selectedSurah.number === 1 ? surahAlFatiha : [];
+  const { data: surahData, isLoading, error } = useSurah(selectedSurah.number);
+
+  const verses: CombinedVerse[] = surahData
+    ? combineVerses(surahData.arabic, surahData.english)
+    : [];
 
   const handleSelectSurah = useCallback((surah: Surah) => {
     setSelectedSurah(surah);
@@ -86,6 +87,48 @@ export default function QuranScreen() {
     [selectedSurah, isDark, handleSelectSurah]
   );
 
+  const renderVerseItem = useCallback(
+    ({ item }: { item: CombinedVerse }) => (
+      <View
+        style={[
+          styles.verseCard,
+          {
+            backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault,
+          },
+        ]}
+      >
+        <View style={styles.verseHeader}>
+          <View
+            style={[
+              styles.verseNumber,
+              {
+                backgroundColor: isDark ? Colors.dark.primary + "20" : Colors.light.primary + "20",
+                borderColor: isDark ? Colors.dark.primary : Colors.light.primary,
+              },
+            ]}
+          >
+            <ThemedText
+              type="small"
+              style={{ color: isDark ? Colors.dark.primary : Colors.light.primary }}
+            >
+              {item.numberInSurah}
+            </ThemedText>
+          </View>
+          <ThemedText type="caption" secondary>
+            Juz {item.juz} - Page {item.page}
+          </ThemedText>
+        </View>
+        <ThemedText type="quran" style={styles.verseArabic}>
+          {item.textAr}
+        </ThemedText>
+        <ThemedText type="small" secondary style={styles.verseTranslation}>
+          {item.translation}
+        </ThemedText>
+      </View>
+    ),
+    [isDark]
+  );
+
   if (showSurahList) {
     return (
       <ThemedView style={styles.container}>
@@ -114,6 +157,8 @@ export default function QuranScreen() {
             { paddingBottom: tabBarHeight + Spacing.xl },
           ]}
           showsVerticalScrollIndicator={false}
+          initialNumToRender={20}
+          maxToRenderPerBatch={20}
         />
       </ThemedView>
     );
@@ -121,17 +166,7 @@ export default function QuranScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <ScrollView
-        contentContainerStyle={[
-          styles.scrollContent,
-          {
-            paddingTop: headerHeight + Spacing.xl,
-            paddingBottom: tabBarHeight + Spacing.xl,
-          },
-        ]}
-        scrollIndicatorInsets={{ bottom: insets.bottom }}
-        showsVerticalScrollIndicator={false}
-      >
+      <View style={[styles.mainContent, { paddingTop: headerHeight }]}>
         <Pressable
           onPress={() => setShowSurahList(true)}
           style={({ pressed }) => [
@@ -166,98 +201,62 @@ export default function QuranScreen() {
           </View>
         </Pressable>
 
-        <View
-          style={[
-            styles.bismillahContainer,
-            {
-              backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault,
-              borderColor: isDark ? Colors.dark.gold : Colors.light.gold,
-            },
-          ]}
-        >
-          <ThemedText
-            type="quran"
+        {selectedSurah.number !== 9 ? (
+          <View
             style={[
-              styles.bismillah,
-              { color: isDark ? Colors.dark.gold : Colors.light.gold },
-            ]}
-          >
-            بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
-          </ThemedText>
-        </View>
-
-        <View style={styles.versesContainer}>
-          {verses.length > 0 ? (
-            verses.map((verse) => (
-              <View
-                key={verse.number}
-                style={[
-                  styles.verseCard,
-                  {
-                    backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault,
-                  },
-                ]}
-              >
-                <View style={styles.verseHeader}>
-                  <View
-                    style={[
-                      styles.verseNumber,
-                      {
-                        backgroundColor: isDark ? Colors.dark.primary + "20" : Colors.light.primary + "20",
-                        borderColor: isDark ? Colors.dark.primary : Colors.light.primary,
-                      },
-                    ]}
-                  >
-                    <ThemedText
-                      type="small"
-                      style={{ color: isDark ? Colors.dark.primary : Colors.light.primary }}
-                    >
-                      {verse.number}
-                    </ThemedText>
-                  </View>
-                </View>
-                <ThemedText type="quran" style={styles.verseArabic}>
-                  {verse.textAr}
-                </ThemedText>
-                <ThemedText type="small" secondary style={styles.verseTranslation}>
-                  {verse.translation}
-                </ThemedText>
-              </View>
-            ))
-          ) : (
-            <View style={styles.comingSoonContainer}>
-              <Feather
-                name="book"
-                size={48}
-                color={isDark ? Colors.dark.muted : Colors.light.muted}
-              />
-              <ThemedText type="body" secondary style={styles.comingSoonText}>
-                Full Quran text coming soon
-              </ThemedText>
-              <ThemedText type="small" secondary style={styles.comingSoonSubtext}>
-                Currently showing Al-Fatihah. More surahs will be added.
-              </ThemedText>
-            </View>
-          )}
-        </View>
-
-        {selectedSurah.number !== 1 ? (
-          <Pressable
-            onPress={() => handleSelectSurah(surahs[0])}
-            style={({ pressed }) => [
-              styles.readFatihahButton,
+              styles.bismillahContainer,
               {
-                backgroundColor: isDark ? Colors.dark.primary : Colors.light.primary,
-                opacity: pressed ? 0.8 : 1,
+                backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault,
+                borderColor: isDark ? Colors.dark.gold : Colors.light.gold,
               },
             ]}
           >
-            <ThemedText type="body" style={{ color: "#FFFFFF" }}>
-              Read Al-Fatihah
+            <ThemedText
+              type="quran"
+              style={[
+                styles.bismillah,
+                { color: isDark ? Colors.dark.gold : Colors.light.gold },
+              ]}
+            >
+              بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
             </ThemedText>
-          </Pressable>
+          </View>
         ) : null}
-      </ScrollView>
+
+        {isLoading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={isDark ? Colors.dark.primary : Colors.light.primary} />
+            <ThemedText type="body" secondary style={styles.loadingText}>
+              Loading Surah...
+            </ThemedText>
+          </View>
+        ) : error ? (
+          <View style={styles.errorContainer}>
+            <Feather name="alert-circle" size={48} color={isDark ? Colors.dark.muted : Colors.light.muted} />
+            <ThemedText type="body" secondary style={styles.errorText}>
+              Failed to load Surah
+            </ThemedText>
+            <ThemedText type="small" secondary>
+              Please check your connection and try again
+            </ThemedText>
+          </View>
+        ) : (
+          <FlatList
+            data={verses}
+            renderItem={renderVerseItem}
+            keyExtractor={(item) => String(item.number)}
+            contentContainerStyle={[
+              styles.versesContent,
+              { paddingBottom: tabBarHeight + Spacing.xl },
+            ]}
+            showsVerticalScrollIndicator={false}
+            scrollIndicatorInsets={{ bottom: insets.bottom }}
+            initialNumToRender={10}
+            maxToRenderPerBatch={10}
+            windowSize={5}
+          />
+        )}
+      </View>
     </ThemedView>
   );
 }
@@ -266,8 +265,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  scrollContent: {
-    flexGrow: 1,
+  mainContent: {
+    flex: 1,
     paddingHorizontal: Spacing.lg,
   },
   surahListHeader: {
@@ -316,7 +315,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: Spacing.lg,
     borderRadius: BorderRadius.lg,
-    marginBottom: Spacing["2xl"],
+    marginTop: Spacing.xl,
+    marginBottom: Spacing.lg,
   },
   surahSelectorContent: {
     flexDirection: "row",
@@ -338,14 +338,15 @@ const styles = StyleSheet.create({
   bismillahContainer: {
     padding: Spacing.xl,
     borderRadius: BorderRadius.lg,
-    marginBottom: Spacing["2xl"],
+    marginBottom: Spacing.lg,
     borderWidth: 1,
     alignItems: "center",
   },
   bismillah: {
     textAlign: "center",
   },
-  versesContainer: {
+  versesContent: {
+    paddingTop: Spacing.sm,
     gap: Spacing.lg,
   },
   verseCard: {
@@ -354,7 +355,8 @@ const styles = StyleSheet.create({
   },
   verseHeader: {
     flexDirection: "row",
-    justifyContent: "flex-end",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: Spacing.md,
   },
   verseNumber: {
@@ -372,24 +374,25 @@ const styles = StyleSheet.create({
   verseTranslation: {
     textAlign: "left",
     fontStyle: "italic",
+    lineHeight: 22,
   },
-  comingSoonContainer: {
+  loadingContainer: {
+    flex: 1,
     alignItems: "center",
+    justifyContent: "center",
     paddingVertical: Spacing["4xl"],
   },
-  comingSoonText: {
+  loadingText: {
     marginTop: Spacing.lg,
-    textAlign: "center",
   },
-  comingSoonSubtext: {
-    marginTop: Spacing.sm,
-    textAlign: "center",
-  },
-  readFatihahButton: {
-    paddingVertical: Spacing.lg,
-    paddingHorizontal: Spacing["2xl"],
-    borderRadius: BorderRadius.lg,
+  errorContainer: {
+    flex: 1,
     alignItems: "center",
-    marginTop: Spacing["2xl"],
+    justifyContent: "center",
+    paddingVertical: Spacing["4xl"],
+  },
+  errorText: {
+    marginTop: Spacing.lg,
+    marginBottom: Spacing.sm,
   },
 });
