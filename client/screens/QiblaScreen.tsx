@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useEffect, useRef } from "react";
 import { View, StyleSheet, Platform, Pressable } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -11,36 +11,41 @@ import {
   useCompass,
   calculateQiblaDirection,
   calculateDistanceToMecca,
-  getDirectionLabel,
+  getRelativeDirection,
 } from "@/hooks/useCompass";
 import { Feather } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 import Animated, {
   useAnimatedStyle,
   withSpring,
-  interpolateColor,
-  useDerivedValue,
+  useSharedValue,
+  withTiming,
+  Easing,
 } from "react-native-reanimated";
 
-const COMPASS_SIZE = 300;
+const COMPASS_SIZE = 280;
+const INNER_RING_SIZE = COMPASS_SIZE - 40;
+const QIBLA_INDICATOR_RADIUS = INNER_RING_SIZE / 2 - 30;
 
 export default function QiblaScreen() {
   const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
-  const { theme, isDark } = useTheme();
+  const { isDark } = useTheme();
+  const wasAlignedRef = useRef(false);
+  const glowOpacity = useSharedValue(0);
 
   const {
     latitude,
     longitude,
     city,
     loading: locationLoading,
-    error: locationError,
     permission,
     requestPermission,
     openSettings,
     canAskAgain,
   } = useLocation();
 
-  const { heading, available: compassAvailable, error: compassError } = useCompass();
+  const { heading, available: compassAvailable, error: compassError, accuracy } = useCompass();
 
   const qiblaDirection = useMemo(() => {
     if (latitude === null || longitude === null) return 0;
@@ -52,40 +57,65 @@ export default function QiblaScreen() {
     return calculateDistanceToMecca(latitude, longitude);
   }, [latitude, longitude]);
 
-  const relativeQibla = (qiblaDirection - heading + 360) % 360;
-  const isAligned = Math.abs(relativeQibla) < 5 || Math.abs(relativeQibla - 360) < 5;
+  const { angle: relativeAngle, direction } = useMemo(() => {
+    return getRelativeDirection(heading, qiblaDirection);
+  }, [heading, qiblaDirection]);
 
-  const alignmentProgress = useDerivedValue(() => {
-    const diff = Math.min(Math.abs(relativeQibla), Math.abs(relativeQibla - 360));
-    return diff < 5 ? 1 : 0;
-  }, [relativeQibla]);
+  const isAligned = direction === "aligned";
+
+  useEffect(() => {
+    if (isAligned && !wasAlignedRef.current) {
+      if (Platform.OS !== "web") {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      }
+      glowOpacity.value = withTiming(1, { duration: 300 });
+    } else if (!isAligned && wasAlignedRef.current) {
+      glowOpacity.value = withTiming(0, { duration: 300 });
+    }
+    wasAlignedRef.current = isAligned;
+  }, [isAligned, glowOpacity]);
 
   const compassRotationStyle = useAnimatedStyle(() => {
     return {
       transform: [
         {
           rotate: withSpring(`${-heading}deg`, {
-            damping: 15,
-            stiffness: 100,
+            damping: 20,
+            stiffness: 90,
+            mass: 0.8,
           }),
         },
       ],
     };
   });
 
-  const needleGlowStyle = useAnimatedStyle(() => {
-    const glowColor = interpolateColor(
-      alignmentProgress.value,
-      [0, 1],
-      ["transparent", isDark ? Colors.dark.primary : Colors.light.primary]
-    );
+  const glowStyle = useAnimatedStyle(() => {
     return {
-      shadowColor: glowColor,
-      shadowOffset: { width: 0, height: 0 },
-      shadowOpacity: alignmentProgress.value * 0.8,
-      shadowRadius: 20,
+      opacity: glowOpacity.value,
     };
   });
+
+  const qiblaIndicatorStyle = useMemo(() => {
+    const angleRad = ((qiblaDirection - 90) * Math.PI) / 180;
+    const x = Math.cos(angleRad) * QIBLA_INDICATOR_RADIUS;
+    const y = Math.sin(angleRad) * QIBLA_INDICATOR_RADIUS;
+    return {
+      transform: [{ translateX: x }, { translateY: y }],
+    };
+  }, [qiblaDirection]);
+
+  const getDirectionText = () => {
+    if (direction === "aligned") return "Facing Qibla";
+    const turnDegrees = Math.round(relativeAngle);
+    if (direction === "left") return `Turn Left ${turnDegrees}°`;
+    return `Turn Right ${turnDegrees}°`;
+  };
+
+  const getDirectionIcon = (): "check-circle" | "chevron-left" | "chevron-right" => {
+    if (direction === "aligned") return "check-circle";
+    if (direction === "left") return "chevron-left";
+    return "chevron-right";
+  };
 
   if (!permission?.granted) {
     return (
@@ -165,6 +195,12 @@ export default function QiblaScreen() {
     );
   }
 
+  const primaryColor = isDark ? Colors.dark.primary : Colors.light.primary;
+  const goldColor = isDark ? Colors.dark.gold : Colors.light.gold;
+  const bgSecondary = isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundSecondary;
+  const borderColor = isDark ? Colors.dark.border : Colors.light.border;
+  const mutedColor = isDark ? Colors.dark.muted : Colors.light.muted;
+
   return (
     <ThemedView style={styles.container}>
       <View
@@ -185,148 +221,153 @@ export default function QiblaScreen() {
           </View>
         ) : null}
 
-        <View style={styles.compassContainer}>
-          <Animated.View style={[styles.compass, compassRotationStyle]}>
-            <View
-              style={[
-                styles.compassOuter,
-                {
-                  backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault,
-                  borderColor: isDark ? Colors.dark.border : Colors.light.border,
-                },
-              ]}
-            >
-              {["N", "E", "S", "W"].map((dir, index) => (
-                <ThemedText
-                  key={dir}
-                  type="h4"
-                  style={[
-                    styles.directionLabel,
-                    {
-                      color: dir === "N" ? (isDark ? Colors.dark.primary : Colors.light.primary) : theme.text,
-                    },
-                    index === 0 && styles.directionN,
-                    index === 1 && styles.directionE,
-                    index === 2 && styles.directionS,
-                    index === 3 && styles.directionW,
-                  ]}
-                >
-                  {dir}
-                </ThemedText>
-              ))}
+        <View style={styles.compassWrapper}>
+          <Animated.View style={[styles.glowRing, { borderColor: primaryColor }, glowStyle]} />
+          
+          <View style={[styles.compassOuter, { backgroundColor: bgSecondary, borderColor }]}>
+            <Animated.View style={[styles.compassInner, compassRotationStyle]}>
+              <View style={[styles.innerRing, { borderColor: mutedColor }]}>
+                {["N", "E", "S", "W"].map((dir, index) => {
+                  const angle = index * 90;
+                  const angleRad = ((angle - 90) * Math.PI) / 180;
+                  const radius = INNER_RING_SIZE / 2 - 25;
+                  const x = Math.cos(angleRad) * radius;
+                  const y = Math.sin(angleRad) * radius;
+                  
+                  return (
+                    <ThemedText
+                      key={dir}
+                      type="h4"
+                      style={[
+                        styles.directionLabel,
+                        {
+                          color: dir === "N" ? primaryColor : mutedColor,
+                          transform: [{ translateX: x - 10 }, { translateY: y - 12 }],
+                        },
+                      ]}
+                    >
+                      {dir}
+                    </ThemedText>
+                  );
+                })}
 
-              <View
-                style={[
-                  styles.qiblaIndicator,
-                  {
-                    transform: [{ rotate: `${qiblaDirection}deg` }, { translateY: -COMPASS_SIZE / 2 + 35 }],
-                  },
-                ]}
-              >
+                {[...Array(72)].map((_, i) => {
+                  const angle = i * 5;
+                  const isMajor = i % 18 === 0;
+                  const isMinor = i % 9 === 0 && !isMajor;
+                  const tickLength = isMajor ? 12 : isMinor ? 8 : 4;
+                  const tickWidth = isMajor ? 2 : 1;
+                  const radius = INNER_RING_SIZE / 2 - 3;
+                  const angleRad = ((angle - 90) * Math.PI) / 180;
+                  const x1 = Math.cos(angleRad) * radius;
+                  const y1 = Math.sin(angleRad) * radius;
+                  const x2 = Math.cos(angleRad) * (radius - tickLength);
+                  const y2 = Math.sin(angleRad) * (radius - tickLength);
+                  
+                  return (
+                    <View
+                      key={i}
+                      style={[
+                        styles.tick,
+                        {
+                          width: tickWidth,
+                          height: tickLength,
+                          backgroundColor: isMajor ? (isDark ? Colors.dark.text : Colors.light.text) : mutedColor,
+                          left: INNER_RING_SIZE / 2 - tickWidth / 2,
+                          top: 3,
+                          transform: [{ rotate: `${angle}deg` }],
+                          transformOrigin: `${tickWidth / 2}px ${INNER_RING_SIZE / 2 - 3}px`,
+                          opacity: isMajor ? 1 : isMinor ? 0.7 : 0.4,
+                        },
+                      ]}
+                    />
+                  );
+                })}
+
                 <View
                   style={[
-                    styles.kaabaIcon,
-                    {
-                      backgroundColor: isDark ? Colors.dark.gold : Colors.light.gold,
-                    },
+                    styles.qiblaIndicator,
+                    qiblaIndicatorStyle,
                   ]}
                 >
-                  <Feather name="navigation" size={16} color="#FFFFFF" />
+                  <View style={[styles.kaabaCircle, { backgroundColor: goldColor }]}>
+                    <View style={styles.kaabaSquare} />
+                  </View>
                 </View>
               </View>
+            </Animated.View>
 
-              {[...Array(36)].map((_, i) => (
-                <View
-                  key={i}
-                  style={[
-                    styles.tick,
-                    i % 9 === 0 ? styles.majorTick : styles.minorTick,
-                    {
-                      transform: [{ rotate: `${i * 10}deg` }],
-                      backgroundColor: i % 9 === 0 ? theme.text : (isDark ? Colors.dark.muted : Colors.light.muted),
-                    },
-                  ]}
-                />
-              ))}
+            <View style={styles.centerPoint}>
+              <View style={[styles.pointerUp, { borderBottomColor: isAligned ? primaryColor : goldColor }]} />
+              <View style={[styles.centerDot, { backgroundColor: isAligned ? primaryColor : goldColor }]} />
             </View>
-          </Animated.View>
+          </View>
+        </View>
 
-          <Animated.View style={[styles.needleContainer, needleGlowStyle]}>
-            <View
-              style={[
-                styles.needle,
-                {
-                  backgroundColor: isAligned
-                    ? (isDark ? Colors.dark.primary : Colors.light.primary)
-                    : (isDark ? Colors.dark.gold : Colors.light.gold),
-                },
-              ]}
+        <View
+          style={[
+            styles.directionIndicator,
+            {
+              backgroundColor: isAligned ? primaryColor : bgSecondary,
+              borderColor: isAligned ? primaryColor : borderColor,
+            },
+          ]}
+        >
+          <Feather
+            name={getDirectionIcon()}
+            size={20}
+            color={isAligned ? "#FFFFFF" : (isDark ? Colors.dark.text : Colors.light.text)}
+          />
+          <ThemedText
+            type="body"
+            style={[
+              styles.directionText,
+              { color: isAligned ? "#FFFFFF" : (isDark ? Colors.dark.text : Colors.light.text) },
+            ]}
+          >
+            {getDirectionText()}
+          </ThemedText>
+          {!isAligned ? (
+            <Feather
+              name={getDirectionIcon()}
+              size={20}
+              color={isDark ? Colors.dark.text : Colors.light.text}
             />
-            <View
-              style={[
-                styles.needleCenter,
-                {
-                  backgroundColor: isDark ? Colors.dark.backgroundDefault : Colors.light.backgroundDefault,
-                  borderColor: isAligned
-                    ? (isDark ? Colors.dark.primary : Colors.light.primary)
-                    : (isDark ? Colors.dark.gold : Colors.light.gold),
-                },
-              ]}
-            />
-          </Animated.View>
+          ) : null}
         </View>
 
         <View style={styles.infoContainer}>
-          <View
-            style={[
-              styles.infoCard,
-              {
-                backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault,
-              },
-            ]}
-          >
-            <ThemedText type="h2" style={{ color: isDark ? Colors.dark.primary : Colors.light.primary }}>
+          <View style={[styles.infoCard, { backgroundColor: bgSecondary }]}>
+            <ThemedText type="h3" style={{ color: primaryColor }}>
               {qiblaDirection}°
             </ThemedText>
-            <ThemedText type="small" secondary>
-              {getDirectionLabel(qiblaDirection)} Direction
+            <ThemedText type="caption" secondary>
+              Qibla Bearing
             </ThemedText>
           </View>
 
-          <View
-            style={[
-              styles.infoCard,
-              {
-                backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault,
-              },
-            ]}
-          >
-            <ThemedText type="h2" style={{ color: isDark ? Colors.dark.gold : Colors.light.gold }}>
+          <View style={[styles.infoCard, { backgroundColor: bgSecondary }]}>
+            <ThemedText type="h3" style={{ color: goldColor }}>
               {distanceToMecca.toLocaleString()}
             </ThemedText>
-            <ThemedText type="small" secondary>
+            <ThemedText type="caption" secondary>
               km to Mecca
             </ThemedText>
           </View>
         </View>
 
-        {isAligned ? (
-          <View
-            style={[
-              styles.alignedBadge,
-              { backgroundColor: isDark ? Colors.dark.primary : Colors.light.primary },
-            ]}
-          >
-            <Feather name="check-circle" size={16} color="#FFFFFF" />
-            <ThemedText type="small" style={{ color: "#FFFFFF", marginLeft: Spacing.xs }}>
-              Facing Qibla
+        {accuracy !== "high" && compassAvailable ? (
+          <View style={styles.calibrationHint}>
+            <Feather name="info" size={14} color={mutedColor} />
+            <ThemedText type="caption" secondary style={styles.calibrationText}>
+              Move your phone in a figure-8 pattern to calibrate
             </ThemedText>
           </View>
         ) : null}
 
         {!compassAvailable || compassError ? (
           <View style={styles.warningContainer}>
-            <Feather name="alert-circle" size={16} color={isDark ? Colors.dark.gold : Colors.light.gold} />
+            <Feather name="alert-circle" size={16} color={goldColor} />
             <ThemedText type="small" secondary style={styles.warningText}>
               {Platform.OS === "web"
                 ? "Compass not available on web. Use on mobile device."
@@ -382,18 +423,19 @@ const styles = StyleSheet.create({
   locationText: {
     marginLeft: Spacing.xs,
   },
-  compassContainer: {
-    width: COMPASS_SIZE,
-    height: COMPASS_SIZE,
+  compassWrapper: {
+    width: COMPASS_SIZE + 20,
+    height: COMPASS_SIZE + 20,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: Spacing["3xl"],
+    marginBottom: Spacing["2xl"],
   },
-  compass: {
-    width: COMPASS_SIZE,
-    height: COMPASS_SIZE,
-    alignItems: "center",
-    justifyContent: "center",
+  glowRing: {
+    position: "absolute",
+    width: COMPASS_SIZE + 16,
+    height: COMPASS_SIZE + 16,
+    borderRadius: (COMPASS_SIZE + 16) / 2,
+    borderWidth: 3,
   },
   compassOuter: {
     width: COMPASS_SIZE,
@@ -402,88 +444,104 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     alignItems: "center",
     justifyContent: "center",
+    overflow: "hidden",
+  },
+  compassInner: {
+    width: INNER_RING_SIZE,
+    height: INNER_RING_SIZE,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  innerRing: {
+    width: INNER_RING_SIZE,
+    height: INNER_RING_SIZE,
+    borderRadius: INNER_RING_SIZE / 2,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
   directionLabel: {
     position: "absolute",
-  },
-  directionN: {
-    top: 20,
-  },
-  directionE: {
-    right: 20,
-  },
-  directionS: {
-    bottom: 20,
-  },
-  directionW: {
-    left: 20,
+    width: 20,
+    textAlign: "center",
+    fontWeight: "600",
   },
   tick: {
     position: "absolute",
-    width: 2,
-    top: 5,
-    transformOrigin: `1px ${COMPASS_SIZE / 2 - 5}px`,
-  },
-  majorTick: {
-    height: 15,
-  },
-  minorTick: {
-    height: 8,
-    opacity: 0.5,
   },
   qiblaIndicator: {
     position: "absolute",
-    alignItems: "center",
-    transformOrigin: `0px ${COMPASS_SIZE / 2 - 35}px`,
   },
-  kaabaIcon: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+  kaabaCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     alignItems: "center",
     justifyContent: "center",
   },
-  needleContainer: {
-    position: "absolute",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  needle: {
-    width: 4,
-    height: 80,
+  kaabaSquare: {
+    width: 14,
+    height: 14,
+    backgroundColor: "#1F2937",
     borderRadius: 2,
-    position: "absolute",
-    top: -40,
   },
-  needleCenter: {
+  centerPoint: {
+    position: "absolute",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  pointerUp: {
+    width: 0,
+    height: 0,
+    borderLeftWidth: 8,
+    borderRightWidth: 8,
+    borderBottomWidth: 50,
+    borderLeftColor: "transparent",
+    borderRightColor: "transparent",
+    marginBottom: -8,
+  },
+  centerDot: {
     width: 16,
     height: 16,
     borderRadius: 8,
-    borderWidth: 3,
+  },
+  directionIndicator: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.full,
+    borderWidth: 1,
+    marginBottom: Spacing["2xl"],
+    gap: Spacing.sm,
+  },
+  directionText: {
+    fontWeight: "600",
   },
   infoContainer: {
     flexDirection: "row",
     gap: Spacing.lg,
   },
   infoCard: {
-    paddingHorizontal: Spacing["2xl"],
-    paddingVertical: Spacing.lg,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.md,
     borderRadius: BorderRadius.lg,
     alignItems: "center",
-    minWidth: 120,
+    minWidth: 110,
   },
-  alignedBadge: {
+  calibrationHint: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.full,
-    marginTop: Spacing["2xl"],
+    marginTop: Spacing.xl,
+    gap: Spacing.xs,
+  },
+  calibrationText: {
+    marginLeft: Spacing.xs,
   },
   warningContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: Spacing["2xl"],
+    marginTop: Spacing.xl,
     paddingHorizontal: Spacing.lg,
   },
   warningText: {
