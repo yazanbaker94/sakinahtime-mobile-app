@@ -1,5 +1,22 @@
 import React, { useState, useCallback } from "react";
-import { View, StyleSheet, ScrollView, FlatList, Pressable, Dimensions, ActivityIndicator } from "react-native";
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  FlatList,
+  Pressable,
+  Dimensions,
+  ActivityIndicator,
+  Modal,
+  Text,
+  Platform,
+} from "react-native";
+import Animated, {
+  FadeIn,
+  FadeOut,
+  SlideInUp,
+  SlideOutDown,
+} from "react-native-reanimated";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -10,8 +27,29 @@ import { useTheme } from "@/hooks/useTheme";
 import { surahs, Surah } from "@/data/quran";
 import { useSurah, combineVerses, CombinedVerse } from "@/hooks/useQuran";
 import { Feather } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+
+const ARABIC_NUMERALS: Record<string, string> = {
+  "0": "٠",
+  "1": "١",
+  "2": "٢",
+  "3": "٣",
+  "4": "٤",
+  "5": "٥",
+  "6": "٦",
+  "7": "٧",
+  "8": "٨",
+  "9": "٩",
+};
+
+function toArabicNumerals(num: number): string {
+  return String(num)
+    .split("")
+    .map((digit) => ARABIC_NUMERALS[digit] || digit)
+    .join("");
+}
 
 export default function QuranScreen() {
   const headerHeight = useHeaderHeight();
@@ -21,6 +59,7 @@ export default function QuranScreen() {
 
   const [selectedSurah, setSelectedSurah] = useState<Surah>(surahs[0]);
   const [showSurahList, setShowSurahList] = useState(false);
+  const [selectedVerse, setSelectedVerse] = useState<CombinedVerse | null>(null);
 
   const { data: surahData, isLoading, error } = useSurah(selectedSurah.number);
 
@@ -31,6 +70,11 @@ export default function QuranScreen() {
   const handleSelectSurah = useCallback((surah: Surah) => {
     setSelectedSurah(surah);
     setShowSurahList(false);
+  }, []);
+
+
+  const closePopover = useCallback(() => {
+    setSelectedVerse(null);
   }, []);
 
   const renderSurahItem = useCallback(
@@ -87,47 +131,45 @@ export default function QuranScreen() {
     [selectedSurah, isDark, handleSelectSurah]
   );
 
-  const renderVerseItem = useCallback(
-    ({ item }: { item: CombinedVerse }) => (
-      <View
-        style={[
-          styles.verseCard,
-          {
-            backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault,
-          },
-        ]}
-      >
-        <View style={styles.verseHeader}>
-          <View
-            style={[
-              styles.verseNumber,
-              {
-                backgroundColor: isDark ? Colors.dark.primary + "20" : Colors.light.primary + "20",
-                borderColor: isDark ? Colors.dark.primary : Colors.light.primary,
-              },
-            ]}
+  const handleVerseLongPress = useCallback((verse: CombinedVerse) => {
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    }
+    setSelectedVerse(verse);
+  }, []);
+
+  const renderMushafText = () => {
+    return (
+      <Text style={[styles.mushafContainer, { direction: "rtl" }]}>
+        {verses.map((verse) => (
+          <Text
+            key={verse.number}
+            onLongPress={() => handleVerseLongPress(verse)}
+            delayLongPress={300}
           >
-            <ThemedText
-              type="small"
-              style={{ color: isDark ? Colors.dark.primary : Colors.light.primary }}
+            <Text
+              style={[
+                styles.verseText,
+                { color: theme.text },
+              ]}
             >
-              {item.numberInSurah}
-            </ThemedText>
-          </View>
-          <ThemedText type="caption" secondary>
-            Juz {item.juz} - Page {item.page}
-          </ThemedText>
-        </View>
-        <ThemedText type="quran" style={styles.verseArabic}>
-          {item.textAr}
-        </ThemedText>
-        <ThemedText type="small" secondary style={styles.verseTranslation}>
-          {item.translation}
-        </ThemedText>
-      </View>
-    ),
-    [isDark]
-  );
+              {verse.textAr}
+            </Text>
+            <Text
+              style={[
+                styles.verseMarker,
+                {
+                  color: isDark ? Colors.dark.gold : Colors.light.gold,
+                },
+              ]}
+            >
+              {" "}﴿{toArabicNumerals(verse.numberInSurah)}﴾{" "}
+            </Text>
+          </Text>
+        ))}
+      </Text>
+    );
+  };
 
   if (showSurahList) {
     return (
@@ -201,28 +243,6 @@ export default function QuranScreen() {
           </View>
         </Pressable>
 
-        {selectedSurah.number !== 9 ? (
-          <View
-            style={[
-              styles.bismillahContainer,
-              {
-                backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault,
-                borderColor: isDark ? Colors.dark.gold : Colors.light.gold,
-              },
-            ]}
-          >
-            <ThemedText
-              type="quran"
-              style={[
-                styles.bismillah,
-                { color: isDark ? Colors.dark.gold : Colors.light.gold },
-              ]}
-            >
-              بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
-            </ThemedText>
-          </View>
-        ) : null}
-
         {isLoading ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color={isDark ? Colors.dark.primary : Colors.light.primary} />
@@ -241,22 +261,164 @@ export default function QuranScreen() {
             </ThemedText>
           </View>
         ) : (
-          <FlatList
-            data={verses}
-            renderItem={renderVerseItem}
-            keyExtractor={(item) => String(item.number)}
+          <ScrollView
             contentContainerStyle={[
-              styles.versesContent,
+              styles.mushafScrollContent,
               { paddingBottom: tabBarHeight + Spacing.xl },
             ]}
             showsVerticalScrollIndicator={false}
             scrollIndicatorInsets={{ bottom: insets.bottom }}
-            initialNumToRender={10}
-            maxToRenderPerBatch={10}
-            windowSize={5}
-          />
+          >
+            {selectedSurah.number !== 9 ? (
+              <View
+                style={[
+                  styles.bismillahContainer,
+                  {
+                    backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault,
+                    borderColor: isDark ? Colors.dark.gold : Colors.light.gold,
+                  },
+                ]}
+              >
+                <ThemedText
+                  type="quran"
+                  style={[
+                    styles.bismillah,
+                    { color: isDark ? Colors.dark.gold : Colors.light.gold },
+                  ]}
+                >
+                  بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+                </ThemedText>
+              </View>
+            ) : null}
+
+            <View
+              style={[
+                styles.mushafCard,
+                {
+                  backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault,
+                },
+              ]}
+            >
+              {renderMushafText()}
+            </View>
+          </ScrollView>
         )}
       </View>
+
+      <Modal
+        visible={selectedVerse !== null}
+        transparent
+        animationType="fade"
+        onRequestClose={closePopover}
+      >
+        <View style={styles.modalOverlay}>
+          <Pressable style={styles.modalBackdrop} onPress={closePopover} />
+          {selectedVerse ? (
+            <Animated.View
+              entering={SlideInUp.duration(200)}
+              exiting={SlideOutDown.duration(150)}
+              style={[
+                styles.popoverContainer,
+                {
+                  backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault,
+                },
+              ]}
+            >
+              <View style={styles.popoverHeader}>
+                <View
+                  style={[
+                    styles.popoverVerseNumber,
+                    {
+                      backgroundColor: isDark ? Colors.dark.primary + "20" : Colors.light.primary + "20",
+                      borderColor: isDark ? Colors.dark.primary : Colors.light.primary,
+                    },
+                  ]}
+                >
+                  <ThemedText
+                    type="small"
+                    style={{ color: isDark ? Colors.dark.primary : Colors.light.primary }}
+                  >
+                    {selectedVerse.numberInSurah}
+                  </ThemedText>
+                </View>
+                <ThemedText type="caption" secondary style={{ flex: 1 }}>
+                  {selectedSurah.nameEn} - Verse {selectedVerse.numberInSurah}
+                </ThemedText>
+                <Pressable onPress={closePopover} style={styles.closeButton}>
+                  <Feather name="x" size={20} color={theme.textSecondary} />
+                </Pressable>
+              </View>
+
+              <View style={styles.popoverContent}>
+                <ThemedText type="quran" style={styles.popoverArabic}>
+                  {selectedVerse.textAr}
+                </ThemedText>
+                
+                <View
+                  style={[
+                    styles.popoverDivider,
+                    { backgroundColor: isDark ? Colors.dark.border : Colors.light.border },
+                  ]}
+                />
+
+                <ThemedText type="h5" style={styles.popoverSectionTitle}>
+                  Translation
+                </ThemedText>
+                <ThemedText type="body" secondary style={styles.popoverTranslation}>
+                  {selectedVerse.translation}
+                </ThemedText>
+              </View>
+
+              <View style={styles.popoverActions}>
+                <Pressable
+                  style={[
+                    styles.popoverActionButton,
+                    { backgroundColor: isDark ? Colors.dark.backgroundTertiary : Colors.light.backgroundSecondary },
+                  ]}
+                  onPress={() => {
+                    if (Platform.OS !== "web") {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    }
+                  }}
+                >
+                  <Feather name="volume-2" size={20} color={isDark ? Colors.dark.primary : Colors.light.primary} />
+                  <ThemedText type="small" style={{ marginLeft: Spacing.sm }}>Audio</ThemedText>
+                </Pressable>
+
+                <Pressable
+                  style={[
+                    styles.popoverActionButton,
+                    { backgroundColor: isDark ? Colors.dark.backgroundTertiary : Colors.light.backgroundSecondary },
+                  ]}
+                  onPress={() => {
+                    if (Platform.OS !== "web") {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    }
+                  }}
+                >
+                  <Feather name="book-open" size={20} color={isDark ? Colors.dark.gold : Colors.light.gold} />
+                  <ThemedText type="small" style={{ marginLeft: Spacing.sm }}>Tafsir</ThemedText>
+                </Pressable>
+
+                <Pressable
+                  style={[
+                    styles.popoverActionButton,
+                    { backgroundColor: isDark ? Colors.dark.backgroundTertiary : Colors.light.backgroundSecondary },
+                  ]}
+                  onPress={() => {
+                    if (Platform.OS !== "web") {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    }
+                  }}
+                >
+                  <Feather name="bookmark" size={20} color={theme.textSecondary} />
+                  <ThemedText type="small" style={{ marginLeft: Spacing.sm }}>Bookmark</ThemedText>
+                </Pressable>
+              </View>
+            </Animated.View>
+          ) : null}
+        </View>
+      </Modal>
     </ThemedView>
   );
 }
@@ -345,36 +507,33 @@ const styles = StyleSheet.create({
   bismillah: {
     textAlign: "center",
   },
-  versesContent: {
+  mushafScrollContent: {
     paddingTop: Spacing.sm,
-    gap: Spacing.lg,
   },
-  verseCard: {
-    padding: Spacing.lg,
-    borderRadius: BorderRadius.md,
+  mushafCard: {
+    padding: Spacing.xl,
+    borderRadius: BorderRadius.lg,
   },
-  verseHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: Spacing.md,
-  },
-  verseNumber: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    borderWidth: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  verseArabic: {
-    marginBottom: Spacing.md,
+  mushafContainer: {
     textAlign: "right",
+    writingDirection: "rtl",
   },
-  verseTranslation: {
-    textAlign: "left",
-    fontStyle: "italic",
-    lineHeight: 22,
+  verseText: {
+    fontFamily: Platform.select({
+      ios: "AmiriQuran",
+      android: "AmiriQuran",
+      default: "serif",
+    }),
+    fontSize: 26,
+    lineHeight: 52,
+  },
+  verseMarker: {
+    fontFamily: Platform.select({
+      ios: "AmiriQuran",
+      android: "AmiriQuran",
+      default: "serif",
+    }),
+    fontSize: 22,
   },
   loadingContainer: {
     flex: 1,
@@ -394,5 +553,77 @@ const styles = StyleSheet.create({
   errorText: {
     marginTop: Spacing.lg,
     marginBottom: Spacing.sm,
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    paddingHorizontal: Spacing.lg,
+  },
+  modalBackdrop: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  popoverContainer: {
+    borderRadius: BorderRadius.xl,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
+    maxHeight: SCREEN_HEIGHT * 0.6,
+  },
+  popoverHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: Spacing.lg,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(128, 128, 128, 0.2)",
+  },
+  popoverVerseNumber: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: Spacing.md,
+  },
+  closeButton: {
+    padding: Spacing.sm,
+    marginRight: -Spacing.sm,
+  },
+  popoverContent: {
+    padding: Spacing.lg,
+  },
+  popoverArabic: {
+    textAlign: "right",
+    fontSize: 24,
+    lineHeight: 44,
+    marginBottom: Spacing.md,
+  },
+  popoverDivider: {
+    height: 1,
+    marginVertical: Spacing.md,
+  },
+  popoverSectionTitle: {
+    marginBottom: Spacing.sm,
+  },
+  popoverTranslation: {
+    lineHeight: 24,
+    fontStyle: "italic",
+  },
+  popoverActions: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    padding: Spacing.lg,
+    borderTopWidth: 1,
+    borderTopColor: "rgba(128, 128, 128, 0.2)",
+  },
+  popoverActionButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.lg,
+    borderRadius: BorderRadius.md,
   },
 });

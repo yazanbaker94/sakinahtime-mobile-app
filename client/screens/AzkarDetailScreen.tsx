@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { View, StyleSheet, FlatList, Pressable } from "react-native";
+import { View, StyleSheet, FlatList, Pressable, ScrollView } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -10,8 +10,6 @@ import { Feather } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import type { RootStackParamList } from "@/navigation/RootStackNavigator";
-import * as Haptics from "expo-haptics";
-import { Platform } from "react-native";
 
 type AzkarDetailRouteProp = RouteProp<RootStackParamList, "AzkarDetail">;
 
@@ -21,49 +19,19 @@ export default function AzkarDetailScreen() {
   const route = useRoute<AzkarDetailRouteProp>();
   const { category } = route.params;
 
-  const [counts, setCounts] = useState<Record<string, number>>({});
+  const [showTransliteration, setShowTransliteration] = useState(false);
+  const [showTranslation, setShowTranslation] = useState(false);
 
   const dhikrList = azkarData[category.id] || [];
 
-  const handleCount = useCallback(
-    (dhikrId: string, maxReps: number) => {
-      const currentCount = counts[dhikrId] || 0;
-      if (currentCount < maxReps || maxReps === 0) {
-        setCounts((prev) => ({
-          ...prev,
-          [dhikrId]: currentCount + 1,
-        }));
-        if (Platform.OS !== "web") {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        }
-      }
-    },
-    [counts]
-  );
-
-  const resetCount = useCallback((dhikrId: string) => {
-    setCounts((prev) => ({
-      ...prev,
-      [dhikrId]: 0,
-    }));
-    if (Platform.OS !== "web") {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    }
-  }, []);
-
   const renderDhikr = useCallback(
     ({ item, index }: { item: Dhikr; index: number }) => {
-      const currentCount = counts[item.id] || 0;
-      const isCompleted = item.repetitions > 0 && currentCount >= item.repetitions;
-      const progress = item.repetitions > 0 ? currentCount / item.repetitions : 0;
-
       return (
         <View
           style={[
             styles.dhikrCard,
             {
               backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault,
-              opacity: isCompleted ? 0.7 : 1,
             },
           ]}
         >
@@ -87,103 +55,46 @@ export default function AzkarDetailScreen() {
             {item.textAr}
           </ThemedText>
 
-          <ThemedText type="small" secondary style={styles.transliteration}>
-            {item.transliteration}
-          </ThemedText>
+          {showTransliteration ? (
+            <ThemedText type="small" secondary style={styles.transliteration}>
+              {item.transliteration}
+            </ThemedText>
+          ) : null}
 
-          <ThemedText type="body" secondary style={styles.translation}>
-            {item.translation}
-          </ThemedText>
+          {showTranslation ? (
+            <ThemedText type="body" secondary style={styles.translation}>
+              {item.translation}
+            </ThemedText>
+          ) : null}
 
           {item.repetitions > 0 ? (
-            <View style={styles.counterSection}>
-              <View
-                style={[
-                  styles.progressBar,
-                  { backgroundColor: isDark ? Colors.dark.backgroundTertiary : Colors.light.backgroundSecondary },
-                ]}
+            <View style={styles.repBadge}>
+              <ThemedText
+                type="caption"
+                style={{ color: isDark ? Colors.dark.primary : Colors.light.primary }}
               >
-                <View
-                  style={[
-                    styles.progressFill,
-                    {
-                      width: `${Math.min(progress * 100, 100)}%`,
-                      backgroundColor: isCompleted
-                        ? (isDark ? Colors.dark.success : Colors.light.success)
-                        : (isDark ? Colors.dark.primary : Colors.light.primary),
-                    },
-                  ]}
-                />
-              </View>
-
-              <View style={styles.counterContainer}>
-                <Pressable
-                  onPress={() => resetCount(item.id)}
-                  style={({ pressed }) => [
-                    styles.resetButton,
-                    {
-                      backgroundColor: isDark ? Colors.dark.backgroundTertiary : Colors.light.backgroundSecondary,
-                      opacity: pressed ? 0.7 : 1,
-                    },
-                  ]}
-                >
-                  <Feather name="rotate-ccw" size={16} color={theme.textSecondary} />
-                </Pressable>
-
-                <Pressable
-                  onPress={() => handleCount(item.id, item.repetitions)}
-                  disabled={isCompleted}
-                  style={({ pressed }) => [
-                    styles.countButton,
-                    {
-                      backgroundColor: isCompleted
-                        ? (isDark ? Colors.dark.success : Colors.light.success)
-                        : (isDark ? Colors.dark.primary : Colors.light.primary),
-                      opacity: pressed && !isCompleted ? 0.8 : 1,
-                      transform: [{ scale: pressed && !isCompleted ? 0.95 : 1 }],
-                    },
-                  ]}
-                >
-                  {isCompleted ? (
-                    <Feather name="check" size={24} color="#FFFFFF" />
-                  ) : (
-                    <ThemedText type="h3" style={{ color: "#FFFFFF" }}>
-                      {currentCount}
-                    </ThemedText>
-                  )}
-                </Pressable>
-
-                <View style={styles.repInfo}>
-                  <ThemedText type="caption" secondary>
-                    of {item.repetitions}
-                  </ThemedText>
-                </View>
-              </View>
+                Repeat {item.repetitions}x
+              </ThemedText>
             </View>
           ) : null}
         </View>
       );
     },
-    [counts, isDark, theme, handleCount, resetCount]
+    [isDark, showTransliteration, showTranslation]
   );
-
-  const completedCount = dhikrList.filter(
-    (d) => d.repetitions > 0 && (counts[d.id] || 0) >= d.repetitions
-  ).length;
-  const totalWithReps = dhikrList.filter((d) => d.repetitions > 0).length;
 
   return (
     <ThemedView style={styles.container}>
       <View
         style={[
-          styles.progressHeader,
+          styles.header,
           {
             backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault,
             borderBottomColor: isDark ? Colors.dark.border : Colors.light.border,
           },
         ]}
       >
-        <View style={styles.progressInfo}>
+        <View style={styles.headerInfo}>
           <ThemedText type="body" style={{ fontWeight: "500" }}>
             {category.titleEn}
           </ThemedText>
@@ -191,16 +102,79 @@ export default function AzkarDetailScreen() {
             {category.titleAr}
           </ThemedText>
         </View>
-        {totalWithReps > 0 ? (
-          <View style={styles.completionBadge}>
+        <View style={styles.toggleContainer}>
+          <Pressable
+            onPress={() => setShowTransliteration(!showTransliteration)}
+            style={({ pressed }) => [
+              styles.toggleButton,
+              {
+                backgroundColor: showTransliteration
+                  ? (isDark ? Colors.dark.primary + "20" : Colors.light.primary + "20")
+                  : (isDark ? Colors.dark.backgroundTertiary : Colors.light.backgroundSecondary),
+                borderColor: showTransliteration
+                  ? (isDark ? Colors.dark.primary : Colors.light.primary)
+                  : "transparent",
+                opacity: pressed ? 0.7 : 1,
+              },
+            ]}
+          >
+            <Feather
+              name="type"
+              size={14}
+              color={showTransliteration
+                ? (isDark ? Colors.dark.primary : Colors.light.primary)
+                : theme.textSecondary
+              }
+            />
             <ThemedText
-              type="small"
-              style={{ color: isDark ? Colors.dark.primary : Colors.light.primary }}
+              type="caption"
+              style={{
+                marginLeft: 4,
+                color: showTransliteration
+                  ? (isDark ? Colors.dark.primary : Colors.light.primary)
+                  : theme.textSecondary,
+              }}
             >
-              {completedCount}/{totalWithReps} completed
+              Translit
             </ThemedText>
-          </View>
-        ) : null}
+          </Pressable>
+
+          <Pressable
+            onPress={() => setShowTranslation(!showTranslation)}
+            style={({ pressed }) => [
+              styles.toggleButton,
+              {
+                backgroundColor: showTranslation
+                  ? (isDark ? Colors.dark.gold + "20" : Colors.light.gold + "20")
+                  : (isDark ? Colors.dark.backgroundTertiary : Colors.light.backgroundSecondary),
+                borderColor: showTranslation
+                  ? (isDark ? Colors.dark.gold : Colors.light.gold)
+                  : "transparent",
+                opacity: pressed ? 0.7 : 1,
+              },
+            ]}
+          >
+            <Feather
+              name="globe"
+              size={14}
+              color={showTranslation
+                ? (isDark ? Colors.dark.gold : Colors.light.gold)
+                : theme.textSecondary
+              }
+            />
+            <ThemedText
+              type="caption"
+              style={{
+                marginLeft: 4,
+                color: showTranslation
+                  ? (isDark ? Colors.dark.gold : Colors.light.gold)
+                  : theme.textSecondary,
+              }}
+            >
+              English
+            </ThemedText>
+          </Pressable>
+        </View>
       </View>
 
       <FlatList
@@ -222,18 +196,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  progressHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+  header: {
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
   },
-  progressInfo: {},
-  completionBadge: {
+  headerInfo: {
+    marginBottom: Spacing.md,
+  },
+  toggleContainer: {
+    flexDirection: "row",
+    gap: Spacing.sm,
+  },
+  toggleButton: {
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.xs,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.md,
+    borderWidth: 1,
   },
   listContent: {
     padding: Spacing.lg,
@@ -256,7 +237,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   arabicText: {
-    marginBottom: Spacing.lg,
+    marginBottom: Spacing.md,
     lineHeight: 44,
     textAlign: "right",
   },
@@ -265,43 +246,13 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   translation: {
-    marginBottom: Spacing.lg,
+    marginBottom: Spacing.md,
   },
-  counterSection: {
-    marginTop: Spacing.md,
-  },
-  progressBar: {
-    height: 4,
-    borderRadius: 2,
-    marginBottom: Spacing.lg,
-    overflow: "hidden",
-  },
-  progressFill: {
-    height: "100%",
-    borderRadius: 2,
-  },
-  counterContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: Spacing.lg,
-  },
-  resetButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  countButton: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  repInfo: {
-    width: 44,
-    alignItems: "center",
+  repBadge: {
+    alignSelf: "flex-start",
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.sm,
+    marginTop: Spacing.sm,
   },
 });
