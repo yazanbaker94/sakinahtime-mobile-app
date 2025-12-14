@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, ScrollView, Pressable, Platform } from "react-native";
+import { View, StyleSheet, ScrollView, Pressable, Platform, Switch } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -15,7 +15,10 @@ import {
   formatTime,
   isPrayerPast,
 } from "@/hooks/usePrayerTimes";
+import { useNotifications, NotificationSettings } from "@/hooks/useNotifications";
+import { useAzan } from "@/hooks/useAzan";
 import { Feather } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 
 const PRAYERS = [
   { key: "Fajr", nameEn: "Fajr", nameAr: "الفجر", icon: "sunrise" },
@@ -49,8 +52,24 @@ export default function PrayerTimesScreen() {
     refetch,
   } = usePrayerTimes(latitude, longitude);
 
+  const {
+    settings: notificationSettings,
+    toggleNotifications,
+    togglePrayerNotification,
+    schedulePrayerNotifications,
+  } = useNotifications();
+
+  const {
+    settings: azanSettings,
+    isPlaying: azanPlaying,
+    toggleAzan,
+    playPreview,
+    stopAzan,
+  } = useAzan();
+
   const [countdown, setCountdown] = useState({ hours: 0, minutes: 0, seconds: 0 });
   const [nextPrayer, setNextPrayer] = useState<{ name: string; time: string; nameAr: string } | null>(null);
+  const [showSettings, setShowSettings] = useState(false);
 
   useEffect(() => {
     if (!prayerData?.timings) return;
@@ -68,6 +87,44 @@ export default function PrayerTimesScreen() {
 
     return () => clearInterval(interval);
   }, [prayerData?.timings]);
+
+  useEffect(() => {
+    if (prayerData?.timings && notificationSettings.enabled) {
+      schedulePrayerNotifications(prayerData.timings);
+    }
+  }, [prayerData?.timings, notificationSettings, schedulePrayerNotifications]);
+
+  const handleToggleNotifications = async (value: boolean) => {
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+    await toggleNotifications(value);
+  };
+
+  const handleTogglePrayerNotification = async (prayer: keyof NotificationSettings["prayers"], value: boolean) => {
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+    await togglePrayerNotification(prayer, value);
+  };
+
+  const handleToggleAzan = async (value: boolean) => {
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+    await toggleAzan(value);
+  };
+
+  const handlePlayAzan = async () => {
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    }
+    if (azanPlaying) {
+      await stopAzan();
+    } else {
+      await playPreview();
+    }
+  };
 
   if (!permission?.granted) {
     return (
@@ -303,6 +360,124 @@ export default function PrayerTimesScreen() {
             );
           })}
         </View>
+
+        <Pressable
+          onPress={() => setShowSettings(!showSettings)}
+          style={[
+            styles.settingsHeader,
+            { backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundSecondary },
+          ]}
+        >
+          <View style={styles.settingsHeaderLeft}>
+            <Feather name="settings" size={20} color={isDark ? Colors.dark.primary : Colors.light.primary} />
+            <ThemedText type="h4" style={{ marginLeft: Spacing.md }}>
+              Notification Settings
+            </ThemedText>
+          </View>
+          <Feather
+            name={showSettings ? "chevron-up" : "chevron-down"}
+            size={20}
+            color={isDark ? Colors.dark.textSecondary : Colors.light.textSecondary}
+          />
+        </Pressable>
+
+        {showSettings ? (
+          <View
+            style={[
+              styles.settingsContainer,
+              { backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault },
+            ]}
+          >
+            <View style={styles.settingRow}>
+              <View style={styles.settingInfo}>
+                <Feather name="bell" size={20} color={isDark ? Colors.dark.primary : Colors.light.primary} />
+                <View style={styles.settingText}>
+                  <ThemedText type="body">Prayer Notifications</ThemedText>
+                  <ThemedText type="small" secondary>
+                    Get notified when it&apos;s time to pray
+                  </ThemedText>
+                </View>
+              </View>
+              <Switch
+                value={notificationSettings.enabled}
+                onValueChange={handleToggleNotifications}
+                trackColor={{
+                  false: isDark ? Colors.dark.backgroundTertiary : Colors.light.backgroundSecondary,
+                  true: isDark ? Colors.dark.primary : Colors.light.primary,
+                }}
+                thumbColor="#FFFFFF"
+              />
+            </View>
+
+            {notificationSettings.enabled ? (
+              <View style={styles.prayerNotifications}>
+                {PRAYERS.map((prayer) => (
+                  <View key={prayer.key} style={styles.prayerNotificationRow}>
+                    <ThemedText type="body">{prayer.nameEn}</ThemedText>
+                    <Switch
+                      value={notificationSettings.prayers[prayer.key as keyof NotificationSettings["prayers"]]}
+                      onValueChange={(value) =>
+                        handleTogglePrayerNotification(prayer.key as keyof NotificationSettings["prayers"], value)
+                      }
+                      trackColor={{
+                        false: isDark ? Colors.dark.backgroundTertiary : Colors.light.backgroundSecondary,
+                        true: isDark ? Colors.dark.primary : Colors.light.primary,
+                      }}
+                      thumbColor="#FFFFFF"
+                    />
+                  </View>
+                ))}
+              </View>
+            ) : null}
+
+            <View style={styles.settingDivider} />
+
+            <View style={styles.settingRow}>
+              <View style={styles.settingInfo}>
+                <Feather name="volume-2" size={20} color={isDark ? Colors.dark.primary : Colors.light.primary} />
+                <View style={styles.settingText}>
+                  <ThemedText type="body">Azan Sound</ThemedText>
+                  <ThemedText type="small" secondary>
+                    Play Azan when prayer time arrives
+                  </ThemedText>
+                </View>
+              </View>
+              <Switch
+                value={azanSettings.enabled}
+                onValueChange={handleToggleAzan}
+                trackColor={{
+                  false: isDark ? Colors.dark.backgroundTertiary : Colors.light.backgroundSecondary,
+                  true: isDark ? Colors.dark.primary : Colors.light.primary,
+                }}
+                thumbColor="#FFFFFF"
+              />
+            </View>
+
+            {azanSettings.enabled ? (
+              <Pressable
+                onPress={handlePlayAzan}
+                style={[
+                  styles.previewButton,
+                  { backgroundColor: isDark ? Colors.dark.primary : Colors.light.primary },
+                ]}
+              >
+                <Feather name={azanPlaying ? "stop-circle" : "play-circle"} size={20} color="#FFFFFF" />
+                <ThemedText type="body" style={{ color: "#FFFFFF", marginLeft: Spacing.sm }}>
+                  {azanPlaying ? "Stop Preview" : "Preview Azan"}
+                </ThemedText>
+              </Pressable>
+            ) : null}
+
+            {Platform.OS === "web" ? (
+              <View style={styles.webNotice}>
+                <Feather name="info" size={16} color={isDark ? Colors.dark.textSecondary : Colors.light.textSecondary} />
+                <ThemedText type="small" secondary style={{ marginLeft: Spacing.sm, flex: 1 }}>
+                  Run in Expo Go for full notification support
+                </ThemedText>
+              </View>
+            ) : null}
+          </View>
+        ) : null}
       </ScrollView>
     </ThemedView>
   );
@@ -418,5 +593,70 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.sm,
+  },
+  settingsHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: Spacing.lg,
+    borderRadius: BorderRadius.md,
+    marginTop: Spacing["2xl"],
+  },
+  settingsHeaderLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  settingsContainer: {
+    padding: Spacing.lg,
+    borderRadius: BorderRadius.md,
+    marginTop: Spacing.sm,
+  },
+  settingRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: Spacing.md,
+  },
+  settingInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+    marginRight: Spacing.lg,
+  },
+  settingText: {
+    marginLeft: Spacing.md,
+    flex: 1,
+  },
+  settingDivider: {
+    height: 1,
+    backgroundColor: "rgba(128, 128, 128, 0.2)",
+    marginVertical: Spacing.md,
+  },
+  prayerNotifications: {
+    marginLeft: Spacing["3xl"],
+    marginTop: Spacing.sm,
+    gap: Spacing.sm,
+  },
+  prayerNotificationRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: Spacing.xs,
+  },
+  previewButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: Spacing.md,
+    borderRadius: BorderRadius.md,
+    marginTop: Spacing.md,
+  },
+  webNotice: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: Spacing.lg,
+    padding: Spacing.md,
+    borderRadius: BorderRadius.sm,
+    backgroundColor: "rgba(128, 128, 128, 0.1)",
   },
 });
