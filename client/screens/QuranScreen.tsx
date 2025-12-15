@@ -75,7 +75,7 @@ export default function QuranScreen() {
   const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [loadingAudio, setLoadingAudio] = useState(false);
   const [scrollToVerse, setScrollToVerse] = useState<number | null>(null);
-  const versesListRef = useRef<FlatList<CombinedVerse>>(null);
+  const versesListRef = useRef<FlatList<CombinedVerse> | null>(null);
 
   const { data: surahData, isLoading, error } = useSurah(selectedSurah.number);
 
