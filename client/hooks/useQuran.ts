@@ -42,21 +42,40 @@ async function fetchSurah(surahNumber: number): Promise<{ arabic: SurahData; eng
     ]);
 
     if (!arabicRes.ok || !englishRes.ok) {
-      throw new Error("Failed to fetch surah data");
+      throw new Error(`Failed to fetch surah data: Arabic ${arabicRes.status}, English ${englishRes.status}`);
     }
 
-    const arabicData: QuranApiResponse = await arabicRes.json();
-    const englishData: QuranApiResponse = await englishRes.json();
+    const arabicText = await arabicRes.text();
+    const englishText = await englishRes.text();
+
+    if (!arabicText || !englishText) {
+      throw new Error("Empty response from API");
+    }
+
+    let arabicData: QuranApiResponse;
+    let englishData: QuranApiResponse;
+
+    try {
+      arabicData = JSON.parse(arabicText);
+    } catch (e) {
+      throw new Error(`Failed to parse Arabic response: ${arabicText.substring(0, 100)}`);
+    }
+
+    try {
+      englishData = JSON.parse(englishText);
+    } catch (e) {
+      throw new Error(`Failed to parse English response: ${englishText.substring(0, 100)}`);
+    }
 
     if (arabicData.code !== 200 || englishData.code !== 200) {
-      throw new Error("Invalid API response");
+      throw new Error(`Invalid API response code: Arabic ${arabicData.code}, English ${englishData.code}`);
     }
 
     const arabic = arabicData.data as SurahData;
     const english = englishData.data as SurahData;
 
     if (!arabic?.ayahs || !english?.ayahs) {
-      throw new Error("Invalid surah data structure");
+      throw new Error("Invalid surah data structure - missing ayahs");
     }
 
     return { arabic, english };

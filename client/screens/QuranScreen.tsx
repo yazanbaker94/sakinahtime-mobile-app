@@ -651,7 +651,7 @@ export default function QuranScreen() {
                   ]}
                 />
 
-                <ThemedText type="h5" style={styles.popoverSectionTitle}>
+                <ThemedText type="body" style={[styles.popoverSectionTitle, { fontWeight: "600" }]}>
                   Translation
                 </ThemedText>
                 <ThemedText type="body" secondary style={styles.popoverTranslation}>
