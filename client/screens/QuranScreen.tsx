@@ -8,10 +8,16 @@ import {
   ActivityIndicator,
   Modal,
   Platform,
+  ScrollView,
 } from "react-native";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   SlideInUp,
   SlideOutDown,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+  runOnJS,
 } from "react-native-reanimated";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -76,6 +82,8 @@ export default function QuranScreen() {
   const [loadingAudio, setLoadingAudio] = useState(false);
   const [scrollToVerse, setScrollToVerse] = useState<number | null>(null);
   const versesListRef = useRef<FlatList<CombinedVerse> | null>(null);
+  const itemHeights = useRef<Map<number, number>>(new Map());
+  const [listHeaderHeight, setListHeaderHeight] = useState(140);
 
   const { data: surahData, isLoading, error } = useSurah(selectedSurah.number);
 
@@ -96,20 +104,48 @@ export default function QuranScreen() {
   }, [sound]);
 
   useEffect(() => {
+    itemHeights.current.clear();
+  }, [selectedSurah.number, verses.length]);
+
+  const getItemOffset = useCallback((index: number) => {
+    let offset = listHeaderHeight;
+    for (let i = 0; i < index; i++) {
+      offset += itemHeights.current.get(i) || 180;
+    }
+    return offset;
+  }, [listHeaderHeight]);
+
+  const hasMeasurementsUpTo = useCallback((index: number) => {
+    if (index === 0) return true;
+    for (let i = 0; i < index; i++) {
+      if (!itemHeights.current.has(i)) return false;
+    }
+    return true;
+  }, []);
+
+  useEffect(() => {
     if (scrollToVerse !== null && verses.length > 0 && versesListRef.current) {
       const index = verses.findIndex((v) => v.numberInSurah === scrollToVerse);
       if (index >= 0) {
         setTimeout(() => {
-          versesListRef.current?.scrollToIndex({
-            index,
-            animated: true,
-            viewPosition: 0.3,
-          });
+          if (hasMeasurementsUpTo(index)) {
+            const offset = getItemOffset(index);
+            versesListRef.current?.scrollToOffset({
+              offset: Math.max(0, offset - 50),
+              animated: true,
+            });
+          } else {
+            versesListRef.current?.scrollToIndex({
+              index,
+              animated: true,
+              viewOffset: 50,
+            });
+          }
           setScrollToVerse(null);
         }, 300);
       }
     }
-  }, [verses, scrollToVerse]);
+  }, [verses, scrollToVerse, getItemOffset, hasMeasurementsUpTo]);
 
   const loadBookmarks = async () => {
     try {
@@ -163,6 +199,21 @@ export default function QuranScreen() {
     return bookmarks.some(
       (b) => b.surahNumber === selectedSurah.number && b.verseNumber === verse.numberInSurah
     );
+  };
+
+  const deleteBookmark = async (bookmark: Bookmark) => {
+    try {
+      const filtered = bookmarks.filter(
+        (b) => !(b.surahNumber === bookmark.surahNumber && b.verseNumber === bookmark.verseNumber)
+      );
+      setBookmarks(filtered);
+      await AsyncStorage.setItem(BOOKMARKS_KEY, JSON.stringify(filtered));
+      if (Platform.OS !== "web") {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      }
+    } catch (e) {
+      console.error("Failed to delete bookmark:", e);
+    }
   };
 
   const playAudio = async (surahNum: number, verseNum: number) => {
@@ -298,114 +349,202 @@ export default function QuranScreen() {
   );
 
   const renderVerseItem = useCallback(
-    ({ item: verse }: { item: CombinedVerse }) => (
-      <Pressable
-        onPress={() => handleVersePress(verse)}
-        style={({ pressed }) => [
-          styles.verseCard,
-          {
-            backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault,
-            opacity: pressed ? 0.8 : 1,
-          },
-        ]}
+    ({ item: verse, index }: { item: CombinedVerse; index: number }) => (
+      <View
+        onLayout={(event) => {
+          const height = event.nativeEvent.layout.height;
+          itemHeights.current.set(index, height);
+        }}
       >
-        <View style={styles.verseHeader}>
-          <View
-            style={[
-              styles.verseNumberBadge,
-              {
-                backgroundColor: isDark ? Colors.dark.primary + "20" : Colors.light.primary + "20",
-                borderColor: isDark ? Colors.dark.primary : Colors.light.primary,
-              },
-            ]}
-          >
-            <ThemedText
-              type="small"
-              style={{ color: isDark ? Colors.dark.primary : Colors.light.primary }}
-            >
-              {verse.numberInSurah}
-            </ThemedText>
-          </View>
-          {isBookmarked(verse) ? (
-            <Feather
-              name="bookmark"
-              size={16}
-              color={isDark ? Colors.dark.gold : Colors.light.gold}
-              style={{ marginLeft: "auto" }}
-            />
-          ) : null}
-        </View>
-        <ThemedText
-          type="quran"
-          style={[
-            styles.verseArabicText,
-            { color: theme.text },
+        <Pressable
+          onPress={() => handleVersePress(verse)}
+          style={({ pressed }) => [
+            styles.verseCard,
+            {
+              backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault,
+              opacity: pressed ? 0.8 : 1,
+            },
           ]}
         >
-          {verse.textAr}
+          <View style={styles.verseHeader}>
+            <View
+              style={[
+                styles.verseNumberBadge,
+                {
+                  backgroundColor: isDark ? Colors.dark.primary + "20" : Colors.light.primary + "20",
+                  borderColor: isDark ? Colors.dark.primary : Colors.light.primary,
+                },
+              ]}
+            >
+              <ThemedText
+                type="small"
+                style={{ color: isDark ? Colors.dark.primary : Colors.light.primary }}
+              >
+                {verse.numberInSurah}
+              </ThemedText>
+            </View>
+            {isBookmarked(verse) ? (
+              <Feather
+                name="bookmark"
+                size={16}
+                color={isDark ? Colors.dark.gold : Colors.light.gold}
+                style={{ marginLeft: "auto" }}
+              />
+            ) : null}
+          </View>
           <ThemedText
-            type="arabic"
-            style={{ color: isDark ? Colors.dark.gold : Colors.light.gold, fontSize: 20 }}
+            type="quran"
+            style={[
+              styles.verseArabicText,
+              { color: theme.text },
+            ]}
           >
-            {" "}﴿{toArabicNumerals(verse.numberInSurah)}﴾
+            {verse.textAr}
+            <ThemedText
+              type="arabic"
+              style={{ color: isDark ? Colors.dark.gold : Colors.light.gold, fontSize: 20 }}
+            >
+              {" "}﴿{toArabicNumerals(verse.numberInSurah)}﴾
+            </ThemedText>
           </ThemedText>
-        </ThemedText>
-        <ThemedText type="small" secondary style={styles.verseTranslation}>
-          {verse.translation}
-        </ThemedText>
-      </Pressable>
+          <ThemedText type="small" secondary style={styles.verseTranslation}>
+            {verse.translation}
+          </ThemedText>
+        </Pressable>
+      </View>
     ),
     [isDark, theme, handleVersePress, bookmarks, selectedSurah]
   );
 
-  const renderBookmarkItem = useCallback(
-    ({ item }: { item: Bookmark }) => (
-      <Pressable
-        onPress={() => goToBookmark(item)}
-        style={({ pressed }) => [
-          styles.bookmarkItem,
-          {
-            backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault,
-            opacity: pressed ? 0.7 : 1,
-          },
-        ]}
-      >
-        <View style={styles.bookmarkHeader}>
-          <View
-            style={[
-              styles.bookmarkBadge,
-              { backgroundColor: isDark ? Colors.dark.gold + "20" : Colors.light.gold + "20" },
-            ]}
-          >
-            <Feather
-              name="bookmark"
-              size={16}
-              color={isDark ? Colors.dark.gold : Colors.light.gold}
-            />
-          </View>
-          <View style={styles.bookmarkInfo}>
-            <ThemedText type="body" style={{ fontWeight: "500" }}>
-              {item.surahName} - Verse {item.verseNumber}
-            </ThemedText>
-            <ThemedText type="caption" secondary>
-              {new Date(item.timestamp).toLocaleDateString()}
-            </ThemedText>
-          </View>
+  const SwipeableBookmarkItem = useCallback(
+    ({ item }: { item: Bookmark }) => {
+      const translateX = useSharedValue(0);
+      const isSwipeActive = useSharedValue(false);
+      const deleteThreshold = -80;
+
+      const panGesture = Gesture.Pan()
+        .activeOffsetX([-15, 15])
+        .failOffsetY([-10, 10])
+        .onStart(() => {
+          isSwipeActive.value = true;
+        })
+        .onUpdate((event) => {
+          if (isSwipeActive.value) {
+            translateX.value = Math.min(0, Math.max(event.translationX, -120));
+          }
+        })
+        .onEnd((event) => {
+          if (isSwipeActive.value && translateX.value < deleteThreshold) {
+            translateX.value = withTiming(-120);
+          } else {
+            translateX.value = withTiming(0);
+          }
+          isSwipeActive.value = false;
+        })
+        .onFinalize(() => {
+          isSwipeActive.value = false;
+        });
+
+      const animatedStyle = useAnimatedStyle(() => ({
+        transform: [{ translateX: translateX.value }],
+      }));
+
+      const deleteButtonStyle = useAnimatedStyle(() => ({
+        opacity: translateX.value < -40 ? 1 : 0,
+      }));
+
+      const handleDelete = () => {
+        if (Platform.OS !== "web") {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        }
+        translateX.value = withTiming(-400, { duration: 200 }, () => {
+          runOnJS(deleteBookmark)(item);
+        });
+      };
+
+      return (
+        <View style={styles.swipeableContainer}>
+          <Animated.View style={[styles.deleteButtonContainer, deleteButtonStyle]}>
+            <Pressable
+              onPress={handleDelete}
+              style={[
+                styles.deleteButton,
+                { backgroundColor: "#EF4444" },
+              ]}
+            >
+              <Feather name="trash-2" size={20} color="#FFFFFF" />
+              <ThemedText type="small" style={{ color: "#FFFFFF", marginLeft: Spacing.xs }}>
+                Delete
+              </ThemedText>
+            </Pressable>
+          </Animated.View>
+          <GestureDetector gesture={panGesture}>
+            <Animated.View style={animatedStyle}>
+              <Pressable
+                onPress={() => goToBookmark(item)}
+                style={({ pressed }) => [
+                  styles.bookmarkItem,
+                  {
+                    backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault,
+                    opacity: pressed ? 0.7 : 1,
+                  },
+                ]}
+              >
+                <View style={styles.bookmarkHeader}>
+                  <View
+                    style={[
+                      styles.bookmarkBadge,
+                      { backgroundColor: isDark ? Colors.dark.gold + "20" : Colors.light.gold + "20" },
+                    ]}
+                  >
+                    <Feather
+                      name="bookmark"
+                      size={16}
+                      color={isDark ? Colors.dark.gold : Colors.light.gold}
+                    />
+                  </View>
+                  <View style={styles.bookmarkInfo}>
+                    <ThemedText type="body" style={{ fontWeight: "500" }}>
+                      {item.surahName} - Verse {item.verseNumber}
+                    </ThemedText>
+                    <ThemedText type="caption" secondary>
+                      {new Date(item.timestamp).toLocaleDateString()}
+                    </ThemedText>
+                  </View>
+                  <Feather
+                    name="chevron-left"
+                    size={16}
+                    color={theme.textSecondary}
+                    style={{ marginLeft: Spacing.sm }}
+                  />
+                </View>
+                <ThemedText
+                  type="arabic"
+                  numberOfLines={2}
+                  style={[styles.bookmarkArabic, { color: theme.text }]}
+                >
+                  {item.verseText}
+                </ThemedText>
+              </Pressable>
+            </Animated.View>
+          </GestureDetector>
         </View>
-        <ThemedText
-          type="arabic"
-          numberOfLines={2}
-          style={[styles.bookmarkArabic, { color: theme.text }]}
-        >
-          {item.verseText}
-        </ThemedText>
-      </Pressable>
-    ),
-    [isDark, theme]
+      );
+    },
+    [isDark, theme, deleteBookmark, goToBookmark]
+  );
+
+  const renderBookmarkItem = useCallback(
+    ({ item }: { item: Bookmark }) => <SwipeableBookmarkItem item={item} />,
+    [SwipeableBookmarkItem]
   );
 
   const ListHeader = () => (
-    <>
+    <View
+      onLayout={(event) => {
+        setListHeaderHeight(event.nativeEvent.layout.height);
+      }}
+    >
       <Pressable
         onPress={() => setShowSurahList(true)}
         style={({ pressed }) => [
@@ -461,7 +600,7 @@ export default function QuranScreen() {
           </ThemedText>
         </View>
       ) : null}
-    </>
+    </View>
   );
 
   if (showBookmarks) {
@@ -611,13 +750,29 @@ export default function QuranScreen() {
             scrollIndicatorInsets={{ bottom: insets.bottom }}
             initialNumToRender={10}
             maxToRenderPerBatch={10}
+            getItemLayout={(data, index) => ({
+              length: itemHeights.current.get(index) || 180,
+              offset: getItemOffset(index),
+              index,
+            })}
             onScrollToIndexFailed={(info) => {
+              const avgItemHeight = info.averageItemLength || 200;
+              const offset = info.index * avgItemHeight;
+              versesListRef.current?.scrollToOffset({
+                offset: Math.max(0, offset),
+                animated: true,
+              });
               setTimeout(() => {
-                versesListRef.current?.scrollToIndex({
-                  index: info.index,
-                  animated: true,
-                });
-              }, 100);
+                try {
+                  versesListRef.current?.scrollToIndex({
+                    index: info.index,
+                    animated: true,
+                    viewPosition: 0.2,
+                  });
+                } catch (e) {
+                  // Silent fallback
+                }
+              }, 400);
             }}
           />
         )}
@@ -667,25 +822,31 @@ export default function QuranScreen() {
                 </Pressable>
               </View>
 
-              <View style={styles.popoverContent}>
-                <ThemedText type="quran" style={styles.popoverArabic}>
-                  {selectedVerse.textAr}
-                </ThemedText>
-                
-                <View
-                  style={[
-                    styles.popoverDivider,
-                    { backgroundColor: isDark ? Colors.dark.border : Colors.light.border },
-                  ]}
-                />
+              <ScrollView 
+                style={styles.popoverScrollContent}
+                showsVerticalScrollIndicator={true}
+                bounces={false}
+              >
+                <View style={styles.popoverContent}>
+                  <ThemedText type="quran" style={styles.popoverArabic}>
+                    {selectedVerse.textAr}
+                  </ThemedText>
+                  
+                  <View
+                    style={[
+                      styles.popoverDivider,
+                      { backgroundColor: isDark ? Colors.dark.border : Colors.light.border },
+                    ]}
+                  />
 
-                <ThemedText type="body" style={[styles.popoverSectionTitle, { fontWeight: "600" }]}>
-                  Translation
-                </ThemedText>
-                <ThemedText type="body" secondary style={styles.popoverTranslation}>
-                  {selectedVerse.translation}
-                </ThemedText>
-              </View>
+                  <ThemedText type="body" style={[styles.popoverSectionTitle, { fontWeight: "600" }]}>
+                    Translation
+                  </ThemedText>
+                  <ThemedText type="body" secondary style={styles.popoverTranslation}>
+                    {selectedVerse.translation}
+                  </ThemedText>
+                </View>
+              </ScrollView>
 
               <View style={styles.popoverActions}>
                 <Pressable
@@ -1018,5 +1179,30 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.lg,
     borderRadius: BorderRadius.md,
+  },
+  popoverScrollContent: {
+    maxHeight: SCREEN_HEIGHT * 0.4,
+  },
+  swipeableContainer: {
+    marginBottom: Spacing.md,
+    overflow: "hidden",
+  },
+  deleteButtonContainer: {
+    position: "absolute",
+    right: 0,
+    top: 0,
+    bottom: Spacing.md,
+    width: 100,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  deleteButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: Spacing.md,
+    borderRadius: BorderRadius.md,
+    height: "100%",
+    width: "100%",
   },
 });
