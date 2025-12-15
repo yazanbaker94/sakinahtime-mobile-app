@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -74,6 +74,8 @@ export default function QuranScreen() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [loadingAudio, setLoadingAudio] = useState(false);
+  const [scrollToVerse, setScrollToVerse] = useState<number | null>(null);
+  const versesListRef = useRef<FlatList<CombinedVerse>>(null);
 
   const { data: surahData, isLoading, error } = useSurah(selectedSurah.number);
 
@@ -92,6 +94,22 @@ export default function QuranScreen() {
       }
     };
   }, [sound]);
+
+  useEffect(() => {
+    if (scrollToVerse !== null && verses.length > 0 && versesListRef.current) {
+      const index = verses.findIndex((v) => v.numberInSurah === scrollToVerse);
+      if (index >= 0) {
+        setTimeout(() => {
+          versesListRef.current?.scrollToIndex({
+            index,
+            animated: true,
+            viewPosition: 0.3,
+          });
+          setScrollToVerse(null);
+        }, 300);
+      }
+    }
+  }, [verses, scrollToVerse]);
 
   const loadBookmarks = async () => {
     try {
@@ -220,6 +238,7 @@ export default function QuranScreen() {
     const surah = surahs.find((s) => s.number === bookmark.surahNumber);
     if (surah) {
       setSelectedSurah(surah);
+      setScrollToVerse(bookmark.verseNumber);
       setShowBookmarks(false);
     }
   };
@@ -579,6 +598,7 @@ export default function QuranScreen() {
           </View>
         ) : (
           <FlatList
+            ref={versesListRef}
             data={verses}
             renderItem={renderVerseItem}
             keyExtractor={(item) => String(item.number)}
@@ -591,6 +611,14 @@ export default function QuranScreen() {
             scrollIndicatorInsets={{ bottom: insets.bottom }}
             initialNumToRender={10}
             maxToRenderPerBatch={10}
+            onScrollToIndexFailed={(info) => {
+              setTimeout(() => {
+                versesListRef.current?.scrollToIndex({
+                  index: info.index,
+                  animated: true,
+                });
+              }, 100);
+            }}
           />
         )}
       </View>

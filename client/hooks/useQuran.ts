@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import quranData from "@/data/quran-uthmani.json";
+import englishData from "@/data/quran-english.json";
 
 export interface QuranVerse {
   number: number;
@@ -31,9 +32,15 @@ interface QuranDataStructure {
 }
 
 const typedQuranData = quranData as QuranDataStructure;
+const typedEnglishData = englishData as QuranDataStructure;
 
 function getSurah(surahNumber: number): SurahData | null {
   const surah = typedQuranData.data.surahs.find((s) => s.number === surahNumber);
+  return surah || null;
+}
+
+function getEnglishSurah(surahNumber: number): SurahData | null {
+  const surah = typedEnglishData.data.surahs.find((s) => s.number === surahNumber);
   return surah || null;
 }
 
@@ -62,11 +69,12 @@ export interface CombinedVerse {
 }
 
 export function combineVerses(arabic: SurahData): CombinedVerse[] {
-  return arabic.ayahs.map((arabicVerse) => ({
+  const englishSurah = getEnglishSurah(arabic.number);
+  return arabic.ayahs.map((arabicVerse, index) => ({
     number: arabicVerse.number,
     numberInSurah: arabicVerse.numberInSurah,
     textAr: arabicVerse.text,
-    translation: "",
+    translation: englishSurah?.ayahs[index]?.text || "",
     juz: arabicVerse.juz,
     page: arabicVerse.page,
   }));
