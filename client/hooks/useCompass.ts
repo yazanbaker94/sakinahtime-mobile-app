@@ -58,9 +58,8 @@ function calculateTiltCompensatedHeading(
   const xH = mx * cosPitch + my * sinRoll * sinPitch + mz * cosRoll * sinPitch;
   const yH = my * cosRoll - mz * sinRoll;
 
-  let heading = Math.atan2(-yH, xH) * (180 / Math.PI);
-
-  heading = (heading + 360) % 360;
+  let heading = Math.atan2(yH, xH) * (180 / Math.PI);
+  heading = (90 - heading + 360) % 360;
 
   return heading;
 }

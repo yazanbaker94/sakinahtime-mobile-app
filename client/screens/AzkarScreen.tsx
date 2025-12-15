@@ -39,7 +39,6 @@ export default function AzkarScreen() {
   const getTimeOfDayGreeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) return { greeting: "Good Morning", arabic: "صباح الخير", icon: "sunrise" as const };
-    if (hour < 18) return { greeting: "Good Afternoon", arabic: "مساء الخير", icon: "sun" as const };
     return { greeting: "Good Evening", arabic: "مساء الخير", icon: "moon" as const };
   };
 
