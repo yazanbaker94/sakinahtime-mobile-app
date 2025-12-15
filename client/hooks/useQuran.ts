@@ -35,26 +35,35 @@ interface QuranApiResponse {
 }
 
 async function fetchSurah(surahNumber: number): Promise<{ arabic: SurahData; english: SurahData }> {
-  const [arabicRes, englishRes] = await Promise.all([
-    fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}`),
-    fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/en.asad`),
-  ]);
+  try {
+    const [arabicRes, englishRes] = await Promise.all([
+      fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}`),
+      fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/en.asad`),
+    ]);
 
-  if (!arabicRes.ok || !englishRes.ok) {
-    throw new Error("Failed to fetch surah data");
+    if (!arabicRes.ok || !englishRes.ok) {
+      throw new Error("Failed to fetch surah data");
+    }
+
+    const arabicData: QuranApiResponse = await arabicRes.json();
+    const englishData: QuranApiResponse = await englishRes.json();
+
+    if (arabicData.code !== 200 || englishData.code !== 200) {
+      throw new Error("Invalid API response");
+    }
+
+    const arabic = arabicData.data as SurahData;
+    const english = englishData.data as SurahData;
+
+    if (!arabic?.ayahs || !english?.ayahs) {
+      throw new Error("Invalid surah data structure");
+    }
+
+    return { arabic, english };
+  } catch (error) {
+    console.error("Error fetching surah:", error);
+    throw error;
   }
-
-  const arabicData: QuranApiResponse = await arabicRes.json();
-  const englishData: QuranApiResponse = await englishRes.json();
-
-  if (arabicData.code !== 200 || englishData.code !== 200) {
-    throw new Error("Invalid API response");
-  }
-
-  return {
-    arabic: arabicData.data as SurahData,
-    english: englishData.data as SurahData,
-  };
 }
 
 export function useSurah(surahNumber: number) {

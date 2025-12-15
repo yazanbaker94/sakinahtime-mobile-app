@@ -59,7 +59,7 @@ function calculateTiltCompensatedHeading(
   const yH = my * cosRoll - mz * sinRoll;
 
   let heading = Math.atan2(yH, xH) * (180 / Math.PI);
-  heading = (90 - heading + 360) % 360;
+  heading = (270 - heading + 360) % 360;
 
   return heading;
 }
