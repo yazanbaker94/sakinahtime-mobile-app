@@ -123,6 +123,36 @@ export default function QuranScreen() {
     return true;
   }, []);
 
+  const progressiveScrollToIndex = useCallback((targetIndex: number) => {
+    const ITEMS_PER_STEP = 15;
+    const STEP_DELAY = 100;
+    
+    const scrollStep = (currentIndex: number) => {
+      if (!versesListRef.current) return;
+      
+      if (currentIndex >= targetIndex) {
+        versesListRef.current.scrollToIndex({
+          index: targetIndex,
+          animated: true,
+          viewOffset: 50,
+        });
+        return;
+      }
+      
+      versesListRef.current.scrollToIndex({
+        index: currentIndex,
+        animated: false,
+        viewOffset: 0,
+      });
+      
+      setTimeout(() => {
+        scrollStep(Math.min(currentIndex + ITEMS_PER_STEP, targetIndex));
+      }, STEP_DELAY);
+    };
+    
+    scrollStep(ITEMS_PER_STEP);
+  }, []);
+
   useEffect(() => {
     if (scrollToVerse !== null && verses.length > 0 && versesListRef.current) {
       const index = verses.findIndex((v) => v.numberInSurah === scrollToVerse);
@@ -134,6 +164,8 @@ export default function QuranScreen() {
               offset: Math.max(0, offset - 50),
               animated: true,
             });
+          } else if (Platform.OS === "web" && index > 20) {
+            progressiveScrollToIndex(index);
           } else {
             versesListRef.current?.scrollToIndex({
               index,
@@ -145,7 +177,7 @@ export default function QuranScreen() {
         }, 300);
       }
     }
-  }, [verses, scrollToVerse, getItemOffset, hasMeasurementsUpTo]);
+  }, [verses, scrollToVerse, getItemOffset, hasMeasurementsUpTo, progressiveScrollToIndex]);
 
   const loadBookmarks = async () => {
     try {
@@ -748,8 +780,10 @@ export default function QuranScreen() {
             ]}
             showsVerticalScrollIndicator={false}
             scrollIndicatorInsets={{ bottom: insets.bottom }}
-            initialNumToRender={10}
-            maxToRenderPerBatch={10}
+            initialNumToRender={20}
+            maxToRenderPerBatch={20}
+            windowSize={21}
+            removeClippedSubviews={Platform.OS !== "web"}
             getItemLayout={(data, index) => ({
               length: itemHeights.current.get(index) || 180,
               offset: getItemOffset(index),
