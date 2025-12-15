@@ -78,7 +78,7 @@ export default function QuranScreen() {
   const { data: surahData, isLoading, error } = useSurah(selectedSurah.number);
 
   const verses: CombinedVerse[] = surahData
-    ? combineVerses(surahData.arabic, surahData.english)
+    ? combineVerses(surahData.arabic)
     : [];
 
   useEffect(() => {
