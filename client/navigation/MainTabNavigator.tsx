@@ -5,7 +5,7 @@ import { BlurView } from "expo-blur";
 import { Platform, StyleSheet, View } from "react-native";
 import QiblaScreen from "@/screens/QiblaScreen";
 import PrayerTimesScreen from "@/screens/PrayerTimesScreen";
-import QuranScreen from "@/screens/QuranScreen";
+import MushafScreen from "@/screens/MushafScreen";
 import AzkarScreen from "@/screens/AzkarScreen";
 import { useTheme } from "@/hooks/useTheme";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
@@ -74,7 +74,7 @@ export default function MainTabNavigator() {
       />
       <Tab.Screen
         name="QuranTab"
-        component={QuranScreen}
+        component={MushafScreen}
         options={{
           title: "Quran",
           headerTitle: "",
