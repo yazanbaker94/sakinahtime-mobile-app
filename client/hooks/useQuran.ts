@@ -34,14 +34,19 @@ interface QuranDataStructure {
 const typedQuranData = quranData as QuranDataStructure;
 const typedEnglishData = englishData as QuranDataStructure;
 
+// Create indexed maps for O(1) lookup
+const surahMap = new Map<number, SurahData>();
+const englishSurahMap = new Map<number, SurahData>();
+
+typedQuranData.data.surahs.forEach(surah => surahMap.set(surah.number, surah));
+typedEnglishData.data.surahs.forEach(surah => englishSurahMap.set(surah.number, surah));
+
 function getSurah(surahNumber: number): SurahData | null {
-  const surah = typedQuranData.data.surahs.find((s) => s.number === surahNumber);
-  return surah || null;
+  return surahMap.get(surahNumber) || null;
 }
 
 function getEnglishSurah(surahNumber: number): SurahData | null {
-  const surah = typedEnglishData.data.surahs.find((s) => s.number === surahNumber);
-  return surah || null;
+  return englishSurahMap.get(surahNumber) || null;
 }
 
 export function useSurah(surahNumber: number) {

@@ -79,6 +79,25 @@ class AudioService {
     }
   }
 
+  setReciter(reciter: string) {
+    this.reciter = reciter;
+  }
+
+  async playQueue(verses: Array<{ surah: number; ayah: number }>) {
+    try {
+      if (this.sound) {
+        await this.sound.stopAsync();
+        await this.sound.unloadAsync();
+        this.sound = null;
+      }
+
+      this.playbackQueue = verses.map(v => ({ surah: v.surah, ayah: v.ayah, reciter: this.reciter }));
+      await this.playNext();
+    } catch (error) {
+      console.error('Play queue error:', error);
+    }
+  }
+
   async play(surah: number, ayah: number, mode: PlaybackMode = 'single', totalAyahs?: number) {
     try {
       if (this.sound) {
@@ -177,32 +196,44 @@ class AudioService {
   async setPlaybackRate(rate: number) {
     this.playbackRate = rate;
     if (this.sound) {
-      await this.sound.setRateAsync(rate, true);
+      try {
+        await this.sound.setRateAsync(rate, true);
+      } catch (error) {
+        console.error('Set rate error:', error);
+      }
     }
     this.notifyListeners();
   }
 
   async skipToNext() {
-    if (this.sound) {
-      await this.sound.stopAsync();
-      await this.sound.unloadAsync();
-      this.sound = null;
-    }
-    if (this.playbackQueue.length > 0) {
-      await this.playNext();
-    } else if (this.lastPlayed) {
-      await this.play(this.lastPlayed.surah, this.lastPlayed.ayah + 1, 'single');
+    try {
+      if (this.sound) {
+        await this.sound.stopAsync();
+        await this.sound.unloadAsync();
+        this.sound = null;
+      }
+      if (this.playbackQueue.length > 0) {
+        await this.playNext();
+      } else if (this.lastPlayed) {
+        await this.play(this.lastPlayed.surah, this.lastPlayed.ayah + 1, 'single');
+      }
+    } catch (error) {
+      console.error('Skip next error:', error);
     }
   }
 
   async skipToPrevious() {
-    if (this.sound) {
-      await this.sound.stopAsync();
-      await this.sound.unloadAsync();
-      this.sound = null;
-    }
-    if (this.lastPlayed && this.lastPlayed.ayah > 1) {
-      await this.play(this.lastPlayed.surah, this.lastPlayed.ayah - 1, 'single');
+    try {
+      if (this.sound) {
+        await this.sound.stopAsync();
+        await this.sound.unloadAsync();
+        this.sound = null;
+      }
+      if (this.lastPlayed && this.lastPlayed.ayah > 1) {
+        await this.play(this.lastPlayed.surah, this.lastPlayed.ayah - 1, 'single');
+      }
+    } catch (error) {
+      console.error('Skip previous error:', error);
     }
   }
 
