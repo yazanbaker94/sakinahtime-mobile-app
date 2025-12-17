@@ -79,6 +79,7 @@ export default function MushafScreen() {
   const [noteVerseKey, setNoteVerseKey] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState('rgba(255, 235, 59, 0.4)');
   const [showTafsirSources, setShowTafsirSources] = useState(false);
+  const [tafsirVerse, setTafsirVerse] = useState<VerseRegion | null>(null);
   const [availableTafsirs, setAvailableTafsirs] = useState([
     { id: 'jalalayn', name: 'Tafsir Jalalayn', language: 'ar', downloaded: true, url: null },
     { id: 'abridged', name: 'Abridged Explanation', language: 'en', downloaded: true, url: null },
@@ -367,6 +368,7 @@ export default function MushafScreen() {
 
   const handleTafsirPress = useCallback(async () => {
     if (!selectedVerse) return;
+    setTafsirVerse(selectedVerse); // Save the verse for tafsir
     closeMenu();
     try {
       const savedTafsirId = await AsyncStorage.getItem('@selectedTafsir') || 'abridged';
@@ -1238,8 +1240,30 @@ export default function MushafScreen() {
               {
                 backgroundColor: isDark ? 'rgba(26, 95, 79, 0.98)' : 'rgba(245, 245, 245, 0.98)',
                 position: 'absolute',
-                left: Math.min(selectedVerse.touchX || 0, SCREEN_WIDTH - 180),
-                top: Math.min(selectedVerse.touchY || 0, SCREEN_HEIGHT - 200),
+                left: (() => {
+                  const menuWidth = 180;
+                  const x = selectedVerse.touchX || 0;
+                  // Keep menu within screen bounds
+                  if (x + menuWidth > SCREEN_WIDTH) {
+                    return SCREEN_WIDTH - menuWidth - 10;
+                  }
+                  return Math.max(10, x);
+                })(),
+                top: (() => {
+                  const menuHeight = 280; // Approximate height of menu
+                  const y = selectedVerse.touchY || 0;
+                  const headerHeight = 100; // Approximate header height
+                  
+                  // If menu would go below screen, position it above the touch point
+                  if (y + menuHeight > SCREEN_HEIGHT - 50) {
+                    return Math.max(headerHeight, y - menuHeight - 20);
+                  }
+                  // If menu would go above header, position it below header
+                  if (y < headerHeight) {
+                    return headerHeight + 10;
+                  }
+                  return y;
+                })(),
               },
             ]}
           >
@@ -1496,57 +1520,219 @@ export default function MushafScreen() {
         <View style={styles.modalOverlay}>
           <Pressable style={styles.modalBackdrop} onPress={() => setTafsirData(null)} />
           <Animated.View
-            entering={SlideInUp.duration(200)}
-            exiting={SlideOutDown.duration(150)}
+            entering={SlideInUp.duration(300).springify()}
+            exiting={SlideOutDown.duration(200)}
             style={[
               styles.modalContainer,
               {
                 backgroundColor: isDark
                   ? Colors.dark.backgroundSecondary
                   : Colors.light.backgroundDefault,
+                maxHeight: SCREEN_HEIGHT * 0.85,
+                width: SCREEN_WIDTH * 0.9,
+                height: SCREEN_HEIGHT * 0.75,
               },
             ]}
           >
-            <View style={styles.modalHeader}>
-              <ThemedText type="body" style={{ fontWeight: "600" }}>
-                Surah {selectedVerse?.surah}, Verse {selectedVerse?.ayah}
-              </ThemedText>
-              <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+            {/* Elegant Header */}
+            <View style={{ 
+              paddingHorizontal: 20, 
+              paddingTop: 20, 
+              paddingBottom: 16,
+              borderBottomWidth: 1,
+              borderBottomColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)',
+            }}>
+              {/* Verse Reference */}
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                  <View style={{ 
+                    width: 40, 
+                    height: 40, 
+                    borderRadius: 20, 
+                    backgroundColor: isDark ? 'rgba(52, 211, 153, 0.15)' : 'rgba(16, 185, 129, 0.1)',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    <Feather name="book-open" size={18} color={isDark ? '#34D399' : '#059669'} />
+                  </View>
+                  <View>
+                    <ThemedText type="body" style={{ fontWeight: "700", fontSize: 18, letterSpacing: -0.3 }}>
+                      {surahs.find(s => s.number === tafsirVerse?.surah)?.nameEn || `Surah ${tafsirVerse?.surah}`}, Ayah {tafsirVerse?.ayah}
+                    </ThemedText>
+                    <ThemedText type="caption" style={{ fontSize: 12, opacity: 0.6, marginTop: 2 }}>
+                      Surah {tafsirVerse?.surah}
+                    </ThemedText>
+                  </View>
+                </View>
                 <Pressable 
-                  onPress={() => {
-                    setTafsirData(null);
-                    setTimeout(() => setShowTafsirSources(true), 100);
-                  }}
-                  style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1 }]}
+                  onPress={() => setTafsirData(null)}
+                  style={({ pressed }) => [{ 
+                    width: 36, 
+                    height: 36, 
+                    borderRadius: 18, 
+                    backgroundColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    opacity: pressed ? 0.6 : 1 
+                  }]}
                 >
-                  <Feather name="more-vertical" size={20} color={theme.textSecondary} />
-                </Pressable>
-                <Pressable onPress={() => setTafsirData(null)}>
-                  <Feather name="x" size={20} color={theme.textSecondary} />
+                  <Feather name="x" size={20} color={theme.text} />
                 </Pressable>
               </View>
+
+              {/* Tafsir Source Selector */}
+              <Pressable 
+                onPress={() => {
+                  setTafsirData(null);
+                  setTimeout(() => setShowTafsirSources(true), 100);
+                }}
+                style={({ pressed }) => [{ 
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  paddingVertical: 12,
+                  paddingHorizontal: 14,
+                  borderRadius: 12,
+                  backgroundColor: isDark ? 'rgba(212, 175, 55, 0.12)' : 'rgba(212, 175, 55, 0.08)',
+                  borderWidth: 1,
+                  borderColor: isDark ? 'rgba(212, 175, 55, 0.2)' : 'rgba(212, 175, 55, 0.15)',
+                  opacity: pressed ? 0.7 : 1,
+                }]}
+              >
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1 }}>
+                  <View style={{ 
+                    width: 32, 
+                    height: 32, 
+                    borderRadius: 16, 
+                    backgroundColor: isDark ? 'rgba(212, 175, 55, 0.2)' : 'rgba(212, 175, 55, 0.15)',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    <Feather name="layers" size={14} color={isDark ? '#D4AF37' : '#B8860B'} />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <ThemedText type="caption" style={{ fontSize: 10, opacity: 0.6, marginBottom: 2, letterSpacing: 0.5 }}>
+                      TAFSIR SOURCE
+                    </ThemedText>
+                    <ThemedText type="body" style={{ fontWeight: "600", fontSize: 14, letterSpacing: -0.2 }}>
+                      {availableTafsirs.find(t => t.id === selectedTafsirId)?.name || 'Abridged Explanation'}
+                    </ThemedText>
+                  </View>
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <ThemedText type="caption" style={{ fontSize: 12, color: isDark ? '#D4AF37' : '#B8860B', fontWeight: '600' }}>
+                    Change
+                  </ThemedText>
+                  <Feather name="chevron-right" size={16} color={isDark ? '#D4AF37' : '#B8860B'} />
+                </View>
+              </Pressable>
             </View>
-            <ScrollView style={styles.modalContent} showsVerticalScrollIndicator={true}>
-              {(tafsirData?.en?.text || tafsirData?.ar?.text) && (
-                <>
-                  <ThemedText type="body" style={{ fontWeight: "600", marginBottom: 12 }}>
-                    Tafsir {showArabicTafsir ? "(Jalalayn)" : ""}
+
+            {/* Content Area */}
+            <ScrollView 
+              style={{ flex: 1, backgroundColor: isDark ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)' }} 
+              contentContainerStyle={{ padding: 20, paddingBottom: 30, flexGrow: 1 }}
+              showsVerticalScrollIndicator={true}
+            >
+              {tafsirData ? (
+                <View>
+                  {/* Decorative Quote Mark */}
+                  <View style={{ 
+                    width: 48, 
+                    height: 48, 
+                    borderRadius: 24, 
+                    backgroundColor: isDark ? 'rgba(52, 211, 153, 0.1)' : 'rgba(16, 185, 129, 0.08)',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: 16
+                  }}>
+                    <ThemedText style={{ fontSize: 24, opacity: 0.4 }}>"</ThemedText>
+                  </View>
+
+                  {/* Tafsir Text */}
+                  <View style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)', padding: 16, borderRadius: 12 }}>
+                    <ThemedText
+                      style={{
+                        fontSize: 16,
+                        lineHeight: 26,
+                        letterSpacing: -0.2,
+                        color: theme.text,
+                      }}
+                    >
+                      {(() => {
+                        // Try all possible text locations
+                        const text = tafsirData?.en?.text || tafsirData?.ar?.text || tafsirData?.text;
+                        
+                        if (!text) {
+                          console.log('❌ No text found');
+                          return "No tafsir available for this verse";
+                        }
+                        
+                        // Strip HTML tags more aggressively
+                        let cleanText = typeof text === 'string' ? text : String(text);
+                        
+                        // Remove all HTML tags including nested ones
+                        cleanText = cleanText.replace(/<[^>]*>/g, '');
+                        // Remove HTML entities
+                        cleanText = cleanText.replace(/&nbsp;/g, ' ');
+                        cleanText = cleanText.replace(/&amp;/g, '&');
+                        cleanText = cleanText.replace(/&lt;/g, '<');
+                        cleanText = cleanText.replace(/&gt;/g, '>');
+                        cleanText = cleanText.replace(/&quot;/g, '"');
+                        // Trim whitespace
+                        cleanText = cleanText.trim();
+                        
+                        console.log('✅ Displaying text, length:', cleanText.length);
+                        return cleanText || "No tafsir available for this verse";
+                      })()}
+                    </ThemedText>
+                  </View>
+
+                  {/* Bottom Decoration */}
+                  <View style={{ 
+                    marginTop: 24, 
+                    paddingTop: 20, 
+                    borderTopWidth: 1,
+                    borderTopColor: isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.04)',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 8
+                  }}>
+                    <View style={{ 
+                      width: 6, 
+                      height: 6, 
+                      borderRadius: 3, 
+                      backgroundColor: isDark ? 'rgba(52, 211, 153, 0.4)' : 'rgba(16, 185, 129, 0.4)' 
+                    }} />
+                    <ThemedText type="caption" style={{ fontSize: 11, opacity: 0.4, letterSpacing: 1 }}>
+                      END OF TAFSIR
+                    </ThemedText>
+                    <View style={{ 
+                      width: 6, 
+                      height: 6, 
+                      borderRadius: 3, 
+                      backgroundColor: isDark ? 'rgba(52, 211, 153, 0.4)' : 'rgba(16, 185, 129, 0.4)' 
+                    }} />
+                  </View>
+                </View>
+              ) : (
+                <View style={{ alignItems: 'center', justifyContent: 'center', paddingVertical: 40 }}>
+                  <View style={{ 
+                    width: 64, 
+                    height: 64, 
+                    borderRadius: 32, 
+                    backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: 16
+                  }}>
+                    <Feather name="book" size={28} color={theme.textSecondary} style={{ opacity: 0.3 }} />
+                  </View>
+                  <ThemedText type="body" style={{ opacity: 0.5, textAlign: 'center' }}>
+                    No tafsir available
                   </ThemedText>
-                  <ThemedText
-                    type={showArabicTafsir ? "arabic" : "small"}
-                    secondary={!showArabicTafsir}
-                    style={[
-                      styles.tafsirText,
-                      showArabicTafsir && { textAlign: "right", fontFamily: "AlMushafQuran" },
-                    ]}
-                  >
-                    {showArabicTafsir
-                      ? tafsirData?.ar?.text?.replace(/<[^>]*>/g, "").trim() ||
-                        "No Arabic tafsir available"
-                      : tafsirData?.en?.text?.replace(/<[^>]*>/g, "").trim() ||
-                        "No English tafsir available"}
-                  </ThemedText>
-                </>
+                </View>
               )}
             </ScrollView>
           </Animated.View>
@@ -1565,16 +1751,223 @@ export default function MushafScreen() {
             <Pressable onPress={() => setShowTafsirSources(false)} style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1, marginRight: 12 }]}>
               <Feather name="arrow-left" size={24} color={theme.text} />
             </Pressable>
-            <ThemedText type="h3" style={{ fontWeight: '700', fontSize: 24, flex: 1 }}>Tafsir & Translations</ThemedText>
+            <View style={{ flex: 1 }}>
+              <ThemedText type="h3" style={{ fontWeight: '700', fontSize: 24 }}>Tafsir & Translations</ThemedText>
+              <ThemedText type="caption" style={{ opacity: 0.5, marginTop: 2, fontSize: 13 }}>
+                {availableTafsirs.filter(t => t.downloaded).length} downloaded
+              </ThemedText>
+            </View>
           </View>
-          <ScrollView contentContainerStyle={{ padding: Spacing.lg }}>
-            <ThemedText type="body" style={{ opacity: 0.6, marginBottom: Spacing.md, fontSize: 13 }}>Download tafsir and translations to read offline</ThemedText>
-            {availableTafsirs.map((tafsir) => {
+          <ScrollView contentContainerStyle={{ padding: Spacing.lg, paddingBottom: 40 }}>
+            {/* Downloaded Section */}
+            {availableTafsirs.filter(t => t.downloaded).length > 0 && (
+              <>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: Spacing.md, marginTop: Spacing.xs }}>
+                  <View style={{ 
+                    width: 32, 
+                    height: 32, 
+                    borderRadius: 16, 
+                    backgroundColor: isDark ? 'rgba(52, 211, 153, 0.15)' : 'rgba(16, 185, 129, 0.1)',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginRight: 10
+                  }}>
+                    <Feather name="check-circle" size={16} color={isDark ? '#34D399' : '#059669'} />
+                  </View>
+                  <ThemedText type="body" style={{ fontWeight: '700', fontSize: 15, letterSpacing: 0.5, opacity: 0.9 }}>
+                    MY LIBRARY
+                  </ThemedText>
+                </View>
+                {availableTafsirs.filter(t => t.downloaded).map((tafsir) => {
               const handleTafsirAction = async () => {
                 if (tafsir.downloaded) {
                   setSelectedTafsirId(tafsir.id);
                   await AsyncStorage.setItem('@selectedTafsir', tafsir.id);
+                  
+                  // If there's a tafsir verse, reload tafsir data
+                  if (tafsirVerse) {
+                    try {
+                      const key = tafsirVerse.verseKey;
+                      let tafsirContent = null;
+                      
+                      if (tafsir.id === 'abridged') {
+                        const enTafsir = await import("@/data/abridged-explanation-of-the-quran.json");
+                        tafsirContent = { text: enTafsir[key]?.text || 'No tafsir available' };
+                      } else if (tafsir.id === 'jalalayn') {
+                        const arTafsir = await import("@/data/tafsir-jalalayn.json");
+                        tafsirContent = { text: arTafsir[key]?.text || 'No tafsir available' };
+                      } else {
+                        const stored = await AsyncStorage.getItem(`@tafsir_${tafsir.id}`);
+                        if (stored) {
+                          const response = JSON.parse(stored);
+                          const tafsirData = response.data || response;
+                          
+                          if (tafsirData.surahs) {
+                            const surah = tafsirData.surahs.find((s: any) => s.number === tafsirVerse.surah);
+                            const ayah = surah?.ayahs?.find((a: any) => a.numberInSurah === tafsirVerse.ayah);
+                            tafsirContent = ayah ? { text: ayah.text || 'No tafsir available' } : { text: 'No tafsir available for this verse' };
+                          } else {
+                            const entry = tafsirData[key];
+                            tafsirContent = entry ? { text: entry.text || entry.tafsir || entry.content || 'No tafsir available' } : { text: 'No tafsir available for this verse' };
+                          }
+                        }
+                      }
+                      
+                      // Set tafsir data first
+                      setTafsirData(tafsirContent ? { en: tafsirContent, ar: tafsirContent } : null);
+                      
+                      // Then close sources modal after a brief delay
+                      setTimeout(() => {
+                        setShowTafsirSources(false);
+                      }, 50);
+                    } catch (e) {
+                      console.error("Failed to reload tafsir:", e);
+                      setShowTafsirSources(false);
+                    }
+                  } else {
+                    // No verse to show tafsir for, just close the modal
+                    setShowTafsirSources(false);
+                  }
                 } else if (tafsir.url) {
+                  setDownloadingTafsir(tafsir.id);
+                  try {
+                    const response = await fetch(tafsir.url);
+                    const contentType = response.headers.get('content-type');
+                    
+                    if (!response.ok) {
+                      throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const text = await response.text();
+                    
+                    if (contentType?.includes('application/json')) {
+                      const data = JSON.parse(text);
+                      await AsyncStorage.setItem(`@tafsir_${tafsir.id}`, JSON.stringify(data));
+                      setAvailableTafsirs(prev => prev.map(t => t.id === tafsir.id ? { ...t, downloaded: true } : t));
+                    } else {
+                      console.error('Response is not JSON:', text.substring(0, 200));
+                      throw new Error('Invalid response format - expected JSON');
+                    }
+                  } catch (error) {
+                    console.error('Download failed:', error);
+                    alert('Download failed. Please check your connection and try again.');
+                  } finally {
+                    setDownloadingTafsir(null);
+                  }
+                }
+              };
+              
+              const isActive = selectedTafsirId === tafsir.id;
+              return (
+              <Pressable
+                key={tafsir.id}
+                onPress={handleTafsirAction}
+                disabled={downloadingTafsir === tafsir.id}
+                style={({ pressed }) => [{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: 16,
+                  marginBottom: 10,
+                  borderRadius: 16,
+                  backgroundColor: isActive 
+                    ? (isDark ? 'rgba(52, 211, 153, 0.12)' : 'rgba(16, 185, 129, 0.08)')
+                    : (isDark ? 'rgba(255, 255, 255, 0.05)' : '#FFFFFF'),
+                  borderWidth: isActive ? 2 : 1,
+                  borderColor: isActive 
+                    ? (isDark ? 'rgba(52, 211, 153, 0.3)' : 'rgba(16, 185, 129, 0.2)')
+                    : (isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)'),
+                  transform: [{ scale: pressed ? 0.98 : 1 }],
+                  shadowColor: isActive ? (isDark ? '#34D399' : '#059669') : '#000',
+                  shadowOffset: { width: 0, height: isActive ? 4 : 2 },
+                  shadowOpacity: isActive ? 0.15 : 0.05,
+                  shadowRadius: isActive ? 8 : 4,
+                  elevation: isActive ? 4 : 2,
+                }]}
+              >
+                <View style={{ flex: 1, marginRight: 12 }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                    <ThemedText type="body" style={{ fontWeight: '600', fontSize: 16, letterSpacing: -0.2 }}>{tafsir.name}</ThemedText>
+                    <View style={{ 
+                      paddingHorizontal: 7, 
+                      paddingVertical: 3, 
+                      borderRadius: 6, 
+                      backgroundColor: tafsir.language === 'ar' 
+                        ? (isDark ? 'rgba(212, 175, 55, 0.2)' : 'rgba(212, 175, 55, 0.15)') 
+                        : (isDark ? 'rgba(52, 211, 153, 0.2)' : 'rgba(5, 150, 105, 0.15)') 
+                    }}>
+                      <ThemedText type="caption" style={{ 
+                        fontSize: 10, 
+                        fontWeight: '700', 
+                        color: tafsir.language === 'ar' ? (isDark ? '#D4AF37' : '#B8860B') : (isDark ? '#34D399' : '#059669'),
+                        letterSpacing: 0.5
+                      }}>
+                        {tafsir.language.toUpperCase()}
+                      </ThemedText>
+                    </View>
+                  </View>
+                  {isActive && (
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                      <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: isDark ? '#34D399' : '#059669' }} />
+                      <ThemedText type="caption" style={{ fontSize: 12, color: isDark ? '#34D399' : '#059669', fontWeight: '600' }}>
+                        Currently Active
+                      </ThemedText>
+                    </View>
+                  )}
+                </View>
+                {downloadingTafsir === tafsir.id ? (
+                  <ActivityIndicator size="small" color={isDark ? '#34D399' : '#059669'} />
+                ) : isActive ? (
+                  <View style={{ 
+                    width: 40, 
+                    height: 40, 
+                    borderRadius: 20, 
+                    backgroundColor: isDark ? 'rgba(52, 211, 153, 0.2)' : 'rgba(16, 185, 129, 0.15)',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    <Feather name="check" size={20} color={isDark ? '#34D399' : '#059669'} />
+                  </View>
+                ) : (
+                  <View style={{ 
+                    paddingHorizontal: 12, 
+                    paddingVertical: 8, 
+                    borderRadius: 8,
+                    backgroundColor: isDark ? 'rgba(212, 175, 55, 0.15)' : 'rgba(26, 95, 79, 0.08)'
+                  }}>
+                    <ThemedText type="caption" style={{ fontSize: 12, color: isDark ? '#D4AF37' : '#1a5f4f', fontWeight: '600' }}>
+                      Select
+                    </ThemedText>
+                  </View>
+                )}
+              </Pressable>
+              );
+            })}
+              </>
+            )}
+
+            {/* Available to Download Section */}
+            {availableTafsirs.filter(t => !t.downloaded).length > 0 && (
+              <>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: Spacing.md, marginTop: Spacing.lg }}>
+                  <View style={{ 
+                    width: 32, 
+                    height: 32, 
+                    borderRadius: 16, 
+                    backgroundColor: isDark ? 'rgba(212, 175, 55, 0.15)' : 'rgba(212, 175, 55, 0.1)',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginRight: 10
+                  }}>
+                    <Feather name="download-cloud" size={16} color={isDark ? '#D4AF37' : '#B8860B'} />
+                  </View>
+                  <ThemedText type="body" style={{ fontWeight: '700', fontSize: 15, letterSpacing: 0.5, opacity: 0.9 }}>
+                    AVAILABLE TO DOWNLOAD
+                  </ThemedText>
+                </View>
+                {availableTafsirs.filter(t => !t.downloaded).map((tafsir) => {
+              const handleTafsirAction = async () => {
+                if (tafsir.url) {
                   setDownloadingTafsir(tafsir.id);
                   try {
                     const response = await fetch(tafsir.url);
@@ -1612,44 +2005,60 @@ export default function MushafScreen() {
                   flexDirection: 'row',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  padding: Spacing.md,
-                  marginBottom: Spacing.sm,
-                  borderRadius: 12,
-                  backgroundColor: isDark ? 'rgba(255, 255, 255, 0.04)' : '#FFFFFF',
-                  opacity: pressed ? 0.7 : 1,
+                  padding: 16,
+                  marginBottom: 10,
+                  borderRadius: 16,
+                  backgroundColor: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)',
+                  borderWidth: 1,
+                  borderColor: isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.04)',
+                  transform: [{ scale: pressed ? 0.98 : 1 }],
+                  opacity: downloadingTafsir === tafsir.id ? 0.6 : 1,
                 }]}
               >
-                <View style={{ flex: 1 }}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                    <ThemedText type="body" style={{ fontWeight: '600', fontSize: 15 }}>{tafsir.name}</ThemedText>
-                    <View style={{ paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6, backgroundColor: tafsir.language === 'ar' ? (isDark ? 'rgba(212, 175, 55, 0.15)' : 'rgba(212, 175, 55, 0.1)') : (isDark ? 'rgba(52, 211, 153, 0.15)' : 'rgba(5, 150, 105, 0.1)') }}>
-                      <ThemedText type="caption" style={{ fontSize: 10, fontWeight: '600', color: tafsir.language === 'ar' ? (isDark ? '#D4AF37' : '#B8860B') : (isDark ? '#34D399' : '#059669') }}>{tafsir.language.toUpperCase()}</ThemedText>
+                <View style={{ flex: 1, marginRight: 12 }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                    <ThemedText type="body" style={{ fontWeight: '600', fontSize: 16, letterSpacing: -0.2 }}>{tafsir.name}</ThemedText>
+                    <View style={{ 
+                      paddingHorizontal: 7, 
+                      paddingVertical: 3, 
+                      borderRadius: 6, 
+                      backgroundColor: tafsir.language === 'ar' 
+                        ? (isDark ? 'rgba(212, 175, 55, 0.2)' : 'rgba(212, 175, 55, 0.15)') 
+                        : (isDark ? 'rgba(52, 211, 153, 0.2)' : 'rgba(5, 150, 105, 0.15)') 
+                    }}>
+                      <ThemedText type="caption" style={{ 
+                        fontSize: 10, 
+                        fontWeight: '700', 
+                        color: tafsir.language === 'ar' ? (isDark ? '#D4AF37' : '#B8860B') : (isDark ? '#34D399' : '#059669'),
+                        letterSpacing: 0.5
+                      }}>
+                        {tafsir.language.toUpperCase()}
+                      </ThemedText>
                     </View>
                   </View>
-                  {tafsir.downloaded && (
-                    <ThemedText type="caption" style={{ fontSize: 12, opacity: 0.6, marginTop: 2 }}>Downloaded</ThemedText>
-                  )}
+                  <ThemedText type="caption" style={{ fontSize: 12, opacity: 0.5 }}>
+                    Tap to download
+                  </ThemedText>
                 </View>
                 {downloadingTafsir === tafsir.id ? (
                   <ActivityIndicator size="small" color={isDark ? '#D4AF37' : '#1a5f4f'} />
-                ) : tafsir.downloaded ? (
-                  selectedTafsirId === tafsir.id ? (
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                      <Feather name="check" size={18} color={isDark ? '#34D399' : '#059669'} />
-                      <ThemedText type="caption" style={{ fontSize: 12, color: isDark ? '#34D399' : '#059669', fontWeight: '600' }}>Active</ThemedText>
-                    </View>
-                  ) : (
-                    <ThemedText type="caption" style={{ fontSize: 12, color: isDark ? '#D4AF37' : '#1a5f4f' }}>Select</ThemedText>
-                  )
                 ) : (
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <View style={{ 
+                    width: 40, 
+                    height: 40, 
+                    borderRadius: 20, 
+                    backgroundColor: isDark ? 'rgba(212, 175, 55, 0.15)' : 'rgba(26, 95, 79, 0.1)',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
                     <Feather name="download" size={18} color={isDark ? '#D4AF37' : '#1a5f4f'} />
-                    <ThemedText type="caption" style={{ fontSize: 12, color: isDark ? '#D4AF37' : '#1a5f4f' }}>Download</ThemedText>
                   </View>
                 )}
               </Pressable>
               );
             })}
+              </>
+            )}
           </ScrollView>
         </ThemedView>
       </Modal>
@@ -1936,7 +2345,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 50,
     left: '50%',
-    transform: [{ translateX: -84 }],
+    transform: [{ translateX: -64 }],
     zIndex: 10,
   },
   pillButton: {
