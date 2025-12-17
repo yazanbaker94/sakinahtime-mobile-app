@@ -32,6 +32,9 @@ import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { Audio } from "expo-av";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { RootStackParamList } from "@/navigation/RootStackNavigator";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -67,6 +70,7 @@ function toArabicNumerals(num: number): string {
 }
 
 export default function QuranScreen() {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
   const insets = useSafeAreaInsets();
@@ -81,11 +85,26 @@ export default function QuranScreen() {
   const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [loadingAudio, setLoadingAudio] = useState(false);
   const [scrollToVerse, setScrollToVerse] = useState<number | null>(null);
-  const versesListRef = useRef<FlatList<CombinedVerse> | null>(null);
-  const itemHeights = useRef<Map<number, number>>(new Map());
-  const [listHeaderHeight, setListHeaderHeight] = useState(140);
+  const versesListRef = useRef<ScrollView | null>(null);
+  const verseRefs = useRef<Map<number, View>>(new Map());
 
   const { data: surahData, isLoading, error } = useSurah(selectedSurah.number);
+  const [tafsirData, setTafsirData] = useState<any>(null);
+  const [showArabicTafsir, setShowArabicTafsir] = useState(false);
+
+  useEffect(() => {
+    const loadTafsirPreference = async () => {
+      try {
+        const pref = await AsyncStorage.getItem('@tafsir_language');
+        if (pref === 'ar') {
+          setShowArabicTafsir(true);
+        }
+      } catch (e) {
+        console.error('Failed to load tafsir preference:', e);
+      }
+    };
+    loadTafsirPreference();
+  }, []);
 
   const verses: CombinedVerse[] = surahData
     ? combineVerses(surahData.arabic)
@@ -104,80 +123,31 @@ export default function QuranScreen() {
   }, [sound]);
 
   useEffect(() => {
-    itemHeights.current.clear();
+    verseRefs.current.clear();
   }, [selectedSurah.number, verses.length]);
 
-  const getItemOffset = useCallback((index: number) => {
-    let offset = listHeaderHeight;
-    for (let i = 0; i < index; i++) {
-      offset += itemHeights.current.get(i) || 180;
-    }
-    return offset;
-  }, [listHeaderHeight]);
 
-  const hasMeasurementsUpTo = useCallback((index: number) => {
-    if (index === 0) return true;
-    for (let i = 0; i < index; i++) {
-      if (!itemHeights.current.has(i)) return false;
-    }
-    return true;
-  }, []);
-
-  const progressiveScrollToIndex = useCallback((targetIndex: number) => {
-    const ITEMS_PER_STEP = 15;
-    const STEP_DELAY = 100;
-    
-    const scrollStep = (currentIndex: number) => {
-      if (!versesListRef.current) return;
-      
-      if (currentIndex >= targetIndex) {
-        versesListRef.current.scrollToIndex({
-          index: targetIndex,
-          animated: true,
-          viewOffset: 50,
-        });
-        return;
-      }
-      
-      versesListRef.current.scrollToIndex({
-        index: currentIndex,
-        animated: false,
-        viewOffset: 0,
-      });
-      
-      setTimeout(() => {
-        scrollStep(Math.min(currentIndex + ITEMS_PER_STEP, targetIndex));
-      }, STEP_DELAY);
-    };
-    
-    scrollStep(ITEMS_PER_STEP);
-  }, []);
 
   useEffect(() => {
-    if (scrollToVerse !== null && verses.length > 0 && versesListRef.current) {
+    if (scrollToVerse !== null && verses.length > 0) {
       const index = verses.findIndex((v) => v.numberInSurah === scrollToVerse);
       if (index >= 0) {
         setTimeout(() => {
-          if (hasMeasurementsUpTo(index)) {
-            const offset = getItemOffset(index);
-            versesListRef.current?.scrollToOffset({
-              offset: Math.max(0, offset - 50),
-              animated: true,
-            });
-          } else if (Platform.OS === "web" && index > 20) {
-            progressiveScrollToIndex(index);
-          } else {
-            versesListRef.current?.scrollToIndex({
-              index,
-              animated: true,
-              viewOffset: 50,
-            });
+          const verseView = verseRefs.current.get(index);
+          if (verseView) {
+            verseView.measureLayout(
+              versesListRef.current as any,
+              (x, y) => {
+                versesListRef.current?.scrollTo({ y, animated: true });
+              },
+              () => {}
+            );
           }
-          setScrollToVerse(null);
         }, 300);
+        setScrollToVerse(null);
       }
     }
-  }, [verses, scrollToVerse, getItemOffset, hasMeasurementsUpTo, progressiveScrollToIndex]);
+  }, [verses, scrollToVerse]);
 
   const loadBookmarks = async () => {
     try {
@@ -305,12 +275,35 @@ export default function QuranScreen() {
     setShowSurahList(false);
   }, []);
 
-  const handleVersePress = useCallback((verse: CombinedVerse) => {
+  const handleVersePress = useCallback(async (verse: CombinedVerse) => {
     if (Platform.OS !== "web") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
     setSelectedVerse(verse);
-  }, []);
+    
+    try {
+      const enTafsir = await import('@/data/abridged-explanation-of-the-quran.json');
+      const arTafsir = await import('@/data/tafsir-jalalayn.json');
+      const key = `${selectedSurah.number}:${verse.numberInSurah}`;
+      setTafsirData({
+        en: enTafsir[key] || null,
+        ar: arTafsir[key] || null,
+      });
+    } catch (e) {
+      console.error('Failed to load tafsir:', e);
+      setTafsirData(null);
+    }
+  }, [selectedSurah.number]);
+
+  const toggleTafsirLanguage = useCallback(async () => {
+    const newValue = !showArabicTafsir;
+    setShowArabicTafsir(newValue);
+    try {
+      await AsyncStorage.setItem('@tafsir_language', newValue ? 'ar' : 'en');
+    } catch (e) {
+      console.error('Failed to save tafsir preference:', e);
+    }
+  }, [showArabicTafsir]);
 
   const closePopover = useCallback(() => {
     setSelectedVerse(null);
@@ -364,7 +357,7 @@ export default function QuranScreen() {
           </ThemedText>
         </View>
         <View style={styles.surahArabic}>
-          <ThemedText type="arabic" style={{ fontSize: 20 }}>
+          <ThemedText type="arabic" style={{ fontSize: 20, fontFamily: 'AlMushafQuran' }}>
             {item.nameAr}
           </ThemedText>
           <ThemedText
@@ -381,11 +374,11 @@ export default function QuranScreen() {
   );
 
   const renderVerseItem = useCallback(
-    ({ item: verse, index }: { item: CombinedVerse; index: number }) => (
+    (verse: CombinedVerse, index: number) => (
       <View
-        onLayout={(event) => {
-          const height = event.nativeEvent.layout.height;
-          itemHeights.current.set(index, height);
+        key={verse.number}
+        ref={(ref) => {
+          if (ref) verseRefs.current.set(index, ref);
         }}
       >
         <Pressable
@@ -428,13 +421,13 @@ export default function QuranScreen() {
             type="quran"
             style={[
               styles.verseArabicText,
-              { color: theme.text },
+              { color: theme.text, fontFamily: 'AlMushafQuran' },
             ]}
           >
             {verse.textAr}
             <ThemedText
               type="arabic"
-              style={{ color: isDark ? Colors.dark.gold : Colors.light.gold, fontSize: 20 }}
+              style={{ color: isDark ? Colors.dark.gold : Colors.light.gold, fontSize: 20, fontFamily: 'AlMushafQuran' }}
             >
               {" "}﴿{toArabicNumerals(verse.numberInSurah)}﴾
             </ThemedText>
@@ -553,7 +546,7 @@ export default function QuranScreen() {
                 <ThemedText
                   type="arabic"
                   numberOfLines={2}
-                  style={[styles.bookmarkArabic, { color: theme.text }]}
+                  style={[styles.bookmarkArabic, { color: theme.text, fontFamily: 'AlMushafQuran' }]}
                 >
                   {item.verseText}
                 </ThemedText>
@@ -572,11 +565,7 @@ export default function QuranScreen() {
   );
 
   const ListHeader = () => (
-    <View
-      onLayout={(event) => {
-        setListHeaderHeight(event.nativeEvent.layout.height);
-      }}
-    >
+    <View>
       <Pressable
         onPress={() => setShowSurahList(true)}
         style={({ pressed }) => [
@@ -606,7 +595,7 @@ export default function QuranScreen() {
           </View>
         </View>
         <View style={styles.surahSelectorRight}>
-          <ThemedText type="arabicLarge">{selectedSurah.nameAr}</ThemedText>
+          <ThemedText type="arabicLarge" style={{ fontFamily: 'AlMushafQuran' }}>{selectedSurah.nameAr}</ThemedText>
           <Feather name="chevron-down" size={20} color={theme.textSecondary} />
         </View>
       </Pressable>
@@ -625,7 +614,7 @@ export default function QuranScreen() {
             type="quran"
             style={[
               styles.bismillah,
-              { color: isDark ? Colors.dark.gold : Colors.light.gold },
+              { color: isDark ? Colors.dark.gold : Colors.light.gold, fontFamily: 'AlMushafQuran' },
             ]}
           >
             بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
@@ -724,6 +713,19 @@ export default function QuranScreen() {
       <View style={[styles.mainContent, { paddingTop: headerHeight }]}>
         <View style={styles.headerActions}>
           <Pressable
+            onPress={() => navigation.navigate('Mushaf')}
+            style={[
+              styles.headerButton,
+              { backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault, marginRight: Spacing.sm },
+            ]}
+          >
+            <Feather
+              name="book-open"
+              size={20}
+              color={isDark ? Colors.dark.primary : Colors.light.primary}
+            />
+          </Pressable>
+          <Pressable
             onPress={() => setShowBookmarks(true)}
             style={[
               styles.headerButton,
@@ -768,47 +770,18 @@ export default function QuranScreen() {
             </ThemedText>
           </View>
         ) : (
-          <FlatList
+          <ScrollView
             ref={versesListRef}
-            data={verses}
-            renderItem={renderVerseItem}
-            keyExtractor={(item) => String(item.number)}
-            ListHeaderComponent={ListHeader}
             contentContainerStyle={[
               styles.versesContent,
               { paddingBottom: tabBarHeight + Spacing.xl },
             ]}
             showsVerticalScrollIndicator={false}
             scrollIndicatorInsets={{ bottom: insets.bottom }}
-            initialNumToRender={20}
-            maxToRenderPerBatch={20}
-            windowSize={21}
-            removeClippedSubviews={Platform.OS !== "web"}
-            getItemLayout={(data, index) => ({
-              length: itemHeights.current.get(index) || 180,
-              offset: getItemOffset(index),
-              index,
-            })}
-            onScrollToIndexFailed={(info) => {
-              const avgItemHeight = info.averageItemLength || 200;
-              const offset = info.index * avgItemHeight;
-              versesListRef.current?.scrollToOffset({
-                offset: Math.max(0, offset),
-                animated: true,
-              });
-              setTimeout(() => {
-                try {
-                  versesListRef.current?.scrollToIndex({
-                    index: info.index,
-                    animated: true,
-                    viewPosition: 0.2,
-                  });
-                } catch (e) {
-                  // Silent fallback
-                }
-              }, 400);
-            }}
-          />
+          >
+            <ListHeader />
+            {verses.map((verse, index) => renderVerseItem(verse, index))}
+          </ScrollView>
         )}
       </View>
 
@@ -862,7 +835,7 @@ export default function QuranScreen() {
                 bounces={false}
               >
                 <View style={styles.popoverContent}>
-                  <ThemedText type="quran" style={styles.popoverArabic}>
+                  <ThemedText type="quran" style={[styles.popoverArabic, { fontFamily: 'AlMushafQuran' }]}>
                     {selectedVerse.textAr}
                   </ThemedText>
                   
@@ -879,6 +852,43 @@ export default function QuranScreen() {
                   <ThemedText type="body" secondary style={styles.popoverTranslation}>
                     {selectedVerse.translation}
                   </ThemedText>
+
+                  {(tafsirData?.en?.text || tafsirData?.ar?.text) && (
+                    <>
+                      <View
+                        style={[
+                          styles.popoverDivider,
+                          { backgroundColor: isDark ? Colors.dark.border : Colors.light.border },
+                        ]}
+                      />
+                      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <ThemedText type="body" style={[styles.popoverSectionTitle, { fontWeight: "600" }]}>
+                          Tafsir {showArabicTafsir ? '(Jalalayn)' : ''}
+                        </ThemedText>
+                        <Pressable
+                          onPress={toggleTafsirLanguage}
+                          style={[
+                            styles.tafsirToggle,
+                            { backgroundColor: isDark ? Colors.dark.primary : Colors.light.primary },
+                          ]}
+                        >
+                          <ThemedText type="small" style={{ color: '#FFFFFF' }}>
+                            {showArabicTafsir ? 'EN' : 'عربي'}
+                          </ThemedText>
+                        </Pressable>
+                      </View>
+                      <ThemedText 
+                        type={showArabicTafsir ? 'arabic' : 'small'} 
+                        secondary={!showArabicTafsir}
+                        style={[styles.popoverTranslation, showArabicTafsir && { textAlign: 'right', fontFamily: 'AlMushafQuran' }]}
+                      >
+                        {showArabicTafsir 
+                          ? tafsirData?.ar?.text?.replace(/<[^>]*>/g, '').trim() || 'No Arabic tafsir available'
+                          : tafsirData?.en?.text?.replace(/<[^>]*>/g, '').trim() || 'No English tafsir available'
+                        }
+                      </ThemedText>
+                    </>
+                  )}
                 </View>
               </ScrollView>
 
@@ -961,7 +971,7 @@ const styles = StyleSheet.create({
   headerActions: {
     flexDirection: "row",
     justifyContent: "flex-end",
-    marginTop: Spacing.md,
+    marginTop: 0,
     marginBottom: Spacing.sm,
   },
   headerButton: {
@@ -1238,5 +1248,10 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     height: "100%",
     width: "100%",
+  },
+  tafsirToggle: {
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.sm,
   },
 });

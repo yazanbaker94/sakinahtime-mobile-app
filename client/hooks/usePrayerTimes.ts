@@ -1,4 +1,27 @@
 import { useQuery } from "@tanstack/react-query";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useState, useEffect } from "react";
+
+export const CALCULATION_METHODS = [
+  { id: 0, name: "Shia Ithna-Ansari" },
+  { id: 1, name: "University of Islamic Sciences, Karachi" },
+  { id: 2, name: "Islamic Society of North America" },
+  { id: 3, name: "Muslim World League" },
+  { id: 4, name: "Umm Al-Qura University, Makkah" },
+  { id: 5, name: "Egyptian General Authority of Survey" },
+  { id: 7, name: "Institute of Geophysics, University of Tehran" },
+  { id: 8, name: "Gulf Region" },
+  { id: 9, name: "Kuwait" },
+  { id: 10, name: "Qatar" },
+  { id: 11, name: "Majlis Ugama Islam Singapura, Singapore" },
+  { id: 12, name: "Union Organization Islamic de France" },
+  { id: 13, name: "Diyanet İşleri Başkanlığı, Turkey" },
+  { id: 14, name: "Spiritual Administration of Muslims of Russia" },
+  { id: 15, name: "Moonsighting Committee Worldwide" },
+  { id: 16, name: "Ministry of Awqaf, Islamic Affairs, Jordan" },
+];
+
+const CALCULATION_METHOD_KEY = "@prayer_calculation_method";
 
 export interface PrayerTimes {
   Fajr: string;
@@ -39,13 +62,31 @@ export interface PrayerTimesData {
   };
 }
 
-async function fetchPrayerTimes(latitude: number, longitude: number): Promise<PrayerTimesData> {
+async function fetchPrayerTimes(latitude: number, longitude: number, method: number = 2): Promise<PrayerTimesData> {
+  console.log('[fetchPrayerTimes] Called with:', { 
+    latitude, 
+    longitude, 
+    method,
+    latType: typeof latitude,
+    lonType: typeof longitude,
+    methodType: typeof method
+  });
+
+  if (latitude === null || latitude === undefined || longitude === null || longitude === undefined) {
+    console.error('[fetchPrayerTimes] Invalid coordinates:', { latitude, longitude });
+    throw new Error("Invalid location coordinates");
+  }
+
+  const validMethod = method ?? 2;
+  console.log('[fetchPrayerTimes] Using method:', validMethod);
+
   const today = new Date();
   const day = today.getDate();
   const month = today.getMonth() + 1;
   const year = today.getFullYear();
 
-  const url = `https://api.aladhan.com/v1/timings/${day}-${month}-${year}?latitude=${latitude}&longitude=${longitude}&method=2`;
+  const url = `https://api.aladhan.com/v1/timings/${day}-${month}-${year}?latitude=${latitude}&longitude=${longitude}&method=${validMethod}`;
+  console.log('[fetchPrayerTimes] URL:', url);
 
   const response = await fetch(url);
   
@@ -62,20 +103,63 @@ async function fetchPrayerTimes(latitude: number, longitude: number): Promise<Pr
   return data.data;
 }
 
-export function usePrayerTimes(latitude: number | null, longitude: number | null) {
+export function usePrayerTimes(latitude: number | null, longitude: number | null, method: number = 2) {
+  console.log('[usePrayerTimes] Hook called with:', { latitude, longitude, method });
+  
+  const enabled = latitude !== null && longitude !== null;
+  console.log('[usePrayerTimes] Query enabled:', enabled);
+
   return useQuery({
-    queryKey: ["prayerTimes", latitude, longitude],
+    queryKey: ["prayerTimes", latitude, longitude, method],
     queryFn: () => {
+      console.log('[usePrayerTimes] queryFn executing with:', { latitude, longitude, method });
       if (latitude === null || longitude === null) {
+        console.error('[usePrayerTimes] Location not available in queryFn');
         throw new Error("Location not available");
       }
-      return fetchPrayerTimes(latitude, longitude);
+      return fetchPrayerTimes(latitude, longitude, method);
     },
-    enabled: latitude !== null && longitude !== null,
+    enabled,
     staleTime: 1000 * 60 * 60,
     gcTime: 1000 * 60 * 60 * 24,
     retry: 2,
   });
+}
+
+export function useCalculationMethod() {
+  const [method, setMethod] = useState<number>(2);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    loadMethod();
+  }, []);
+
+  const loadMethod = async () => {
+    try {
+      const stored = await AsyncStorage.getItem(CALCULATION_METHOD_KEY);
+      if (stored !== null) {
+        const parsed = parseInt(stored, 10);
+        if (!isNaN(parsed)) {
+          setMethod(parsed);
+        }
+      }
+    } catch (e) {
+      console.error("Failed to load calculation method:", e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const saveMethod = async (newMethod: number) => {
+    try {
+      await AsyncStorage.setItem(CALCULATION_METHOD_KEY, newMethod.toString());
+      setMethod(newMethod);
+    } catch (e) {
+      console.error("Failed to save calculation method:", e);
+    }
+  };
+
+  return { method, setMethod: saveMethod, isLoading };
 }
 
 export function getNextPrayer(timings: PrayerTimes): { name: string; time: string; nameAr: string } | null {

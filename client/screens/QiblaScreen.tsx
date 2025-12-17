@@ -6,7 +6,7 @@ import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { Spacing, Colors, BorderRadius } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
-import { useLocation } from "@/hooks/useLocation";
+import { useLocation } from "@/contexts/LocationContext";
 import {
   useCompass,
   calculateQiblaDirection,

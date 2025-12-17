@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Audio } from "expo-av";
+import * as Notifications from "expo-notifications";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const AZAN_SETTINGS_KEY = "@azan_settings";
@@ -26,12 +27,19 @@ export function useAzan() {
     loadSettings();
     setupAudio();
 
+    const subscription = Notifications.addNotificationReceivedListener((notification) => {
+      if (notification.request.content.data?.prayer && settings.enabled) {
+        playAzan();
+      }
+    });
+
     return () => {
+      subscription.remove();
       if (soundRef.current) {
         soundRef.current.unloadAsync();
       }
     };
-  }, []);
+  }, [settings.enabled, playAzan]);
 
   const setupAudio = async () => {
     try {

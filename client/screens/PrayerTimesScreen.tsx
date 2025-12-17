@@ -7,9 +7,11 @@ import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Spacing, Colors, BorderRadius } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
-import { useLocation } from "@/hooks/useLocation";
+import { useLocation } from "@/contexts/LocationContext";
 import {
   usePrayerTimes,
+  useCalculationMethod,
+  CALCULATION_METHODS,
   getNextPrayer,
   getTimeUntilPrayer,
   formatTime,
@@ -28,11 +30,37 @@ const PRAYERS = [
   { key: "Isha", nameEn: "Isha", nameAr: "العشاء", icon: "moon" },
 ] as const;
 
+const ARABIC_NUMERALS: Record<string, string> = {
+  "0": "٠",
+  "1": "١",
+  "2": "٢",
+  "3": "٣",
+  "4": "٤",
+  "5": "٥",
+  "6": "٦",
+  "7": "٧",
+  "8": "٨",
+  "9": "٩",
+};
+
+function toArabicNumerals(num: number): string {
+  return String(num)
+    .split("")
+    .map((digit) => ARABIC_NUMERALS[digit] || digit)
+    .join("");
+}
+
 export default function PrayerTimesScreen() {
   const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
   const insets = useSafeAreaInsets();
   const { theme, isDark } = useTheme();
+
+  const [countdown, setCountdown] = useState({ hours: 0, minutes: 0, seconds: 0 });
+  const [nextPrayer, setNextPrayer] = useState<{ name: string; time: string; nameAr: string } | null>(null);
+  const [showSettings, setShowSettings] = useState(false);
+  const [showMethodPicker, setShowMethodPicker] = useState(false);
+  const { method: calculationMethod, setMethod: setCalculationMethod, isLoading: methodLoading } = useCalculationMethod();
 
   const {
     latitude,
@@ -45,12 +73,28 @@ export default function PrayerTimesScreen() {
     canAskAgain,
   } = useLocation();
 
+  const hasValidLocation = latitude !== null && latitude !== undefined && longitude !== null && longitude !== undefined;
+  
+  console.log('[PrayerTimesScreen] Location state:', { 
+    latitude, 
+    longitude, 
+    hasValidLocation,
+    calculationMethod,
+    methodLoading,
+    locationLoading,
+    permissionGranted: permission?.granted
+  });
+
   const {
     data: prayerData,
     isLoading: prayerLoading,
     error: prayerError,
     refetch,
-  } = usePrayerTimes(latitude, longitude);
+  } = usePrayerTimes(
+    hasValidLocation ? latitude : null,
+    hasValidLocation ? longitude : null,
+    calculationMethod
+  );
 
   const {
     settings: notificationSettings,
@@ -67,9 +111,11 @@ export default function PrayerTimesScreen() {
     stopAzan,
   } = useAzan();
 
-  const [countdown, setCountdown] = useState({ hours: 0, minutes: 0, seconds: 0 });
-  const [nextPrayer, setNextPrayer] = useState<{ name: string; time: string; nameAr: string } | null>(null);
-  const [showSettings, setShowSettings] = useState(false);
+  useEffect(() => {
+    if (latitude !== null && longitude !== null && latitude !== undefined && longitude !== undefined) {
+      refetch();
+    }
+  }, [calculationMethod, latitude, longitude, refetch]);
 
   useEffect(() => {
     if (!prayerData?.timings) return;
@@ -184,7 +230,7 @@ export default function PrayerTimesScreen() {
     );
   }
 
-  if (locationLoading || prayerLoading) {
+  if (locationLoading || prayerLoading || methodLoading) {
     return (
       <ThemedView style={styles.container}>
         <View
@@ -258,7 +304,7 @@ export default function PrayerTimesScreen() {
         {prayerData?.date ? (
           <View style={styles.dateContainer}>
             <ThemedText type="arabic" style={styles.hijriDate}>
-              {prayerData.date.hijri.day} {prayerData.date.hijri.month.ar} {prayerData.date.hijri.year}
+              {toArabicNumerals(parseInt(prayerData.date.hijri.day))} {prayerData.date.hijri.month.ar} {toArabicNumerals(parseInt(prayerData.date.hijri.year))}
             </ThemedText>
             <ThemedText type="small" secondary>
               {prayerData.date.gregorian.weekday.en}, {prayerData.date.gregorian.day} {prayerData.date.gregorian.month.en} {prayerData.date.gregorian.year}
@@ -298,10 +344,6 @@ export default function PrayerTimesScreen() {
             </View>
           </View>
         ) : null}
-
-        <ThemedText type="h4" style={styles.sectionTitle}>
-          Today&apos;s Prayers
-        </ThemedText>
 
         <View style={styles.prayersList}>
           {PRAYERS.map((prayer) => {
@@ -427,6 +469,73 @@ export default function PrayerTimesScreen() {
                     />
                   </View>
                 ))}
+              </View>
+            ) : null}
+
+            <View style={styles.settingDivider} />
+
+            <Pressable
+              onPress={() => setShowMethodPicker(!showMethodPicker)}
+              style={styles.settingRow}
+            >
+              <View style={styles.settingInfo}>
+                <Feather name="book" size={20} color={isDark ? Colors.dark.primary : Colors.light.primary} />
+                <View style={styles.settingText}>
+                  <ThemedText type="body">Calculation Method</ThemedText>
+                  <ThemedText type="small" secondary>
+                    {CALCULATION_METHODS.find(m => m.id === calculationMethod)?.name || "ISNA"}
+                  </ThemedText>
+                </View>
+              </View>
+              <Feather
+                name={showMethodPicker ? "chevron-up" : "chevron-down"}
+                size={20}
+                color={isDark ? Colors.dark.textSecondary : Colors.light.textSecondary}
+              />
+            </Pressable>
+
+            {showMethodPicker ? (
+              <View style={styles.methodPicker}>
+                <ScrollView style={styles.methodList} nestedScrollEnabled>
+                  {CALCULATION_METHODS.map((m) => (
+                    <Pressable
+                      key={m.id}
+                      onPress={() => {
+                        setCalculationMethod(m.id);
+                        setShowMethodPicker(false);
+                        if (Platform.OS !== "web") {
+                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                        }
+                      }}
+                      style={[
+                        styles.methodItem,
+                        {
+                          backgroundColor: calculationMethod === m.id
+                            ? (isDark ? Colors.dark.primary + "20" : Colors.light.primary + "20")
+                            : "transparent",
+                        },
+                      ]}
+                    >
+                      <ThemedText
+                        type="small"
+                        style={{
+                          color: calculationMethod === m.id
+                            ? (isDark ? Colors.dark.primary : Colors.light.primary)
+                            : (isDark ? Colors.dark.text : Colors.light.text),
+                        }}
+                      >
+                        {m.name}
+                      </ThemedText>
+                      {calculationMethod === m.id ? (
+                        <Feather
+                          name="check"
+                          size={16}
+                          color={isDark ? Colors.dark.primary : Colors.light.primary}
+                        />
+                      ) : null}
+                    </Pressable>
+                  ))}
+                </ScrollView>
               </View>
             ) : null}
 
@@ -658,5 +767,22 @@ const styles = StyleSheet.create({
     padding: Spacing.md,
     borderRadius: BorderRadius.sm,
     backgroundColor: "rgba(128, 128, 128, 0.1)",
+  },
+  methodPicker: {
+    marginLeft: Spacing["3xl"],
+    marginTop: Spacing.sm,
+    maxHeight: 200,
+  },
+  methodList: {
+    maxHeight: 200,
+  },
+  methodItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    borderRadius: BorderRadius.sm,
+    marginBottom: Spacing.xs,
   },
 });

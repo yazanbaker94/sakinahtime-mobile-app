@@ -1,18 +1,18 @@
 {
   "expo": {
-    "name": "Islamic Prayer Companion",
-    "slug": "islamic-prayer-companion",
+    "name": "SakinahTime.Com - Heal Within",
+    "slug": "sakinahtime-heal-within",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "islamicprayercompanion",
+    "scheme": "sakinahtime",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.islamicprayercompanion.app",
+      "bundleIdentifier": "com.sakinahtime.app",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "We need your location to calculate accurate prayer times and Qibla direction for your area."
+        "NSLocationWhenInUseUsageDescription": "SakinahTime needs your location to calculate accurate prayer times and Qibla direction for your area."
       }
     },
     "android": {
@@ -22,7 +22,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.islamicprayercompanion.app",
+      "package": "com.sakinahtime.app",
       "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"]
     },
     "web": {
@@ -46,13 +46,13 @@
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "Allow Islamic Prayer Companion to use your location to calculate prayer times and Qibla direction."
+          "locationAlwaysAndWhenInUsePermission": "Allow SakinahTime to use your location to calculate prayer times and Qibla direction."
         }
       ],
       [
         "expo-sensors",
         {
-          "motionPermission": "Allow Islamic Prayer Companion to access your device motion for Qibla compass."
+          "motionPermission": "Allow SakinahTime to access your device motion for Qibla compass."
         }
       ]
     ],

@@ -36,13 +36,7 @@ export default function AzkarScreen() {
     [navigation]
   );
 
-  const getTimeOfDayGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return { greeting: "Good Morning", arabic: "صباح الخير", icon: "sunrise" as const };
-    return { greeting: "Good Evening", arabic: "مساء الخير", icon: "moon" as const };
-  };
 
-  const timeGreeting = getTimeOfDayGreeting();
 
   return (
     <ThemedView style={styles.container}>
@@ -57,31 +51,6 @@ export default function AzkarScreen() {
         scrollIndicatorInsets={{ bottom: insets.bottom }}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.greetingContainer}>
-          <View
-            style={[
-              styles.greetingIcon,
-              { backgroundColor: isDark ? Colors.dark.gold + "20" : Colors.light.gold + "20" },
-            ]}
-          >
-            <Feather
-              name={timeGreeting.icon}
-              size={24}
-              color={isDark ? Colors.dark.gold : Colors.light.gold}
-            />
-          </View>
-          <View style={styles.greetingText}>
-            <ThemedText type="h3">{timeGreeting.greeting}</ThemedText>
-            <ThemedText type="arabic" secondary style={{ textAlign: "left" }}>
-              {timeGreeting.arabic}
-            </ThemedText>
-          </View>
-        </View>
-
-        <ThemedText type="h4" style={styles.sectionTitle}>
-          Daily Remembrance
-        </ThemedText>
-
         <View style={styles.categoriesGrid}>
           {azkarCategories.map((category) => (
             <Pressable
@@ -182,21 +151,6 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     paddingHorizontal: Spacing.lg,
-  },
-  greetingContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: Spacing["2xl"],
-  },
-  greetingIcon: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  greetingText: {
-    marginLeft: Spacing.lg,
   },
   sectionTitle: {
     marginBottom: Spacing.lg,

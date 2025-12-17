@@ -55,7 +55,7 @@ export default function MainTabNavigator() {
         component={QiblaScreen}
         options={{
           title: "Qibla",
-          headerTitle: "Qibla Direction",
+          headerTitle: "",
           tabBarIcon: ({ color, size }) => (
             <Feather name="compass" size={size} color={color} />
           ),
@@ -66,7 +66,7 @@ export default function MainTabNavigator() {
         component={PrayerTimesScreen}
         options={{
           title: "Prayer",
-          headerTitle: "Prayer Times",
+          headerTitle: "",
           tabBarIcon: ({ color, size }) => (
             <Feather name="clock" size={size} color={color} />
           ),
@@ -77,7 +77,7 @@ export default function MainTabNavigator() {
         component={QuranScreen}
         options={{
           title: "Quran",
-          headerTitle: "Al-Quran",
+          headerTitle: "",
           tabBarIcon: ({ color, size }) => (
             <Feather name="book-open" size={size} color={color} />
           ),
@@ -88,7 +88,7 @@ export default function MainTabNavigator() {
         component={AzkarScreen}
         options={{
           title: "Azkar",
-          headerTitle: "Azkar",
+          headerTitle: "",
           tabBarIcon: ({ color, size }) => (
             <Feather name="heart" size={size} color={color} />
           ),
