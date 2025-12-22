@@ -27,10 +27,11 @@ export default function RootStackNavigator() {
       <Stack.Screen
         name="AzkarDetail"
         component={AzkarDetailScreen}
-        options={{
+        options={({ route }) => ({
           presentation: "modal",
           headerTitle: "Azkar",
-        }}
+          headerTransparent: false,
+        })}
       />
       <Stack.Screen
         name="Mushaf"

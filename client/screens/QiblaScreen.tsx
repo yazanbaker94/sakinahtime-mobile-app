@@ -1,5 +1,5 @@
 import React, { useMemo, useEffect, useRef } from "react";
-import { View, StyleSheet, Platform, Pressable } from "react-native";
+import { View, StyleSheet, Platform, Pressable, Dimensions } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -20,12 +20,15 @@ import Animated, {
   withSpring,
   useSharedValue,
   withTiming,
-  Easing,
+  withRepeat,
+  withSequence,
+  interpolate,
 } from "react-native-reanimated";
 
-const COMPASS_SIZE = 280;
-const INNER_RING_SIZE = COMPASS_SIZE - 40;
-const QIBLA_INDICATOR_RADIUS = INNER_RING_SIZE / 2 - 30;
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const COMPASS_SIZE = Math.min(SCREEN_WIDTH - 80, 340);
+const INNER_RING_SIZE = COMPASS_SIZE - 70;
+const QIBLA_INDICATOR_RADIUS = INNER_RING_SIZE / 2 - 40;
 
 export default function QiblaScreen() {
   const headerHeight = useHeaderHeight();
@@ -33,6 +36,9 @@ export default function QiblaScreen() {
   const { isDark } = useTheme();
   const wasAlignedRef = useRef(false);
   const glowOpacity = useSharedValue(0);
+  const pulseScale = useSharedValue(1);
+  const successScale = useSharedValue(1);
+  const rotationProgress = useSharedValue(0);
 
   const {
     latitude,
@@ -69,11 +75,24 @@ export default function QiblaScreen() {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       }
       glowOpacity.value = withTiming(1, { duration: 300 });
+      pulseScale.value = withRepeat(
+        withSequence(
+          withTiming(1.08, { duration: 1000 }),
+          withTiming(1, { duration: 1000 })
+        ),
+        -1,
+        false
+      );
+      successScale.value = withSequence(
+        withSpring(1.15, { damping: 8 }),
+        withSpring(1, { damping: 10 })
+      );
     } else if (!isAligned && wasAlignedRef.current) {
       glowOpacity.value = withTiming(0, { duration: 300 });
+      pulseScale.value = 1;
     }
     wasAlignedRef.current = isAligned;
-  }, [isAligned, glowOpacity]);
+  }, [isAligned, glowOpacity, pulseScale, successScale]);
 
   const compassRotationStyle = useAnimatedStyle(() => {
     return {
@@ -92,17 +111,28 @@ export default function QiblaScreen() {
   const glowStyle = useAnimatedStyle(() => {
     return {
       opacity: glowOpacity.value,
+      transform: [{ scale: pulseScale.value }],
     };
   });
 
-  const qiblaIndicatorStyle = useMemo(() => {
+  const successAnimStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: successScale.value }],
+    };
+  });
+
+  const qiblaIndicatorAnimStyle = useAnimatedStyle(() => {
     const angleRad = ((qiblaDirection - 90) * Math.PI) / 180;
     const x = Math.cos(angleRad) * QIBLA_INDICATOR_RADIUS;
     const y = Math.sin(angleRad) * QIBLA_INDICATOR_RADIUS;
     return {
-      transform: [{ translateX: x }, { translateY: y }],
+      transform: [
+        { translateX: x }, 
+        { translateY: y },
+        { scale: isAligned ? successScale.value : 1 }
+      ],
     };
-  }, [qiblaDirection]);
+  }, [qiblaDirection, isAligned]);
 
   const getDirectionText = () => {
     if (direction === "aligned") return "Facing Qibla";
@@ -133,7 +163,11 @@ export default function QiblaScreen() {
             <View
               style={[
                 styles.iconCircle,
-                { backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundSecondary },
+                { 
+                  backgroundColor: isDark ? 'rgba(52, 211, 153, 0.15)' : 'rgba(16, 185, 129, 0.1)',
+                  borderWidth: 2,
+                  borderColor: isDark ? 'rgba(52, 211, 153, 0.3)' : 'rgba(16, 185, 129, 0.3)',
+                },
               ]}
             >
               <Feather name="map-pin" size={48} color={isDark ? Colors.dark.primary : Colors.light.primary} />
@@ -148,9 +182,16 @@ export default function QiblaScreen() {
               Platform.OS !== "web" ? (
                 <Pressable
                   onPress={openSettings}
-                  style={[styles.permissionButton, { backgroundColor: isDark ? Colors.dark.primary : Colors.light.primary }]}
+                  style={[styles.permissionButton, { 
+                    backgroundColor: isDark ? Colors.dark.primary : Colors.light.primary,
+                    shadowColor: isDark ? Colors.dark.primary : Colors.light.primary,
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 8,
+                    elevation: 4,
+                  }]}
                 >
-                  <ThemedText type="body" style={{ color: "#FFFFFF" }}>
+                  <ThemedText type="body" style={{ color: "#FFFFFF", fontWeight: '600' }}>
                     Open Settings
                   </ThemedText>
                 </Pressable>
@@ -162,9 +203,16 @@ export default function QiblaScreen() {
             ) : (
               <Pressable
                 onPress={requestPermission}
-                style={[styles.permissionButton, { backgroundColor: isDark ? Colors.dark.primary : Colors.light.primary }]}
+                style={[styles.permissionButton, { 
+                  backgroundColor: isDark ? Colors.dark.primary : Colors.light.primary,
+                  shadowColor: isDark ? Colors.dark.primary : Colors.light.primary,
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 8,
+                  elevation: 4,
+                }]}
               >
-                <ThemedText type="body" style={{ color: "#FFFFFF" }}>
+                <ThemedText type="body" style={{ color: "#FFFFFF", fontWeight: '600' }}>
                   Enable Location
                 </ThemedText>
               </Pressable>
@@ -196,10 +244,7 @@ export default function QiblaScreen() {
   }
 
   const primaryColor = isDark ? Colors.dark.primary : Colors.light.primary;
-  const goldColor = isDark ? Colors.dark.gold : Colors.light.gold;
-  const bgSecondary = isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundSecondary;
-  const borderColor = isDark ? Colors.dark.border : Colors.light.border;
-  const mutedColor = isDark ? Colors.dark.muted : Colors.light.muted;
+  const goldColor = isDark ? '#F59E0B' : '#D97706';
 
   return (
     <ThemedView style={styles.container}>
@@ -207,62 +252,91 @@ export default function QiblaScreen() {
         style={[
           styles.content,
           {
-            paddingTop: headerHeight + Spacing.xl,
-            paddingBottom: tabBarHeight + Spacing.xl,
+            paddingTop: headerHeight + Spacing.md,
+            paddingBottom: tabBarHeight + Spacing["2xl"],
           },
         ]}
       >
+        {/* Location Badge */}
         {city ? (
           <View style={styles.locationBadge}>
-            <Feather name="map-pin" size={14} color={isDark ? Colors.dark.textSecondary : Colors.light.textSecondary} />
-            <ThemedText type="small" secondary style={styles.locationText}>
+            <Feather name="map-pin" size={15} color={primaryColor} />
+            <ThemedText type="small" style={{ 
+              marginLeft: 7,
+              color: primaryColor,
+              fontWeight: '700',
+              fontSize: 13,
+            }}>
               {city}
             </ThemedText>
           </View>
         ) : null}
 
+        {/* Premium Compass */}
         <View style={styles.compassWrapper}>
-          <Animated.View style={[styles.glowRing, { borderColor: primaryColor }, glowStyle]} />
+          {/* Animated Glow Rings */}
+          <Animated.View style={[styles.glowRing, { 
+            borderColor: isAligned ? primaryColor : 'rgba(52, 211, 153, 0.2)',
+            shadowColor: primaryColor,
+            shadowOffset: { width: 0, height: 0 },
+            shadowOpacity: isAligned ? 0.7 : 0,
+            shadowRadius: 25,
+          }, glowStyle]} />
           
-          <View style={[styles.compassOuter, { backgroundColor: bgSecondary, borderColor }]}>
+          <View style={[styles.compassOuter, { 
+            backgroundColor: isDark ? 'rgba(17, 24, 39, 0.98)' : 'rgba(255, 255, 255, 0.98)',
+            borderWidth: 3,
+            borderColor: isDark ? 'rgba(52, 211, 153, 0.25)' : 'rgba(16, 185, 129, 0.25)',
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 12 },
+            shadowOpacity: isDark ? 0.6 : 0.18,
+            shadowRadius: 30,
+            elevation: 12,
+          }]}>
             <Animated.View style={[styles.compassInner, compassRotationStyle]}>
-              <View style={[styles.innerRing, { borderColor: mutedColor }]}>
+              <View style={[styles.innerRing, { 
+                borderColor: isDark ? 'rgba(52, 211, 153, 0.35)' : 'rgba(16, 185, 129, 0.35)',
+                borderWidth: 2.5,
+              }]}>
+                {/* Cardinal Directions */}
                 {["N", "E", "S", "W"].map((dir, index) => {
                   const angle = index * 90;
                   const angleRad = ((angle - 90) * Math.PI) / 180;
-                  const radius = INNER_RING_SIZE / 2 - 25;
+                  const radius = INNER_RING_SIZE / 2 - 32;
                   const x = Math.cos(angleRad) * radius;
                   const y = Math.sin(angleRad) * radius;
                   
                   return (
-                    <ThemedText
+                    <View
                       key={dir}
-                      type="h4"
                       style={[
-                        styles.directionLabel,
+                        styles.directionLabelContainer,
                         {
-                          color: dir === "N" ? primaryColor : mutedColor,
-                          transform: [{ translateX: x - 10 }, { translateY: y - 12 }],
+                          transform: [{ translateX: x - 20 }, { translateY: y - 20 }],
                         },
                       ]}
                     >
-                      {dir}
-                    </ThemedText>
+                      <ThemedText
+                        type="h4"
+                        style={{
+                          color: dir === "N" ? primaryColor : (isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.4)'),
+                          fontWeight: dir === "N" ? '800' : '600',
+                          fontSize: dir === "N" ? 20 : 17,
+                        }}
+                      >
+                        {dir}
+                      </ThemedText>
+                    </View>
                   );
                 })}
 
+                {/* Compass Ticks */}
                 {[...Array(72)].map((_, i) => {
                   const angle = i * 5;
                   const isMajor = i % 18 === 0;
                   const isMinor = i % 9 === 0 && !isMajor;
-                  const tickLength = isMajor ? 12 : isMinor ? 8 : 4;
-                  const tickWidth = isMajor ? 2 : 1;
-                  const radius = INNER_RING_SIZE / 2 - 3;
-                  const angleRad = ((angle - 90) * Math.PI) / 180;
-                  const x1 = Math.cos(angleRad) * radius;
-                  const y1 = Math.sin(angleRad) * radius;
-                  const x2 = Math.cos(angleRad) * (radius - tickLength);
-                  const y2 = Math.sin(angleRad) * (radius - tickLength);
+                  const tickLength = isMajor ? 14 : isMinor ? 10 : 5;
+                  const tickWidth = isMajor ? 2.5 : isMinor ? 1.5 : 1;
                   
                   return (
                     <View
@@ -272,103 +346,158 @@ export default function QiblaScreen() {
                         {
                           width: tickWidth,
                           height: tickLength,
-                          backgroundColor: isMajor ? (isDark ? Colors.dark.text : Colors.light.text) : mutedColor,
+                          backgroundColor: isMajor 
+                            ? (isDark ? '#FFFFFF' : '#000000')
+                            : (isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.3)'),
                           left: INNER_RING_SIZE / 2 - tickWidth / 2,
                           top: 3,
                           transform: [{ rotate: `${angle}deg` }],
                           transformOrigin: `${tickWidth / 2}px ${INNER_RING_SIZE / 2 - 3}px`,
-                          opacity: isMajor ? 1 : isMinor ? 0.7 : 0.4,
+                          opacity: isMajor ? 1 : isMinor ? 0.75 : 0.5,
                         },
                       ]}
                     />
                   );
                 })}
 
-                <View
+                {/* Kaaba/Qibla Indicator */}
+                <Animated.View
                   style={[
                     styles.qiblaIndicator,
-                    qiblaIndicatorStyle,
+                    qiblaIndicatorAnimStyle,
                   ]}
                 >
-                  <View style={[styles.kaabaCircle, { backgroundColor: goldColor }]}>
-                    <View style={styles.kaabaSquare} />
+                  <View style={[styles.kaabaCircle, { 
+                    backgroundColor: isAligned ? primaryColor : goldColor,
+                    shadowColor: isAligned ? primaryColor : goldColor,
+                    shadowOffset: { width: 0, height: 0 },
+                    shadowOpacity: 0.9,
+                    shadowRadius: isAligned ? 18 : 10,
+                    elevation: 10,
+                    borderWidth: 3,
+                    borderColor: '#FFFFFF',
+                  }]}>
+                    <Feather name="home" size={20} color="#FFFFFF" />
                   </View>
-                </View>
+                </Animated.View>
               </View>
             </Animated.View>
 
+            {/* Center Pointer */}
             <View style={styles.centerPoint}>
-              <View style={[styles.pointerUp, { borderBottomColor: isAligned ? primaryColor : goldColor }]} />
-              <View style={[styles.centerDot, { backgroundColor: isAligned ? primaryColor : goldColor }]} />
+              <View style={[styles.pointerUp, { 
+                borderBottomColor: isAligned ? primaryColor : goldColor,
+                shadowColor: isAligned ? primaryColor : goldColor,
+                shadowOffset: { width: 0, height: 0 },
+                shadowOpacity: 0.7,
+                shadowRadius: 12,
+              }]} />
+              <View style={[styles.centerDot, { 
+                backgroundColor: isAligned ? primaryColor : goldColor,
+                shadowColor: isAligned ? primaryColor : goldColor,
+                shadowOffset: { width: 0, height: 0 },
+                shadowOpacity: 0.9,
+                shadowRadius: 10,
+                elevation: 6,
+                borderWidth: 3,
+                borderColor: '#FFFFFF',
+              }]} />
             </View>
           </View>
         </View>
 
-        <View
+        {/* Direction Indicator */}
+        <Animated.View
           style={[
             styles.directionIndicator,
-            {
-              backgroundColor: isAligned ? primaryColor : bgSecondary,
-              borderColor: isAligned ? primaryColor : borderColor,
-            },
+            isAligned && successAnimStyle,
           ]}
         >
-          <Feather
-            name={getDirectionIcon()}
-            size={20}
-            color={isAligned ? "#FFFFFF" : (isDark ? Colors.dark.text : Colors.light.text)}
-          />
+          {isAligned && (
+            <Feather
+              name="check-circle"
+              size={26}
+              color={primaryColor}
+            />
+          )}
           <ThemedText
             type="body"
             style={[
               styles.directionText,
-              { color: isAligned ? "#FFFFFF" : (isDark ? Colors.dark.text : Colors.light.text) },
+              { 
+                color: isAligned ? primaryColor : (isDark ? Colors.dark.text : Colors.light.text),
+                fontWeight: '800',
+                fontSize: 18,
+                letterSpacing: -0.5,
+              },
             ]}
           >
             {getDirectionText()}
           </ThemedText>
-          {!isAligned ? (
-            <Feather
-              name={getDirectionIcon()}
-              size={20}
-              color={isDark ? Colors.dark.text : Colors.light.text}
-            />
-          ) : null}
-        </View>
+        </Animated.View>
 
+        {/* Info Cards */}
         <View style={styles.infoContainer}>
-          <View style={[styles.infoCard, { backgroundColor: bgSecondary }]}>
-            <ThemedText type="h3" style={{ color: primaryColor }}>
+          <View style={styles.infoCard}>
+            <Feather name="compass" size={18} color={primaryColor} style={{ marginBottom: 6 }} />
+            <ThemedText type="h2" style={{ color: primaryColor, fontWeight: '800', fontSize: 26, letterSpacing: -1 }}>
               {qiblaDirection}°
             </ThemedText>
-            <ThemedText type="caption" secondary>
-              Qibla Bearing
+            <ThemedText type="caption" secondary style={{ marginTop: 4, fontSize: 10, fontWeight: '700', letterSpacing: 0.5 }}>
+              QIBLA BEARING
             </ThemedText>
           </View>
 
-          <View style={[styles.infoCard, { backgroundColor: bgSecondary }]}>
-            <ThemedText type="h3" style={{ color: goldColor }}>
+          <View style={styles.infoCard}>
+            <Feather name="map-pin" size={18} color={goldColor} style={{ marginBottom: 6 }} />
+            <ThemedText type="h2" style={{ color: goldColor, fontWeight: '800', fontSize: 26, letterSpacing: -1 }}>
               {distanceToMecca.toLocaleString()}
             </ThemedText>
-            <ThemedText type="caption" secondary>
-              km to Mecca
+            <ThemedText type="caption" secondary style={{ marginTop: 4, fontSize: 10, fontWeight: '700', letterSpacing: 0.5 }}>
+              KM TO MECCA
             </ThemedText>
           </View>
         </View>
 
+        {/* Calibration Hint */}
         {accuracy !== "high" && compassAvailable ? (
-          <View style={styles.calibrationHint}>
-            <Feather name="info" size={14} color={mutedColor} />
-            <ThemedText type="caption" secondary style={styles.calibrationText}>
+          <View style={[styles.calibrationHint, {
+            backgroundColor: isDark ? 'rgba(245, 158, 11, 0.15)' : 'rgba(217, 119, 6, 0.1)',
+            paddingHorizontal: 16,
+            paddingVertical: 12,
+            borderRadius: 12,
+            borderWidth: 1.5,
+            borderColor: isDark ? 'rgba(245, 158, 11, 0.25)' : 'rgba(217, 119, 6, 0.25)',
+          }]}>
+            <Feather name="info" size={16} color={goldColor} />
+            <ThemedText type="caption" style={{ 
+              marginLeft: 10,
+              color: goldColor,
+              fontWeight: '600',
+              flex: 1,
+            }}>
               Move your phone in a figure-8 pattern to calibrate
             </ThemedText>
           </View>
         ) : null}
 
+        {/* Warning */}
         {!compassAvailable || compassError ? (
-          <View style={styles.warningContainer}>
-            <Feather name="alert-circle" size={16} color={goldColor} />
-            <ThemedText type="small" secondary style={styles.warningText}>
+          <View style={[styles.warningContainer, {
+            backgroundColor: isDark ? 'rgba(239, 68, 68, 0.15)' : 'rgba(220, 38, 38, 0.1)',
+            paddingHorizontal: 16,
+            paddingVertical: 12,
+            borderRadius: 12,
+            borderWidth: 1.5,
+            borderColor: isDark ? 'rgba(239, 68, 68, 0.25)' : 'rgba(220, 38, 38, 0.25)',
+          }]}>
+            <Feather name="alert-circle" size={18} color={isDark ? '#EF4444' : '#DC2626'} />
+            <ThemedText type="small" style={{ 
+              marginLeft: 10,
+              color: isDark ? '#EF4444' : '#DC2626',
+              fontWeight: '600',
+              flex: 1,
+            }}>
               {Platform.OS === "web"
                 ? "Compass not available on web. Use on mobile device."
                 : compassError || "Compass not available"}
@@ -389,15 +518,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: Spacing.lg,
+    gap: Spacing.md,
   },
   permissionContainer: {
     alignItems: "center",
     paddingHorizontal: Spacing["2xl"],
   },
   iconCircle: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
+    width: 110,
+    height: 110,
+    borderRadius: 55,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: Spacing["2xl"],
@@ -405,43 +535,47 @@ const styles = StyleSheet.create({
   permissionTitle: {
     marginBottom: Spacing.md,
     textAlign: "center",
+    fontWeight: '700',
   },
   permissionText: {
     textAlign: "center",
     marginBottom: Spacing["2xl"],
+    lineHeight: 24,
   },
   permissionButton: {
     paddingHorizontal: Spacing["3xl"],
     paddingVertical: Spacing.lg,
-    borderRadius: BorderRadius.xl,
+    borderRadius: 16,
+  },
+  headerSection: {
+    alignItems: "center",
+    width: '100%',
+  },
+  titleContainer: {
+    alignItems: "center",
+    marginBottom: Spacing.md,
   },
   locationBadge: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: Spacing["2xl"],
-  },
-  locationText: {
-    marginLeft: Spacing.xs,
   },
   compassWrapper: {
-    width: COMPASS_SIZE + 20,
-    height: COMPASS_SIZE + 20,
+    width: COMPASS_SIZE + 35,
+    height: COMPASS_SIZE + 35,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: Spacing["2xl"],
   },
   glowRing: {
     position: "absolute",
-    width: COMPASS_SIZE + 16,
-    height: COMPASS_SIZE + 16,
-    borderRadius: (COMPASS_SIZE + 16) / 2,
-    borderWidth: 3,
+    width: COMPASS_SIZE + 28,
+    height: COMPASS_SIZE + 28,
+    borderRadius: (COMPASS_SIZE + 28) / 2,
+    borderWidth: 4,
   },
   compassOuter: {
     width: COMPASS_SIZE,
     height: COMPASS_SIZE,
     borderRadius: COMPASS_SIZE / 2,
-    borderWidth: 2,
     alignItems: "center",
     justifyContent: "center",
     overflow: "hidden",
@@ -456,15 +590,16 @@ const styles = StyleSheet.create({
     width: INNER_RING_SIZE,
     height: INNER_RING_SIZE,
     borderRadius: INNER_RING_SIZE / 2,
-    borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",
   },
-  directionLabel: {
+  directionLabelContainer: {
     position: "absolute",
-    width: 20,
-    textAlign: "center",
-    fontWeight: "600",
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
   },
   tick: {
     position: "absolute",
@@ -473,17 +608,11 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   kaabaCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     alignItems: "center",
     justifyContent: "center",
-  },
-  kaabaSquare: {
-    width: 14,
-    height: 14,
-    backgroundColor: "#1F2937",
-    borderRadius: 2,
   },
   centerPoint: {
     position: "absolute",
@@ -493,27 +622,23 @@ const styles = StyleSheet.create({
   pointerUp: {
     width: 0,
     height: 0,
-    borderLeftWidth: 8,
-    borderRightWidth: 8,
-    borderBottomWidth: 50,
+    borderLeftWidth: 11,
+    borderRightWidth: 11,
+    borderBottomWidth: 65,
     borderLeftColor: "transparent",
     borderRightColor: "transparent",
-    marginBottom: -8,
+    marginBottom: -11,
   },
   centerDot: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
+    width: 22,
+    height: 22,
+    borderRadius: 11,
   },
   directionIndicator: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: Spacing.xl,
-    paddingVertical: Spacing.md,
-    borderRadius: BorderRadius.full,
-    borderWidth: 1,
-    marginBottom: Spacing["2xl"],
     gap: Spacing.sm,
+    justifyContent: "center",
   },
   directionText: {
     fontWeight: "600",
@@ -521,30 +646,24 @@ const styles = StyleSheet.create({
   infoContainer: {
     flexDirection: "row",
     gap: Spacing.lg,
+    width: '100%',
+    justifyContent: 'center',
   },
   infoCard: {
-    paddingHorizontal: Spacing.xl,
+    paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
-    borderRadius: BorderRadius.lg,
     alignItems: "center",
-    minWidth: 110,
+    flex: 1,
+    maxWidth: 155,
   },
   calibrationHint: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: Spacing.xl,
-    gap: Spacing.xs,
-  },
-  calibrationText: {
-    marginLeft: Spacing.xs,
+    maxWidth: '90%',
   },
   warningContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: Spacing.xl,
-    paddingHorizontal: Spacing.lg,
-  },
-  warningText: {
-    marginLeft: Spacing.sm,
+    maxWidth: '90%',
   },
 });

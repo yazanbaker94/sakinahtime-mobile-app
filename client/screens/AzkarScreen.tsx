@@ -59,7 +59,7 @@ export default function AzkarScreen() {
               style={({ pressed }) => [
                 styles.categoryCard,
                 {
-                  backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault,
+                  backgroundColor: isDark ? 'rgba(26, 95, 79, 0.2)' : Colors.light.backgroundDefault,
                   opacity: pressed ? 0.7 : 1,
                   transform: [{ scale: pressed ? 0.98 : 1 }],
                 },
@@ -71,10 +71,10 @@ export default function AzkarScreen() {
                   {
                     backgroundColor:
                       category.id === "morning"
-                        ? (isDark ? Colors.dark.gold + "30" : Colors.light.gold + "30")
+                        ? (isDark ? 'rgba(212, 175, 55, 0.2)' : Colors.light.gold + "30")
                         : category.id === "evening"
-                          ? (isDark ? Colors.dark.primary + "30" : Colors.light.primary + "30")
-                          : (isDark ? Colors.dark.backgroundTertiary : Colors.light.backgroundSecondary),
+                          ? (isDark ? 'rgba(52, 211, 153, 0.2)' : Colors.light.primary + "30")
+                          : (isDark ? 'rgba(52, 211, 153, 0.15)' : Colors.light.backgroundSecondary),
                   },
                 ]}
               >

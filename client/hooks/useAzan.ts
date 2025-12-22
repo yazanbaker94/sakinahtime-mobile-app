@@ -15,7 +15,8 @@ const DEFAULT_SETTINGS: AzanSettings = {
   volume: 0.8,
 };
 
-const AZAN_URL = "https://www.islamcan.com/audio/adhan/azan1.mp3";
+// Use local azan file - place azan.mp3 in assets/audio/
+const AZAN_AUDIO = require('../../assets/audio/azan.mp3');
 
 export function useAzan() {
   const [settings, setSettings] = useState<AzanSettings>(DEFAULT_SETTINGS);
@@ -39,14 +40,16 @@ export function useAzan() {
         soundRef.current.unloadAsync();
       }
     };
-  }, [settings.enabled, playAzan]);
+  }, [settings.enabled]);
 
   const setupAudio = async () => {
     try {
       await Audio.setAudioModeAsync({
         playsInSilentModeIOS: true,
-        staysActiveInBackground: false,
+        staysActiveInBackground: true, // Allow audio to play in background
         shouldDuckAndroid: true,
+        interruptionModeIOS: 2, // Mix with other audio
+        interruptionModeAndroid: 1, // Duck other audio
       });
     } catch (error) {
       console.error("Failed to setup audio:", error);
@@ -97,7 +100,7 @@ export function useAzan() {
       }
 
       const { sound } = await Audio.Sound.createAsync(
-        { uri: AZAN_URL },
+        AZAN_AUDIO,
         { shouldPlay: true, volume: settings.volume }
       );
 
@@ -135,7 +138,7 @@ export function useAzan() {
       }
 
       const { sound } = await Audio.Sound.createAsync(
-        { uri: AZAN_URL },
+        AZAN_AUDIO,
         { shouldPlay: true, volume: settings.volume }
       );
 

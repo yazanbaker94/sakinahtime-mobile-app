@@ -1,63 +1,73 @@
 {
   "expo": {
-    "name": "SakinahTime.Com - Heal Within",
-    "slug": "sakinahtime-heal-within",
+    "name": "SakinahTime",
+    "slug": "sakinahtime",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "sakinahtime",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.sakinahtime.app",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "SakinahTime needs your location to calculate accurate prayer times and Qibla direction for your area."
-      }
+        "UIBackgroundModes": [
+          "audio"
+        ]
+      },
+      "sounds": [
+        "./assets/audio/azan.caf"
+      ]
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#059669",
-        "foregroundImage": "./assets/images/icon.png"
+        "foregroundImage": "./assets/images/icon.png",
+        "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false,
       "package": "com.sakinahtime.app",
-      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"]
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "FOREGROUND_SERVICE",
+        "NOTIFICATIONS",
+        "SCHEDULE_EXACT_ALARM",
+        "USE_EXACT_ALARM",
+        "WAKE_LOCK",
+        "RECEIVE_BOOT_COMPLETED"
+      ]
     },
     "web": {
+      "bundler": "metro",
       "output": "single",
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
       [
-        "expo-splash-screen",
+        "expo-notifications",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#059669",
-          "dark": {
-            "backgroundColor": "#111827"
-          }
+          "sounds": [
+            "./assets/audio/azan.mp3"
+          ],
+          "icon": "./assets/images/icon.png",
+          "color": "#10B981"
         }
       ],
-      "expo-web-browser",
-      [
-        "expo-location",
-        {
-          "locationAlwaysAndWhenInUsePermission": "Allow SakinahTime to use your location to calculate prayer times and Qibla direction."
-        }
-      ],
-      [
-        "expo-sensors",
-        {
-          "motionPermission": "Allow SakinahTime to access your device motion for Qibla compass."
-        }
-      ]
+      "./plugins/withAndroidNotificationSound.js",
+      "./plugins/withAndroidNativeFiles.js",
+      "./plugins/withAndroidNativeModules.js"
     ],
-    "experiments": {
-      "reactCompiler": true
+    "extra": {
+      "eas": {
+        "projectId": "b265137f-1e35-4727-a5f9-09a0bb6890c7"
+      }
     }
   }
 }

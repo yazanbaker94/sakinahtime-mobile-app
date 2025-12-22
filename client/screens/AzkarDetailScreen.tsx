@@ -1,5 +1,6 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { View, StyleSheet, FlatList, Pressable, ScrollView } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -13,6 +14,11 @@ import type { RootStackParamList } from "@/navigation/RootStackNavigator";
 
 type AzkarDetailRouteProp = RouteProp<RootStackParamList, "AzkarDetail">;
 
+const STORAGE_KEYS = {
+  TRANSLITERATION: '@azkar_show_transliteration',
+  TRANSLATION: '@azkar_show_translation',
+};
+
 export default function AzkarDetailScreen() {
   const insets = useSafeAreaInsets();
   const { theme, isDark } = useTheme();
@@ -21,6 +27,51 @@ export default function AzkarDetailScreen() {
 
   const [showTransliteration, setShowTransliteration] = useState(false);
   const [showTranslation, setShowTranslation] = useState(false);
+
+  // Load saved preferences on mount
+  useEffect(() => {
+    const loadPreferences = async () => {
+      try {
+        const [translitValue, translationValue] = await Promise.all([
+          AsyncStorage.getItem(STORAGE_KEYS.TRANSLITERATION),
+          AsyncStorage.getItem(STORAGE_KEYS.TRANSLATION),
+        ]);
+        
+        if (translitValue !== null) {
+          setShowTransliteration(translitValue === 'true');
+        }
+        if (translationValue !== null) {
+          setShowTranslation(translationValue === 'true');
+        }
+      } catch (error) {
+        // Silently fail, use default values
+      }
+    };
+    
+    loadPreferences();
+  }, []);
+
+  // Save transliteration preference
+  const toggleTransliteration = async () => {
+    const newValue = !showTransliteration;
+    setShowTransliteration(newValue);
+    try {
+      await AsyncStorage.setItem(STORAGE_KEYS.TRANSLITERATION, String(newValue));
+    } catch (error) {
+      // Silently fail
+    }
+  };
+
+  // Save translation preference
+  const toggleTranslation = async () => {
+    const newValue = !showTranslation;
+    setShowTranslation(newValue);
+    try {
+      await AsyncStorage.setItem(STORAGE_KEYS.TRANSLATION, String(newValue));
+    } catch (error) {
+      // Silently fail
+    }
+  };
 
   const dhikrList = azkarData[category.id] || [];
 
@@ -31,7 +82,7 @@ export default function AzkarDetailScreen() {
           style={[
             styles.dhikrCard,
             {
-              backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault,
+              backgroundColor: isDark ? 'rgba(26, 95, 79, 0.2)' : Colors.light.backgroundDefault,
             },
           ]}
         >
@@ -40,7 +91,7 @@ export default function AzkarDetailScreen() {
               style={[
                 styles.dhikrNumber,
                 {
-                  backgroundColor: isDark ? Colors.dark.backgroundTertiary : Colors.light.backgroundSecondary,
+                  backgroundColor: isDark ? 'rgba(52, 211, 153, 0.15)' : Colors.light.backgroundSecondary,
                 },
               ]}
             >
@@ -51,7 +102,7 @@ export default function AzkarDetailScreen() {
             </ThemedText>
           </View>
 
-          <ThemedText type="arabicLarge" style={styles.arabicText}>
+          <ThemedText type="arabicLarge" style={[styles.arabicText, { fontFamily: 'AlMushafQuran' }]}>
             {item.textAr}
           </ThemedText>
 
@@ -89,8 +140,8 @@ export default function AzkarDetailScreen() {
         style={[
           styles.header,
           {
-            backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault,
-            borderBottomColor: isDark ? Colors.dark.border : Colors.light.border,
+            backgroundColor: isDark ? 'rgba(26, 95, 79, 0.3)' : Colors.light.backgroundDefault,
+            borderBottomColor: isDark ? 'rgba(52, 211, 153, 0.2)' : Colors.light.border,
           },
         ]}
       >
@@ -98,22 +149,22 @@ export default function AzkarDetailScreen() {
           <ThemedText type="body" style={{ fontWeight: "500" }}>
             {category.titleEn}
           </ThemedText>
-          <ThemedText type="arabic" secondary style={{ fontSize: 14, textAlign: "left" }}>
+          <ThemedText type="arabic" secondary style={{ fontSize: 14, textAlign: "left", fontFamily: 'AlMushafQuran' }}>
             {category.titleAr}
           </ThemedText>
         </View>
         <View style={styles.toggleContainer}>
           <Pressable
-            onPress={() => setShowTransliteration(!showTransliteration)}
+            onPress={toggleTransliteration}
             style={({ pressed }) => [
               styles.toggleButton,
               {
                 backgroundColor: showTransliteration
                   ? (isDark ? Colors.dark.primary + "20" : Colors.light.primary + "20")
-                  : (isDark ? Colors.dark.backgroundTertiary : Colors.light.backgroundSecondary),
+                  : (isDark ? 'rgba(52, 211, 153, 0.1)' : Colors.light.backgroundSecondary),
                 borderColor: showTransliteration
                   ? (isDark ? Colors.dark.primary : Colors.light.primary)
-                  : "transparent",
+                  : (isDark ? 'rgba(52, 211, 153, 0.2)' : "transparent"),
                 opacity: pressed ? 0.7 : 1,
               },
             ]}
@@ -123,7 +174,7 @@ export default function AzkarDetailScreen() {
               size={14}
               color={showTransliteration
                 ? (isDark ? Colors.dark.primary : Colors.light.primary)
-                : theme.textSecondary
+                : (isDark ? 'rgba(52, 211, 153, 0.7)' : theme.textSecondary)
               }
             />
             <ThemedText
@@ -132,7 +183,7 @@ export default function AzkarDetailScreen() {
                 marginLeft: 4,
                 color: showTransliteration
                   ? (isDark ? Colors.dark.primary : Colors.light.primary)
-                  : theme.textSecondary,
+                  : (isDark ? 'rgba(52, 211, 153, 0.7)' : theme.textSecondary),
               }}
             >
               Translit
@@ -140,16 +191,16 @@ export default function AzkarDetailScreen() {
           </Pressable>
 
           <Pressable
-            onPress={() => setShowTranslation(!showTranslation)}
+            onPress={toggleTranslation}
             style={({ pressed }) => [
               styles.toggleButton,
               {
                 backgroundColor: showTranslation
                   ? (isDark ? Colors.dark.gold + "20" : Colors.light.gold + "20")
-                  : (isDark ? Colors.dark.backgroundTertiary : Colors.light.backgroundSecondary),
+                  : (isDark ? 'rgba(212, 175, 55, 0.1)' : Colors.light.backgroundSecondary),
                 borderColor: showTranslation
                   ? (isDark ? Colors.dark.gold : Colors.light.gold)
-                  : "transparent",
+                  : (isDark ? 'rgba(212, 175, 55, 0.2)' : "transparent"),
                 opacity: pressed ? 0.7 : 1,
               },
             ]}
@@ -159,7 +210,7 @@ export default function AzkarDetailScreen() {
               size={14}
               color={showTranslation
                 ? (isDark ? Colors.dark.gold : Colors.light.gold)
-                : theme.textSecondary
+                : (isDark ? 'rgba(212, 175, 55, 0.7)' : theme.textSecondary)
               }
             />
             <ThemedText
@@ -168,7 +219,7 @@ export default function AzkarDetailScreen() {
                 marginLeft: 4,
                 color: showTranslation
                   ? (isDark ? Colors.dark.gold : Colors.light.gold)
-                  : theme.textSecondary,
+                  : (isDark ? 'rgba(212, 175, 55, 0.7)' : theme.textSecondary),
               }}
             >
               English

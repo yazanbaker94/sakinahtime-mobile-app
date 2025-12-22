@@ -74,16 +74,6 @@ export default function PrayerTimesScreen() {
   } = useLocation();
 
   const hasValidLocation = latitude !== null && latitude !== undefined && longitude !== null && longitude !== undefined;
-  
-  console.log('[PrayerTimesScreen] Location state:', { 
-    latitude, 
-    longitude, 
-    hasValidLocation,
-    calculationMethod,
-    methodLoading,
-    locationLoading,
-    permissionGranted: permission?.granted
-  });
 
   const {
     data: prayerData,
@@ -91,8 +81,8 @@ export default function PrayerTimesScreen() {
     error: prayerError,
     refetch,
   } = usePrayerTimes(
-    hasValidLocation ? latitude : null,
-    hasValidLocation ? longitude : null,
+    hasValidLocation && !methodLoading ? latitude : null,
+    hasValidLocation && !methodLoading ? longitude : null,
     calculationMethod
   );
 
@@ -101,6 +91,7 @@ export default function PrayerTimesScreen() {
     toggleNotifications,
     togglePrayerNotification,
     schedulePrayerNotifications,
+    sendTestNotification,
   } = useNotifications();
 
   const {
@@ -136,9 +127,19 @@ export default function PrayerTimesScreen() {
 
   useEffect(() => {
     if (prayerData?.timings && notificationSettings.enabled) {
-      schedulePrayerNotifications(prayerData.timings);
+      schedulePrayerNotifications(prayerData.timings, azanSettings.enabled);
     }
-  }, [prayerData?.timings, notificationSettings, schedulePrayerNotifications]);
+  }, [
+    prayerData?.timings, 
+    notificationSettings.enabled,
+    notificationSettings.prayers.Fajr,
+    notificationSettings.prayers.Dhuhr,
+    notificationSettings.prayers.Asr,
+    notificationSettings.prayers.Maghrib,
+    notificationSettings.prayers.Isha,
+    azanSettings.enabled, 
+    schedulePrayerNotifications
+  ]);
 
   const handleToggleNotifications = async (value: boolean) => {
     if (Platform.OS !== "web") {
@@ -285,60 +286,100 @@ export default function PrayerTimesScreen() {
         contentContainerStyle={[
           styles.scrollContent,
           {
-            paddingTop: headerHeight + Spacing.xl,
+            paddingTop: insets.top + Spacing.xl,
             paddingBottom: tabBarHeight + Spacing.xl,
           },
         ]}
         scrollIndicatorInsets={{ bottom: insets.bottom }}
         showsVerticalScrollIndicator={false}
       >
-        {city ? (
-          <View style={styles.locationBadge}>
-            <Feather name="map-pin" size={14} color={isDark ? Colors.dark.primary : Colors.light.primary} />
-            <ThemedText type="small" style={{ color: isDark ? Colors.dark.primary : Colors.light.primary, marginLeft: Spacing.xs }}>
-              {city}
-            </ThemedText>
-          </View>
-        ) : null}
-
-        {prayerData?.date ? (
-          <View style={styles.dateContainer}>
-            <ThemedText type="arabic" style={styles.hijriDate}>
-              {toArabicNumerals(parseInt(prayerData.date.hijri.day))} {prayerData.date.hijri.month.ar} {toArabicNumerals(parseInt(prayerData.date.hijri.year))}
-            </ThemedText>
-            <ThemedText type="small" secondary>
-              {prayerData.date.gregorian.weekday.en}, {prayerData.date.gregorian.day} {prayerData.date.gregorian.month.en} {prayerData.date.gregorian.year}
-            </ThemedText>
-          </View>
-        ) : null}
-
         {nextPrayer ? (
           <View
             style={[
               styles.nextPrayerCard,
               {
-                backgroundColor: isDark ? Colors.dark.primary : Colors.light.primary,
+                backgroundColor: isDark ? 'rgba(26, 95, 79, 0.95)' : 'rgba(16, 185, 129, 0.95)',
+                shadowColor: isDark ? '#34D399' : '#059669',
+                shadowOffset: { width: 0, height: 6 },
+                shadowOpacity: 0.25,
+                shadowRadius: 12,
+                elevation: 6,
               },
             ]}
           >
-            <ThemedText type="small" style={{ color: "rgba(255,255,255,0.8)" }}>
-              Next Prayer
-            </ThemedText>
-            <View style={styles.nextPrayerInfo}>
-              <View>
-                <ThemedText type="h2" style={{ color: "#FFFFFF" }}>
-                  {nextPrayer.name}
+            {/* Compact Header with Info */}
+            <View style={styles.compactHeader}>
+              <View style={styles.headerLeft}>
+                <View style={styles.nextPrayerBadge}>
+                  <Feather name="clock" size={12} color="#FFFFFF" />
+                  <ThemedText type="caption" style={{ color: "#FFFFFF", marginLeft: 5, fontWeight: '700', letterSpacing: 0.5, fontSize: 10 }}>
+                    NEXT PRAYER
+                  </ThemedText>
+                </View>
+                <View style={styles.prayerNameCompact}>
+                  <ThemedText type="h2" style={{ color: "#FFFFFF", fontWeight: '800', fontSize: 28, letterSpacing: -1 }}>
+                    {nextPrayer.name}
+                  </ThemedText>
+                  <ThemedText type="arabic" style={{ fontFamily: 'AlMushafQuran', color: "rgba(255,255,255,0.9)", fontSize: 16, marginLeft: 10 }}>
+                    {nextPrayer.nameAr}
+                  </ThemedText>
+                </View>
+              </View>
+              
+              {/* Metadata */}
+              <View style={styles.metadataCompact}>
+                {prayerData?.date && (
+                  <View style={styles.metaRow}>
+                    <Feather name="calendar" size={11} color="rgba(255,255,255,0.8)" />
+                    <ThemedText type="caption" style={{ color: "rgba(255,255,255,0.9)", marginLeft: 5, fontSize: 11 }}>
+                      {prayerData.date.gregorian.day} {prayerData.date.gregorian.month.en}
+                    </ThemedText>
+                    <ThemedText type="arabic" style={{ color: "rgba(255,255,255,0.9)", fontSize: 11, marginLeft: 4 }}>
+                      {toArabicNumerals(Number(prayerData.date.hijri.day) || 0)} <ThemedText type="arabic" style={{ fontFamily: 'AlMushafQuran', color: "rgba(255,255,255,0.9)", fontSize: 11 }}>{prayerData.date.hijri.month.ar}</ThemedText>
+                    </ThemedText>
+                  </View>
+                )}
+                {city && (
+                  <View style={styles.metaRow}>
+                    <Feather name="map-pin" size={11} color="rgba(255,255,255,0.8)" />
+                    <ThemedText type="caption" style={{ color: "rgba(255,255,255,0.9)", marginLeft: 5, fontSize: 11 }}>
+                      {city}
+                    </ThemedText>
+                  </View>
+                )}
+              </View>
+            </View>
+            
+            {/* Compact Countdown */}
+            <View style={styles.countdownCompact}>
+              <View style={styles.countdownItem}>
+                <ThemedText type="h1" style={{ color: "#FFFFFF", fontSize: 40, fontWeight: '800', letterSpacing: -1.5 }}>
+                  {String(countdown.hours).padStart(2, "0")}
                 </ThemedText>
-                <ThemedText type="arabic" style={{ color: "rgba(255,255,255,0.9)", textAlign: "left" }}>
-                  {nextPrayer.nameAr}
+                <ThemedText type="caption" style={{ color: "rgba(255,255,255,0.75)", fontSize: 9, marginTop: 2, fontWeight: '700', letterSpacing: 0.5 }}>
+                  HOURS
                 </ThemedText>
               </View>
-              <View style={styles.countdownContainer}>
-                <ThemedText type="h1" style={{ color: "#FFFFFF" }}>
-                  {String(countdown.hours).padStart(2, "0")}:{String(countdown.minutes).padStart(2, "0")}
+              <ThemedText type="h1" style={{ color: "rgba(255,255,255,0.4)", fontSize: 32, marginHorizontal: 6, marginTop: -8 }}>
+                :
+              </ThemedText>
+              <View style={styles.countdownItem}>
+                <ThemedText type="h1" style={{ color: "#FFFFFF", fontSize: 40, fontWeight: '800', letterSpacing: -1.5 }}>
+                  {String(countdown.minutes).padStart(2, "0")}
                 </ThemedText>
-                <ThemedText type="caption" style={{ color: "rgba(255,255,255,0.7)" }}>
-                  :{String(countdown.seconds).padStart(2, "0")}
+                <ThemedText type="caption" style={{ color: "rgba(255,255,255,0.75)", fontSize: 9, marginTop: 2, fontWeight: '700', letterSpacing: 0.5 }}>
+                  MINUTES
+                </ThemedText>
+              </View>
+              <ThemedText type="h1" style={{ color: "rgba(255,255,255,0.4)", fontSize: 32, marginHorizontal: 6, marginTop: -8 }}>
+                :
+              </ThemedText>
+              <View style={styles.countdownItem}>
+                <ThemedText type="h1" style={{ color: "#FFFFFF", fontSize: 40, fontWeight: '800', letterSpacing: -1.5 }}>
+                  {String(countdown.seconds).padStart(2, "0")}
+                </ThemedText>
+                <ThemedText type="caption" style={{ color: "rgba(255,255,255,0.75)", fontSize: 9, marginTop: 2, fontWeight: '700', letterSpacing: 0.5 }}>
+                  SECONDS
                 </ThemedText>
               </View>
             </View>
@@ -346,7 +387,7 @@ export default function PrayerTimesScreen() {
         ) : null}
 
         <View style={styles.prayersList}>
-          {PRAYERS.map((prayer) => {
+          {PRAYERS.map((prayer, index) => {
             const time = prayerData?.timings?.[prayer.key] || "";
             const isPast = isPrayerPast(time);
             const isNext = nextPrayer?.name === prayer.nameEn;
@@ -357,46 +398,80 @@ export default function PrayerTimesScreen() {
                 style={[
                   styles.prayerCard,
                   {
-                    backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault,
-                    opacity: isPast && !isNext ? 0.5 : 1,
-                    borderLeftColor: isNext ? (isDark ? Colors.dark.primary : Colors.light.primary) : "transparent",
-                    borderLeftWidth: isNext ? 3 : 0,
+                    backgroundColor: isNext 
+                      ? (isDark ? 'rgba(52, 211, 153, 0.15)' : Colors.light.backgroundDefault)
+                      : (isDark ? 'rgba(26, 95, 79, 0.2)' : Colors.light.backgroundDefault),
+                    opacity: isPast && !isNext ? 0.6 : 1,
+                    shadowColor: '#000',
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: isDark ? 0.3 : 0.08,
+                    shadowRadius: 8,
+                    elevation: 3,
+                    borderWidth: isNext ? 2 : 0,
+                    borderColor: isNext ? (isDark ? '#34D399' : '#059669') : 'transparent',
                   },
                 ]}
               >
+                {isNext && (
+                  <View style={[styles.activePrayerIndicator, { 
+                    backgroundColor: isDark ? '#34D399' : '#059669' 
+                  }]} />
+                )}
+                
                 <View style={styles.prayerCardLeft}>
                   <View
                     style={[
                       styles.prayerIcon,
                       {
                         backgroundColor: isNext
-                          ? (isDark ? Colors.dark.primary : Colors.light.primary)
-                          : (isDark ? Colors.dark.backgroundTertiary : Colors.light.backgroundSecondary),
+                          ? (isDark ? 'rgba(52, 211, 153, 0.2)' : 'rgba(16, 185, 129, 0.15)')
+                          : (isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.04)'),
+                        borderWidth: isNext ? 2 : 0,
+                        borderColor: isNext ? (isDark ? '#34D399' : '#059669') : 'transparent',
                       },
                     ]}
                   >
                     <Feather
                       name={prayer.icon as any}
-                      size={20}
-                      color={isNext ? "#FFFFFF" : (isDark ? Colors.dark.textSecondary : Colors.light.textSecondary)}
+                      size={22}
+                      color={isNext ? (isDark ? '#34D399' : '#059669') : (isDark ? Colors.dark.textSecondary : Colors.light.textSecondary)}
                     />
                   </View>
-                  <View>
-                    <ThemedText type="body" style={{ fontWeight: isNext ? "600" : "400" }}>
+                  <View style={styles.prayerNames}>
+                    <ThemedText type="body" style={{ fontWeight: isNext ? "700" : "500", fontSize: 17 }}>
                       {prayer.nameEn}
                     </ThemedText>
-                    <ThemedText type="arabic" secondary style={{ fontSize: 14, textAlign: "left" }}>
+                    <ThemedText type="arabic" secondary style={{ fontFamily: 'AlMushafQuran', fontSize: 15, textAlign: "left", marginTop: 2 }}>
                       {prayer.nameAr}
                     </ThemedText>
                   </View>
                 </View>
                 <View style={styles.prayerCardRight}>
-                  <ThemedText type="h4" style={{ color: isNext ? (isDark ? Colors.dark.primary : Colors.light.primary) : theme.text }}>
-                    {formatTime(time)}
-                  </ThemedText>
-                  {isPast && !isNext ? (
-                    <Feather name="check" size={16} color={isDark ? Colors.dark.success : Colors.light.success} />
-                  ) : null}
+                  <View style={styles.prayerTimeContainer}>
+                    <ThemedText type="h3" style={{ 
+                      color: isNext ? (isDark ? '#34D399' : '#059669') : theme.text,
+                      fontWeight: '700',
+                      fontSize: 22,
+                      letterSpacing: -0.5
+                    }}>
+                      {formatTime(time)}
+                    </ThemedText>
+                    {isPast && !isNext && (
+                      <View style={[styles.completedBadge, {
+                        backgroundColor: isDark ? 'rgba(52, 211, 153, 0.15)' : 'rgba(16, 185, 129, 0.1)'
+                      }]}>
+                        <Feather name="check" size={14} color={isDark ? '#34D399' : '#059669'} />
+                        <ThemedText type="caption" style={{ 
+                          color: isDark ? '#34D399' : '#059669',
+                          marginLeft: 4,
+                          fontSize: 10,
+                          fontWeight: '600'
+                        }}>
+                          PRAYED
+                        </ThemedText>
+                      </View>
+                    )}
+                  </View>
                 </View>
               </View>
             );
@@ -563,18 +638,38 @@ export default function PrayerTimesScreen() {
             </View>
 
             {azanSettings.enabled ? (
-              <Pressable
-                onPress={handlePlayAzan}
-                style={[
-                  styles.previewButton,
-                  { backgroundColor: isDark ? Colors.dark.primary : Colors.light.primary },
-                ]}
-              >
-                <Feather name={azanPlaying ? "stop-circle" : "play-circle"} size={20} color="#FFFFFF" />
-                <ThemedText type="body" style={{ color: "#FFFFFF", marginLeft: Spacing.sm }}>
-                  {azanPlaying ? "Stop Preview" : "Preview Azan"}
-                </ThemedText>
-              </Pressable>
+              <>
+                <Pressable
+                  onPress={handlePlayAzan}
+                  style={[
+                    styles.previewButton,
+                    { backgroundColor: isDark ? Colors.dark.primary : Colors.light.primary },
+                  ]}
+                >
+                  <Feather name={azanPlaying ? "stop-circle" : "play-circle"} size={20} color="#FFFFFF" />
+                  <ThemedText type="body" style={{ color: "#FFFFFF", marginLeft: Spacing.sm }}>
+                    {azanPlaying ? "Stop Preview" : "Preview Azan"}
+                  </ThemedText>
+                </Pressable>
+                
+                <Pressable
+                  onPress={() => {
+                    sendTestNotification(azanSettings.enabled);
+                    if (Platform.OS !== "web") {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                    }
+                  }}
+                  style={[
+                    styles.previewButton,
+                    { backgroundColor: isDark ? '#F59E0B' : '#D97706', marginTop: Spacing.sm },
+                  ]}
+                >
+                  <Feather name="bell" size={20} color="#FFFFFF" />
+                  <ThemedText type="body" style={{ color: "#FFFFFF", marginLeft: Spacing.sm }}>
+                    Test Notification (10s)
+                  </ThemedText>
+                </Pressable>
+              </>
             ) : null}
 
             {Platform.OS === "web" ? (
@@ -659,15 +754,48 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   nextPrayerCard: {
-    padding: Spacing.xl,
-    borderRadius: BorderRadius.lg,
-    marginBottom: Spacing["2xl"],
+    padding: Spacing.lg,
+    borderRadius: 18,
+    marginBottom: Spacing.xl,
+    overflow: 'hidden',
   },
-  nextPrayerInfo: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginTop: Spacing.md,
+  compactHeader: {
+    marginBottom: Spacing.md,
+  },
+  headerLeft: {
+    marginBottom: Spacing.sm,
+  },
+  nextPrayerBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    marginBottom: Spacing.sm,
+  },
+  prayerNameCompact: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  metadataCompact: {
+    gap: 4,
+  },
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  countdownCompact: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: Spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255, 255, 255, 0.15)',
+  },
+  countdownItem: {
+    alignItems: 'center',
   },
   countdownContainer: {
     flexDirection: "row",
@@ -683,25 +811,47 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: Spacing.lg,
-    borderRadius: BorderRadius.md,
+    padding: Spacing.xl,
+    borderRadius: 16,
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  activePrayerIndicator: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: 4,
   },
   prayerCardLeft: {
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.md,
+    flex: 1,
   },
   prayerIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 52,
+    height: 52,
+    borderRadius: 26,
     alignItems: "center",
     justifyContent: "center",
   },
+  prayerNames: {
+    flex: 1,
+  },
   prayerCardRight: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.sm,
+    alignItems: "flex-end",
+  },
+  prayerTimeContainer: {
+    alignItems: 'flex-end',
+  },
+  completedBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    marginTop: 6,
   },
   settingsHeader: {
     flexDirection: "row",

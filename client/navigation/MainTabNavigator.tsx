@@ -67,6 +67,7 @@ export default function MainTabNavigator() {
         options={{
           title: "Prayer",
           headerTitle: "",
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Feather name="clock" size={size} color={color} />
           ),
@@ -78,6 +79,7 @@ export default function MainTabNavigator() {
         options={{
           title: "Quran",
           headerTitle: "",
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Feather name="book-open" size={size} color={color} />
           ),

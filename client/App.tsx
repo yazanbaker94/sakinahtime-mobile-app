@@ -16,6 +16,7 @@ import { queryClient } from "@/lib/query-client";
 import RootStackNavigator from "@/navigation/RootStackNavigator";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { LocationProvider } from "@/contexts/LocationContext";
+import { CoordinatesProvider } from "@/contexts/CoordinatesContext";
 
 export default function App() {
   const [fontsLoaded, setFontsLoaded] = React.useState(false);
@@ -43,18 +44,20 @@ export default function App() {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <LocationProvider>
-          <SafeAreaProvider>
-            <GestureHandlerRootView style={styles.root}>
-              <KeyboardProvider>
-                <NavigationContainer>
-                  <RootStackNavigator />
-                </NavigationContainer>
-                <StatusBar style="auto" />
-              </KeyboardProvider>
-            </GestureHandlerRootView>
-          </SafeAreaProvider>
-        </LocationProvider>
+        <CoordinatesProvider>
+          <LocationProvider>
+            <SafeAreaProvider>
+              <GestureHandlerRootView style={styles.root}>
+                <KeyboardProvider>
+                  <NavigationContainer>
+                    <RootStackNavigator />
+                  </NavigationContainer>
+                  <StatusBar style="auto" translucent backgroundColor="transparent" />
+                </KeyboardProvider>
+              </GestureHandlerRootView>
+            </SafeAreaProvider>
+          </LocationProvider>
+        </CoordinatesProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   );

@@ -1,12 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { Magnetometer, Accelerometer } from "expo-sensors";
 import { Platform } from "react-native";
+import * as Location from "expo-location";
 
 interface CompassState {
   heading: number;
   available: boolean;
   error: string | null;
   accuracy: "low" | "medium" | "high";
+  declination: number;
 }
 
 interface SensorData {
@@ -59,7 +61,7 @@ function calculateTiltCompensatedHeading(
   const yH = my * cosRoll - mz * sinRoll;
 
   let heading = Math.atan2(yH, xH) * (180 / Math.PI);
-  heading = (270 - heading + 360) % 360;
+  heading = (heading + 360) % 360;
 
   return heading;
 }
@@ -70,7 +72,9 @@ export function useCompass() {
     available: false,
     error: null,
     accuracy: "low",
+    declination: 0,
   });
+  const [magneticDeclination, setMagneticDeclination] = useState(0);
 
   const magDataRef = useRef<SensorData | null>(null);
   const accelDataRef = useRef<SensorData | null>(null);
@@ -85,6 +89,30 @@ export function useCompass() {
 
     const initCompass = async () => {
       try {
+        // Get magnetic declination for Android
+        if (Platform.OS === 'android') {
+          try {
+            // Check if location permission is granted before trying to get location
+            const { status } = await Location.getForegroundPermissionsAsync();
+            if (status === 'granted') {
+              const location = await Location.getCurrentPositionAsync({
+                accuracy: Location.Accuracy.Lowest, // Use lowest accuracy for declination
+              });
+              const { latitude, longitude } = location.coords;
+              
+              // Calculate magnetic declination using World Magnetic Model
+              // This is an approximation - for production, use a proper WMM library
+              const declination = await getMagneticDeclination(latitude, longitude);
+              setMagneticDeclination(declination);
+            } else {
+              console.log('Location permission not granted, skipping magnetic declination');
+            }
+          } catch (error) {
+            console.warn('Could not get magnetic declination:', error);
+            // Continue without declination - compass will still work
+          }
+        }
+
         const [magAvailable, accelAvailable] = await Promise.all([
           Magnetometer.isAvailableAsync(),
           Accelerometer.isAvailableAsync(),
@@ -133,11 +161,23 @@ export function useCompass() {
 
           if (accel) {
             heading = calculateTiltCompensatedHeading(mag, accel);
+            // iOS needs 270 degree offset, Android needs 180 degree offset
+            if (Platform.OS === 'ios') {
+              heading = (270 - heading + 360) % 360;
+            } else {
+              // Android: subtract 90 degrees to match iOS
+              heading = (heading - 90 + 360) % 360;
+            }
           } else {
             const { x, y } = mag;
             let angle = Math.atan2(y, x) * (180 / Math.PI);
             angle = (angle + 360) % 360;
-            heading = (360 - angle) % 360;
+            if (Platform.OS === 'ios') {
+              heading = (360 - angle) % 360;
+            } else {
+              // Android: subtract 90 degrees to match iOS
+              heading = (angle - 90 + 360) % 360;
+            }
           }
 
           headingHistoryRef.current.push(heading);
@@ -169,10 +209,18 @@ export function useCompass() {
           if (variance < 25) accuracy = "high";
           else if (variance < 100) accuracy = "medium";
 
+          // Apply magnetic declination to get true north
+          let trueHeading = smoothedHeading;
+          if (Platform.OS === 'android' && magneticDeclination !== 0) {
+            // Apply declination correction for Android
+            trueHeading = (smoothedHeading + magneticDeclination + 360) % 360;
+          }
+
           setState((prev) => ({
             ...prev,
-            heading: Math.round(smoothedHeading),
+            heading: Math.round(trueHeading),
             accuracy,
+            declination: magneticDeclination,
           }));
         }, 100);
       } catch (error) {
@@ -258,4 +306,22 @@ export function getRelativeDirection(
     angle: absDiff,
     direction: diff > 0 ? "right" : "left",
   };
+}
+
+// Simplified magnetic declination calculation
+// For production, use a proper World Magnetic Model library
+async function getMagneticDeclination(latitude: number, longitude: number): Promise<number> {
+  try {
+    // Use NOAA API to get magnetic declination
+    const response = await fetch(
+      `https://www.ngdc.noaa.gov/geomag-web/calculators/calculateDeclination?lat1=${latitude}&lon1=${longitude}&resultFormat=json`
+    );
+    const data = await response.json();
+    return data.result[0].declination || 0;
+  } catch (error) {
+    console.warn('Failed to fetch magnetic declination, using approximation');
+    // Rough approximation based on location
+    // This is very simplified - real declination varies significantly
+    return 0;
+  }
 }

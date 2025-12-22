@@ -63,22 +63,11 @@ export interface PrayerTimesData {
 }
 
 async function fetchPrayerTimes(latitude: number, longitude: number, method: number = 2): Promise<PrayerTimesData> {
-  console.log('[fetchPrayerTimes] Called with:', { 
-    latitude, 
-    longitude, 
-    method,
-    latType: typeof latitude,
-    lonType: typeof longitude,
-    methodType: typeof method
-  });
-
   if (latitude === null || latitude === undefined || longitude === null || longitude === undefined) {
-    console.error('[fetchPrayerTimes] Invalid coordinates:', { latitude, longitude });
     throw new Error("Invalid location coordinates");
   }
 
   const validMethod = method ?? 2;
-  console.log('[fetchPrayerTimes] Using method:', validMethod);
 
   const today = new Date();
   const day = today.getDate();
@@ -86,7 +75,6 @@ async function fetchPrayerTimes(latitude: number, longitude: number, method: num
   const year = today.getFullYear();
 
   const url = `https://api.aladhan.com/v1/timings/${day}-${month}-${year}?latitude=${latitude}&longitude=${longitude}&method=${validMethod}`;
-  console.log('[fetchPrayerTimes] URL:', url);
 
   const response = await fetch(url);
   
@@ -104,17 +92,12 @@ async function fetchPrayerTimes(latitude: number, longitude: number, method: num
 }
 
 export function usePrayerTimes(latitude: number | null, longitude: number | null, method: number = 2) {
-  console.log('[usePrayerTimes] Hook called with:', { latitude, longitude, method });
-  
   const enabled = latitude !== null && longitude !== null;
-  console.log('[usePrayerTimes] Query enabled:', enabled);
 
   return useQuery({
     queryKey: ["prayerTimes", latitude, longitude, method],
     queryFn: () => {
-      console.log('[usePrayerTimes] queryFn executing with:', { latitude, longitude, method });
       if (latitude === null || longitude === null) {
-        console.error('[usePrayerTimes] Location not available in queryFn');
         throw new Error("Location not available");
       }
       return fetchPrayerTimes(latitude, longitude, method);
