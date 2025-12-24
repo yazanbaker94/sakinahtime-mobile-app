@@ -12,7 +12,7 @@ export interface AzanSettings {
 
 const DEFAULT_SETTINGS: AzanSettings = {
   enabled: true,
-  volume: 0.8,
+  volume: 1.0, // Maximum volume
 };
 
 // Use local azan file - place azan.mp3 in assets/audio/

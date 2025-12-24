@@ -17,6 +17,8 @@ import RootStackNavigator from "@/navigation/RootStackNavigator";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { LocationProvider } from "@/contexts/LocationContext";
 import { CoordinatesProvider } from "@/contexts/CoordinatesContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
+import { PrayerAdjustmentsProvider } from "@/contexts/PrayerAdjustmentsContext";
 
 export default function App() {
   const [fontsLoaded, setFontsLoaded] = React.useState(false);
@@ -43,22 +45,26 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <CoordinatesProvider>
-          <LocationProvider>
-            <SafeAreaProvider>
-              <GestureHandlerRootView style={styles.root}>
-                <KeyboardProvider>
-                  <NavigationContainer>
-                    <RootStackNavigator />
-                  </NavigationContainer>
-                  <StatusBar style="auto" translucent backgroundColor="transparent" />
-                </KeyboardProvider>
-              </GestureHandlerRootView>
-            </SafeAreaProvider>
-          </LocationProvider>
-        </CoordinatesProvider>
-      </QueryClientProvider>
+      <ThemeProvider>
+        <PrayerAdjustmentsProvider>
+          <QueryClientProvider client={queryClient}>
+            <CoordinatesProvider>
+              <LocationProvider>
+                <SafeAreaProvider>
+                  <GestureHandlerRootView style={styles.root}>
+                    <KeyboardProvider>
+                      <NavigationContainer>
+                        <RootStackNavigator />
+                      </NavigationContainer>
+                      <StatusBar style="auto" translucent backgroundColor="transparent" />
+                    </KeyboardProvider>
+                  </GestureHandlerRootView>
+                </SafeAreaProvider>
+              </LocationProvider>
+            </CoordinatesProvider>
+          </QueryClientProvider>
+        </PrayerAdjustmentsProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 }

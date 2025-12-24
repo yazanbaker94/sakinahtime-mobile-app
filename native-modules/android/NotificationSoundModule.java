@@ -37,20 +37,16 @@ public class NotificationSoundModule extends ReactContextBaseJavaModule {
                     notificationManager.deleteNotificationChannel(CHANNEL_ID);
                 }
 
-                // Create new channel with custom sound
+                // Create new channel WITHOUT custom sound (MediaPlayer plays it)
                 CharSequence name = "Prayer Times";
                 String description = "Notifications for prayer times";
                 int importance = NotificationManager.IMPORTANCE_HIGH;
                 NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
                 channel.setDescription(description);
 
-                // Set custom sound
-                Uri soundUri = Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.azan);
-                AudioAttributes audioAttributes = new AudioAttributes.Builder()
-                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                    .build();
-                channel.setSound(soundUri, audioAttributes);
+                // NO custom sound - use default or silent
+                // The azan is played by MediaPlayer in PrayerAlarmReceiver
+                channel.setSound(null, null);
 
                 // Set other properties
                 channel.enableVibration(true);
@@ -59,7 +55,7 @@ public class NotificationSoundModule extends ReactContextBaseJavaModule {
                 channel.setLightColor(0xFF10B981);
 
                 notificationManager.createNotificationChannel(channel);
-                promise.resolve("Channel created successfully with custom sound");
+                promise.resolve("Channel created successfully (silent - MediaPlayer plays azan)");
             } else {
                 promise.resolve("Android version < O, no channels needed");
             }

@@ -7,6 +7,7 @@ import QiblaScreen from "@/screens/QiblaScreen";
 import PrayerTimesScreen from "@/screens/PrayerTimesScreen";
 import MushafScreen from "@/screens/MushafScreen";
 import AzkarScreen from "@/screens/AzkarScreen";
+import SettingsScreen from "@/screens/SettingsScreen";
 import { useTheme } from "@/hooks/useTheme";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 import { Colors } from "@/constants/theme";
@@ -16,6 +17,7 @@ export type MainTabParamList = {
   PrayerTimesTab: undefined;
   QuranTab: undefined;
   AzkarTab: undefined;
+  SettingsTab: undefined;
 };
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
@@ -91,8 +93,20 @@ export default function MainTabNavigator() {
         options={{
           title: "Azkar",
           headerTitle: "",
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Feather name="heart" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="SettingsTab"
+        component={SettingsScreen}
+        options={{
+          title: "Settings",
+          headerTitle: "Settings",
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="settings" size={size} color={color} />
           ),
         }}
       />

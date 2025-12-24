@@ -140,6 +140,13 @@ export function useNotifications() {
     loadSettings();
     checkPermission();
     
+    // Stop azan when app opens
+    if (Platform.OS === 'android' && PrayerAlarmModule) {
+      PrayerAlarmModule.stopAzan().catch(() => {
+        // Ignore errors if azan isn't playing
+      });
+    }
+    
     // Listen for notifications being received (foreground and background)
     const receivedSubscription = Notifications.addNotificationReceivedListener(notification => {
       console.log('📬 Notification RECEIVED:', {
@@ -156,12 +163,20 @@ export function useNotifications() {
       }
     });
 
-    // Listen for notifications being tapped
+    // Listen for notifications being tapped - STOP AZAN
     const responseSubscription = Notifications.addNotificationResponseReceivedListener(response => {
       console.log('👆 Notification TAPPED:', {
         title: response.notification.request.content.title,
         data: response.notification.request.content.data,
       });
+      
+      // Stop azan when notification is tapped
+      if (Platform.OS === 'android' && PrayerAlarmModule) {
+        console.log('🛑 Stopping azan (notification tapped)');
+        PrayerAlarmModule.stopAzan().catch((error: any) => {
+          console.log('Azan was not playing or already stopped');
+        });
+      }
     });
 
     return () => {
@@ -296,8 +311,7 @@ export function useNotifications() {
           console.log('✅ Native alarms scheduled:', result);
           console.log('🔔 Scheduled alarms:', prayerAlarms.map(a => `${a.name} at ${new Date(a.timestamp).toLocaleString()}`));
           
-          // Also schedule expo notifications for display
-          await scheduleExpoNotifications(timings, azanEnabled);
+          // Native alarm will show notification, no need for expo notifications
         } catch (error) {
           console.error('❌ Failed to schedule native alarms:', error);
           // Fallback to expo notifications only
@@ -353,9 +367,8 @@ export function useNotifications() {
 
         if (Platform.OS === 'android') {
           notificationContent.channelId = 'prayer-times';
-          if (azanEnabled) {
-            notificationContent.sound = 'azan';
-          }
+          // Don't set sound here - native alarm plays it
+          // The notification is just for display
         }
 
         await Notifications.scheduleNotificationAsync({
@@ -392,23 +405,7 @@ export function useNotifications() {
         console.log('✅ Native test alarm scheduled:', result);
         console.log('⏰ Will trigger in 10 seconds');
         
-        // Also schedule expo notification for display
-        const notificationContent: any = {
-          title: `Test Prayer - الاختبار`,
-          body: `This is a test notification with ${azanEnabled ? 'azan sound' : 'no sound'}`,
-          data: { prayer: 'test', azanEnabled },
-          channelId: 'prayer-times',
-        };
-        
-        await Notifications.scheduleNotificationAsync({
-          content: notificationContent,
-          trigger: {
-            type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-            seconds: 10,
-          },
-        });
-        
-        console.log('✅ Expo notification also scheduled for display');
+        // Native alarm will show notification, no need for expo notification
         return;
       }
       

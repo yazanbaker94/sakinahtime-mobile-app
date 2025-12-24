@@ -178,29 +178,11 @@ export default function QiblaScreen() {
             <ThemedText type="body" secondary style={styles.permissionText}>
               We need your location to calculate the Qibla direction from your current position.
             </ThemedText>
-            {permission?.status === "denied" && !canAskAgain ? (
-              Platform.OS !== "web" ? (
-                <Pressable
-                  onPress={openSettings}
-                  style={[styles.permissionButton, { 
-                    backgroundColor: isDark ? Colors.dark.primary : Colors.light.primary,
-                    shadowColor: isDark ? Colors.dark.primary : Colors.light.primary,
-                    shadowOffset: { width: 0, height: 4 },
-                    shadowOpacity: 0.3,
-                    shadowRadius: 8,
-                    elevation: 4,
-                  }]}
-                >
-                  <ThemedText type="body" style={{ color: "#FFFFFF", fontWeight: '600' }}>
-                    Open Settings
-                  </ThemedText>
-                </Pressable>
-              ) : (
-                <ThemedText type="small" secondary style={styles.permissionText}>
-                  Please enable location in your browser settings.
-                </ThemedText>
-              )
-            ) : (
+            {Platform.OS === "web" ? (
+              <ThemedText type="small" secondary style={styles.permissionText}>
+                Please enable location in your browser settings.
+              </ThemedText>
+            ) : canAskAgain ? (
               <Pressable
                 onPress={requestPermission}
                 style={[styles.permissionButton, { 
@@ -214,6 +196,22 @@ export default function QiblaScreen() {
               >
                 <ThemedText type="body" style={{ color: "#FFFFFF", fontWeight: '600' }}>
                   Enable Location
+                </ThemedText>
+              </Pressable>
+            ) : (
+              <Pressable
+                onPress={openSettings}
+                style={[styles.permissionButton, { 
+                  backgroundColor: isDark ? Colors.dark.primary : Colors.light.primary,
+                  shadowColor: isDark ? Colors.dark.primary : Colors.light.primary,
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 8,
+                  elevation: 4,
+                }]}
+              >
+                <ThemedText type="body" style={{ color: "#FFFFFF", fontWeight: '600' }}>
+                  Open Settings
                 </ThemedText>
               </Pressable>
             )}

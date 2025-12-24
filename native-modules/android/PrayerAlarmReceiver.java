@@ -14,9 +14,19 @@ import android.util.Log;
 public class PrayerAlarmReceiver extends BroadcastReceiver {
     private static final String TAG = "PrayerAlarmReceiver";
     private static MediaPlayer mediaPlayer;
+    private static Context appContext;
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        String action = intent.getAction();
+        
+        // Handle stop action from notification
+        if ("STOP_AZAN".equals(action)) {
+            Log.d(TAG, "Stop azan action received from notification");
+            stopAzan();
+            return;
+        }
+        
         Log.d(TAG, "Prayer alarm received!");
         
         String prayerName = intent.getStringExtra("prayer_name");
@@ -26,17 +36,16 @@ public class PrayerAlarmReceiver extends BroadcastReceiver {
         
         if (playAzan) {
             Log.d(TAG, "Playing azan sound...");
-            playAzanSound(context);
+            playAzanSound(context, prayerName);
         } else {
             Log.d(TAG, "Azan disabled, skipping sound");
         }
-        
-        // Show notification (handled by expo-notifications)
-        Log.d(TAG, "Notification for " + prayerName + " will be shown by expo-notifications");
     }
     
-    private void playAzanSound(Context context) {
+    private void playAzanSound(Context context, String prayerName) {
         try {
+            // Store context for later use
+            appContext = context.getApplicationContext();
             // Wake up the device
             PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
             PowerManager.WakeLock wakeLock = powerManager.newWakeLock(
@@ -47,62 +56,128 @@ public class PrayerAlarmReceiver extends BroadcastReceiver {
             
             // Stop any existing playback
             if (mediaPlayer != null) {
-                mediaPlayer.release();
+                try {
+                    if (mediaPlayer.isPlaying()) {
+                        mediaPlayer.stop();
+                    }
+                    mediaPlayer.release();
+                } catch (Exception e) {
+                    Log.e(TAG, "Error stopping previous MediaPlayer: " + e.getMessage());
+                }
                 mediaPlayer = null;
             }
             
-            // Create MediaPlayer with azan sound
-            mediaPlayer = MediaPlayer.create(context, R.raw.azan);
+            // Create and configure MediaPlayer manually
+            mediaPlayer = new MediaPlayer();
             
-            if (mediaPlayer != null) {
-                // Set audio attributes for notification/alarm
-                AudioAttributes audioAttributes = new AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_ALARM)
-                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                    .build();
-                mediaPlayer.setAudioAttributes(audioAttributes);
-                
-                // Set volume to max
-                AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-                int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM);
-                int currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_ALARM);
-                
-                // Use alarm stream so it plays even in silent mode
-                mediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
-                
-                // Set completion listener
-                final PowerManager.WakeLock finalWakeLock = wakeLock;
-                mediaPlayer.setOnCompletionListener(mp -> {
-                    mp.release();
-                    mediaPlayer = null;
-                    if (finalWakeLock.isHeld()) {
-                        finalWakeLock.release();
-                    }
-                    Log.d(TAG, "Azan playback completed");
-                });
-                
-                // Set error listener
-                mediaPlayer.setOnErrorListener((mp, what, extra) -> {
-                    Log.e(TAG, "MediaPlayer error: " + what + ", " + extra);
-                    mp.release();
-                    mediaPlayer = null;
-                    if (finalWakeLock.isHeld()) {
-                        finalWakeLock.release();
-                    }
-                    return true;
-                });
-                
-                // Start playback
-                mediaPlayer.start();
-                Log.d(TAG, "Azan playback started");
-            } else {
-                Log.e(TAG, "Failed to create MediaPlayer");
+            // Set audio attributes BEFORE setting data source
+            AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_ALARM)
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .build();
+            mediaPlayer.setAudioAttributes(audioAttributes);
+            
+            // Use alarm stream so it plays even in silent mode
+            mediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
+            
+            // Set data source from raw resource
+            android.content.res.AssetFileDescriptor afd = context.getResources().openRawResourceFd(R.raw.azan);
+            if (afd == null) {
+                Log.e(TAG, "Could not open azan.mp3 resource");
                 if (wakeLock.isHeld()) {
                     wakeLock.release();
                 }
+                return;
             }
+            
+            mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+            afd.close();
+            
+            // Prepare the media player
+            mediaPlayer.prepare();
+            
+            Log.d(TAG, "MediaPlayer prepared successfully");
+            
+            // Set completion listener
+            final PowerManager.WakeLock finalWakeLock = wakeLock;
+            mediaPlayer.setOnCompletionListener(mp -> {
+                Log.d(TAG, "Azan playback completed");
+                mp.release();
+                mediaPlayer = null;
+                if (finalWakeLock.isHeld()) {
+                    finalWakeLock.release();
+                }
+            });
+            
+            // Set error listener
+            mediaPlayer.setOnErrorListener((mp, what, extra) -> {
+                Log.e(TAG, "MediaPlayer error: " + what + ", " + extra);
+                mp.release();
+                mediaPlayer = null;
+                if (finalWakeLock.isHeld()) {
+                    finalWakeLock.release();
+                }
+                return true;
+            });
+            
+            // Start playback
+            mediaPlayer.start();
+            Log.d(TAG, "Azan playback started");
+            
+            // Show notification with stop action
+            showAzanNotification(context, prayerName);
         } catch (Exception e) {
             Log.e(TAG, "Error playing azan: " + e.getMessage(), e);
+            if (mediaPlayer != null) {
+                mediaPlayer.release();
+                mediaPlayer = null;
+            }
+        }
+    }
+    
+    private void showAzanNotification(Context context, String prayerName) {
+        try {
+            // Create stop intent
+            Intent stopIntent = new Intent(context, PrayerAlarmReceiver.class);
+            stopIntent.setAction("STOP_AZAN");
+            android.app.PendingIntent stopPendingIntent = android.app.PendingIntent.getBroadcast(
+                context,
+                999,
+                stopIntent,
+                android.app.PendingIntent.FLAG_UPDATE_CURRENT | android.app.PendingIntent.FLAG_IMMUTABLE
+            );
+            
+            // Create notification
+            android.app.NotificationManager notificationManager = 
+                (android.app.NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            
+            // Prayer names in Arabic
+            String prayerNameAr = "";
+            switch (prayerName) {
+                case "Fajr": prayerNameAr = "الفجر"; break;
+                case "Dhuhr": prayerNameAr = "الظهر"; break;
+                case "Asr": prayerNameAr = "العصر"; break;
+                case "Maghrib": prayerNameAr = "المغرب"; break;
+                case "Isha": prayerNameAr = "العشاء"; break;
+                default: prayerNameAr = "الصلاة"; break;
+            }
+            
+            android.app.Notification.Builder builder = new android.app.Notification.Builder(context, "prayer-times")
+                .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
+                .setContentTitle(prayerName + " - " + prayerNameAr)
+                .setContentText("It's time for " + prayerName + " prayer")
+                .setSubText("Tap to stop azan")
+                .setContentIntent(stopPendingIntent)
+                .setAutoCancel(true)
+                .setOngoing(false)
+                .setPriority(android.app.Notification.PRIORITY_MAX)
+                .setCategory(android.app.Notification.CATEGORY_ALARM)
+                .setVisibility(android.app.Notification.VISIBILITY_PUBLIC);
+            
+            notificationManager.notify(9999, builder.build());
+            Log.d(TAG, "Prayer notification shown: " + prayerName);
+        } catch (Exception e) {
+            Log.e(TAG, "Error showing prayer notification: " + e.getMessage(), e);
         }
     }
     
@@ -115,6 +190,13 @@ public class PrayerAlarmReceiver extends BroadcastReceiver {
                 mediaPlayer.release();
                 mediaPlayer = null;
                 Log.d(TAG, "Azan playback stopped");
+                
+                // Dismiss the azan notification
+                if (appContext != null) {
+                    android.app.NotificationManager notificationManager = 
+                        (android.app.NotificationManager) appContext.getSystemService(Context.NOTIFICATION_SERVICE);
+                    notificationManager.cancel(9999);
+                }
             } catch (Exception e) {
                 Log.e(TAG, "Error stopping azan: " + e.getMessage(), e);
             }

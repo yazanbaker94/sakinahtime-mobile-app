@@ -62,7 +62,8 @@
       ],
       "./plugins/withAndroidNotificationSound.js",
       "./plugins/withAndroidNativeFiles.js",
-      "./plugins/withAndroidNativeModules.js"
+      "./plugins/withAndroidNativeModules.js",
+      "./plugins/withAndroidManifest.js"
     ],
     "extra": {
       "eas": {

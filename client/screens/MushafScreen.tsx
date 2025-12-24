@@ -921,11 +921,14 @@ export default function MushafScreen() {
           style={[styles.mushafImage, { 
             width: SCREEN_WIDTH, 
             height: imageHeight,
-            tintColor: isDark ? '#FFFFFF' : undefined
+            tintColor: isDark ? '#FFFFFF' : undefined,
           }]} 
           resizeMode="contain"
           fadeDuration={0}
-          key={`theme-${isDark}`}
+          key={`theme-${isDark}-${pageNum}`}
+          resizeMethod="resize"
+          progressiveRenderingEnabled={false}
+          shouldRasterizeIOS={false}
         />
         <View style={[styles.juzHizbBadge, { 
           top: Platform.OS === 'android' ? Math.max(insets.top, 10) + 5 : insets.top + 5,
@@ -1003,6 +1006,10 @@ export default function MushafScreen() {
       console.log('Scrolling to:', { index, offset });
       setShowSurahList(false);
       setIsNavigating(true);
+      
+      // Save the page to recent pages immediately
+      saveRecentPage(page);
+      
       requestAnimationFrame(() => {
         flatListRef.current?.scrollToOffset({ offset, animated: false });
         setTimeout(() => setIsNavigating(false), 300);
@@ -1805,6 +1812,10 @@ export default function MushafScreen() {
                         const offset = index * SCREEN_WIDTH;
                         setShowSurahList(false);
                         setIsNavigating(true);
+                        
+                        // Save the page to recent pages immediately
+                        saveRecentPage(page);
+                        
                         requestAnimationFrame(() => {
                           flatListRef.current?.scrollToOffset({ offset, animated: false });
                           setTimeout(() => setIsNavigating(false), 300);

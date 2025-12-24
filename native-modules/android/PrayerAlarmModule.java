@@ -32,8 +32,8 @@ public class PrayerAlarmModule extends ReactContextBaseJavaModule {
             Context context = getReactApplicationContext();
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             
-            // Cancel all existing alarms first
-            cancelAllAlarms(promise);
+            // Cancel all existing alarms first (without promise)
+            cancelAllAlarmsInternal(context, alarmManager);
             
             int scheduled = 0;
             for (int i = 0; i < prayers.size(); i++) {
@@ -82,31 +82,36 @@ public class PrayerAlarmModule extends ReactContextBaseJavaModule {
         }
     }
 
+    private void cancelAllAlarmsInternal(Context context, AlarmManager alarmManager) {
+        // Cancel alarms for all prayer names (including Test)
+        String[] prayers = {"Fajr", "Dhuhr", "Asr", "Maghrib", "Isha", "Test"};
+        
+        for (String prayerName : prayers) {
+            Intent intent = new Intent(context, PrayerAlarmReceiver.class);
+            int requestCode = prayerName.hashCode();
+            
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                context,
+                requestCode,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+            );
+            
+            alarmManager.cancel(pendingIntent);
+            pendingIntent.cancel();
+        }
+        
+        Log.d(TAG, "Cancelled all prayer alarms");
+    }
+
     @ReactMethod
     public void cancelAllAlarms(Promise promise) {
         try {
             Context context = getReactApplicationContext();
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             
-            // Cancel alarms for all prayer names
-            String[] prayers = {"Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"};
+            cancelAllAlarmsInternal(context, alarmManager);
             
-            for (String prayerName : prayers) {
-                Intent intent = new Intent(context, PrayerAlarmReceiver.class);
-                int requestCode = prayerName.hashCode();
-                
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                    context,
-                    requestCode,
-                    intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-                );
-                
-                alarmManager.cancel(pendingIntent);
-                pendingIntent.cancel();
-            }
-            
-            Log.d(TAG, "Cancelled all prayer alarms");
             promise.resolve("Cancelled all alarms");
         } catch (Exception e) {
             Log.e(TAG, "Error cancelling alarms: " + e.getMessage(), e);
