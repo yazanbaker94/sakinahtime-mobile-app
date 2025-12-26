@@ -924,9 +924,9 @@ export default function MushafScreen() {
             tintColor: isDark ? '#FFFFFF' : undefined,
           }]} 
           resizeMode="contain"
+          resizeMethod="scale"
           fadeDuration={0}
           key={`theme-${isDark}-${pageNum}`}
-          resizeMethod="resize"
           progressiveRenderingEnabled={false}
           shouldRasterizeIOS={false}
         />
