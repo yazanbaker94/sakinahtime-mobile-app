@@ -1,10 +1,9 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import {
   View,
   StyleSheet,
   Pressable,
   Dimensions,
-  Image,
   Modal,
   ScrollView,
   FlatList,
@@ -18,12 +17,18 @@ import {
   Share,
   Alert,
 } from "react-native";
+import { Image } from "expo-image";
 import * as Clipboard from 'expo-clipboard';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+import { useFocusEffect } from '@react-navigation/native';
 import { Swipeable, GestureDetector, Gesture } from "react-native-gesture-handler";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useHeaderHeight } from "@react-navigation/elements";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { Spacing, Colors, BorderRadius } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { Feather } from "@expo/vector-icons";
@@ -36,6 +41,10 @@ import { surahs } from "@/data/quran";
 import { surahPages } from "@/data/surah-pages";
 import AudioService from "@/services/AudioService";
 import { useCoordinates } from "@/contexts/CoordinatesContext";
+import { useProgressTracker } from "@/hooks/useProgressTracker";
+import { useLayoutDimensions } from "@/hooks/useLayoutDimensions";
+import { useNetworkStatus } from "@/hooks/useNetworkStatus";
+import { OfflineIndicator } from "@/components/OfflineIndicator";
 import { JSX } from "react/jsx-runtime";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -58,18 +67,61 @@ interface VerseRegion {
 export default function MushafScreen() {
   const { theme, isDark } = useTheme();
   const insets = useSafeAreaInsets();
-  const { allCoords, isLoading: coordsLoading, loadCoordinates } = useCoordinates();
   
-  // Log theme changes
-  React.useEffect(() => {
-    console.log('🌓 MushafScreen theme changed - isDark:', isDark);
-  }, [isDark]);
+  // Get tab bar height - this hook is safe to use since MushafScreen is always in tab context
+  const tabBarHeight = useBottomTabBarHeight();
+  
+  // Get layout dimensions for consistent positioning across devices
+  const layout = useLayoutDimensions(tabBarHeight);
+  
+  // Calculate responsive scale for player UI (base: 375px iPhone width)
+  const playerScale = Math.min(1.3, Math.max(0.85, layout.screenWidth / 375));
+  
+  const { allCoords, isLoading: coordsLoading, loadCoordinates } = useCoordinates();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  
+  // Progress tracking
+  const { markPageRead, todayProgress, stats } = useProgressTracker();
+  const pageReadTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  
+  // Network status for offline indicator
+  const { isOnline } = useNetworkStatus();
   
   // Load coordinates when screen mounts
   React.useEffect(() => {
     loadCoordinates();
   }, []);
+  
+  // Log when coordinates are loaded
+  React.useEffect(() => {
+    // Coordinates loaded
+  }, [allCoords]);
+  
   const [currentPage, setCurrentPage] = useState(1);
+  
+  // Track page reading with 3-second debounce
+  useEffect(() => {
+    // Clear any existing timer
+    if (pageReadTimerRef.current) {
+      clearTimeout(pageReadTimerRef.current);
+    }
+    
+    // Set new timer to mark page as read after 3 seconds
+    pageReadTimerRef.current = setTimeout(() => {
+      if (currentPage >= 1 && currentPage <= 604) {
+        markPageRead(currentPage).catch(err => {
+          console.error('Failed to mark page as read:', err);
+        });
+      }
+    }, 3000);
+    
+    // Cleanup on unmount or page change
+    return () => {
+      if (pageReadTimerRef.current) {
+        clearTimeout(pageReadTimerRef.current);
+      }
+    };
+  }, [currentPage, markPageRead]);
   const [selectedVerse, setSelectedVerse] = useState<VerseRegion | null>(null);
   const [tafsirData, setTafsirData] = useState<any>(null);
   const [showArabicTafsir, setShowArabicTafsir] = useState(false);
@@ -301,7 +353,7 @@ export default function MushafScreen() {
   const [showSpeedMenu, setShowSpeedMenu] = useState(false);
   const [showAudioSettings, setShowAudioSettings] = useState(false);
   const [showReciterPicker, setShowReciterPicker] = useState(false);
-  const [playUntil, setPlayUntil] = useState<'surah' | 'page' | 'juz'>('surah');
+  const [playUntil, setPlayUntil] = useState<'verse' | 'surah' | 'page' | 'juz'>('surah');
   const [selectedReciter, setSelectedReciter] = useState('Alafasy_128kbps');
   const [reciterSearch, setReciterSearch] = useState('');
   const buttonOpacity = useSharedValue(1);
@@ -459,7 +511,10 @@ export default function MushafScreen() {
     const surahData = quranData.data.surahs.find((s: any) => s.number === surah);
     if (!surahData) return [];
 
-    if (playUntil === 'surah') {
+    if (playUntil === 'verse') {
+      // Single verse only
+      return [{ surah, ayah }];
+    } else if (playUntil === 'surah') {
       return surahData.ayahs.filter((a: any) => a.numberInSurah >= ayah).map((a: any) => ({ surah, ayah: a.numberInSurah }));
     } else if (playUntil === 'page') {
       const currentPage = surahData.ayahs.find((a: any) => a.numberInSurah === ayah)?.page;
@@ -534,55 +589,68 @@ export default function MushafScreen() {
   }, []);
 
   // Load downloaded tafsirs from FileSystem
-  React.useEffect(() => {
-    const loadDownloadedTafsirs = async () => {
-      try {
-        // Clean up old tafsir data from AsyncStorage to free up space
-        console.log('Checking AsyncStorage for old tafsir data...');
-        const keys = await AsyncStorage.getAllKeys();
-        console.log('Total AsyncStorage keys:', keys.length);
-        const tafsirKeys = keys.filter(key => key.startsWith('@tafsir_') && !key.includes('_downloaded_'));
-        console.log('Old tafsir keys to remove:', tafsirKeys.length);
-        if (tafsirKeys.length > 0) {
-          await AsyncStorage.multiRemove(tafsirKeys);
-          console.log(`✅ Cleaned up ${tafsirKeys.length} old tafsir entries from AsyncStorage`);
-        }
-        
-        // Also check for any large items in AsyncStorage
-        if (Platform.OS === 'android') {
-          console.log('Android: Checking AsyncStorage size...');
-          for (const key of keys) {
-            try {
-              const value = await AsyncStorage.getItem(key);
-              if (value && value.length > 100000) { // > 100KB
-                console.log(`Large item found: ${key} (${(value.length / 1024).toFixed(2)}KB)`);
+  // Re-check downloaded tafsirs when screen is focused (in case files were deleted from Storage settings)
+  useFocusEffect(
+    React.useCallback(() => {
+      const loadDownloadedTafsirs = async () => {
+        try {
+          // Clean up old tafsir data from AsyncStorage to free up space
+          console.log('Checking AsyncStorage for old tafsir data...');
+          const keys = await AsyncStorage.getAllKeys();
+          console.log('Total AsyncStorage keys:', keys.length);
+          const tafsirKeys = keys.filter(key => key.startsWith('@tafsir_') && !key.includes('_downloaded_'));
+          console.log('Old tafsir keys to remove:', tafsirKeys.length);
+          if (tafsirKeys.length > 0) {
+            await AsyncStorage.multiRemove(tafsirKeys);
+            console.log(`✅ Cleaned up ${tafsirKeys.length} old tafsir entries from AsyncStorage`);
+          }
+          
+          // Also check for any large items in AsyncStorage
+          if (Platform.OS === 'android') {
+            console.log('Android: Checking AsyncStorage size...');
+            for (const key of keys) {
+              try {
+                const value = await AsyncStorage.getItem(key);
+                if (value && value.length > 100000) { // > 100KB
+                  console.log(`Large item found: ${key} (${(value.length / 1024).toFixed(2)}KB)`);
+                }
+              } catch (e) {
+                console.log(`Error checking key ${key}:`, e);
               }
-            } catch (e) {
-              console.log(`Error checking key ${key}:`, e);
             }
           }
-        }
-        
-        const tafsirDir = `${FileSystem.documentDirectory}tafsirs/`;
-        const dirInfo = await FileSystem.getInfoAsync(tafsirDir);
-        
-        if (dirInfo.exists) {
-          const files = await FileSystem.readDirectoryAsync(tafsirDir);
-          const downloadedIds = files.map(f => f.replace('.json', ''));
-          console.log('Downloaded tafsirs from FileSystem:', downloadedIds);
           
-          setAvailableTafsirs(prev => prev.map(t => ({
-            ...t,
-            downloaded: t.downloaded || downloadedIds.includes(t.id)
-          })));
+          const tafsirDir = `${FileSystem.documentDirectory}tafsirs/`;
+          const dirInfo = await FileSystem.getInfoAsync(tafsirDir);
+          
+          if (dirInfo.exists) {
+            const files = await FileSystem.readDirectoryAsync(tafsirDir);
+            const downloadedIds = files.map(f => f.replace('.json', ''));
+            console.log('Downloaded tafsirs from FileSystem:', downloadedIds);
+            
+            // Update downloaded status based on actual files (not preserving old state)
+            setAvailableTafsirs(prev => prev.map(t => ({
+              ...t,
+              // Built-in tafsirs are always downloaded, others only if file exists
+              downloaded: (t.id === 'jalalayn' || t.id === 'abridged' || t.id === 'sahih-international') 
+                ? true 
+                : downloadedIds.includes(t.id)
+            })));
+          } else {
+            // No tafsirs directory - reset all to not downloaded except built-ins
+            setAvailableTafsirs(prev => prev.map(t => ({
+              ...t,
+              downloaded: t.id === 'jalalayn' || t.id === 'abridged' || t.id === 'sahih-international'
+            })));
+          }
+        } catch (error) {
+          console.error('Failed to load downloaded tafsirs:', error);
         }
-      } catch (error) {
-        console.error('Failed to load downloaded tafsirs:', error);
-      }
-    };
-    
-    loadDownloadedTafsirs();
-  }, []);
+      };
+      
+      loadDownloadedTafsirs();
+    }, [])
+  );
 
   React.useEffect(() => {
     if (currentPage > 0) {
@@ -793,14 +861,15 @@ export default function MushafScreen() {
       let tafsirContent = null;
       
       if (savedTafsirId === 'abridged') {
+        console.log('📚 [MushafScreen] Loading abridged tafsir...');
         const enTafsir = await import("@/data/abridged-explanation-of-the-quran.json");
-        tafsirContent = { text: enTafsir[key]?.text || 'No tafsir available' };
+        tafsirContent = { text: (enTafsir as any)[key]?.text || 'No tafsir available' };
       } else if (savedTafsirId === 'jalalayn') {
         const arTafsir = await import("@/data/tafsir-jalalayn.json");
-        tafsirContent = { text: arTafsir[key]?.text || 'No tafsir available' };
+        tafsirContent = { text: (arTafsir as any)[key]?.text || 'No tafsir available' };
       } else if (savedTafsirId === 'sahih-international') {
         const sahihTafsir = await import("@/data/en-sahih-international-inline-footnotes.json");
-        tafsirContent = { text: sahihTafsir[key]?.t || 'No tafsir available' };
+        tafsirContent = { text: (sahihTafsir as any)[key]?.t || 'No tafsir available' };
       } else {
         // Try to load from FileSystem
         const tafsirPath = `${FileSystem.documentDirectory}tafsirs/${savedTafsirId}.json`;
@@ -841,6 +910,18 @@ export default function MushafScreen() {
               tafsirContent = entry ? { text: entry.t || entry.text || entry.tafsir || entry.content || 'No tafsir available' } : { text: 'No tafsir available for this verse' };
             }
           }
+        } else {
+          // File was deleted - fall back to default tafsir and reset selection
+          console.log(`[MushafScreen] Tafsir file not found: ${savedTafsirId}, falling back to abridged`);
+          setSelectedTafsirId('abridged');
+          await AsyncStorage.setItem('@selectedTafsir', 'abridged');
+          // Mark as not downloaded
+          setAvailableTafsirs(prev => prev.map(t => 
+            t.id === savedTafsirId ? { ...t, downloaded: false } : t
+          ));
+          // Load default tafsir
+          const enTafsir = await import("@/data/abridged-explanation-of-the-quran.json");
+          tafsirContent = { text: (enTafsir as any)[key]?.text || 'No tafsir available' };
         }
       }
       
@@ -879,9 +960,9 @@ export default function MushafScreen() {
 
   const renderPage = React.useCallback(({ item: pageNum }: { item: number }) => {
     const pageCoords = allCoords?.[pageNum];
-    const scale = SCREEN_WIDTH / 1300;
-    const imageHeight = 2103 * scale;
-    const offsetY = (SCREEN_HEIGHT - imageHeight) / 2;
+    
+    // Use layout dimensions for consistent positioning across devices
+    const { screenWidth, imageScale, imageHeight, imageOffsetY, contentZoneHeight } = layout;
 
     const verseGroups = new Map<string, any[]>();
     pageCoords?.forEach((coord: any) => {
@@ -900,58 +981,30 @@ export default function MushafScreen() {
     const pageJuz = verseData?.juz || 1;
     const pageHizb = verseData?.hizbQuarter ? Math.ceil(verseData.hizbQuarter / 4) : 1;
 
-    if (audioState?.current) {
-      console.log(`🎵 Page ${pageNum} - Audio State:`, {
-        current: audioState.current,
-        isPlaying: audioState.isPlaying,
-        verseKey: `${audioState.current.surah}:${audioState.current.ayah}`
-      });
-    }
-
-    console.log(`🎨 Rendering page ${pageNum} - isDark: ${isDark}, tintColor: ${isDark ? '#FFFFFF' : 'none'}`);
-
     return (
       <View style={[styles.pageContainer, { 
-        width: SCREEN_WIDTH, 
-        height: SCREEN_HEIGHT,
-        backgroundColor: isDark ? '#1a1a1a' : '#F5F5F5'
+        width: screenWidth, 
+        height: contentZoneHeight,
       }]}>
         <Image 
           source={mushafImages[pageNum]} 
           style={[styles.mushafImage, { 
-            width: SCREEN_WIDTH, 
+            width: screenWidth, 
             height: imageHeight,
+            top: imageOffsetY,
             tintColor: isDark ? '#FFFFFF' : undefined,
           }]} 
-          resizeMode="contain"
-          resizeMethod="scale"
-          fadeDuration={0}
+          contentFit="contain"
+          cachePolicy="memory-disk"
+          transition={0}
           key={`theme-${isDark}-${pageNum}`}
-          progressiveRenderingEnabled={false}
-          shouldRasterizeIOS={false}
         />
-        <View style={[styles.juzHizbBadge, { 
-          top: Platform.OS === 'android' ? Math.max(insets.top, 10) + 5 : insets.top + 5,
-          paddingTop: 3
-        }]}>
-          <ThemedText type="caption" style={{ fontSize: 10, opacity: isDark ? 0.7 : 0.4 }}>JUZ {pageJuz}</ThemedText>
-          <ThemedText type="caption" style={{ fontSize: 14, opacity: isDark ? 0.7 : 0.4, marginTop: 2 }}>HIZB {pageHizb}</ThemedText>
-        </View>
-        <View style={[styles.surahBadge, { 
-          top: Platform.OS === 'android' ? Math.max(insets.top, 10) + 5 : insets.top + 5
-        }]}>
-          <ThemedText type="arabic" style={{ fontFamily: 'AlMushafQuran', fontSize: 16, opacity: isDark ? 0.9 : 0.9 }}>{pageSurah?.nameAr}</ThemedText>
-          <ThemedText type="caption" style={{ fontSize: 11, opacity: isDark ? 0.7 : 0.6, marginTop: 2 }}>{pageSurah?.nameEn}</ThemedText>
-        </View>
-        <View style={styles.pageFooter}>
-          <ThemedText type="caption" style={{ fontSize: 14, opacity: isDark ? 0.6 : 0.4 }}>{pageNum}</ThemedText>
-        </View>
-        {Array.from(verseGroups.entries()).map(([verseKey, coords]) => {
+        {Array.from(verseGroups.entries()).flatMap(([verseKey, coords]) => {
           const [surah, ayah] = verseKey.split(':');
           const lineGroups = new Map<number, any[]>();
-          coords.forEach(c => {
+          coords.forEach((c: any) => {
             if (!lineGroups.has(c.line)) lineGroups.set(c.line, []);
-            lineGroups.get(c.line).push(c);
+            lineGroups.get(c.line)!.push(c);
           });
           
           return Array.from(lineGroups.values()).map((lineCoords, idx) => {
@@ -965,18 +1018,14 @@ export default function MushafScreen() {
             const isHighlighted = highlightedVerse === verseKey;
             const highlightColor = highlights[verseKey] || (notes[verseKey] ? 'rgba(212, 175, 55, 0.15)' : null);
             
-            if (isAudioPlaying) {
-              console.log('✅ Highlighting verse:', verseKey, 'on page', pageNum);
-            }
-            
             return (
               <Pressable
                 key={`${verseKey}-${idx}`}
                 style={[styles.verseRegion, { 
-                  left: minX * scale, 
-                  top: (minY * scale) + offsetY, 
-                  width: (maxX - minX) * scale, 
-                  height: (maxY - minY) * scale, 
+                  left: minX * imageScale, 
+                  top: (minY * imageScale) + imageOffsetY, 
+                  width: (maxX - minX) * imageScale, 
+                  height: (maxY - minY) * imageScale, 
                   backgroundColor: isHighlighted
                     ? 'rgba(255, 215, 0, 0.4)'
                     : isAudioPlaying 
@@ -995,15 +1044,13 @@ export default function MushafScreen() {
         })}
       </View>
     );
-  }, [allCoords, selectedVerse, handleVersePress, audioState, highlights, notes, highlightedVerse, SCREEN_WIDTH, SCREEN_HEIGHT, isDark]);
+  }, [allCoords, selectedVerse, handleVersePress, audioState, highlights, notes, highlightedVerse, isDark, layout]);
 
   const goToSurah = (surahNumber: number) => {
     const page = surahPages[surahNumber];
-    console.log('goToSurah called:', { surahNumber, page });
     if (page) {
       const index = 604 - page;
       const offset = index * SCREEN_WIDTH;
-      console.log('Scrolling to:', { index, offset });
       setShowSurahList(false);
       setIsNavigating(true);
       
@@ -1012,10 +1059,10 @@ export default function MushafScreen() {
       
       requestAnimationFrame(() => {
         flatListRef.current?.scrollToOffset({ offset, animated: false });
-        setTimeout(() => setIsNavigating(false), 300);
+        setTimeout(() => {
+          setIsNavigating(false);
+        }, 300);
       });
-    } else {
-      console.log('No page found for surah:', surahNumber);
     }
   };
 
@@ -2016,95 +2063,159 @@ export default function MushafScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <View style={[styles.pillButtonContainer, { 
-        top: Platform.OS === 'android' ? Math.max(insets.top, 10) + 5 : insets.top + 5 
-      }]}>
+      {/* Safe Area Top Spacer */}
+      <View style={{ height: layout.safeAreaTop }} />
+      
+      {/* Offline Indicator */}
+      {!isOnline && (
+        <View style={{ paddingHorizontal: Spacing.md, marginBottom: Spacing.xs }}>
+          <OfflineIndicator isOffline={!isOnline} compact />
+        </View>
+      )}
+      
+      {/* Header Zone - contains Juz/Hizb, Action Pill, Surah info */}
+      <View style={[styles.headerZone, { height: layout.headerZoneHeight }]}>
+        {/* Juz/Hizb Badge - Left */}
+        <View style={styles.headerLeft}>
+          <ThemedText type="caption" style={{ fontSize: 10, opacity: isDark ? 0.7 : 0.4 }}>
+            JUZ {(() => {
+              const pageCoords = allCoords?.[currentPage];
+              const firstVerse = pageCoords?.[0];
+              const verseData = quranData.data.surahs
+                .find((s: any) => s.number === (firstVerse?.sura || 1))
+                ?.ayahs.find((a: any) => a.numberInSurah === firstVerse?.ayah);
+              return verseData?.juz || 1;
+            })()}
+          </ThemedText>
+          <ThemedText type="caption" style={{ fontSize: 12, opacity: isDark ? 0.6 : 0.35, marginTop: 1 }}>
+            HIZB {(() => {
+              const pageCoords = allCoords?.[currentPage];
+              const firstVerse = pageCoords?.[0];
+              const verseData = quranData.data.surahs
+                .find((s: any) => s.number === (firstVerse?.sura || 1))
+                ?.ayahs.find((a: any) => a.numberInSurah === firstVerse?.ayah);
+              return verseData?.hizbQuarter ? Math.ceil(verseData.hizbQuarter / 4) : 1;
+            })()}
+          </ThemedText>
+        </View>
+        
+        {/* Action Pill - Center */}
         <View style={[styles.pillButton, { 
-          backgroundColor: isDark ? 'rgba(26, 95, 79, 0.25)' : 'rgba(255, 255, 255, 0.85)',
-          borderColor: isDark ? 'rgba(212, 175, 55, 0.4)' : 'rgba(212, 175, 55, 0.5)',
+          backgroundColor: isDark ? 'rgba(26, 95, 79, 0.85)' : 'rgba(255, 255, 255, 0.95)',
+          borderColor: isDark ? 'rgba(212, 175, 55, 0.4)' : 'rgba(0, 0, 0, 0.1)',
         }]}>
           <Pressable
-            onPress={() => {
-              setShowBookmarks(true);
-            }}
-            style={({ pressed }) => [
-              styles.pillButtonHalf,
-              { opacity: pressed ? 0.7 : 1, transform: [{ scale: pressed ? 0.95 : 1 }] },
-            ]}
+            onPress={() => navigation.navigate('Progress')}
+            style={({ pressed }) => [styles.pillButtonHalf, { opacity: pressed ? 0.5 : 1 }]}
+          >
+            <Feather name="bar-chart-2" size={16} color={isDark ? '#D4AF37' : '#1a5f4f'} />
+            <ThemedText style={{ color: isDark ? '#D4AF37' : '#1a5f4f', fontSize: 8, marginTop: 1 }}>
+              {stats?.completionPercentage?.toFixed(0) || 0}%
+            </ThemedText>
+          </Pressable>
+          <View style={[styles.pillDivider, { backgroundColor: isDark ? 'rgba(212, 175, 55, 0.3)' : 'rgba(0, 0, 0, 0.1)' }]} />
+          <Pressable
+            onPress={() => setShowBookmarks(true)}
+            style={({ pressed }) => [styles.pillButtonHalf, { opacity: pressed ? 0.5 : 1 }]}
           >
             <Feather name="bookmark" size={18} color={isDark ? '#D4AF37' : '#1a5f4f'} />
             {bookmarks.length > 0 && (
               <View style={[styles.pillBadge, { backgroundColor: isDark ? '#D4AF37' : '#1a5f4f' }]}>
-                <ThemedText type="small" style={{ color: '#FFF', fontSize: 9, fontWeight: '700' }}>{bookmarks.length}</ThemedText>
+                <ThemedText style={{ color: '#FFF', fontSize: 8, fontWeight: '700' }}>{bookmarks.length}</ThemedText>
               </View>
             )}
           </Pressable>
-          <View style={[styles.pillDivider, { backgroundColor: isDark ? 'rgba(212, 175, 55, 0.25)' : 'rgba(26, 95, 79, 0.2)' }]} />
+          <View style={[styles.pillDivider, { backgroundColor: isDark ? 'rgba(212, 175, 55, 0.3)' : 'rgba(0, 0, 0, 0.1)' }]} />
           <Pressable
-            onPress={() => {
-              setShowNotes(true);
-            }}
-            style={({ pressed }) => [
-              styles.pillButtonHalf,
-              { opacity: pressed ? 0.7 : 1, transform: [{ scale: pressed ? 0.95 : 1 }] },
-            ]}
+            onPress={() => setShowNotes(true)}
+            style={({ pressed }) => [styles.pillButtonHalf, { opacity: pressed ? 0.5 : 1 }]}
           >
             <Feather name="edit-3" size={18} color={isDark ? '#D4AF37' : '#1a5f4f'} />
-            {([...Object.keys(highlights), ...Object.keys(notes)].filter((v, i, a) => a.indexOf(v) === i).length > 0) && (
-              <View style={[styles.pillBadge, { backgroundColor: isDark ? '#D4AF37' : '#1a5f4f' }]}>
-                <ThemedText type="small" style={{ color: '#FFF', fontSize: 9, fontWeight: '700' }}>{[...Object.keys(highlights), ...Object.keys(notes)].filter((v, i, a) => a.indexOf(v) === i).length}</ThemedText>
-              </View>
-            )}
+            {(() => {
+              const uniqueKeys = new Set([...Object.keys(highlights), ...Object.keys(notes)]);
+              return uniqueKeys.size > 0 && (
+                <View style={[styles.pillBadge, { backgroundColor: isDark ? '#D4AF37' : '#1a5f4f' }]}>
+                  <ThemedText style={{ color: '#FFF', fontSize: 8, fontWeight: '700' }}>{uniqueKeys.size}</ThemedText>
+                </View>
+              );
+            })()}
           </Pressable>
-          <View style={[styles.pillDivider, { backgroundColor: isDark ? 'rgba(212, 175, 55, 0.25)' : 'rgba(26, 95, 79, 0.2)' }]} />
+          <View style={[styles.pillDivider, { backgroundColor: isDark ? 'rgba(212, 175, 55, 0.3)' : 'rgba(0, 0, 0, 0.1)' }]} />
           <Pressable
-            onPress={() => {
-              setShowSurahList(true);
-            }}
-            style={({ pressed }) => [
-              styles.pillButtonHalf,
-              { opacity: pressed ? 0.7 : 1, transform: [{ scale: pressed ? 0.95 : 1 }] },
-            ]}
+            onPress={() => setShowSurahList(true)}
+            style={({ pressed }) => [styles.pillButtonHalf, { opacity: pressed ? 0.5 : 1 }]}
           >
             <Feather name="book-open" size={18} color={isDark ? '#D4AF37' : '#1a5f4f'} />
           </Pressable>
         </View>
+        
+        {/* Surah Badge - Right */}
+        <View style={styles.headerRight}>
+          <ThemedText type="arabic" style={{ fontFamily: 'AlMushafQuran', fontSize: 14, opacity: isDark ? 0.8 : 0.7 }}>
+            {(() => {
+              const pageCoords = allCoords?.[currentPage];
+              const firstVerse = pageCoords?.[0];
+              const pageSurah = surahs.find(s => s.number === (firstVerse?.sura || 1));
+              return pageSurah?.nameAr;
+            })()}
+          </ThemedText>
+          <ThemedText type="caption" style={{ fontSize: 10, opacity: isDark ? 0.6 : 0.4, marginTop: 1 }}>
+            {(() => {
+              const pageCoords = allCoords?.[currentPage];
+              const firstVerse = pageCoords?.[0];
+              const pageSurah = surahs.find(s => s.number === (firstVerse?.sura || 1));
+              return pageSurah?.nameEn;
+            })()}
+          </ThemedText>
+        </View>
       </View>
-      <FlatList
-        ref={flatListRef}
-        data={Array.from({ length: 604 }, (_, i) => 604 - i)}
-        renderItem={renderPage}
-        keyExtractor={(item) => String(item)}
-        extraData={isDark}
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        snapToInterval={SCREEN_WIDTH}
-        decelerationRate="fast"
-        overScrollMode="never"
-        disableIntervalMomentum={true}
-        onMomentumScrollEnd={(e) => {
-          const offset = e.nativeEvent.contentOffset.x;
-          const index = Math.round(offset / SCREEN_WIDTH);
-          const page = 604 - index;
-          console.log('Scroll ended:', { offset, index, calculatedPage: page });
-          setCurrentPage(page);
-        }}
-        onScrollToIndexFailed={(info) => {
-          console.log('Scroll to index failed:', info);
-          flatListRef.current?.scrollToOffset({ offset: info.averageItemLength * info.index, animated: false });
-        }}
-        getItemLayout={(_, index) => ({
-          length: SCREEN_WIDTH,
-          offset: SCREEN_WIDTH * index,
-          index,
-        })}
-        initialNumToRender={3}
-        maxToRenderPerBatch={5}
-        windowSize={21}
-        removeClippedSubviews={false}
-        updateCellsBatchingPeriod={30}
-      />
+
+      {/* Content Zone - FlatList with Mushaf pages */}
+      <View style={[styles.contentZone, { height: layout.contentZoneHeight }]}>
+        <FlatList
+          ref={flatListRef}
+          data={Array.from({ length: 604 }, (_, i) => 604 - i)}
+          renderItem={renderPage}
+          keyExtractor={(item) => String(item)}
+          extraData={isDark}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          snapToInterval={layout.screenWidth}
+          decelerationRate="fast"
+          overScrollMode="never"
+          disableIntervalMomentum={true}
+          onMomentumScrollEnd={(e) => {
+            const offset = e.nativeEvent.contentOffset.x;
+            const index = Math.round(offset / layout.screenWidth);
+            const page = 604 - index;
+            setCurrentPage(page);
+          }}
+          onScrollToIndexFailed={(info) => {
+            flatListRef.current?.scrollToOffset({ offset: info.averageItemLength * info.index, animated: false });
+          }}
+          getItemLayout={(_, index) => ({
+            length: layout.screenWidth,
+            offset: layout.screenWidth * index,
+            index,
+          })}
+          initialNumToRender={3}
+          maxToRenderPerBatch={5}
+          windowSize={21}
+          removeClippedSubviews={false}
+          updateCellsBatchingPeriod={30}
+        />
+      </View>
+
+      {/* Footer Zone - Page Number */}
+      <View style={[styles.footerZone, { height: layout.footerZoneHeight }]}>
+        <ThemedText type="caption" style={{ fontSize: 14, opacity: isDark ? 0.6 : 0.4 }}>
+          {currentPage}
+        </ThemedText>
+      </View>
+
+      {/* Tab Bar Spacer */}
+      <View style={{ height: layout.tabBarHeight }} />
 
       {/* Loading overlay while coordinates load */}
       {coordsLoading && (
@@ -2153,7 +2264,7 @@ export default function MushafScreen() {
                   return Math.max(10, x);
                 })(),
                 top: (() => {
-                  const menuHeight = 380; // Updated height with copy/share buttons
+                  const menuHeight = 430; // Updated height with Generate Video button
                   const y = selectedVerse.touchY || 0;
                   const headerHeight = insets.top + 100;
                   const bottomSafeArea = insets.bottom + 20;
@@ -3961,11 +4072,11 @@ export default function MushafScreen() {
             <View style={styles.settingsSection}>
               <ThemedText type="body" style={{ fontWeight: '600', marginBottom: Spacing.sm, opacity: 0.6, fontSize: 13 }}>PLAY UNTIL</ThemedText>
               <View style={{ flexDirection: 'row', gap: 8 }}>
-                {[{ value: 'surah', label: 'Surah', icon: 'book' }, { value: 'page', label: 'Page', icon: 'file-text' }, { value: 'juz', label: 'Juz', icon: 'layers' }].map((option) => (
+                {[{ value: 'verse', label: 'Verse', icon: 'type' }, { value: 'surah', label: 'Surah', icon: 'book' }, { value: 'page', label: 'Page', icon: 'file-text' }, { value: 'juz', label: 'Juz', icon: 'layers' }].map((option) => (
                   <Pressable
                     key={option.value}
                     onPress={async () => {
-                      const newPlayUntil = option.value as 'surah' | 'page' | 'juz';
+                      const newPlayUntil = option.value as 'verse' | 'surah' | 'page' | 'juz';
                       const oldPlayUntil = playUntil;
                       setPlayUntil(newPlayUntil);
                       
@@ -3982,7 +4093,10 @@ export default function MushafScreen() {
                           if (!surahData) return;
                           
                           let verses: any[] = [];
-                          if (newPlayUntil === 'surah') {
+                          if (newPlayUntil === 'verse') {
+                            // Single verse - no queue, just play current
+                            verses = [{ surah: currentSurah, ayah: currentAyah }];
+                          } else if (newPlayUntil === 'surah') {
                             verses = surahData.ayahs.filter((a: any) => a.numberInSurah >= currentAyah).map((a: any) => ({ surah: currentSurah, ayah: a.numberInSurah }));
                           } else if (newPlayUntil === 'page') {
                             const currentPage = surahData.ayahs.find((a: any) => a.numberInSurah === currentAyah)?.page;
@@ -4078,20 +4192,20 @@ export default function MushafScreen() {
           <Pressable 
             onPress={() => setIsPlayerMinimized(!isPlayerMinimized)}
             style={{ 
-              paddingVertical: 8, 
+              paddingVertical: 8 * playerScale, 
               alignItems: 'center',
               width: '100%'
             }}
           >
             <View style={{ 
-              width: 36, 
-              height: 4, 
+              width: 36 * playerScale, 
+              height: 4 * playerScale, 
               backgroundColor: isDark ? 'rgba(212, 175, 55, 0.3)' : 'rgba(0, 0, 0, 0.15)',
-              borderRadius: 2,
-              marginBottom: 4,
+              borderRadius: 2 * playerScale,
+              marginBottom: 4 * playerScale,
             }} />
             <ThemedText type="caption" style={{ 
-              fontSize: 10, 
+              fontSize: 10 * playerScale, 
               opacity: 0.4, 
               letterSpacing: 0.5
             }}>
@@ -4102,17 +4216,17 @@ export default function MushafScreen() {
           {/* Expanded View - Full Controls */}
           <View style={styles.playerContent}>
               <View style={styles.playerInfo}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 * playerScale }}>
                   <View style={{ 
-                    width: 6, 
-                    height: 6, 
-                    borderRadius: 3, 
+                    width: 6 * playerScale, 
+                    height: 6 * playerScale, 
+                    borderRadius: 3 * playerScale, 
                     backgroundColor: audioState.isPlaying ? (isDark ? '#34D399' : '#059669') : (isDark ? '#666' : '#999'),
-                    marginRight: 8
+                    marginRight: 8 * playerScale
                   }} />
                   <ThemedText type="caption" style={{ 
                     opacity: 0.6, 
-                    fontSize: 11, 
+                    fontSize: 11 * playerScale, 
                     letterSpacing: 0.5, 
                     fontWeight: '600'
                   }}>
@@ -4121,30 +4235,30 @@ export default function MushafScreen() {
                   <Pressable
                     onPress={() => setShowSpeedMenu(!showSpeedMenu)}
                     style={({ pressed }) => [{
-                      paddingHorizontal: 10,
-                      paddingVertical: 4,
-                      borderRadius: 10,
+                      paddingHorizontal: 10 * playerScale,
+                      paddingVertical: 4 * playerScale,
+                      borderRadius: 10 * playerScale,
                       backgroundColor: isDark ? 'rgba(212, 175, 55, 0.2)' : 'rgba(5, 150, 105, 0.12)',
                       transform: [{ scale: pressed ? 0.95 : 1 }],
                       marginLeft: 'auto',
                     }]}
                   >
-                    <ThemedText type="caption" style={{ fontSize: 11, fontWeight: '700', color: isDark ? '#D4AF37' : '#059669', letterSpacing: 0.3 }}>
+                    <ThemedText type="caption" style={{ fontSize: 11 * playerScale, fontWeight: '700', color: isDark ? '#D4AF37' : '#059669', letterSpacing: 0.3 }}>
                       {audioState.playbackRate}×
                     </ThemedText>
                   </Pressable>
                 </View>
-                <ThemedText type="body" style={{ fontWeight: '700', fontSize: 16, letterSpacing: -0.3, marginBottom: 4 }}>
+                <ThemedText type="body" style={{ fontWeight: '700', fontSize: 16 * playerScale, letterSpacing: -0.3, marginBottom: 4 * playerScale }}>
                   {surahs.find(s => s.number === audioState.current.surah)?.nameEn || `Surah ${audioState.current.surah}`}
                 </ThemedText>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                  <ThemedText type="caption" style={{ opacity: 0.5, fontSize: 12 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 * playerScale, flexWrap: 'wrap' }}>
+                  <ThemedText type="caption" style={{ opacity: 0.5, fontSize: 12 * playerScale }}>
                     Verse {audioState.current.ayah}
                   </ThemedText>
                   {audioState.queue.length > 0 && (
                     <>
-                      <View style={{ width: 3, height: 3, borderRadius: 1.5, backgroundColor: theme.text, opacity: 0.3 }} />
-                      <ThemedText type="caption" style={{ opacity: 0.5, fontSize: 12 }}>
+                      <View style={{ width: 3 * playerScale, height: 3 * playerScale, borderRadius: 1.5 * playerScale, backgroundColor: theme.text, opacity: 0.3 }} />
+                      <ThemedText type="caption" style={{ opacity: 0.5, fontSize: 12 * playerScale }}>
                         {audioState.queue.length} remaining
                       </ThemedText>
                     </>
@@ -4155,16 +4269,16 @@ export default function MushafScreen() {
                 <Pressable
                   onPress={() => AudioService.skipToPrevious()}
                   style={({ pressed }) => [{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 20,
+                    width: 40 * playerScale,
+                    height: 40 * playerScale,
+                    borderRadius: 20 * playerScale,
                     alignItems: 'center',
                     justifyContent: 'center',
                     backgroundColor: isDark ? 'rgba(212, 175, 55, 0.15)' : 'rgba(0, 0, 0, 0.06)',
                     transform: [{ scale: pressed ? 0.9 : 1 }],
                   }]}
                 >
-                  <Feather name="skip-back" size={18} color={isDark ? '#D4AF37' : theme.text} />
+                  <Feather name="skip-back" size={18 * playerScale} color={isDark ? '#D4AF37' : theme.text} />
                 </Pressable>
                 <Pressable
                   onPress={() => {
@@ -4175,14 +4289,14 @@ export default function MushafScreen() {
                     }
                   }}
                   style={({ pressed }) => [{
-                    width: 52,
-                    height: 52,
-                    borderRadius: 26,
+                    width: 52 * playerScale,
+                    height: 52 * playerScale,
+                    borderRadius: 26 * playerScale,
                     alignItems: 'center',
                     justifyContent: 'center',
                     backgroundColor: isDark ? '#D4AF37' : '#059669',
                     transform: [{ scale: pressed ? 0.92 : 1 }],
-                    marginHorizontal: 4,
+                    marginHorizontal: 4 * playerScale,
                     shadowColor: isDark ? '#D4AF37' : '#059669',
                     shadowOffset: { width: 0, height: 4 },
                     shadowOpacity: 0.3,
@@ -4190,51 +4304,51 @@ export default function MushafScreen() {
                     elevation: 6,
                   }]}
                 >
-                  <Feather name={audioState.isPlaying ? 'pause' : 'play'} size={20} color="#FFF" />
+                  <Feather name={audioState.isPlaying ? 'pause' : 'play'} size={20 * playerScale} color="#FFF" />
                 </Pressable>
                 <Pressable
                   onPress={() => AudioService.skipToNext()}
                   style={({ pressed }) => [{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 20,
+                    width: 40 * playerScale,
+                    height: 40 * playerScale,
+                    borderRadius: 20 * playerScale,
                     alignItems: 'center',
                     justifyContent: 'center',
                     backgroundColor: isDark ? 'rgba(212, 175, 55, 0.15)' : 'rgba(0, 0, 0, 0.06)',
                     transform: [{ scale: pressed ? 0.9 : 1 }],
                   }]}
                 >
-                  <Feather name="skip-forward" size={18} color={isDark ? '#D4AF37' : theme.text} />
+                  <Feather name="skip-forward" size={18 * playerScale} color={isDark ? '#D4AF37' : theme.text} />
                 </Pressable>
                 <Pressable
                   onPress={() => setShowAudioSettings(true)}
                   style={({ pressed }) => [{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 20,
+                    width: 40 * playerScale,
+                    height: 40 * playerScale,
+                    borderRadius: 20 * playerScale,
                     alignItems: 'center',
                     justifyContent: 'center',
                     backgroundColor: isDark ? 'rgba(212, 175, 55, 0.15)' : 'rgba(0, 0, 0, 0.06)',
                     transform: [{ scale: pressed ? 0.9 : 1 }],
-                    marginLeft: 4,
+                    marginLeft: 4 * playerScale,
                   }]}
                 >
-                  <Feather name="sliders" size={16} color={isDark ? '#D4AF37' : theme.text} />
+                  <Feather name="sliders" size={16 * playerScale} color={isDark ? '#D4AF37' : theme.text} />
                 </Pressable>
                 <Pressable
                   onPress={() => AudioService.stop()}
                   style={({ pressed }) => [{
-                    width: 36,
-                    height: 36,
-                    borderRadius: 18,
+                    width: 36 * playerScale,
+                    height: 36 * playerScale,
+                    borderRadius: 18 * playerScale,
                     alignItems: 'center',
                     justifyContent: 'center',
                     backgroundColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)',
                     opacity: pressed ? 0.6 : 1,
-                    marginLeft: 8,
+                    marginLeft: 8 * playerScale,
                   }]}
                 >
-                  <Feather name="x" size={16} color={theme.text} />
+                  <Feather name="x" size={16 * playerScale} color={theme.text} />
                 </Pressable>
               </View>
             </View>
@@ -4279,13 +4393,13 @@ export default function MushafScreen() {
             <Pressable
               onPress={() => setIsPlayerMinimized(false)}
               style={({ pressed }) => [{
-                paddingHorizontal: 14,
-                paddingVertical: 10,
-                borderRadius: 20,
+                paddingHorizontal: 14 * playerScale,
+                paddingVertical: 10 * playerScale,
+                borderRadius: 20 * playerScale,
                 backgroundColor: isDark ? 'rgba(26, 95, 79, 0.98)' : 'rgba(255, 255, 255, 0.98)',
                 flexDirection: 'row',
                 alignItems: 'center',
-                gap: 8,
+                gap: 8 * playerScale,
                 shadowColor: '#000',
                 shadowOffset: { width: 0, height: 4 },
                 shadowOpacity: 0.2,
@@ -4296,8 +4410,8 @@ export default function MushafScreen() {
                 transform: [{ scale: pressed ? 0.95 : 1 }],
               }]}
             >
-              <Feather name={audioState.isPlaying ? 'pause' : 'play'} size={14} color={isDark ? '#D4AF37' : '#059669'} />
-              <ThemedText type="caption" style={{ fontSize: 12, fontWeight: '600' }}>
+              <Feather name={audioState.isPlaying ? 'pause' : 'play'} size={14 * playerScale} color={isDark ? '#D4AF37' : '#059669'} />
+              <ThemedText type="caption" style={{ fontSize: 12 * playerScale, fontWeight: '600' }}>
                 {surahs.find(s => s.number === audioState.current.surah)?.nameEn?.split(' ')[0] || audioState.current.surah}:{audioState.current.ayah}
               </ThemedText>
             </Pressable>
@@ -4311,9 +4425,9 @@ export default function MushafScreen() {
                 }
               }}
               style={({ pressed }) => [{
-                width: 44,
-                height: 44,
-                borderRadius: 22,
+                width: 44 * playerScale,
+                height: 44 * playerScale,
+                borderRadius: 22 * playerScale,
                 alignItems: 'center',
                 justifyContent: 'center',
                 backgroundColor: isDark ? '#D4AF37' : '#059669',
@@ -4325,7 +4439,7 @@ export default function MushafScreen() {
                 transform: [{ scale: pressed ? 0.9 : 1 }],
               }]}
             >
-              <Feather name={audioState.isPlaying ? 'pause' : 'play'} size={18} color="#FFF" />
+              <Feather name={audioState.isPlaying ? 'pause' : 'play'} size={18 * playerScale} color="#FFF" />
             </Pressable>
           </Animated.View>
         </GestureDetector>
@@ -4337,6 +4451,27 @@ export default function MushafScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  headerZone: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 12,
+  },
+  headerLeft: {
+    alignItems: 'flex-start',
+    minWidth: 60,
+  },
+  headerRight: {
+    alignItems: 'flex-end',
+    minWidth: 60,
+  },
+  contentZone: {
+    flex: 1,
+  },
+  footerZone: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   pageContainer: {
     justifyContent: 'center',
@@ -4350,9 +4485,7 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   pillButtonContainer: {
-    position: 'absolute',
-    left: '50%',
-    transform: [{ translateX: -64 }],
+    // Legacy style - no longer used with new layout zones
     zIndex: 10,
   },
   pillButton: {
@@ -4592,21 +4725,63 @@ const styles = StyleSheet.create({
     borderTopColor: 'rgba(128, 128, 128, 0.1)',
   },
   juzHizbBadge: {
-    position: 'absolute',
-    left: 20,
+    // Legacy style - no longer used with new layout zones
     zIndex: 1,
   },
   surahBadge: {
-    position: 'absolute',
-    right: 20,
+    // Legacy style - no longer used with new layout zones
     alignItems: 'flex-end',
     zIndex: 1,
   },
-  pageFooter: {
+  headerBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingBottom: 8,
+    borderBottomWidth: 1,
+    zIndex: 10,
+  },
+  // headerLeft, headerCenter, headerRight are defined in the new layout zone styles above
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+    gap: 12,
+  },
+  headerActionBtn: {
+    padding: 6,
+  },
+  headerBadge: {
     position: 'absolute',
-    bottom: 90,
-    left: 0,
-    right: 0,
+    top: 2,
+    right: 2,
+    minWidth: 14,
+    height: 14,
+    borderRadius: 7,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  progressBadge: {
+    position: 'absolute',
+    left: '50%',
+    marginLeft: -25,
+    alignItems: 'center',
+    zIndex: 1,
+  },
+  progressBarContainer: {
+    width: 50,
+    height: 4,
+    backgroundColor: 'rgba(128, 128, 128, 0.2)',
+    borderRadius: 2,
+    overflow: 'hidden',
+  },
+  progressBarFill: {
+    height: '100%',
+    borderRadius: 2,
+  },
+  pageFooter: {
+    // Legacy style - no longer used with new layout zones
     alignItems: 'center',
     paddingVertical: 8,
     paddingHorizontal: 16,

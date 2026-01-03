@@ -5,6 +5,9 @@ import { ThemedView } from "@/components/ThemedView";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { Spacing, Colors, BorderRadius } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { useLocation } from "@/contexts/LocationContext";
@@ -19,6 +22,7 @@ import {
 import { useNotifications } from "@/hooks/useNotifications";
 import { useAzan } from "@/hooks/useAzan";
 import { usePrayerAdjustments, applyAdjustment } from "@/hooks/usePrayerAdjustments";
+import { OfflineIndicator } from "@/components/OfflineIndicator";
 import { Feather } from "@expo/vector-icons";
 
 const PRAYERS = [
@@ -54,6 +58,7 @@ export default function PrayerTimesScreen() {
   const tabBarHeight = useBottomTabBarHeight();
   const insets = useSafeAreaInsets();
   const { theme, isDark } = useTheme();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const [countdown, setCountdown] = useState({ hours: 0, minutes: 0, seconds: 0 });
   const [nextPrayer, setNextPrayer] = useState<{ name: string; time: string; nameAr: string } | null>(null);
@@ -77,6 +82,9 @@ export default function PrayerTimesScreen() {
     isLoading: prayerLoading,
     error: prayerError,
     refetch,
+    isUsingCache,
+    cacheLastSync,
+    isOffline,
   } = usePrayerTimes(
     hasValidLocation && !methodLoading ? latitude : null,
     hasValidLocation && !methodLoading ? longitude : null,
@@ -266,6 +274,12 @@ export default function PrayerTimesScreen() {
         scrollIndicatorInsets={{ bottom: insets.bottom }}
         showsVerticalScrollIndicator={false}
       >
+        {/* Offline indicator when using cached data */}
+        <OfflineIndicator 
+          isOffline={isOffline || isUsingCache} 
+          lastSync={cacheLastSync} 
+        />
+
         {nextPrayer ? (
           <View
             style={[
@@ -302,15 +316,16 @@ export default function PrayerTimesScreen() {
               {/* Metadata */}
               <View style={styles.metadataCompact}>
                 {prayerData?.date && (
-                  <View style={styles.metaRow}>
-                    <Feather name="calendar" size={11} color="rgba(255,255,255,0.8)" />
-                    <ThemedText type="caption" style={{ color: "rgba(255,255,255,0.9)", marginLeft: 5, fontSize: 11 }}>
-                      {prayerData.date.gregorian.day} {prayerData.date.gregorian.month.en}
+                  <Pressable 
+                    style={styles.calendarButton}
+                    onPress={() => navigation.navigate('HijriCalendar')}
+                  >
+                    <Feather name="calendar" size={14} color="#FFFFFF" />
+                    <ThemedText type="caption" style={{ color: "#FFFFFF", marginLeft: 8, fontSize: 13, fontWeight: '600' }}>
+                      {toArabicNumerals(Number(prayerData.date.hijri.day) || 0)} {prayerData.date.hijri.month.ar} • View Calendar
                     </ThemedText>
-                    <ThemedText type="arabic" style={{ color: "rgba(255,255,255,0.9)", fontSize: 11, marginLeft: 4 }}>
-                      {toArabicNumerals(Number(prayerData.date.hijri.day) || 0)} <ThemedText type="arabic" style={{ fontFamily: 'AlMushafQuran', color: "rgba(255,255,255,0.9)", fontSize: 11 }}>{prayerData.date.hijri.month.ar}</ThemedText>
-                    </ThemedText>
-                  </View>
+                    <Feather name="chevron-right" size={16} color="#FFFFFF" style={{ marginLeft: 6 }} />
+                  </Pressable>
                 )}
                 {city && (
                   <View style={styles.metaRow}>
@@ -568,6 +583,17 @@ const styles = StyleSheet.create({
   metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  calendarButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 20,
+    alignSelf: 'flex-start',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
   },
   countdownCompact: {
     flexDirection: 'row',

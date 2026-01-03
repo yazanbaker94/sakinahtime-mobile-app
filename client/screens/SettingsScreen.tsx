@@ -4,6 +4,9 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { Spacing, Colors, BorderRadius } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { useThemeContext } from "@/contexts/ThemeContext";
@@ -21,6 +24,7 @@ export default function SettingsScreen() {
   const { theme, isDark } = useTheme();
   const { themeMode, setThemeMode } = useThemeContext();
   const [showNotificationModal, setShowNotificationModal] = useState(false);
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const { method: calculationMethod, setMethod: setCalculationMethod } = useCalculationMethod();
   const { adjustments: prayerAdjustments, setAdjustment } = usePrayerAdjustments();
@@ -222,6 +226,39 @@ export default function SettingsScreen() {
                   </ThemedText>
                   <ThemedText type="caption" secondary>
                     {notificationSettings.enabled ? "Enabled" : "Disabled"}
+                  </ThemedText>
+                </View>
+              </View>
+              <Feather name="chevron-right" size={20} color={theme.textSecondary} />
+            </Pressable>
+          </View>
+        </View>
+
+        {/* Storage & Downloads Section */}
+        <View style={styles.section}>
+          <View style={[styles.card, { backgroundColor: isDark ? 'rgba(26, 95, 79, 0.2)' : Colors.light.backgroundDefault }]}>
+            <Pressable
+              onPress={() => {
+                if (Platform.OS !== "web") {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                }
+                navigation.navigate('StorageManagement');
+              }}
+              style={({ pressed }) => [
+                styles.settingRow,
+                { opacity: pressed ? 0.7 : 1 },
+              ]}
+            >
+              <View style={styles.settingLeft}>
+                <View style={[styles.iconCircle, { backgroundColor: isDark ? 'rgba(96, 165, 250, 0.15)' : 'rgba(59, 130, 246, 0.1)' }]}>
+                  <Feather name="download-cloud" size={20} color={isDark ? '#60A5FA' : '#3B82F6'} />
+                </View>
+                <View style={styles.settingText}>
+                  <ThemedText type="body" style={{ fontWeight: '600' }}>
+                    Storage & Downloads
+                  </ThemedText>
+                  <ThemedText type="caption" secondary>
+                    Manage offline content
                   </ThemedText>
                 </View>
               </View>

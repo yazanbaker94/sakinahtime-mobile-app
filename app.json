@@ -21,7 +21,9 @@
       "infoPlist": {
         "UIBackgroundModes": [
           "audio"
-        ]
+        ],
+        "NSPhotoLibraryUsageDescription": "SakinahTime needs access to your photo library to save generated Quran videos.",
+        "NSPhotoLibraryAddUsageDescription": "SakinahTime needs permission to save generated Quran videos to your photo library."
       },
       "sounds": [
         "./assets/audio/azan.caf"
@@ -41,7 +43,11 @@
         "SCHEDULE_EXACT_ALARM",
         "USE_EXACT_ALARM",
         "WAKE_LOCK",
-        "RECEIVE_BOOT_COMPLETED"
+        "RECEIVE_BOOT_COMPLETED",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "READ_MEDIA_VIDEO",
+        "READ_MEDIA_AUDIO"
       ]
     },
     "web": {
@@ -63,7 +69,8 @@
       "./plugins/withAndroidNotificationSound.js",
       "./plugins/withAndroidNativeFiles.js",
       "./plugins/withAndroidNativeModules.js",
-      "./plugins/withAndroidManifest.js"
+      "./plugins/withAndroidManifest.js",
+      "expo-media-library"
     ],
     "extra": {
       "eas": {

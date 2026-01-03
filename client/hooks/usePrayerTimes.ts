@@ -1,6 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { prayerTimesCacheService } from "../services/PrayerTimesCacheService";
+import { widgetDataService } from "../services/WidgetDataService";
+import { useNetworkStatus } from "./useNetworkStatus";
 
 export const CALCULATION_METHODS = [
   { id: 0, name: "Shia Ithna-Ansari" },
@@ -93,20 +96,127 @@ async function fetchPrayerTimes(latitude: number, longitude: number, method: num
 
 export function usePrayerTimes(latitude: number | null, longitude: number | null, method: number = 2) {
   const enabled = latitude !== null && longitude !== null;
+  const { isOnline, lastOnline } = useNetworkStatus();
+  const [isUsingCache, setIsUsingCache] = useState(false);
+  const [cacheLastSync, setCacheLastSync] = useState<Date | null>(null);
 
-  return useQuery({
+  const query = useQuery({
     queryKey: ["prayerTimes", latitude, longitude, method],
-    queryFn: () => {
+    queryFn: async () => {
       if (latitude === null || longitude === null) {
         throw new Error("Location not available");
       }
-      return fetchPrayerTimes(latitude, longitude, method);
+
+      // If online, fetch from API and cache the result
+      if (isOnline) {
+        try {
+          const data = await fetchPrayerTimes(latitude, longitude, method);
+          setIsUsingCache(false);
+          
+          // Cache the prayer times for offline use
+          try {
+            await prayerTimesCacheService.initialize();
+            await prayerTimesCacheService.cachePrayerTimes(
+              data,
+              { lat: latitude, lng: longitude },
+              method
+            );
+          } catch (cacheError) {
+            console.warn('[usePrayerTimes] Failed to cache prayer times:', cacheError);
+          }
+          
+          // Update widget data
+          try {
+            await widgetDataService.updatePrayerTimes(data.timings, '');
+          } catch (widgetError) {
+            console.warn('[usePrayerTimes] Failed to update widget:', widgetError);
+          }
+          
+          return data;
+        } catch (error) {
+          // If online fetch fails, try cache as fallback
+          console.warn('[usePrayerTimes] Online fetch failed, trying cache:', error);
+          const cached = await getCachedData(latitude, longitude, method);
+          if (cached) {
+            setIsUsingCache(true);
+            setCacheLastSync(new Date(cached.cachedAt));
+            return transformCachedData(cached);
+          }
+          throw error;
+        }
+      }
+
+      // If offline, use cached data
+      const cached = await getCachedData(latitude, longitude, method);
+      if (cached) {
+        setIsUsingCache(true);
+        setCacheLastSync(new Date(cached.cachedAt));
+        return transformCachedData(cached);
+      }
+
+      throw new Error("No cached prayer times available while offline");
     },
     enabled,
     staleTime: 1000 * 60 * 60,
     gcTime: 1000 * 60 * 60 * 24,
-    retry: 2,
+    retry: isOnline ? 2 : 0, // Don't retry when offline
   });
+
+  return {
+    ...query,
+    isUsingCache,
+    cacheLastSync,
+    isOffline: !isOnline,
+  };
+}
+
+/**
+ * Get cached prayer times data
+ */
+async function getCachedData(latitude: number, longitude: number, method: number) {
+  try {
+    await prayerTimesCacheService.initialize();
+    const cached = await prayerTimesCacheService.getCachedPrayerTimes(
+      new Date(),
+      { lat: latitude, lng: longitude },
+      method
+    );
+    return cached;
+  } catch (error) {
+    console.error('[usePrayerTimes] Failed to get cached data:', error);
+    return null;
+  }
+}
+
+/**
+ * Transform cached data to match API response format
+ */
+function transformCachedData(cached: any): PrayerTimesData {
+  const [year, month, day] = cached.date.split('-');
+  const date = new Date(cached.date);
+  
+  return {
+    timings: cached.timings,
+    date: {
+      hijri: {
+        day: day,
+        weekday: { en: '', ar: '' },
+        month: { number: parseInt(month), en: '', ar: '' },
+        year: year,
+        designation: { abbreviated: 'AH', expanded: 'Anno Hegirae' },
+      },
+      gregorian: {
+        date: `${day}-${month}-${year}`,
+        day: day,
+        weekday: { en: date.toLocaleDateString('en-US', { weekday: 'long' }) },
+        month: { number: parseInt(month), en: date.toLocaleDateString('en-US', { month: 'long' }) },
+        year: year,
+      },
+    },
+    meta: {
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    },
+  };
 }
 
 export function useCalculationMethod() {
