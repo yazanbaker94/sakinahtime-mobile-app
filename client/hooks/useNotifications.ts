@@ -3,6 +3,9 @@ import { Platform, NativeModules } from "react-native";
 import * as Notifications from "expo-notifications";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { PrayerTimes } from "./usePrayerTimes";
+import { IqamaSettings } from "./useIqamaSettings";
+import { PrayerName, PRAYER_NAMES } from "../types/prayerLog";
+import { prayerLogService, getTodayDateString } from "../services/PrayerLogService";
 
 const { NotificationSoundModule, PrayerAlarmModule } = NativeModules;
 
@@ -135,6 +138,23 @@ export function useNotifications() {
   const [settings, setSettings] = useState<NotificationSettings>(DEFAULT_SETTINGS);
   const [loading, setLoading] = useState(true);
   const lastScheduledRef = useRef<string | null>(null);
+  const lastScheduleTimeRef = useRef<number>(0);
+  const lastIqamaScheduledRef = useRef<string | null>(null);
+  const lastIqamaScheduleTimeRef = useRef<number>(0);
+  const [scheduleVersion, setScheduleVersion] = useState(0); // Trigger re-scheduling
+
+  // Force reschedule if more than 1 minute has passed since last schedule
+  // This handles phone time changes
+  const shouldForceReschedule = () => {
+    const now = Date.now();
+    const timeSinceLastSchedule = now - lastScheduleTimeRef.current;
+    // If system time jumped backwards or more than 5 minutes passed, force reschedule
+    if (timeSinceLastSchedule < 0 || timeSinceLastSchedule > 5 * 60 * 1000) {
+      console.log('⏰ Time jump detected, forcing reschedule');
+      return true;
+    }
+    return false;
+  };
 
   useEffect(() => {
     loadSettings();
@@ -144,6 +164,9 @@ export function useNotifications() {
     if (Platform.OS === 'android' && PrayerAlarmModule) {
       PrayerAlarmModule.stopAzan().catch(() => {
         // Ignore errors if azan isn't playing
+      });
+      PrayerAlarmModule.stopIqama().catch(() => {
+        // Ignore errors if iqama isn't playing
       });
     }
     
@@ -172,9 +195,12 @@ export function useNotifications() {
       
       // Stop azan when notification is tapped
       if (Platform.OS === 'android' && PrayerAlarmModule) {
-        console.log('🛑 Stopping azan (notification tapped)');
+        console.log('🛑 Stopping azan/iqama (notification tapped)');
         PrayerAlarmModule.stopAzan().catch((error: any) => {
           console.log('Azan was not playing or already stopped');
+        });
+        PrayerAlarmModule.stopIqama().catch((error: any) => {
+          console.log('Iqama was not playing or already stopped');
         });
       }
     });
@@ -252,18 +278,24 @@ export function useNotifications() {
 
     console.log('📅 Scheduling prayer notifications...', { azanEnabled });
 
+    // Include current date in schedule key so alarms are rescheduled each day
+    // and when phone time changes
+    const today = new Date().toDateString();
     const scheduleKey = JSON.stringify({
+      date: today,
       timings: { Fajr: timings.Fajr, Dhuhr: timings.Dhuhr, Asr: timings.Asr, Maghrib: timings.Maghrib, Isha: timings.Isha },
       prayers: settings.prayers,
       azanEnabled,
     });
     
-    if (lastScheduledRef.current === scheduleKey) {
-      console.log('⏭️ Skipping - already scheduled with same settings');
+    if (lastScheduledRef.current === scheduleKey && !shouldForceReschedule()) {
+      console.log('⏭️ Skipping - already scheduled with same settings for today');
       return;
     }
     
     lastScheduledRef.current = scheduleKey;
+    lastScheduleTimeRef.current = Date.now();
+    console.log('🔄 Rescheduling alarms (new schedule key)');
 
     // Use native alarm module for Android (works even when app is closed)
     if (Platform.OS === 'android') {
@@ -450,6 +482,249 @@ export function useNotifications() {
     }
   }, []);
 
+  // Force reschedule iqama if time jumped
+  const shouldForceIqamaReschedule = () => {
+    const now = Date.now();
+    const timeSinceLastSchedule = now - lastIqamaScheduleTimeRef.current;
+    if (timeSinceLastSchedule < 0 || timeSinceLastSchedule > 5 * 60 * 1000) {
+      console.log('⏰ Time jump detected for iqama, forcing reschedule');
+      return true;
+    }
+    return false;
+  };
+
+  const scheduleIqamaNotifications = useCallback(async (
+    timings: PrayerTimes,
+    iqamaSettings: IqamaSettings
+  ) => {
+    if (!iqamaSettings.enabled) {
+      console.log('⏭️ Iqama disabled, cancelling any existing iqama alarms');
+      lastIqamaScheduledRef.current = null;
+      if (Platform.OS === 'android' && PrayerAlarmModule) {
+        try {
+          await PrayerAlarmModule.cancelIqamaAlarms();
+        } catch (error) {
+          console.error('Failed to cancel iqama alarms:', error);
+        }
+      }
+      return;
+    }
+
+    if (permission !== "granted") {
+      console.log('⚠️ Notification permission not granted for iqama');
+      return;
+    }
+
+    // Create schedule key for deduplication
+    const today = new Date().toDateString();
+    const iqamaScheduleKey = JSON.stringify({
+      date: today,
+      timings: { Fajr: timings.Fajr, Dhuhr: timings.Dhuhr, Asr: timings.Asr, Maghrib: timings.Maghrib, Isha: timings.Isha },
+      prayers: iqamaSettings.prayers,
+      delayMinutes: iqamaSettings.delayMinutes,
+      version: scheduleVersion,
+    });
+
+    if (lastIqamaScheduledRef.current === iqamaScheduleKey && !shouldForceIqamaReschedule()) {
+      console.log('⏭️ Skipping iqama - already scheduled with same settings for today');
+      return;
+    }
+
+    lastIqamaScheduledRef.current = iqamaScheduleKey;
+    lastIqamaScheduleTimeRef.current = Date.now();
+
+    console.log('📅 Scheduling iqama notifications...', { 
+      delayMinutes: iqamaSettings.delayMinutes,
+      prayers: iqamaSettings.prayers 
+    });
+
+    if (Platform.OS === 'android' && PrayerAlarmModule) {
+      try {
+        const prayers: Array<{ key: keyof IqamaSettings["prayers"]; time: string }> = [
+          { key: "Fajr", time: timings.Fajr },
+          { key: "Dhuhr", time: timings.Dhuhr },
+          { key: "Asr", time: timings.Asr },
+          { key: "Maghrib", time: timings.Maghrib },
+          { key: "Isha", time: timings.Isha },
+        ];
+
+        const now = new Date();
+        const iqamaAlarms = [];
+        const delayMs = iqamaSettings.delayMinutes * 60 * 1000;
+
+        for (const prayer of prayers) {
+          if (!iqamaSettings.prayers[prayer.key]) continue;
+
+          const parsedTime = parseTimeString(prayer.time);
+          if (!parsedTime) {
+            console.warn(`Invalid time format for ${prayer.key}: ${prayer.time}`);
+            continue;
+          }
+
+          const { hours, minutes } = parsedTime;
+          const prayerDate = new Date(now);
+          prayerDate.setHours(hours, minutes, 0, 0);
+          
+          // Calculate iqama time (prayer time + delay)
+          const iqamaDate = new Date(prayerDate.getTime() + delayMs);
+
+          // Check if IQAMA time is in the past, not prayer time
+          if (iqamaDate <= now) {
+            prayerDate.setDate(prayerDate.getDate() + 1);
+          }
+
+          iqamaAlarms.push({
+            name: prayer.key,
+            timestamp: prayerDate.getTime(),
+          });
+        }
+
+        const result = await PrayerAlarmModule.scheduleIqamaAlarms(
+          iqamaAlarms, 
+          iqamaSettings.delayMinutes
+        );
+        console.log('✅ Iqama alarms scheduled:', result);
+        console.log('🔔 Scheduled iqama alarms:', iqamaAlarms.map(a => 
+          `${a.name} at ${new Date(a.timestamp + iqamaSettings.delayMinutes * 60000).toLocaleString()}`
+        ));
+      } catch (error) {
+        console.error('❌ Failed to schedule iqama alarms:', error);
+      }
+    } else {
+      console.log('⚠️ Iqama scheduling only supported on Android with native module');
+    }
+  }, [permission, scheduleVersion]);
+
+  const cancelIqamaNotifications = useCallback(async () => {
+    if (Platform.OS === 'android' && PrayerAlarmModule) {
+      try {
+        await PrayerAlarmModule.cancelIqamaAlarms();
+        console.log('✅ Iqama alarms cancelled');
+      } catch (error) {
+        console.error('Failed to cancel iqama alarms:', error);
+      }
+    }
+  }, []);
+
+  /**
+   * Schedule missed prayer reminder notifications
+   * These fire X minutes after each prayer time if the prayer is still unmarked
+   */
+  const scheduleMissedPrayerReminders = useCallback(async (
+    timings: PrayerTimes,
+    delayMinutes: number,
+    enabled: boolean
+  ) => {
+    // Cancel existing missed prayer reminders first
+    const scheduled = await Notifications.getAllScheduledNotificationsAsync();
+    const missedReminderIds = scheduled
+      .filter(n => n.content.data?.type === 'missed_prayer_reminder')
+      .map(n => n.identifier);
+    
+    for (const id of missedReminderIds) {
+      await Notifications.cancelScheduledNotificationAsync(id);
+    }
+
+    if (!enabled) {
+      console.log('⏭️ Missed prayer reminders disabled');
+      return;
+    }
+
+    if (permission !== "granted") {
+      console.log('⚠️ Notification permission not granted for missed prayer reminders');
+      return;
+    }
+
+    console.log('📅 Scheduling missed prayer reminders...', { delayMinutes });
+
+    const prayers: Array<{ key: PrayerName; time: string }> = [
+      { key: "Fajr", time: timings.Fajr },
+      { key: "Dhuhr", time: timings.Dhuhr },
+      { key: "Asr", time: timings.Asr },
+      { key: "Maghrib", time: timings.Maghrib },
+      { key: "Isha", time: timings.Isha },
+    ];
+
+    const now = new Date();
+    const today = getTodayDateString();
+
+    for (const prayer of prayers) {
+      const parsedTime = parseTimeString(prayer.time);
+      if (!parsedTime) {
+        console.warn(`Invalid time format for ${prayer.key}: ${prayer.time}`);
+        continue;
+      }
+
+      const { hours, minutes } = parsedTime;
+      
+      // Calculate reminder time (prayer time + delay)
+      const reminderDate = new Date(now);
+      reminderDate.setHours(hours, minutes, 0, 0);
+      reminderDate.setMinutes(reminderDate.getMinutes() + delayMinutes);
+
+      // If reminder time has passed, schedule for tomorrow
+      if (reminderDate <= now) {
+        reminderDate.setDate(reminderDate.getDate() + 1);
+      }
+
+      try {
+        const notificationContent: any = {
+          title: `Did you pray ${prayer.key}?`,
+          body: `It's been ${delayMinutes} minutes since ${prayer.key}. Tap to mark your prayer.`,
+          data: { 
+            type: 'missed_prayer_reminder',
+            prayer: prayer.key,
+            date: today,
+          },
+        };
+
+        if (Platform.OS === 'android') {
+          notificationContent.channelId = 'prayer-times';
+        }
+
+        await Notifications.scheduleNotificationAsync({
+          content: notificationContent,
+          trigger: {
+            type: Notifications.SchedulableTriggerInputTypes.DATE,
+            date: reminderDate,
+          },
+        });
+
+        console.log(`✅ Missed reminder scheduled for ${prayer.key} at ${reminderDate.toLocaleString()}`);
+      } catch (error) {
+        console.error(`Failed to schedule missed reminder for ${prayer.key}:`, error);
+      }
+    }
+  }, [permission]);
+
+  /**
+   * Cancel missed prayer reminder for a specific prayer (when user marks it)
+   */
+  const cancelMissedPrayerReminder = useCallback(async (prayer: PrayerName) => {
+    try {
+      const scheduled = await Notifications.getAllScheduledNotificationsAsync();
+      const reminderToCancel = scheduled.find(
+        n => n.content.data?.type === 'missed_prayer_reminder' && n.content.data?.prayer === prayer
+      );
+      
+      if (reminderToCancel) {
+        await Notifications.cancelScheduledNotificationAsync(reminderToCancel.identifier);
+        console.log(`✅ Cancelled missed reminder for ${prayer}`);
+      }
+    } catch (error) {
+      console.error(`Failed to cancel missed reminder for ${prayer}:`, error);
+    }
+  }, []);
+
+  // Force clear the schedule cache to trigger rescheduling
+  const clearScheduleCache = useCallback(() => {
+    lastScheduledRef.current = null;
+    lastScheduleTimeRef.current = 0;
+    lastIqamaScheduledRef.current = null;
+    lastIqamaScheduleTimeRef.current = 0;
+    setScheduleVersion(v => v + 1);
+  }, []);
+
   return {
     permission,
     settings,
@@ -460,5 +735,10 @@ export function useNotifications() {
     schedulePrayerNotifications,
     cancelAllNotifications,
     sendTestNotification,
+    scheduleIqamaNotifications,
+    cancelIqamaNotifications,
+    scheduleMissedPrayerReminders,
+    cancelMissedPrayerReminder,
+    clearScheduleCache,
   };
 }

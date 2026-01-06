@@ -11,6 +11,9 @@ import * as Notifications from "expo-notifications";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { widgetDataService } from "./services/WidgetDataService";
 
+import { hijriDateService } from "./services/HijriDateService";
+import { moonPhaseService } from "./services/MoonPhaseService";
+
 SplashScreen.preventAutoHideAsync();
 
 // Navigation ref for handling notification taps
@@ -69,6 +72,7 @@ import { LocationProvider } from "@/contexts/LocationContext";
 import { CoordinatesProvider } from "@/contexts/CoordinatesContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { PrayerAdjustmentsProvider } from "@/contexts/PrayerAdjustmentsContext";
+import { RamadanProvider } from "@/contexts/RamadanContext";
 
 // Sample verses for daily verse widget
 const DAILY_VERSES = [
@@ -84,11 +88,11 @@ const DAILY_VERSES = [
 
 /**
  * Sync widget data on app launch
- * Updates daily verse widget with a verse based on the day
+ * Updates all widgets: daily verse, hijri date, and tasbeeh
  */
 async function syncWidgetDataOnLaunch() {
   try {
-    // Get verse based on day of year for consistency
+    // 1. Update Daily Verse widget
     const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
     const verseIndex = dayOfYear % DAILY_VERSES.length;
     const verse = DAILY_VERSES[verseIndex];
@@ -103,7 +107,15 @@ async function syncWidgetDataOnLaunch() {
       verseKey: `${verse.surah}:${verse.ayah}`,
     });
     
-    console.log('[App] Widget data synced on launch');
+    // 2. Update Hijri Date widget
+    const hijriDate = hijriDateService.getCurrentHijriDate();
+    const moonPhase = moonPhaseService.getCurrentPhase();
+    await widgetDataService.updateHijriDate(hijriDate, moonPhase, null, null);
+    
+    // 3. Update Tasbeeh widget with default values
+    await widgetDataService.updateTasbeehCount(0, 33, 'سبحان الله');
+    
+    console.log('[App] All widget data synced on launch');
   } catch (error) {
     console.warn('[App] Failed to sync widget data:', error);
   }
@@ -169,7 +181,7 @@ export default function App() {
 
     return () => {
       if (notificationResponseListener.current) {
-        Notifications.removeNotificationSubscription(notificationResponseListener.current);
+        notificationResponseListener.current.remove();
       }
     };
   }, []);
@@ -179,28 +191,30 @@ export default function App() {
   }
 
   return (
-    <ErrorBoundary>
-      <ThemeProvider>
+    <ThemeProvider>
+      <ErrorBoundary>
         <PrayerAdjustmentsProvider>
           <QueryClientProvider client={queryClient}>
             <CoordinatesProvider>
               <LocationProvider>
-                <SafeAreaProvider>
-                  <GestureHandlerRootView style={styles.root}>
-                    <KeyboardProvider>
-                      <NavigationContainer ref={navigationRef} linking={linking}>
-                        <RootStackNavigator />
-                      </NavigationContainer>
-                      <StatusBar style="auto" translucent backgroundColor="transparent" />
-                    </KeyboardProvider>
-                  </GestureHandlerRootView>
-                </SafeAreaProvider>
+                <RamadanProvider>
+                  <SafeAreaProvider>
+                    <GestureHandlerRootView style={styles.root}>
+                      <KeyboardProvider>
+                        <NavigationContainer ref={navigationRef} linking={linking}>
+                          <RootStackNavigator />
+                        </NavigationContainer>
+                        <StatusBar style="auto" translucent backgroundColor="transparent" />
+                      </KeyboardProvider>
+                    </GestureHandlerRootView>
+                  </SafeAreaProvider>
+                </RamadanProvider>
               </LocationProvider>
             </CoordinatesProvider>
           </QueryClientProvider>
         </PrayerAdjustmentsProvider>
-      </ThemeProvider>
-    </ErrorBoundary>
+      </ErrorBoundary>
+    </ThemeProvider>
   );
 }
 

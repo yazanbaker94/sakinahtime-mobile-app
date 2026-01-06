@@ -40,6 +40,10 @@ class AudioDownloadServiceImpl {
   private initialized = false;
   private isProcessing = false;
   private shouldStopProcessing = false;
+  
+  // Per-item control flags for pause/cancel
+  private cancelledItems: Set<string> = new Set();
+  private pausedItems: Set<string> = new Set();
 
   private constructor() {}
 
@@ -315,15 +319,37 @@ class AudioDownloadServiceImpl {
       const reciterDir = this.getReciterDir(item.reciter);
       await offlineStorageService.ensureDirectory(reciterDir);
 
-      let downloadedAyahs = 0;
+      let downloadedAyahs = item.lastDownloadedAyah || 0;
       let totalSize = 0;
+      
+      // Start from last downloaded ayah (for resume) or from beginning
+      const startAyah = (item.lastDownloadedAyah || 0) + 1;
 
       // Download each ayah
-      for (let ayah = 1; ayah <= surahInfo.ayahs; ayah++) {
-        // Check if cancelled
+      for (let ayah = startAyah; ayah <= surahInfo.ayahs; ayah++) {
+        // Check if this specific item was cancelled
+        if (this.cancelledItems.has(item.id)) {
+          console.log(`[AudioDownloadService] Download cancelled for surah ${item.surahNumber}`);
+          this.cancelledItems.delete(item.id);
+          // Don't save as pending - item will be removed from queue by cancelDownload()
+          return;
+        }
+        
+        // Check if this specific item was paused
+        if (this.pausedItems.has(item.id)) {
+          console.log(`[AudioDownloadService] Download paused for surah ${item.surahNumber} at ayah ${ayah - 1}`);
+          item.status = 'paused';
+          item.lastDownloadedAyah = ayah - 1;
+          await this.saveQueue();
+          this.notifyProgress(item);
+          return;
+        }
+        
+        // Check global stop (for cancelAll)
         if (this.shouldStopProcessing) {
           console.log(`[AudioDownloadService] Download cancelled for surah ${item.surahNumber}`);
-          item.status = 'pending'; // Reset to pending so it can be resumed later
+          item.status = 'pending';
+          item.lastDownloadedAyah = ayah - 1;
           this.notifyProgress(item);
           return;
         }
@@ -340,7 +366,13 @@ class AudioDownloadServiceImpl {
           let retries = 0;
           let success = false;
 
-          while (retries < DOWNLOAD_SETTINGS.RETRY_ATTEMPTS && !success && !this.shouldStopProcessing) {
+          while (retries < DOWNLOAD_SETTINGS.RETRY_ATTEMPTS && !success) {
+            // Check cancellation/pause between retries too
+            if (this.cancelledItems.has(item.id) || this.pausedItems.has(item.id) || this.shouldStopProcessing) {
+              console.log(`[AudioDownloadService] Download interrupted during retry loop`);
+              break;
+            }
+            
             try {
               const result = await FileSystem.downloadAsync(url, localPath);
               console.log(`[AudioDownloadService] Download result for ayah ${ayah}: status ${result.status}`);
@@ -354,9 +386,19 @@ class AudioDownloadServiceImpl {
                 console.warn(`[AudioDownloadService] Non-200 status: ${result.status} for ${url}`);
               }
             } catch (error) {
+              // Check if cancelled - if so, don't retry, just exit
+              if (this.cancelledItems.has(item.id) || this.pausedItems.has(item.id) || this.shouldStopProcessing) {
+                console.log(`[AudioDownloadService] Download cancelled during error handling, not retrying`);
+                break;
+              }
+              
               console.error(`[AudioDownloadService] Download error (attempt ${retries + 1}):`, error);
               retries++;
               if (retries < DOWNLOAD_SETTINGS.RETRY_ATTEMPTS) {
+                // Check again before waiting
+                if (this.cancelledItems.has(item.id) || this.pausedItems.has(item.id) || this.shouldStopProcessing) {
+                  break;
+                }
                 await new Promise(resolve => 
                   setTimeout(resolve, DOWNLOAD_SETTINGS.RETRY_DELAY_MS)
                 );
@@ -364,32 +406,57 @@ class AudioDownloadServiceImpl {
             }
           }
 
-          // Check again after retry loop
+          // Check again after retry loop for cancellation/pause
+          if (this.cancelledItems.has(item.id)) {
+            console.log(`[AudioDownloadService] Download cancelled for surah ${item.surahNumber}`);
+            item.status = 'pending'; // Mark as pending so UI knows it stopped
+            this.notifyProgress(item);
+            return;
+          }
+          
+          if (this.pausedItems.has(item.id)) {
+            console.log(`[AudioDownloadService] Download paused for surah ${item.surahNumber} at ayah ${ayah - 1}`);
+            item.status = 'paused';
+            item.lastDownloadedAyah = ayah - 1;
+            await this.saveQueue();
+            this.notifyProgress(item);
+            return;
+          }
+          
           if (this.shouldStopProcessing) {
             console.log(`[AudioDownloadService] Download cancelled for surah ${item.surahNumber}`);
             item.status = 'pending';
+            item.lastDownloadedAyah = ayah - 1;
             this.notifyProgress(item);
             return;
           }
 
-          if (!success) {
+          // Only throw error if not cancelled - cancelled downloads are expected to fail
+          if (!success && !this.cancelledItems.has(item.id) && !this.pausedItems.has(item.id) && !this.shouldStopProcessing) {
             throw new Error(`Failed to download ayah ${ayah} after ${DOWNLOAD_SETTINGS.RETRY_ATTEMPTS} retries`);
+          }
+          
+          // If cancelled/paused during download, just return without error
+          if (!success) {
+            return;
           }
         }
 
         downloadedAyahs++;
         item.progress = Math.round((downloadedAyahs / surahInfo.ayahs) * 100);
         item.downloadedBytes = downloadedAyahs * AVG_AYAH_SIZE_BYTES;
+        item.lastDownloadedAyah = ayah;
         this.notifyProgress(item);
       }
 
-      // Only mark as completed if not cancelled
-      if (!this.shouldStopProcessing) {
+      // Only mark as completed if not cancelled/paused
+      if (!this.cancelledItems.has(item.id) && !this.pausedItems.has(item.id) && !this.shouldStopProcessing) {
         // Mark as completed
         item.status = 'completed';
         item.progress = 100;
         item.completedAt = new Date();
         item.localPath = this.getReciterDir(item.reciter!);
+        item.lastDownloadedAyah = undefined; // Clear resume tracking
 
         // Update metadata
         if (!this.downloadedMeta[item.reciter!]) {
@@ -420,10 +487,19 @@ class AudioDownloadServiceImpl {
    */
   async pauseDownload(downloadId: string): Promise<void> {
     const item = this.downloadQueue.find(i => i.id === downloadId);
-    if (item && item.status === 'downloading') {
-      item.status = 'paused';
-      await this.saveQueue();
-      this.notifyProgress(item);
+    if (item) {
+      // Add to paused set - this will be checked in download loop
+      this.pausedItems.add(downloadId);
+      
+      // If pending (not yet started), update status immediately
+      if (item.status === 'pending') {
+        item.status = 'paused';
+        await this.saveQueue();
+        this.notifyProgress(item);
+      }
+      // If downloading, the loop will handle the pause when it checks pausedItems
+      
+      console.log(`[AudioDownloadService] Pause requested for ${downloadId}`);
     }
   }
 
@@ -432,9 +508,18 @@ class AudioDownloadServiceImpl {
    */
   async resumeDownload(downloadId: string): Promise<void> {
     const item = this.downloadQueue.find(i => i.id === downloadId);
-    if (item && item.status === 'paused') {
+    if (item && (item.status === 'paused' || item.status === 'failed')) {
+      // Remove from paused set
+      this.pausedItems.delete(downloadId);
+      
+      // Set to pending so it gets picked up by queue processor
       item.status = 'pending';
       await this.saveQueue();
+      this.notifyProgress(item);
+      
+      console.log(`[AudioDownloadService] Resume requested for ${downloadId}, lastAyah: ${item.lastDownloadedAyah}`);
+      
+      // Restart queue processing
       this.processQueue();
     }
   }
@@ -445,19 +530,74 @@ class AudioDownloadServiceImpl {
   async cancelDownload(downloadId: string): Promise<void> {
     const item = this.downloadQueue.find(i => i.id === downloadId);
     if (item) {
-      // Remove partially downloaded files
+      console.log(`[AudioDownloadService] Cancel requested for ${downloadId}`);
+      
+      // Add to cancelled set - this will stop the download loop
+      this.cancelledItems.add(downloadId);
+      
+      // Also remove from paused set if it was there
+      this.pausedItems.delete(downloadId);
+      
+      // Wait for the download loop to notice and stop
+      // The loop checks cancelledItems between each ayah, so we need to wait
+      // for any in-flight download to complete or fail
+      let waitTime = 0;
+      const maxWait = 3000; // Max 3 seconds
+      const checkInterval = 100;
+      
+      while (waitTime < maxWait) {
+        // Check if item is still being processed (status is 'downloading')
+        const currentItem = this.downloadQueue.find(i => i.id === downloadId);
+        if (!currentItem || currentItem.status !== 'downloading') {
+          break;
+        }
+        await new Promise(resolve => setTimeout(resolve, checkInterval));
+        waitTime += checkInterval;
+      }
+      
+      // Extra safety delay for any in-flight network request to complete
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Now safe to remove files - the download loop has stopped
       if (item.surahNumber && item.reciter) {
         const surahInfo = SURAH_INFO.find(s => s.number === item.surahNumber);
         if (surahInfo) {
+          // Delete all ayah files for this surah
           for (let ayah = 1; ayah <= surahInfo.ayahs; ayah++) {
             const localPath = this.getAyahFilePath(item.surahNumber, ayah, item.reciter);
             await FileSystem.deleteAsync(localPath, { idempotent: true });
           }
+          
+          // Also check if reciter directory is now empty and clean it up
+          const reciterDir = this.getReciterDir(item.reciter);
+          try {
+            const dirInfo = await FileSystem.getInfoAsync(reciterDir);
+            if (dirInfo.exists) {
+              const remainingFiles = await FileSystem.readDirectoryAsync(reciterDir);
+              if (remainingFiles.length === 0) {
+                await FileSystem.deleteAsync(reciterDir, { idempotent: true });
+              }
+            }
+          } catch (e) {
+            // Directory might not exist, that's fine
+          }
         }
       }
 
+      // Remove from queue
       this.downloadQueue = this.downloadQueue.filter(i => i.id !== downloadId);
       await this.saveQueue();
+      
+      // Clean up cancelled set
+      this.cancelledItems.delete(downloadId);
+      
+      // Notify UI that item was removed (send with a special status to signal removal)
+      this.notifyProgress({ ...item, status: 'pending', progress: 0 });
+      
+      // Run cleanup for any orphaned files (async, don't wait)
+      this.cleanupOrphanedFiles().catch(() => {});
+      
+      console.log(`[AudioDownloadService] Cancelled and cleaned up ${downloadId}`);
     }
   }
 
@@ -670,6 +810,107 @@ class AudioDownloadServiceImpl {
   onError(callback: ErrorCallback): () => void {
     this.errorListeners.add(callback);
     return () => this.errorListeners.delete(callback);
+  }
+
+  /**
+   * Clean up orphaned files - files that exist on disk but aren't tracked in metadata
+   * Call this to reclaim storage from cancelled/failed downloads
+   */
+  async cleanupOrphanedFiles(): Promise<number> {
+    await this.initialize();
+    
+    let cleanedBytes = 0;
+    
+    try {
+      const audioBaseDir = `${FileSystem.documentDirectory}${OFFLINE_DIRS.AUDIO}/`;
+      const dirInfo = await FileSystem.getInfoAsync(audioBaseDir);
+      
+      if (!dirInfo.exists) return 0;
+      
+      // Get all reciter directories
+      const reciterDirs = await FileSystem.readDirectoryAsync(audioBaseDir);
+      
+      for (const reciterDir of reciterDirs) {
+        const reciterPath = `${audioBaseDir}${reciterDir}/`;
+        const reciterInfo = await FileSystem.getInfoAsync(reciterPath);
+        
+        if (!reciterInfo.exists || !reciterInfo.isDirectory) continue;
+        
+        // Get tracked surahs for this reciter
+        const trackedSurahs = this.downloadedMeta[reciterDir]?.surahs || [];
+        
+        // Get all files in reciter directory
+        const files = await FileSystem.readDirectoryAsync(reciterPath);
+        
+        for (const file of files) {
+          // Parse surah number from filename (format: surah_ayah.mp3)
+          const match = file.match(/^(\d+)_\d+\.mp3$/);
+          if (match) {
+            const surahNumber = parseInt(match[1], 10);
+            
+            // If this surah isn't tracked as completed, it's orphaned
+            if (!trackedSurahs.includes(surahNumber)) {
+              const filePath = `${reciterPath}${file}`;
+              const fileInfo = await FileSystem.getInfoAsync(filePath);
+              
+              if (fileInfo.exists && 'size' in fileInfo && typeof fileInfo.size === 'number') {
+                cleanedBytes += fileInfo.size;
+              }
+              
+              await FileSystem.deleteAsync(filePath, { idempotent: true });
+            }
+          }
+        }
+        
+        // If reciter has no tracked surahs and no files left, remove the directory
+        if (trackedSurahs.length === 0) {
+          const remainingFiles = await FileSystem.readDirectoryAsync(reciterPath);
+          if (remainingFiles.length === 0) {
+            await FileSystem.deleteAsync(reciterPath, { idempotent: true });
+          }
+        }
+      }
+      
+      console.log(`[AudioDownloadService] Cleaned up ${cleanedBytes} bytes of orphaned files`);
+      return cleanedBytes;
+    } catch (error) {
+      console.error('[AudioDownloadService] Error cleaning up orphaned files:', error);
+      return cleanedBytes;
+    }
+  }
+
+  /**
+   * Get actual storage used by audio files (reads from disk, not metadata)
+   */
+  async getActualStorageUsed(): Promise<number> {
+    try {
+      const audioBaseDir = `${FileSystem.documentDirectory}${OFFLINE_DIRS.AUDIO}/`;
+      const dirInfo = await FileSystem.getInfoAsync(audioBaseDir);
+      
+      if (!dirInfo.exists) return 0;
+      
+      let totalSize = 0;
+      const reciterDirs = await FileSystem.readDirectoryAsync(audioBaseDir);
+      
+      for (const reciterDir of reciterDirs) {
+        const reciterPath = `${audioBaseDir}${reciterDir}/`;
+        const files = await FileSystem.readDirectoryAsync(reciterPath);
+        
+        for (const file of files) {
+          const filePath = `${reciterPath}${file}`;
+          const fileInfo = await FileSystem.getInfoAsync(filePath);
+          
+          if (fileInfo.exists && 'size' in fileInfo && typeof fileInfo.size === 'number') {
+            totalSize += fileInfo.size;
+          }
+        }
+      }
+      
+      return totalSize;
+    } catch (error) {
+      console.error('[AudioDownloadService] Error getting actual storage:', error);
+      return 0;
+    }
   }
 }
 

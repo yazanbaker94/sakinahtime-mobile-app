@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:background="@drawable/widget_background"
+    android:gravity="center">
+
+    <!-- Moon Phase Icon -->
+    <TextView
+        android:id="@+id/moon_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="🌙"
+        android:textSize="28sp" />
+
+    <!-- Hijri Day and Month -->
+    <TextView
+        android:id="@+id/hijri_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="3 Rajab"
+        android:textColor="@color/widget_text_primary"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <!-- Hijri Year -->
+    <TextView
+        android:id="@+id/hijri_year"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1447 AH"
+        android:textColor="@color/widget_accent"
+        android:textSize="13sp" />
+
+    <!-- Divider -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="6dp"
+        android:background="@color/widget_divider" />
+
+    <!-- Gregorian Date -->
+    <TextView
+        android:id="@+id/gregorian_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Jan 3, 2026"
+        android:textColor="@color/widget_text_secondary"
+        android:textSize="11sp" />
+
+    <!-- Event/Fasting Badge (optional) -->
+    <TextView
+        android:id="@+id/event_badge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="2dp"
+        android:background="@drawable/widget_highlight_background"
+        android:text=""
+        android:textColor="@color/widget_accent"
+        android:textSize="9sp"
+        android:visibility="gone" />
+
+</LinearLayout>

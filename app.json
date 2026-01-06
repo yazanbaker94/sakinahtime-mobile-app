@@ -69,6 +69,7 @@
       "./plugins/withAndroidNotificationSound.js",
       "./plugins/withAndroidNativeFiles.js",
       "./plugins/withAndroidNativeModules.js",
+      "./plugins/withAndroidWidgets.js",
       "./plugins/withAndroidManifest.js",
       "expo-media-library"
     ],

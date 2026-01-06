@@ -38,7 +38,7 @@ export function useHijriDate(maghribTime?: Date): UseHijriDateResult {
     setMoonPhase(newMoonPhase);
     
     // Update widget data
-    widgetDataService.updateHijriDate(newHijriDate, newMoonPhase).catch(err => {
+    widgetDataService.updateHijriDate(newHijriDate, newMoonPhase, null, null).catch(err => {
       console.warn('[useHijriDate] Failed to update widget:', err);
     });
   }, [maghribTime]);

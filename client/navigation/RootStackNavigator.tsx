@@ -5,22 +5,54 @@ import AzkarDetailScreen from "@/screens/AzkarDetailScreen";
 import IslamicGuideDetailScreen from "@/screens/IslamicGuideDetailScreen";
 import MushafScreen from "@/screens/MushafScreen";
 import ProgressScreen from "@/screens/ProgressScreen";
+import HifzProgressScreen from "@/screens/HifzProgressScreen";
+import PrayerStatsScreen from "@/screens/PrayerStatsScreen";
 import { HijriCalendarScreen } from "@/screens/HijriCalendarScreen";
 import { StorageManagementScreen } from "@/screens/StorageManagementScreen";
 import { AudioDownloadScreen } from "@/screens/AudioDownloadScreen";
+import { DuaCollectionScreen } from "@/screens/DuaCollectionScreen";
+import { DuaDetailScreen } from "@/screens/DuaDetailScreen";
+import { CustomDuaFormScreen } from "@/screens/CustomDuaFormScreen";
+import RamadanDashboardScreen from "@/screens/RamadanDashboardScreen";
+import QuranScheduleScreen from "@/screens/QuranScheduleScreen";
+import TaraweehTrackerScreen from "@/screens/TaraweehTrackerScreen";
+import CharityTrackerScreen from "@/screens/CharityTrackerScreen";
+import ZakatCalculatorScreen from "@/screens/ZakatCalculatorScreen";
+import AddDonationScreen from "@/screens/AddDonationScreen";
+import SetCharityGoalScreen from "@/screens/SetCharityGoalScreen";
+import LogTaraweehScreen from "@/screens/LogTaraweehScreen";
+import MosqueFinderScreen from "@/screens/MosqueFinderScreen";
+import MosqueDetailScreen from "@/screens/MosqueDetailScreen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 import type { AzkarCategory } from "@/data/azkar";
 import type { IslamicGuide } from "@/data/islamicGuides";
+import type { TaraweehEntry } from "@/types/ramadan";
+import type { Mosque } from "@/types/mosque";
 
 export type RootStackParamList = {
   Main: undefined;
   AzkarDetail: { category: AzkarCategory };
   IslamicGuideDetail: { guide: IslamicGuide };
-  Mushaf: undefined;
+  Mushaf: { surahNumber?: number; ayahNumber?: number } | undefined;
   Progress: undefined;
+  HifzProgress: undefined;
+  PrayerStats: undefined;
   HijriCalendar: undefined;
   StorageManagement: undefined;
   AudioDownload: undefined;
+  DuaCollection: undefined;
+  DuaDetail: { duaId: string };
+  CustomDuaForm: { duaId?: string };
+  RamadanDashboard: undefined;
+  QuranSchedule: undefined;
+  TaraweehTracker: undefined;
+  CharityTracker: undefined;
+  ZakatCalculator: undefined;
+  AddDonation: undefined;
+  SetCharityGoal: undefined;
+  LogTaraweeh: { day: number; existingEntry?: TaraweehEntry };
+  MosqueFinder: undefined;
+  MosqueDetail: { mosqueId: string; mosque?: Mosque };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -68,6 +100,20 @@ export default function RootStackNavigator() {
         }}
       />
       <Stack.Screen
+        name="HifzProgress"
+        component={HifzProgressScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="PrayerStats"
+        component={PrayerStatsScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
         name="HijriCalendar"
         component={HijriCalendarScreen}
         options={{
@@ -84,6 +130,98 @@ export default function RootStackNavigator() {
       <Stack.Screen
         name="AudioDownload"
         component={AudioDownloadScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="DuaCollection"
+        component={DuaCollectionScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="DuaDetail"
+        component={DuaDetailScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="CustomDuaForm"
+        component={CustomDuaFormScreen}
+        options={{
+          headerShown: false,
+          presentation: 'modal',
+        }}
+      />
+      <Stack.Screen
+        name="RamadanDashboard"
+        component={RamadanDashboardScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="QuranSchedule"
+        component={QuranScheduleScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="TaraweehTracker"
+        component={TaraweehTrackerScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="CharityTracker"
+        component={CharityTrackerScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="ZakatCalculator"
+        component={ZakatCalculatorScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="AddDonation"
+        component={AddDonationScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="SetCharityGoal"
+        component={SetCharityGoalScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="LogTaraweeh"
+        component={LogTaraweehScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="MosqueFinder"
+        component={MosqueFinderScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="MosqueDetail"
+        component={MosqueDetailScreen}
         options={{
           headerShown: false,
         }}

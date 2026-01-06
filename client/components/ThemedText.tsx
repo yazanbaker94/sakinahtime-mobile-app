@@ -1,7 +1,7 @@
 import { Text, type TextProps } from "react-native";
 
 import { useTheme } from "@/hooks/useTheme";
-import { Typography, Colors } from "@/constants/theme";
+import { Typography } from "@/constants/theme";
 
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
@@ -34,7 +34,7 @@ export function ThemedText({
     }
 
     if (secondary) {
-      return isDark ? Colors.dark.textSecondary : Colors.light.textSecondary;
+      return theme.textSecondary;
     }
 
     return theme.text;

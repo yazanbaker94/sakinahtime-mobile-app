@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, ScrollView, Pressable, Switch, Platform, Linking } from "react-native";
+import { View, StyleSheet, ScrollView, Pressable, Platform, Linking } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -7,22 +7,22 @@ import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
-import { Spacing, Colors, BorderRadius } from "@/constants/theme";
+import { Spacing, BorderRadius } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
-import { useThemeContext } from "@/contexts/ThemeContext";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { NotificationSettingsModal } from "@/components/NotificationSettingsModal";
+import { ThemePicker } from "@/components/ThemePicker";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useAzan } from "@/hooks/useAzan";
-import { useCalculationMethod, CALCULATION_METHODS } from "@/hooks/usePrayerTimes";
+import { useIqamaSettings, IqamaSettings } from "@/hooks/useIqamaSettings";
+import { useCalculationMethod } from "@/hooks/usePrayerTimes";
 import { usePrayerAdjustments, PrayerAdjustments } from "@/hooks/usePrayerAdjustments";
 
 export default function SettingsScreen() {
   const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
   const { theme, isDark } = useTheme();
-  const { themeMode, setThemeMode } = useThemeContext();
   const [showNotificationModal, setShowNotificationModal] = useState(false);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
@@ -39,13 +39,12 @@ export default function SettingsScreen() {
     settings: azanSettings,
     toggleAzan,
   } = useAzan();
-
-  const handleThemeChange = async (mode: "light" | "dark" | "system") => {
-    if (Platform.OS !== "web") {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    }
-    await setThemeMode(mode);
-  };
+  const {
+    settings: iqamaSettings,
+    toggleIqama,
+    setDelayMinutes: setIqamaDelay,
+    togglePrayerIqama,
+  } = useIqamaSettings();
 
   const handleToggleNotifications = async (value: boolean) => {
     if (Platform.OS !== "web") {
@@ -59,6 +58,27 @@ export default function SettingsScreen() {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
     await toggleAzan(value);
+  };
+
+  const handleToggleIqama = async (value: boolean) => {
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+    await toggleIqama(value);
+  };
+
+  const handleChangeIqamaDelay = async (minutes: number) => {
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+    await setIqamaDelay(minutes);
+  };
+
+  const handleTogglePrayerIqama = async (prayer: keyof IqamaSettings["prayers"], value: boolean) => {
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+    await togglePrayerIqama(prayer, value);
   };
 
   const handleAdjustPrayerTime = async (prayer: keyof PrayerAdjustments, minutes: number) => {
@@ -84,126 +104,29 @@ export default function SettingsScreen() {
       >
         {/* Appearance Section */}
         <View style={styles.section}>
-          <View style={[styles.card, { backgroundColor: isDark ? 'rgba(26, 95, 79, 0.2)' : Colors.light.backgroundDefault }]}>
+          <View style={[styles.card, { backgroundColor: isDark ? 'rgba(26, 95, 79, 0.2)' : theme.cardBackground }]}>
             <View style={styles.settingRow}>
               <View style={styles.settingLeft}>
-                <View style={[styles.iconCircle, { backgroundColor: isDark ? 'rgba(52, 211, 153, 0.15)' : 'rgba(16, 185, 129, 0.1)' }]}>
-                  <Feather name={isDark ? "moon" : "sun"} size={20} color={isDark ? Colors.dark.primary : Colors.light.primary} />
+                <View style={[styles.iconCircle, { backgroundColor: isDark ? 'rgba(52, 211, 153, 0.15)' : `${theme.primary}15` }]}>
+                  <Feather name="droplet" size={20} color={theme.primary} />
                 </View>
                 <View style={styles.settingText}>
                   <ThemedText type="body" style={{ fontWeight: '600' }}>
-                    Theme
+                    Appearance
                   </ThemedText>
                   <ThemedText type="caption" secondary>
-                    {themeMode === "system" ? "System Default" : themeMode === "dark" ? "Dark Mode" : "Light Mode"}
+                    Customize your theme
                   </ThemedText>
                 </View>
               </View>
             </View>
-
-            <View style={styles.themeOptions}>
-              <Pressable
-                onPress={() => handleThemeChange("light")}
-                style={[
-                  styles.themeOption,
-                  {
-                    backgroundColor: themeMode === "light"
-                      ? (isDark ? 'rgba(52, 211, 153, 0.2)' : 'rgba(16, 185, 129, 0.15)')
-                      : (isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.04)'),
-                    borderWidth: themeMode === "light" ? 2 : 1,
-                    borderColor: themeMode === "light"
-                      ? (isDark ? Colors.dark.primary : Colors.light.primary)
-                      : (isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'),
-                  },
-                ]}
-              >
-                <Feather 
-                  name="sun" 
-                  size={24} 
-                  color={themeMode === "light" ? (isDark ? Colors.dark.primary : Colors.light.primary) : theme.textSecondary} 
-                />
-                <ThemedText 
-                  type="small" 
-                  style={{ 
-                    marginTop: Spacing.xs,
-                    color: themeMode === "light" ? (isDark ? Colors.dark.primary : Colors.light.primary) : theme.textSecondary,
-                    fontWeight: themeMode === "light" ? '700' : '500',
-                  }}
-                >
-                  Light
-                </ThemedText>
-              </Pressable>
-
-              <Pressable
-                onPress={() => handleThemeChange("dark")}
-                style={[
-                  styles.themeOption,
-                  {
-                    backgroundColor: themeMode === "dark"
-                      ? (isDark ? 'rgba(52, 211, 153, 0.2)' : 'rgba(16, 185, 129, 0.15)')
-                      : (isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.04)'),
-                    borderWidth: themeMode === "dark" ? 2 : 1,
-                    borderColor: themeMode === "dark"
-                      ? (isDark ? Colors.dark.primary : Colors.light.primary)
-                      : (isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'),
-                  },
-                ]}
-              >
-                <Feather 
-                  name="moon" 
-                  size={24} 
-                  color={themeMode === "dark" ? (isDark ? Colors.dark.primary : Colors.light.primary) : theme.textSecondary} 
-                />
-                <ThemedText 
-                  type="small" 
-                  style={{ 
-                    marginTop: Spacing.xs,
-                    color: themeMode === "dark" ? (isDark ? Colors.dark.primary : Colors.light.primary) : theme.textSecondary,
-                    fontWeight: themeMode === "dark" ? '700' : '500',
-                  }}
-                >
-                  Dark
-                </ThemedText>
-              </Pressable>
-
-              <Pressable
-                onPress={() => handleThemeChange("system")}
-                style={[
-                  styles.themeOption,
-                  {
-                    backgroundColor: themeMode === "system"
-                      ? (isDark ? 'rgba(52, 211, 153, 0.2)' : 'rgba(16, 185, 129, 0.15)')
-                      : (isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.04)'),
-                    borderWidth: themeMode === "system" ? 2 : 1,
-                    borderColor: themeMode === "system"
-                      ? (isDark ? Colors.dark.primary : Colors.light.primary)
-                      : (isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'),
-                  },
-                ]}
-              >
-                <Feather 
-                  name="smartphone" 
-                  size={24} 
-                  color={themeMode === "system" ? (isDark ? Colors.dark.primary : Colors.light.primary) : theme.textSecondary} 
-                />
-                <ThemedText 
-                  type="small" 
-                  style={{ 
-                    marginTop: Spacing.xs,
-                    color: themeMode === "system" ? (isDark ? Colors.dark.primary : Colors.light.primary) : theme.textSecondary,
-                    fontWeight: themeMode === "system" ? '700' : '500',
-                  }}
-                >
-                  System
-                </ThemedText>
-              </Pressable>
-            </View>
+            <ThemePicker />
           </View>
         </View>
 
         {/* Notifications Section */}
         <View style={styles.section}>
-          <View style={[styles.card, { backgroundColor: isDark ? 'rgba(26, 95, 79, 0.2)' : Colors.light.backgroundDefault }]}>
+          <View style={[styles.card, { backgroundColor: isDark ? 'rgba(26, 95, 79, 0.2)' : theme.cardBackground }]}>
             <Pressable
               onPress={() => {
                 if (Platform.OS !== "web") {
@@ -217,8 +140,8 @@ export default function SettingsScreen() {
               ]}
             >
               <View style={styles.settingLeft}>
-                <View style={[styles.iconCircle, { backgroundColor: isDark ? 'rgba(52, 211, 153, 0.15)' : 'rgba(16, 185, 129, 0.1)' }]}>
-                  <Feather name="bell" size={20} color={isDark ? Colors.dark.primary : Colors.light.primary} />
+                <View style={[styles.iconCircle, { backgroundColor: isDark ? 'rgba(52, 211, 153, 0.15)' : `${theme.primary}15` }]}>
+                  <Feather name="bell" size={20} color={theme.primary} />
                 </View>
                 <View style={styles.settingText}>
                   <ThemedText type="body" style={{ fontWeight: '600' }}>
@@ -236,7 +159,7 @@ export default function SettingsScreen() {
 
         {/* Storage & Downloads Section */}
         <View style={styles.section}>
-          <View style={[styles.card, { backgroundColor: isDark ? 'rgba(26, 95, 79, 0.2)' : Colors.light.backgroundDefault }]}>
+          <View style={[styles.card, { backgroundColor: isDark ? 'rgba(26, 95, 79, 0.2)' : theme.cardBackground }]}>
             <Pressable
               onPress={() => {
                 if (Platform.OS !== "web") {
@@ -269,7 +192,7 @@ export default function SettingsScreen() {
 
         {/* Support Section */}
         <View style={styles.section}>
-          <View style={[styles.card, { backgroundColor: isDark ? 'rgba(26, 95, 79, 0.2)' : Colors.light.backgroundDefault }]}>
+          <View style={[styles.card, { backgroundColor: isDark ? 'rgba(26, 95, 79, 0.2)' : theme.cardBackground }]}>
             <Pressable
               onPress={async () => {
                 if (Platform.OS !== "web") {
@@ -287,8 +210,8 @@ export default function SettingsScreen() {
               ]}
             >
               <View style={styles.settingLeft}>
-                <View style={[styles.iconCircle, { backgroundColor: isDark ? 'rgba(212, 175, 55, 0.15)' : 'rgba(217, 119, 6, 0.1)' }]}>
-                  <Feather name="message-circle" size={20} color={isDark ? Colors.dark.gold : Colors.light.gold} />
+                <View style={[styles.iconCircle, { backgroundColor: isDark ? 'rgba(212, 175, 55, 0.15)' : `${theme.gold}15` }]}>
+                  <Feather name="message-circle" size={20} color={theme.gold} />
                 </View>
                 <View style={styles.settingText}>
                   <ThemedText type="body" style={{ fontWeight: '600' }}>
@@ -312,12 +235,16 @@ export default function SettingsScreen() {
         azanEnabled={azanSettings.enabled}
         calculationMethod={calculationMethod}
         prayerAdjustments={prayerAdjustments}
+        iqamaSettings={iqamaSettings}
         onToggleNotifications={handleToggleNotifications}
         onTogglePrayerNotification={togglePrayerNotification}
         onToggleAzan={handleToggleAzan}
         onChangeCalculationMethod={setCalculationMethod}
         onAdjustPrayerTime={handleAdjustPrayerTime}
         onTestNotification={() => sendTestNotification(azanSettings.enabled)}
+        onToggleIqama={handleToggleIqama}
+        onChangeIqamaDelay={handleChangeIqamaDelay}
+        onTogglePrayerIqama={handleTogglePrayerIqama}
       />
     </ThemedView>
   );
@@ -362,16 +289,5 @@ const styles = StyleSheet.create({
   },
   settingText: {
     flex: 1,
-  },
-  themeOptions: {
-    flexDirection: 'row',
-    gap: Spacing.md,
-    marginTop: Spacing.lg,
-  },
-  themeOption: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: Spacing.lg,
-    borderRadius: BorderRadius.md,
   },
 });

@@ -4,7 +4,7 @@
  * Main screen for managing offline storage and downloads.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, Pressable, Alert, ActivityIndicator } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -23,6 +23,7 @@ import { useOfflineSettings } from '@/hooks/useOfflineSettings';
 import { useNetworkStatus } from '@/hooks/useNetworkStatus';
 import { NetworkStatusBadge } from '@/components/NetworkStatusBadge';
 import { StorageCategory } from '@/types/offline';
+import { audioDownloadService } from '@/services/AudioDownloadService';
 
 export function StorageManagementScreen() {
   const insets = useSafeAreaInsets();
@@ -34,6 +35,20 @@ export function StorageManagementScreen() {
   const { settings, updateSettings, isLoading: settingsLoading } = useOfflineSettings();
   
   const [clearing, setClearing] = useState<StorageCategory | null>(null);
+
+  // Auto-cleanup orphaned files when screen loads
+  useEffect(() => {
+    const runCleanup = async () => {
+      try {
+        await audioDownloadService.cleanupOrphanedFiles();
+        // Refresh storage info after cleanup
+        refreshStorageInfo();
+      } catch (error) {
+        console.error('[StorageManagement] Auto-cleanup failed:', error);
+      }
+    };
+    runCleanup();
+  }, []);
 
   const handleClearCache = async (category: StorageCategory) => {
     const categoryNames: Record<StorageCategory, string> = {
@@ -47,7 +62,7 @@ export function StorageManagementScreen() {
     Alert.alert(
       `Clear ${categoryNames[category]}?`,
       category === 'all' 
-        ? 'This will remove all downloaded content and cached data. You will need to re-download content for offline use.'
+        ? 'This will remove all downloaded Quran audio and tafsir. You will need to re-download for offline use.'
         : `This will remove all ${categoryNames[category].toLowerCase()}. You may need to re-download for offline use.`,
       [
         { text: 'Cancel', style: 'cancel' },

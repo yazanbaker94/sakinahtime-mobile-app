@@ -37,7 +37,15 @@ export function useAudioDownload(reciter: string) {
   useEffect(() => {
     const unsubProgress = audioDownloadService.onProgress((item) => {
       if (item.reciter === reciter) {
-        setCurrentDownload(item.status === 'downloading' ? item : null);
+        // Only show as currentDownload if actually downloading
+        if (item.status === 'downloading') {
+          setCurrentDownload(item);
+        } else {
+          // Clear current download if this item was the current one
+          setCurrentDownload(prev => 
+            prev?.id === item.id ? null : prev
+          );
+        }
         setDownloadQueue(audioDownloadService.getDownloadQueue());
       }
     });
@@ -88,19 +96,19 @@ export function useAudioDownload(reciter: string) {
 
   const pauseDownload = useCallback(async (downloadId: string) => {
     await audioDownloadService.pauseDownload(downloadId);
-    setDownloadQueue(audioDownloadService.getDownloadQueue());
-    setCurrentDownload(null);
+    // State will be updated via onProgress listener
   }, []);
 
   const resumeDownload = useCallback(async (downloadId: string) => {
     await audioDownloadService.resumeDownload(downloadId);
-    setDownloadQueue(audioDownloadService.getDownloadQueue());
+    // State will be updated via onProgress listener
   }, []);
 
   const cancelDownload = useCallback(async (downloadId: string) => {
     await audioDownloadService.cancelDownload(downloadId);
+    // Immediately update local state since item is removed
     setDownloadQueue(audioDownloadService.getDownloadQueue());
-    setCurrentDownload(null);
+    setCurrentDownload(prev => prev?.id === downloadId ? null : prev);
   }, []);
 
   const cancelAllDownloads = useCallback(async () => {

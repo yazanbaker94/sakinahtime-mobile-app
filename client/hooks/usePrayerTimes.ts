@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState, useEffect, useCallback } from "react";
 import { prayerTimesCacheService } from "../services/PrayerTimesCacheService";
@@ -220,33 +220,31 @@ function transformCachedData(cached: any): PrayerTimesData {
 }
 
 export function useCalculationMethod() {
-  const [method, setMethod] = useState<number>(2);
-  const [isLoading, setIsLoading] = useState(true);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    loadMethod();
-  }, []);
-
-  const loadMethod = async () => {
-    try {
+  // Use React Query to share calculation method state across components
+  const { data: method = 2, isLoading } = useQuery({
+    queryKey: ["calculationMethod"],
+    queryFn: async () => {
       const stored = await AsyncStorage.getItem(CALCULATION_METHOD_KEY);
       if (stored !== null) {
         const parsed = parseInt(stored, 10);
         if (!isNaN(parsed)) {
-          setMethod(parsed);
+          return parsed;
         }
       }
-    } catch (e) {
-      console.error("Failed to load calculation method:", e);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      return 2; // Default method
+    },
+    staleTime: Infinity, // Never consider stale - only update when we explicitly set it
+  });
 
   const saveMethod = async (newMethod: number) => {
     try {
       await AsyncStorage.setItem(CALCULATION_METHOD_KEY, newMethod.toString());
-      setMethod(newMethod);
+      // Update the cached calculation method
+      queryClient.setQueryData(["calculationMethod"], newMethod);
+      // Invalidate prayer times queries to force refetch with new method
+      queryClient.invalidateQueries({ queryKey: ["prayerTimes"] });
     } catch (e) {
       console.error("Failed to save calculation method:", e);
     }

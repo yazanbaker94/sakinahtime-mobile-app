@@ -4,11 +4,15 @@ import { ThemedText } from "@/components/ThemedText";
 import { Spacing, Colors, BorderRadius } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { NotificationSettings } from "@/hooks/useNotifications";
+import { IqamaSettings, IQAMA_DELAY_OPTIONS } from "@/hooks/useIqamaSettings";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { CALCULATION_METHODS } from "@/hooks/usePrayerTimes";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { PrayerAdjustments } from "@/hooks/usePrayerAdjustments";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "@/navigation/RootStackNavigator";
 
 const PRAYERS = [
   { key: "Fajr", nameEn: "Fajr", nameAr: "الفجر" },
@@ -25,13 +29,19 @@ interface NotificationSettingsModalProps {
   azanEnabled: boolean;
   calculationMethod: number;
   prayerAdjustments: PrayerAdjustments;
+  iqamaSettings: IqamaSettings;
   onToggleNotifications: (enabled: boolean) => void;
   onTogglePrayerNotification: (prayer: keyof NotificationSettings["prayers"], enabled: boolean) => void;
   onToggleAzan: (enabled: boolean) => void;
   onChangeCalculationMethod: (method: number) => void;
   onAdjustPrayerTime: (prayer: keyof PrayerAdjustments, minutes: number) => void;
   onTestNotification: () => void;
+  onToggleIqama: (enabled: boolean) => void;
+  onChangeIqamaDelay: (minutes: number) => void;
+  onTogglePrayerIqama: (prayer: keyof IqamaSettings["prayers"], enabled: boolean) => void;
 }
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export function NotificationSettingsModal({
   visible,
@@ -40,17 +50,30 @@ export function NotificationSettingsModal({
   azanEnabled,
   calculationMethod,
   prayerAdjustments,
+  iqamaSettings,
   onToggleNotifications,
   onTogglePrayerNotification,
   onToggleAzan,
   onChangeCalculationMethod,
   onAdjustPrayerTime,
   onTestNotification,
+  onToggleIqama,
+  onChangeIqamaDelay,
+  onTogglePrayerIqama,
 }: NotificationSettingsModalProps) {
   const { isDark } = useTheme();
   const insets = useSafeAreaInsets();
+  const navigation = useNavigation<NavigationProp>();
   const [showMethodPicker, setShowMethodPicker] = useState(false);
   const [showAdjustments, setShowAdjustments] = useState(false);
+  const [showIqamaDelayPicker, setShowIqamaDelayPicker] = useState(false);
+  const [showIqamaPrayers, setShowIqamaPrayers] = useState(false);
+
+  const handleFindMosques = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    onClose();
+    navigation.navigate('MosqueFinder');
+  };
 
   return (
     <Modal
@@ -219,6 +242,125 @@ export function NotificationSettingsModal({
 
             <View style={styles.settingDivider} />
 
+            {/* Iqama Reminder */}
+            <View style={styles.settingRow}>
+              <View style={styles.settingInfo}>
+                <Feather name="bell" size={20} color={isDark ? Colors.dark.primary : Colors.light.primary} />
+                <View style={styles.settingText}>
+                  <ThemedText type="body">Iqama Reminder</ThemedText>
+                  <ThemedText type="small" secondary>
+                    Play "Haya Al Salat" before prayer
+                  </ThemedText>
+                </View>
+              </View>
+              <Switch
+                value={iqamaSettings.enabled}
+                onValueChange={onToggleIqama}
+                trackColor={{
+                  false: isDark ? Colors.dark.backgroundTertiary : Colors.light.backgroundSecondary,
+                  true: isDark ? Colors.dark.primary : Colors.light.primary,
+                }}
+                thumbColor="#FFFFFF"
+              />
+            </View>
+
+            {/* Iqama Delay Picker */}
+            {iqamaSettings.enabled && (
+              <>
+                <Pressable
+                  onPress={() => setShowIqamaDelayPicker(!showIqamaDelayPicker)}
+                  style={[styles.settingRow, { marginLeft: Spacing.xl + Spacing.md }]}
+                >
+                  <View style={styles.settingInfo}>
+                    <Feather name="clock" size={18} color={isDark ? Colors.dark.textSecondary : Colors.light.textSecondary} />
+                    <View style={styles.settingText}>
+                      <ThemedText type="body">Reminder Delay</ThemedText>
+                      <ThemedText type="small" secondary>
+                        {iqamaSettings.delayMinutes} minutes after Azan
+                      </ThemedText>
+                    </View>
+                  </View>
+                  <Feather
+                    name={showIqamaDelayPicker ? "chevron-up" : "chevron-down"}
+                    size={20}
+                    color={isDark ? Colors.dark.textSecondary : Colors.light.textSecondary}
+                  />
+                </Pressable>
+
+                {showIqamaDelayPicker && (
+                  <View style={styles.delayPicker}>
+                    {IQAMA_DELAY_OPTIONS.map((delay) => (
+                      <Pressable
+                        key={delay}
+                        onPress={() => {
+                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                          onChangeIqamaDelay(delay);
+                          setShowIqamaDelayPicker(false);
+                        }}
+                        style={[
+                          styles.delayItem,
+                          iqamaSettings.delayMinutes === delay && {
+                            backgroundColor: isDark ? 'rgba(52, 211, 153, 0.15)' : 'rgba(16, 185, 129, 0.1)'
+                          }
+                        ]}
+                      >
+                        <ThemedText type="body">{delay} minutes</ThemedText>
+                        {iqamaSettings.delayMinutes === delay && (
+                          <Feather name="check" size={20} color={isDark ? Colors.dark.primary : Colors.light.primary} />
+                        )}
+                      </Pressable>
+                    ))}
+                  </View>
+                )}
+
+                {/* Per-Prayer Iqama Toggles */}
+                <Pressable
+                  onPress={() => setShowIqamaPrayers(!showIqamaPrayers)}
+                  style={[styles.settingRow, { marginLeft: Spacing.xl + Spacing.md }]}
+                >
+                  <View style={styles.settingInfo}>
+                    <Feather name="list" size={18} color={isDark ? Colors.dark.textSecondary : Colors.light.textSecondary} />
+                    <View style={styles.settingText}>
+                      <ThemedText type="body">Prayer Selection</ThemedText>
+                      <ThemedText type="small" secondary>
+                        Choose which prayers get iqama
+                      </ThemedText>
+                    </View>
+                  </View>
+                  <Feather
+                    name={showIqamaPrayers ? "chevron-up" : "chevron-down"}
+                    size={20}
+                    color={isDark ? Colors.dark.textSecondary : Colors.light.textSecondary}
+                  />
+                </Pressable>
+
+                {showIqamaPrayers && (
+                  <View style={styles.iqamaPrayerToggles}>
+                    {PRAYERS.map((prayer) => (
+                      <View key={`iqama-${prayer.key}`} style={styles.prayerNotificationRow}>
+                        <ThemedText type="body">{prayer.nameEn} - {prayer.nameAr}</ThemedText>
+                        <Switch
+                          value={iqamaSettings.prayers[prayer.key as keyof IqamaSettings["prayers"]]}
+                          onValueChange={(value) =>
+                            onTogglePrayerIqama(prayer.key as keyof IqamaSettings["prayers"], value)
+                          }
+                          trackColor={{
+                            false: isDark ? Colors.dark.backgroundTertiary : Colors.light.backgroundSecondary,
+                            true: isDark ? Colors.dark.primary : Colors.light.primary,
+                          }}
+                          thumbColor="#FFFFFF"
+                        />
+                      </View>
+                    ))}
+                  </View>
+                )}
+              </>
+            )}
+
+            {/* Find Nearby Mosques Button - Removed, now in Qibla screen */}
+
+            <View style={styles.settingDivider} />
+
             {/* Calculation Method */}
             <Pressable
               onPress={() => setShowMethodPicker(!showMethodPicker)}
@@ -371,6 +513,30 @@ const styles = StyleSheet.create({
   adjustmentValue: {
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.md,
+  },
+  delayPicker: {
+    marginLeft: Spacing.xl + Spacing.md + Spacing.xl,
+    marginTop: Spacing.sm,
+  },
+  delayItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.md,
+    borderRadius: BorderRadius.md,
+    marginBottom: Spacing.xs,
+  },
+  iqamaPrayerToggles: {
+    marginLeft: Spacing.xl + Spacing.md + Spacing.xl,
+    marginTop: Spacing.sm,
+  },
+  findMosquesButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.md,
     borderRadius: BorderRadius.md,
   },
 });

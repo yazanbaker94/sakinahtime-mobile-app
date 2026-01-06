@@ -4,6 +4,9 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { Spacing, Colors, BorderRadius } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { useLocation } from "@/contexts/LocationContext";
@@ -34,7 +37,10 @@ export default function QiblaScreen() {
   const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
   const { isDark } = useTheme();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const wasAlignedRef = useRef(false);
+  const [showCalibrationHint, setShowCalibrationHint] = React.useState(false);
+  const calibrationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const glowOpacity = useSharedValue(0);
   const pulseScale = useSharedValue(1);
   const successScale = useSharedValue(1);
@@ -52,6 +58,37 @@ export default function QiblaScreen() {
   } = useLocation();
 
   const { heading, available: compassAvailable, error: compassError, accuracy } = useCompass();
+
+  // Debounce calibration hint to prevent flickering
+  useEffect(() => {
+    if (accuracy !== "high" && compassAvailable) {
+      // Show hint after 2 seconds of low accuracy
+      if (!showCalibrationHint && !calibrationTimeoutRef.current) {
+        calibrationTimeoutRef.current = setTimeout(() => {
+          setShowCalibrationHint(true);
+          calibrationTimeoutRef.current = null;
+        }, 2000);
+      }
+    } else {
+      // Hide hint after 3 seconds of high accuracy (sticky)
+      if (showCalibrationHint && !calibrationTimeoutRef.current) {
+        calibrationTimeoutRef.current = setTimeout(() => {
+          setShowCalibrationHint(false);
+          calibrationTimeoutRef.current = null;
+        }, 3000);
+      } else if (!showCalibrationHint && calibrationTimeoutRef.current) {
+        // Cancel pending show if accuracy improved
+        clearTimeout(calibrationTimeoutRef.current);
+        calibrationTimeoutRef.current = null;
+      }
+    }
+    
+    return () => {
+      if (calibrationTimeoutRef.current) {
+        clearTimeout(calibrationTimeoutRef.current);
+      }
+    };
+  }, [accuracy, compassAvailable, showCalibrationHint]);
 
   const qiblaDirection = useMemo(() => {
     if (latitude === null || longitude === null) return 0;
@@ -457,8 +494,26 @@ export default function QiblaScreen() {
           </View>
         </View>
 
+        {/* Find Nearby Mosques Button */}
+        <Pressable
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            navigation.navigate('MosqueFinder');
+          }}
+          style={[styles.mosquesButton, {
+            backgroundColor: isDark ? 'rgba(52, 211, 153, 0.15)' : 'rgba(16, 185, 129, 0.1)',
+            borderColor: isDark ? 'rgba(52, 211, 153, 0.3)' : 'rgba(16, 185, 129, 0.3)',
+          }]}
+        >
+          <Feather name="map" size={18} color={primaryColor} />
+          <ThemedText type="body" style={{ color: primaryColor, fontWeight: '600', marginLeft: Spacing.sm }}>
+            Find Nearby Mosques
+          </ThemedText>
+          <Feather name="chevron-right" size={18} color={primaryColor} style={{ marginLeft: 'auto' }} />
+        </Pressable>
+
         {/* Calibration Hint */}
-        {accuracy !== "high" && compassAvailable ? (
+        {showCalibrationHint ? (
           <View style={[styles.calibrationHint, {
             backgroundColor: isDark ? 'rgba(245, 158, 11, 0.15)' : 'rgba(217, 119, 6, 0.1)',
             paddingHorizontal: 16,
@@ -653,6 +708,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flex: 1,
     maxWidth: 155,
+  },
+  mosquesButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1.5,
+    width: '100%',
+    maxWidth: 320,
   },
   calibrationHint: {
     flexDirection: "row",

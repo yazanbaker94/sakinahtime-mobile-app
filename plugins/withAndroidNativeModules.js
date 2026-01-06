@@ -11,8 +11,17 @@ module.exports = function withAndroidNativeModules(config) {
     // Check if packages are already added
     const hasNotificationPackage = contents.includes('NotificationSoundPackage()');
     const hasPrayerPackage = contents.includes('PrayerAlarmPackage()');
+    const hasWidgetPackage = contents.includes('WidgetBridgePackage()');
 
-    if (!hasNotificationPackage || !hasPrayerPackage) {
+    // Add import for WidgetBridgePackage if not present
+    if (!contents.includes('import com.sakinahtime.app.bridge.WidgetBridgePackage')) {
+      contents = contents.replace(
+        'import com.facebook.react.ReactPackage',
+        'import com.facebook.react.ReactPackage\nimport com.sakinahtime.app.bridge.WidgetBridgePackage'
+      );
+    }
+
+    if (!hasNotificationPackage || !hasPrayerPackage || !hasWidgetPackage) {
       // Find the packages list
       const packagesRegex = /(override fun getPackages\(\): List<ReactPackage> =\s+PackageList\(this\)\.packages\.apply\s*\{[^}]*)/;
       
@@ -30,6 +39,11 @@ module.exports = function withAndroidNativeModules(config) {
             // Add PrayerAlarmPackage if not present
             if (!hasPrayerPackage) {
               result += '\n              add(PrayerAlarmPackage())';
+            }
+            
+            // Add WidgetBridgePackage if not present
+            if (!hasWidgetPackage) {
+              result += '\n              add(WidgetBridgePackage())';
             }
             
             return result;

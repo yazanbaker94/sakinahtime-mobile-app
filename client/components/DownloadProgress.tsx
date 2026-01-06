@@ -22,6 +22,7 @@ interface DownloadProgressProps {
 
 export function DownloadProgress({ item, onPause, onResume, onCancel }: DownloadProgressProps) {
   const { isDark } = useTheme();
+  const [isCancelling, setIsCancelling] = React.useState(false);
 
   const surahInfo = SURAH_INFO.find(s => s.number === item.surahNumber);
   const surahName = surahInfo?.nameEn || `Surah ${item.surahNumber}`;
@@ -29,6 +30,11 @@ export function DownloadProgress({ item, onPause, onResume, onCancel }: Download
   const isDownloading = item.status === 'downloading';
   const isPaused = item.status === 'paused';
   const isFailed = item.status === 'failed';
+
+  const handleCancel = () => {
+    setIsCancelling(true);
+    onCancel?.();
+  };
 
   const getStatusColor = () => {
     if (isFailed) return isDark ? '#F87171' : '#EF4444';
@@ -77,8 +83,19 @@ export function DownloadProgress({ item, onPause, onResume, onCancel }: Download
             </Pressable>
           )}
           {onCancel && (
-            <Pressable onPress={onCancel} style={styles.controlButton}>
-              <Feather name="x" size={18} color={isDark ? '#F87171' : '#EF4444'} />
+            <Pressable 
+              onPress={handleCancel} 
+              style={styles.controlButton}
+              disabled={isCancelling}
+            >
+              {isCancelling ? (
+                <ActivityIndicator 
+                  size={18} 
+                  color={isDark ? '#F87171' : '#EF4444'} 
+                />
+              ) : (
+                <Feather name="x" size={18} color={isDark ? '#F87171' : '#EF4444'} />
+              )}
             </Pressable>
           )}
         </View>

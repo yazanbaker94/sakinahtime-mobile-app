@@ -151,14 +151,15 @@ class OfflineStorageServiceImpl {
   }
 
   /**
-   * Clear all cached data
+   * Clear all cached data (only audio and tafsir - safe to clear)
+   * Does NOT clear prayer cache (essential) or system cache (can break fonts/assets)
    */
   async clearAllCache(): Promise<void> {
     await Promise.all([
       this.clearAudioCache(),
       this.clearTafsirCache(),
-      this.clearPrayerCache(),
-      this.clearOtherCache(),
+      // Don't clear prayer cache - it's essential and will cause UI issues
+      // Don't clear other cache - it can break fonts and other assets
     ]);
   }
 

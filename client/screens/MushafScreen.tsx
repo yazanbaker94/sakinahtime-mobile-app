@@ -20,8 +20,8 @@ import {
 import { Image } from "expo-image";
 import * as Clipboard from 'expo-clipboard';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
-import { useFocusEffect } from '@react-navigation/native';
+import { BottomTabBarHeightContext } from '@react-navigation/bottom-tabs';
+import { useFocusEffect, useRoute, RouteProp } from '@react-navigation/native';
 import { Swipeable, GestureDetector, Gesture } from "react-native-gesture-handler";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -29,6 +29,7 @@ import { useHeaderHeight } from "@react-navigation/elements";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
+import { MainTabParamList } from "@/navigation/MainTabNavigator";
 import { Spacing, Colors, BorderRadius } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { Feather } from "@expo/vector-icons";
@@ -46,6 +47,13 @@ import { useLayoutDimensions } from "@/hooks/useLayoutDimensions";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { OfflineIndicator } from "@/components/OfflineIndicator";
 import { JSX } from "react/jsx-runtime";
+// Hifz Mode imports
+import { HifzModeProvider, useHifzMode } from "@/contexts/HifzModeContext";
+import { MushafHifzOverlay } from "@/components/hifz/MushafHifzOverlay";
+import { useHifzProgress } from "@/hooks/useHifzProgress";
+import { useRevisionSchedule } from "@/hooks/useRevisionSchedule";
+import { HIFZ_ACTIVE_COLOR, HIDDEN_TEXT_BG } from "@/constants/hifz";
+import type { MemorizationStatus } from "@/types/hifz";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -64,12 +72,24 @@ interface VerseRegion {
   touchY?: number;
 }
 
+// Wrapper component that provides HifzModeContext
 export default function MushafScreen() {
+  return (
+    <HifzModeProvider>
+      <MushafScreenContent />
+    </HifzModeProvider>
+  );
+}
+
+// Inner component that can use Hifz hooks
+function MushafScreenContent() {
   const { theme, isDark } = useTheme();
   const insets = useSafeAreaInsets();
+  const route = useRoute<RouteProp<MainTabParamList, 'QuranTab'>>();
   
-  // Get tab bar height - this hook is safe to use since MushafScreen is always in tab context
-  const tabBarHeight = useBottomTabBarHeight();
+  // Get tab bar height safely - returns 0 if not in tab context (e.g., when navigated from stack)
+  const tabBarHeightContext = React.useContext(BottomTabBarHeightContext);
+  const tabBarHeight = tabBarHeightContext ?? 0;
   
   // Get layout dimensions for consistent positioning across devices
   const layout = useLayoutDimensions(tabBarHeight);
@@ -139,6 +159,17 @@ export default function MushafScreen() {
   const [highlightedVerse, setHighlightedVerse] = useState<string | null>(null);
   const [lastSearchTerm, setLastSearchTerm] = useState<string>('');
   const [audioState, setAudioState] = useState<any>(null);
+  const [showHifzStatusMenu, setShowHifzStatusMenu] = useState(false);
+  const [showHifzControlPanel, setShowHifzControlPanel] = useState(false);
+  const [hifzMenuVerseKey, setHifzMenuVerseKey] = useState<string | null>(null);
+  const [hifzMenuPosition, setHifzMenuPosition] = useState({ x: 0, y: 0 });
+  const [showHifzTooltip, setShowHifzTooltip] = useState(false);
+  const [navigationToast, setNavigationToast] = useState<string | null>(null);
+  
+  // Hifz Mode hooks
+  const hifzMode = useHifzMode();
+  const { progress: hifzProgress, markVerse: markHifzVerse } = useHifzProgress();
+  const { dueRevisions, isVerseDueForRevision } = useRevisionSchedule();
   
   // Function to get full language name from code
   const getLanguageName = (code: string): string => {
@@ -575,6 +606,67 @@ export default function MushafScreen() {
   
   const flatListRef = React.useRef<FlatList>(null);
 
+  // Handle navigation params to go to specific surah/ayah/page (e.g., from Dua detail "View in Quran" or Ramadan mode)
+  React.useEffect(() => {
+    const params = route.params;
+    if (params?.page || params?.surahNumber) {
+      // Find the page for this specific verse
+      let targetPage: number | null = null;
+      
+      // Direct page navigation (e.g., from Ramadan Quran schedule)
+      if (params.page) {
+        targetPage = params.page;
+      } else if (params.ayahNumber && params.surahNumber) {
+        // Find the exact page for this ayah
+        const surah = quranData.data.surahs.find((s: any) => s.number === params.surahNumber);
+        if (surah) {
+          const ayah = surah.ayahs.find((a: any) => a.numberInSurah === params.ayahNumber);
+          if (ayah) {
+            targetPage = ayah.page;
+          }
+        }
+      }
+      
+      // Fallback to surah start page if ayah not found
+      if (!targetPage && params.surahNumber) {
+        targetPage = surahPages[params.surahNumber];
+      }
+      
+      // Ensure page is within valid range (1-604)
+      if (targetPage) {
+        targetPage = Math.max(1, Math.min(604, targetPage));
+        
+        // Small delay to ensure FlatList is ready
+        setTimeout(() => {
+          const index = Math.max(0, Math.min(603, 604 - targetPage!));
+          flatListRef.current?.scrollToIndex({ index, animated: true });
+          setCurrentPage(targetPage!);
+          
+          // If ayah is specified, highlight it with a flash effect
+          if (params.ayahNumber && params.surahNumber) {
+            const verseKey = `${params.surahNumber}:${params.ayahNumber}`;
+            // Flash the highlight 3 times for visibility
+            let flashCount = 0;
+            const flashInterval = setInterval(() => {
+              flashCount++;
+              if (flashCount % 2 === 1) {
+                setHighlightedVerse(verseKey);
+              } else {
+                setHighlightedVerse(null);
+              }
+              if (flashCount >= 6) {
+                clearInterval(flashInterval);
+                // Keep it highlighted for a bit longer after flashing
+                setHighlightedVerse(verseKey);
+                setTimeout(() => setHighlightedVerse(null), 2000);
+              }
+            }, 300);
+          }
+        }, 500);
+      }
+    }
+  }, [route.params]);
+
   React.useEffect(() => {
     loadBookmarks();
     loadRecentPages();
@@ -958,7 +1050,7 @@ export default function MushafScreen() {
     return allVerses;
   };
 
-  const renderPage = React.useCallback(({ item: pageNum }: { item: number }) => {
+  const renderPage = ({ item: pageNum }: { item: number }) => {
     const pageCoords = allCoords?.[pageNum];
     
     // Use layout dimensions for consistent positioning across devices
@@ -1001,6 +1093,116 @@ export default function MushafScreen() {
         />
         {Array.from(verseGroups.entries()).flatMap(([verseKey, coords]) => {
           const [surah, ayah] = verseKey.split(':');
+          
+          // Hifz mode state (shared for all rendering modes)
+          const isHifzActive = hifzMode.isActive;
+          const isWordMode = isHifzActive && hifzMode.settings.hideMode === 'word';
+          const isVerseRevealed = hifzMode.isVerseRevealed(verseKey) || hifzMode.revealedVerses.has('__ALL__');
+          const isDueForRevision = isVerseDueForRevision(verseKey);
+          const verseProgress = hifzProgress?.verses?.[verseKey];
+          const hifzActiveColor = isDark ? HIFZ_ACTIVE_COLOR.dark : HIFZ_ACTIVE_COLOR.light;
+          const hiddenBgColor = isDark ? HIDDEN_TEXT_BG.dark : HIDDEN_TEXT_BG.light;
+          
+          // Word-by-word mode: render individual word overlays
+          if (isWordMode) {
+            // Filter out null ayah entries (verse markers) and render each word
+            const rawWordCoords = coords.filter((c: any) => c.ayah !== null);
+            
+            // Deduplicate coords - some verses have duplicate coordinate entries
+            const seenCoords = new Set<string>();
+            const wordCoords = rawWordCoords.filter((c: any) => {
+              const key = `${c.x}-${c.y}-${c.width}-${c.height}`;
+              if (seenCoords.has(key)) return false;
+              seenCoords.add(key);
+              return true;
+            });
+            
+            const lastWordIdx = wordCoords.length - 1;
+            
+            return wordCoords.map((coord: any, wordIdx: number) => {
+              const wordKey = `${verseKey}:${wordIdx}`;
+              // Check directly against the Set to ensure we get the latest value
+              const isWordRevealed = hifzMode.revealedWords.has(wordKey) || isVerseRevealed;
+              const isWordHidden = !isWordRevealed;
+              const isLastWord = wordIdx === lastWordIdx;
+              const actualBgColor = isWordHidden ? hiddenBgColor : 'transparent';
+              
+              return (
+                <Pressable
+                  key={`word-${wordKey}`}
+                  accessible={true}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Word ${wordIdx + 1} of verse ${surah}:${ayah}${isWordHidden ? ', hidden, tap to reveal' : ''}`}
+                  accessibilityHint="Tap to reveal this word, long press for memorization options"
+                  style={[styles.verseRegion, { 
+                    left: coord.x * imageScale, 
+                    top: (coord.y * imageScale) + imageOffsetY, 
+                    width: Math.max(coord.width * imageScale, 20), 
+                    height: Math.max(coord.height * imageScale, 20), 
+                    backgroundColor: actualBgColor,
+                    borderRadius: isWordHidden ? 3 : 0,
+                  }]}
+                  onPress={() => {
+                    if (isWordHidden) {
+                      hifzMode.revealWord(wordKey);
+                    } else {
+                      // If verse is revealed (from full verse mode or reveal all), 
+                      // we need to hide the verse first, then reveal all OTHER words except this one
+                      if (isVerseRevealed) {
+                        hifzMode.hideVerse(verseKey);
+                        for (let i = 0; i < wordCoords.length; i++) {
+                          if (i !== wordIdx) {
+                            hifzMode.revealWord(`${verseKey}:${i}`);
+                          }
+                        }
+                      } else {
+                        hifzMode.hideWord(wordKey);
+                      }
+                    }
+                  }}
+                  onLongPress={(e) => {
+                    // Long press shows Hifz status menu (same as solid mode)
+                    const { pageX, pageY } = e.nativeEvent;
+                    setHifzMenuVerseKey(verseKey);
+                    setHifzMenuPosition({ x: pageX, y: pageY });
+                    setShowHifzStatusMenu(true);
+                  }}
+                  delayLongPress={500}
+                >
+                  {/* Loop start indicator (A) on first word - right side for RTL */}
+                  {wordIdx === 0 && hifzMode.loopStart === verseKey && (
+                    <View style={[styles.loopIndicator, { backgroundColor: '#3B82F6', right: 0 }]}>
+                      <ThemedText style={styles.loopIndicatorText}>A</ThemedText>
+                    </View>
+                  )}
+                  {/* Loop end indicator (B) on first word - right side for RTL (same position as A but different verse) */}
+                  {wordIdx === 0 && hifzMode.loopEnd === verseKey && (
+                    <View style={[styles.loopIndicator, { backgroundColor: '#3B82F6', right: 16 }]}>
+                      <ThemedText style={styles.loopIndicatorText}>B</ThemedText>
+                    </View>
+                  )}
+                  {/* Memorization status indicator on first word (start of verse in RTL) */}
+                  {wordIdx === 0 && verseProgress && (
+                    <View style={[
+                      styles.memorizationIndicator,
+                      { 
+                        backgroundColor: verseProgress.status === 'memorized' 
+                          ? '#10B981' 
+                          : verseProgress.status === 'in_progress' 
+                          ? '#F59E0B' 
+                          : 'transparent' 
+                      }
+                    ]} />
+                  )}
+                  {/* Due for revision badge on first word */}
+                  {wordIdx === 0 && isDueForRevision && (
+                    <View style={[styles.revisionBadge, { backgroundColor: '#EF4444' }]} />
+                  )}
+                </Pressable>
+              );
+            });
+          } else {
+          // Solid mode (default): render merged verse regions per line
           const lineGroups = new Map<number, any[]>();
           coords.forEach((c: any) => {
             if (!lineGroups.has(c.line)) lineGroups.set(c.line, []);
@@ -1018,41 +1220,123 @@ export default function MushafScreen() {
             const isHighlighted = highlightedVerse === verseKey;
             const highlightColor = highlights[verseKey] || (notes[verseKey] ? 'rgba(212, 175, 55, 0.15)' : null);
             
+            const isHidden = isHifzActive && !isVerseRevealed;
+            
+            // Determine background color with Hifz mode priority
+            let bgColor = 'transparent';
+            if (isHidden) {
+              bgColor = hiddenBgColor;
+            } else if (isHighlighted) {
+              bgColor = 'rgba(52, 211, 153, 0.5)'; // Bright green highlight for navigation
+            } else if (isAudioPlaying) {
+              bgColor = 'rgba(52, 211, 153, 0.3)';
+            } else if (highlightColor) {
+              bgColor = highlightColor;
+            } else if (isSelected) {
+              bgColor = 'rgba(76, 175, 80, 0.2)';
+            } else if (isHifzActive && isDueForRevision) {
+              bgColor = 'rgba(239, 68, 68, 0.15)'; // Red tint for due revision
+            }
+            
             return (
               <Pressable
                 key={`${verseKey}-${idx}`}
+                accessible={true}
+                accessibilityRole="button"
+                accessibilityLabel={`Verse ${surah}:${ayah}${isHidden ? ', hidden, tap to reveal' : ''}${isDueForRevision ? ', due for revision' : ''}`}
+                accessibilityHint={isHifzActive ? 'Tap to reveal verse, long press for memorization options' : 'Tap to select verse'}
                 style={[styles.verseRegion, { 
                   left: minX * imageScale, 
                   top: (minY * imageScale) + imageOffsetY, 
                   width: (maxX - minX) * imageScale, 
                   height: (maxY - minY) * imageScale, 
-                  backgroundColor: isHighlighted
-                    ? 'rgba(255, 215, 0, 0.4)'
-                    : isAudioPlaying 
-                    ? 'rgba(52, 211, 153, 0.3)' 
-                    : highlightColor || (isSelected 
-                    ? 'rgba(76, 175, 80, 0.2)' 
-                    : 'transparent')
+                  backgroundColor: bgColor,
+                  borderRadius: isHidden ? 4 : 0,
                 }]}
                 onPress={(e) => {
                   const { pageX, pageY } = e.nativeEvent;
+                  // In Hifz mode, tap only reveals/hides verse (no menu)
+                  if (isHifzActive) {
+                    if (isVerseRevealed) {
+                      hifzMode.hideVerse(verseKey);
+                    } else {
+                      hifzMode.revealVerse(verseKey);
+                    }
+                    return; // Don't open verse menu in Hifz mode
+                  }
+                  // Normal mode: open verse menu
                   handleVersePress({ surah: parseInt(surah), ayah: parseInt(ayah), verseKey, touchX: pageX, touchY: pageY });
                 }}
-              />
+                onLongPress={(e) => {
+                  // Long press shows Hifz status menu in Hifz mode
+                  if (isHifzActive) {
+                    const { pageX, pageY } = e.nativeEvent;
+                    setHifzMenuVerseKey(verseKey);
+                    setHifzMenuPosition({ x: pageX, y: pageY });
+                    setShowHifzStatusMenu(true);
+                  } else {
+                    // Normal mode: long press could open verse menu too
+                    const { pageX, pageY } = e.nativeEvent;
+                    handleVersePress({ surah: parseInt(surah), ayah: parseInt(ayah), verseKey, touchX: pageX, touchY: pageY });
+                  }
+                }}
+                delayLongPress={500}
+              >
+                {/* Loop start indicator (A) - right side for RTL (first word position) */}
+                {isHifzActive && hifzMode.loopStart === verseKey && idx === 0 && (
+                  <View style={[styles.loopIndicator, { backgroundColor: '#3B82F6', right: 0 }]}>
+                    <ThemedText style={styles.loopIndicatorText}>A</ThemedText>
+                  </View>
+                )}
+                {/* Loop end indicator (B) - right side for RTL (first word position, offset from A) */}
+                {isHifzActive && hifzMode.loopEnd === verseKey && idx === 0 && (
+                  <View style={[styles.loopIndicator, { backgroundColor: '#3B82F6', right: 16 }]}>
+                    <ThemedText style={styles.loopIndicatorText}>B</ThemedText>
+                  </View>
+                )}
+                {/* Hidden verse indicator */}
+                {isHidden && (
+                  <View style={styles.hiddenVerseOverlay}>
+                    <View style={[styles.hiddenLine, { backgroundColor: theme.border }]} />
+                    <View style={[styles.hiddenLineShort, { backgroundColor: theme.border }]} />
+                  </View>
+                )}
+                {/* Due for revision badge */}
+                {isHifzActive && isDueForRevision && idx === 0 && (
+                  <View style={[styles.revisionBadge, { backgroundColor: '#EF4444' }]} />
+                )}
+                {/* Memorization status indicator */}
+                {isHifzActive && verseProgress && idx === 0 && (
+                  <View style={[
+                    styles.memorizationIndicator,
+                    { 
+                      backgroundColor: verseProgress.status === 'memorized' 
+                        ? '#10B981' 
+                        : verseProgress.status === 'in_progress' 
+                        ? '#F59E0B' 
+                        : 'transparent' 
+                    }
+                  ]} />
+                )}
+              </Pressable>
             );
           });
+          }
         })}
       </View>
     );
-  }, [allCoords, selectedVerse, handleVersePress, audioState, highlights, notes, highlightedVerse, isDark, layout]);
+  };
 
   const goToSurah = (surahNumber: number) => {
     const page = surahPages[surahNumber];
     if (page) {
       const index = 604 - page;
-      const offset = index * SCREEN_WIDTH;
+      const offset = index * layout.screenWidth;
       setShowSurahList(false);
       setIsNavigating(true);
+      
+      // Update current page immediately
+      setCurrentPage(page);
       
       // Save the page to recent pages immediately
       saveRecentPage(page);
@@ -1061,6 +1345,8 @@ export default function MushafScreen() {
         flatListRef.current?.scrollToOffset({ offset, animated: false });
         setTimeout(() => {
           setIsNavigating(false);
+          // Ensure page is set correctly after scroll completes
+          setCurrentPage(page);
         }, 300);
       });
     }
@@ -1112,7 +1398,7 @@ export default function MushafScreen() {
                   setShowNotes(false);
                   requestAnimationFrame(() => {
                     const index = 604 - currentPage;
-                    flatListRef.current?.scrollToOffset({ offset: index * SCREEN_WIDTH, animated: false });
+                    flatListRef.current?.scrollToOffset({ offset: index * layout.screenWidth, animated: false });
                   });
                 }}
                 style={({ pressed }) => [{ width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center', backgroundColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)', opacity: pressed ? 0.6 : 1 }]}
@@ -1210,7 +1496,7 @@ export default function MushafScreen() {
                         onPress={() => {
                           const page = ayahData?.page || 1;
                           const index = 604 - page;
-                          const offset = index * SCREEN_WIDTH;
+                          const offset = index * layout.screenWidth;
                           setShowNotes(false);
                           setIsNavigating(true);
                           requestAnimationFrame(() => {
@@ -1326,7 +1612,7 @@ export default function MushafScreen() {
                         onPress={() => {
                           const page = ayahData?.page || 1;
                           const index = 604 - page;
-                          const offset = index * SCREEN_WIDTH;
+                          const offset = index * layout.screenWidth;
                           setShowNotes(false);
                           setIsNavigating(true);
                           requestAnimationFrame(() => {
@@ -1381,7 +1667,7 @@ export default function MushafScreen() {
                   setShowBookmarks(false);
                   requestAnimationFrame(() => {
                     const index = 604 - currentPage;
-                    flatListRef.current?.scrollToOffset({ offset: index * SCREEN_WIDTH, animated: false });
+                    flatListRef.current?.scrollToOffset({ offset: index * layout.screenWidth, animated: false });
                   });
                 }}
                 style={({ pressed }) => [{
@@ -1452,7 +1738,7 @@ export default function MushafScreen() {
                       const page = ayahData?.page || 1;
                       console.log('Page number:', page);
                       const index = 604 - page;
-                      const offset = index * SCREEN_WIDTH;
+                      const offset = index * layout.screenWidth;
                       console.log('Scroll to:', { index, offset, SCREEN_WIDTH });
                       setShowBookmarks(false);
                       setIsNavigating(true);
@@ -1514,7 +1800,7 @@ export default function MushafScreen() {
                   setShowSurahList(false);
                   requestAnimationFrame(() => {
                     const index = 604 - currentPage;
-                    flatListRef.current?.scrollToOffset({ offset: index * SCREEN_WIDTH, animated: false });
+                    flatListRef.current?.scrollToOffset({ offset: index * layout.screenWidth, animated: false });
                   });
                 }}
                 style={({ pressed }) => [{
@@ -1675,7 +1961,7 @@ export default function MushafScreen() {
                       onPress={async () => {
                         const page = result.page;
                         const index = 604 - page;
-                        const offset = index * SCREEN_WIDTH;
+                        const offset = index * layout.screenWidth;
                         setShowSurahList(false);
                         setSearchQuery('');
                         setIsNavigating(true);
@@ -1856,7 +2142,7 @@ export default function MushafScreen() {
                       key={page}
                       onPress={() => {
                         const index = 604 - page;
-                        const offset = index * SCREEN_WIDTH;
+                        const offset = index * layout.screenWidth;
                         setShowSurahList(false);
                         setIsNavigating(true);
                         
@@ -2017,7 +2303,7 @@ export default function MushafScreen() {
                     onPress={() => {
                       const page = item.verse.page;
                       const index = 604 - page;
-                      const offset = index * SCREEN_WIDTH;
+                      const offset = index * layout.screenWidth;
                       setShowSurahList(false);
                       setIsNavigating(true);
                       requestAnimationFrame(() => {
@@ -2141,11 +2427,41 @@ export default function MushafScreen() {
             })()}
           </Pressable>
           <View style={[styles.pillDivider, { backgroundColor: isDark ? 'rgba(212, 175, 55, 0.3)' : 'rgba(0, 0, 0, 0.1)' }]} />
+          {/* Hifz Mode Toggle */}
+          <Pressable
+            onPress={() => {
+              const wasActive = hifzMode.isActive;
+              hifzMode.toggleHifzMode();
+              // Show tooltip when activating Hifz mode
+              if (!wasActive) {
+                setShowHifzTooltip(true);
+                setTimeout(() => setShowHifzTooltip(false), 3000);
+              }
+            }}
+            onLongPress={() => hifzMode.isActive && setShowHifzControlPanel(true)}
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel={hifzMode.isActive ? 'Hifz mode active. Tap to deactivate, long press for settings' : 'Activate Hifz memorization mode'}
+            accessibilityHint={hifzMode.isActive ? 'Long press to open Hifz control panel' : ''}
+            style={({ pressed }) => [styles.pillButtonHalf, { opacity: pressed ? 0.5 : 1 }]}
+          >
+            <Feather 
+              name="book-open" 
+              size={18} 
+              color={hifzMode.isActive ? '#10B981' : (isDark ? '#D4AF37' : '#1a5f4f')} 
+            />
+            {hifzMode.isActive && (
+              <View style={[styles.pillBadge, { backgroundColor: '#10B981' }]}>
+                <ThemedText style={{ color: '#FFF', fontSize: 6, fontWeight: '700' }}>H</ThemedText>
+              </View>
+            )}
+          </Pressable>
+          <View style={[styles.pillDivider, { backgroundColor: isDark ? 'rgba(212, 175, 55, 0.3)' : 'rgba(0, 0, 0, 0.1)' }]} />
           <Pressable
             onPress={() => setShowSurahList(true)}
             style={({ pressed }) => [styles.pillButtonHalf, { opacity: pressed ? 0.5 : 1 }]}
           >
-            <Feather name="book-open" size={18} color={isDark ? '#D4AF37' : '#1a5f4f'} />
+            <Feather name="list" size={18} color={isDark ? '#D4AF37' : '#1a5f4f'} />
           </Pressable>
         </View>
         
@@ -2177,7 +2493,7 @@ export default function MushafScreen() {
           data={Array.from({ length: 604 }, (_, i) => 604 - i)}
           renderItem={renderPage}
           keyExtractor={(item) => String(item)}
-          extraData={isDark}
+          extraData={`${isDark}-${hifzMode.isActive}-${hifzMode.revealCounter}-${hifzMode.settings.hideMode}-${hifzMode.revealedWords.size}-${hifzProgress?.totalMemorized || 0}`}
           horizontal
           pagingEnabled
           showsHorizontalScrollIndicator={false}
@@ -2185,6 +2501,7 @@ export default function MushafScreen() {
           decelerationRate="fast"
           overScrollMode="never"
           disableIntervalMomentum={true}
+          initialScrollIndex={603}
           onMomentumScrollEnd={(e) => {
             const offset = e.nativeEvent.contentOffset.x;
             const index = Math.round(offset / layout.screenWidth);
@@ -2200,10 +2517,10 @@ export default function MushafScreen() {
             index,
           })}
           initialNumToRender={3}
-          maxToRenderPerBatch={5}
-          windowSize={21}
+          maxToRenderPerBatch={3}
+          windowSize={5}
           removeClippedSubviews={false}
-          updateCellsBatchingPeriod={30}
+          updateCellsBatchingPeriod={10}
         />
       </View>
 
@@ -2285,11 +2602,29 @@ export default function MushafScreen() {
             <Pressable
               onPress={async () => {
                 closeMenu();
-                const verses = getVersesToPlay(selectedVerse.surah, selectedVerse.ayah);
-                if (verses.length > 1) {
-                  AudioService.playQueue(verses);
+                // In Hifz mode, use repeat settings
+                if (hifzMode.isActive && hifzMode.settings.repeatCount > 1) {
+                  // Set playback speed first
+                  await AudioService.setPlaybackRate(hifzMode.settings.playbackSpeed);
+                  // Play with repeat
+                  await AudioService.playWithRepeat(
+                    selectedVerse.surah,
+                    selectedVerse.ayah,
+                    hifzMode.settings.repeatCount,
+                    hifzMode.settings.pauseBetweenRepeats
+                  );
                 } else {
-                  await AudioService.play(selectedVerse.surah, selectedVerse.ayah, 'single');
+                  // Normal playback
+                  const verses = getVersesToPlay(selectedVerse.surah, selectedVerse.ayah);
+                  if (verses.length > 1) {
+                    AudioService.playQueue(verses);
+                  } else {
+                    // Apply Hifz speed even for single play
+                    if (hifzMode.isActive) {
+                      await AudioService.setPlaybackRate(hifzMode.settings.playbackSpeed);
+                    }
+                    await AudioService.play(selectedVerse.surah, selectedVerse.ayah, 'single');
+                  }
                 }
               }}
               style={({ pressed }) => [
@@ -2298,7 +2633,11 @@ export default function MushafScreen() {
               ]}
             >
               <Feather name="play" size={20} color={isDark ? '#D4AF37' : '#1a5f4f'} />
-              <ThemedText type="body" style={{ marginLeft: 12, fontWeight: '500' }}>Play</ThemedText>
+              <ThemedText type="body" style={{ marginLeft: 12, fontWeight: '500' }}>
+                {hifzMode.isActive && hifzMode.settings.repeatCount > 1 
+                  ? `Play ${hifzMode.settings.repeatCount}×` 
+                  : 'Play'}
+              </ThemedText>
             </Pressable>
             <View style={[styles.menuDivider, { backgroundColor: isDark ? 'rgba(212, 175, 55, 0.2)' : 'rgba(26, 95, 79, 0.15)' }]} />
             <Pressable
@@ -4255,6 +4594,24 @@ export default function MushafScreen() {
                   <ThemedText type="caption" style={{ opacity: 0.5, fontSize: 12 * playerScale }}>
                     Verse {audioState.current.ayah}
                   </ThemedText>
+                  {/* Repeat Progress Indicator */}
+                  {audioState.isRepeating && (
+                    <>
+                      <View style={{ width: 3 * playerScale, height: 3 * playerScale, borderRadius: 1.5 * playerScale, backgroundColor: isDark ? '#34D399' : '#059669', opacity: 0.8 }} />
+                      <ThemedText type="caption" style={{ fontSize: 12 * playerScale, color: isDark ? '#34D399' : '#059669', fontWeight: '600' }}>
+                        Repeat {audioState.currentRepeat}/{audioState.totalRepeats === 0 ? '∞' : audioState.totalRepeats}
+                      </ThemedText>
+                    </>
+                  )}
+                  {/* Loop Indicator */}
+                  {audioState.isLooping && (
+                    <>
+                      <View style={{ width: 3 * playerScale, height: 3 * playerScale, borderRadius: 1.5 * playerScale, backgroundColor: isDark ? '#8B5CF6' : '#7C3AED', opacity: 0.8 }} />
+                      <ThemedText type="caption" style={{ fontSize: 12 * playerScale, color: isDark ? '#8B5CF6' : '#7C3AED', fontWeight: '600' }}>
+                        Loop
+                      </ThemedText>
+                    </>
+                  )}
                   {audioState.queue.length > 0 && (
                     <>
                       <View style={{ width: 3 * playerScale, height: 3 * playerScale, borderRadius: 1.5 * playerScale, backgroundColor: theme.text, opacity: 0.3 }} />
@@ -4444,6 +4801,238 @@ export default function MushafScreen() {
           </Animated.View>
         </GestureDetector>
       )}
+
+      {/* Hifz Status Menu (Long Press) */}
+      <Modal
+        visible={showHifzStatusMenu}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowHifzStatusMenu(false)}
+      >
+        <Pressable 
+          style={{ flex: 1 }} 
+          onPress={() => setShowHifzStatusMenu(false)}
+        >
+          <View
+            style={[
+              styles.hifzStatusMenu,
+              {
+                // Menu is approximately 320px tall, 160px wide
+                // Ensure it stays within screen bounds with padding
+                top: Math.max(
+                  insets.top + 10, // Don't go above safe area
+                  Math.min(
+                    hifzMenuPosition.y - 80, // Try to position near touch point
+                    SCREEN_HEIGHT - insets.bottom - 340 // Don't go below screen
+                  )
+                ),
+                left: Math.max(
+                  12, // Left padding
+                  Math.min(
+                    hifzMenuPosition.x - 80, // Center horizontally on touch point
+                    SCREEN_WIDTH - 172 // Right padding (160 width + 12 padding)
+                  )
+                ),
+                backgroundColor: isDark ? '#1F2937' : '#FFFFFF',
+              },
+            ]}
+          >
+              <ThemedText style={{ fontSize: 11, opacity: 0.5, paddingHorizontal: 12, paddingTop: 6, paddingBottom: 4 }}>
+                {hifzMenuVerseKey}
+              </ThemedText>
+              <TouchableOpacity
+                style={styles.hifzStatusMenuItem}
+                onPress={async () => {
+                  if (hifzMenuVerseKey) {
+                    await markHifzVerse(hifzMenuVerseKey, 'not_started');
+                  }
+                  setShowHifzStatusMenu(false);
+                }}
+            >
+              <View style={{ width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: theme.border }} />
+              <ThemedText style={styles.hifzStatusMenuText}>Not Started</ThemedText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.hifzStatusMenuItem}
+              onPress={async () => {
+                if (hifzMenuVerseKey) {
+                  await markHifzVerse(hifzMenuVerseKey, 'in_progress');
+                }
+                setShowHifzStatusMenu(false);
+              }}
+            >
+              <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: '#F59E0B' }} />
+              <ThemedText style={styles.hifzStatusMenuText}>In Progress</ThemedText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.hifzStatusMenuItem}
+              onPress={async () => {
+                if (hifzMenuVerseKey) {
+                  await markHifzVerse(hifzMenuVerseKey, 'memorized');
+                }
+                setShowHifzStatusMenu(false);
+              }}
+            >
+              <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: '#10B981' }} />
+              <ThemedText style={styles.hifzStatusMenuText}>Memorized</ThemedText>
+            </TouchableOpacity>
+            
+            {/* Divider */}
+            <View style={{ height: 1, backgroundColor: theme.border, marginVertical: 8, marginHorizontal: 16 }} />
+            
+            {/* Play Button */}
+            <TouchableOpacity
+              style={styles.hifzStatusMenuItem}
+              onPress={async () => {
+                if (hifzMenuVerseKey) {
+                  const [surah, ayah] = hifzMenuVerseKey.split(':').map(Number);
+                  // Use Hifz repeat settings
+                  if (hifzMode.settings.repeatCount > 1) {
+                    await AudioService.setPlaybackRate(hifzMode.settings.playbackSpeed);
+                    await AudioService.playWithRepeat(
+                      surah,
+                      ayah,
+                      hifzMode.settings.repeatCount,
+                      hifzMode.settings.pauseBetweenRepeats
+                    );
+                  } else {
+                    await AudioService.setPlaybackRate(hifzMode.settings.playbackSpeed);
+                    await AudioService.play(surah, ayah, 'single');
+                  }
+                }
+                setShowHifzStatusMenu(false);
+              }}
+            >
+              <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: isDark ? '#D4AF37' : '#059669', alignItems: 'center', justifyContent: 'center' }}>
+                <Feather name="play" size={12} color="#FFFFFF" />
+              </View>
+              <ThemedText style={styles.hifzStatusMenuText}>
+                {hifzMode.settings.repeatCount > 1 
+                  ? `Play ${hifzMode.settings.repeatCount}×` 
+                  : 'Play'}
+              </ThemedText>
+            </TouchableOpacity>
+            
+            {/* Divider */}
+            <View style={{ height: 1, backgroundColor: theme.border, marginVertical: 8, marginHorizontal: 16 }} />
+            
+            {/* Loop Start */}
+            <TouchableOpacity
+              style={styles.hifzStatusMenuItem}
+              onPress={() => {
+                if (hifzMenuVerseKey) {
+                  hifzMode.setLoopStart(hifzMenuVerseKey);
+                }
+                setShowHifzStatusMenu(false);
+              }}
+            >
+              <View style={{ width: 18, height: 18, borderRadius: 9, backgroundColor: hifzMode.loopStart ? '#3B82F6' : 'transparent', borderWidth: 2, borderColor: '#3B82F6', alignItems: 'center', justifyContent: 'center' }}>
+                {hifzMode.loopStart && <ThemedText style={{ color: '#FFF', fontSize: 9, fontWeight: '700' }}>A</ThemedText>}
+              </View>
+              <ThemedText style={styles.hifzStatusMenuText}>
+                Set Loop Start
+              </ThemedText>
+            </TouchableOpacity>
+            
+            {/* Loop End */}
+            <TouchableOpacity
+              style={styles.hifzStatusMenuItem}
+              onPress={() => {
+                if (hifzMenuVerseKey) {
+                  hifzMode.setLoopEnd(hifzMenuVerseKey);
+                }
+                setShowHifzStatusMenu(false);
+              }}
+            >
+              <View style={{ width: 18, height: 18, borderRadius: 9, backgroundColor: hifzMode.loopEnd ? '#3B82F6' : 'transparent', borderWidth: 2, borderColor: '#3B82F6', alignItems: 'center', justifyContent: 'center' }}>
+                {hifzMode.loopEnd && <ThemedText style={{ color: '#FFF', fontSize: 9, fontWeight: '700' }}>B</ThemedText>}
+              </View>
+              <ThemedText style={styles.hifzStatusMenuText}>
+                Set Loop End
+              </ThemedText>
+            </TouchableOpacity>
+            
+            {/* Start Loop (if both set) */}
+            {hifzMode.loopStart && hifzMode.loopEnd && (
+              <TouchableOpacity
+                style={[styles.hifzStatusMenuItem, { backgroundColor: '#3B82F615', marginTop: 4 }]}
+                onPress={async () => {
+                  const [startSurah, startAyah] = hifzMode.loopStart!.split(':').map(Number);
+                  const [endSurah, endAyah] = hifzMode.loopEnd!.split(':').map(Number);
+                  await AudioService.setPlaybackRate(hifzMode.settings.playbackSpeed);
+                  await AudioService.playLoop(startSurah, startAyah, endSurah, endAyah, 0);
+                  setShowHifzStatusMenu(false);
+                }}
+              >
+                <View style={{ width: 18, height: 18, borderRadius: 9, backgroundColor: '#3B82F6', alignItems: 'center', justifyContent: 'center' }}>
+                  <Feather name="play" size={10} color="#FFFFFF" />
+                </View>
+                <ThemedText style={[styles.hifzStatusMenuText, { color: '#3B82F6' }]}>
+                  Play Loop
+                </ThemedText>
+              </TouchableOpacity>
+            )}
+          </View>
+        </Pressable>
+      </Modal>
+
+      {/* Hifz Mode Overlay */}
+      <MushafHifzOverlay 
+        currentVerseKey={selectedVerse?.verseKey}
+        currentPage={currentPage}
+        currentJuz={(() => {
+          const pageCoords = allCoords?.[currentPage];
+          const firstVerse = pageCoords?.[0];
+          if (!firstVerse) return 1;
+          const verseData = quranData.data.surahs
+            .find((s: any) => s.number === firstVerse.sura)
+            ?.ayahs.find((a: any) => a.numberInSurah === firstVerse.ayah);
+          return verseData?.juz || 1;
+        })()}
+        pageVerses={(() => {
+          const pageCoords = allCoords?.[currentPage];
+          if (!pageCoords) return [];
+          const uniqueVerses = new Set<string>();
+          pageCoords.forEach((coord: any) => {
+            uniqueVerses.add(`${coord.sura}:${coord.ayah}`);
+          });
+          return Array.from(uniqueVerses);
+        })()}
+        bottomOffset={80}
+        showControlPanel={showHifzControlPanel}
+        onCloseControlPanel={() => setShowHifzControlPanel(false)}
+      />
+      
+      {/* Hifz tooltip - rendered at screen level to avoid clipping */}
+      {showHifzTooltip && (
+        <View 
+          style={{
+            position: 'absolute',
+            top: 85,
+            left: 0,
+            right: 0,
+            alignItems: 'center',
+            zIndex: 9999,
+            pointerEvents: 'none',
+          }}
+        >
+          <View style={{
+            backgroundColor: '#10B981',
+            paddingHorizontal: 14,
+            paddingVertical: 8,
+            borderRadius: 8,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.25,
+            shadowRadius: 4,
+            elevation: 5,
+          }}>
+            <ThemedText style={{ color: '#FFF', fontSize: 13, fontWeight: '600' }}>
+              Hold Hifz button for settings
+            </ThemedText>
+          </View>
+        </View>
+      )}
     </ThemedView>
   );
 }
@@ -4483,6 +5072,82 @@ const styles = StyleSheet.create({
   verseRegion: {
     position: "absolute",
     backgroundColor: "transparent",
+  },
+  hiddenVerseOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 4,
+  },
+  hiddenLine: {
+    height: 6,
+    width: '60%',
+    borderRadius: 3,
+    marginVertical: 2,
+  },
+  hiddenLineShort: {
+    height: 6,
+    width: '35%',
+    borderRadius: 3,
+    marginVertical: 2,
+  },
+  revisionBadge: {
+    position: 'absolute',
+    top: 2,
+    right: 2,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  memorizationIndicator: {
+    position: 'absolute',
+    top: -4,
+    right: 2,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  hifzStatusMenu: {
+    position: 'absolute',
+    backgroundColor: 'white',
+    borderRadius: 12,
+    paddingVertical: 4,
+    paddingHorizontal: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
+    minWidth: 160,
+    zIndex: 1000,
+  },
+  hifzStatusMenuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    gap: 10,
+    borderRadius: 8,
+  },
+  hifzStatusMenuText: {
+    fontSize: 13,
+    fontWeight: '500',
+    flex: 1,
+  },
+  loopIndicator: {
+    position: 'absolute',
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 10,
+    top: -16, // Position above the verse, not over it
+  },
+  loopIndicatorText: {
+    color: '#FFFFFF',
+    fontSize: 9,
+    fontWeight: '700',
   },
   pillButtonContainer: {
     // Legacy style - no longer used with new layout zones

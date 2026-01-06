@@ -10,12 +10,11 @@ import AzkarScreen from "@/screens/AzkarScreen";
 import SettingsScreen from "@/screens/SettingsScreen";
 import { useTheme } from "@/hooks/useTheme";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
-import { Colors } from "@/constants/theme";
 
 export type MainTabParamList = {
   QiblaTab: undefined;
   PrayerTimesTab: undefined;
-  QuranTab: undefined;
+  QuranTab: { surahNumber?: number; ayahNumber?: number; page?: number } | undefined;
   AzkarTab: undefined;
   SettingsTab: undefined;
 };
@@ -31,7 +30,7 @@ export default function MainTabNavigator() {
       initialRouteName="QiblaTab"
       screenOptions={{
         ...screenOptions,
-        tabBarActiveTintColor: isDark ? Colors.dark.primary : Colors.light.primary,
+        tabBarActiveTintColor: theme.tabIconSelected,
         tabBarInactiveTintColor: theme.tabIconDefault,
         tabBarStyle: {
           position: "absolute",

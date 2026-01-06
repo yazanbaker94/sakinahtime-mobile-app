@@ -18,6 +18,7 @@ export interface DownloadItem {
   createdAt: Date;
   completedAt?: Date;
   error?: string;
+  lastDownloadedAyah?: number; // Track progress for resume
 }
 
 export interface StorageInfo {

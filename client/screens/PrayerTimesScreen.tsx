@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { View, StyleSheet, ScrollView, Pressable, Platform } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { Spacing, Colors, BorderRadius } from "@/constants/theme";
@@ -21,9 +21,14 @@ import {
 } from "@/hooks/usePrayerTimes";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useAzan } from "@/hooks/useAzan";
+import { useIqamaSettings } from "@/hooks/useIqamaSettings";
 import { usePrayerAdjustments, applyAdjustment } from "@/hooks/usePrayerAdjustments";
+import { usePrayerLog } from "@/hooks/usePrayerLog";
 import { OfflineIndicator } from "@/components/OfflineIndicator";
+import { PrayerStatusIndicator, getNextStatus } from "@/components/PrayerStatusIndicator";
+import { StreakCard } from "@/components/StreakCard";
 import { Feather } from "@expo/vector-icons";
+import { PrayerName } from "@/types/prayerLog";
 
 const PRAYERS = [
   { key: "Fajr", nameEn: "Fajr", nameAr: "الفجر", icon: "sunrise" },
@@ -94,13 +99,42 @@ export default function PrayerTimesScreen() {
   const {
     settings: notificationSettings,
     schedulePrayerNotifications,
+    scheduleIqamaNotifications,
+    scheduleMissedPrayerReminders,
+    cancelMissedPrayerReminder,
+    clearScheduleCache,
   } = useNotifications();
 
   const {
     settings: azanSettings,
   } = useAzan();
 
+  const {
+    settings: iqamaSettings,
+  } = useIqamaSettings();
+
   const { adjustments: prayerAdjustments } = usePrayerAdjustments();
+
+  const {
+    markPrayer,
+    getPrayerStatus,
+    isPerfectDay,
+    streak,
+    trackingEnabled,
+    missedReminderEnabled,
+    missedReminderDelayMinutes,
+    refresh: refreshPrayerLog,
+  } = usePrayerLog();
+
+  // Refresh prayer log when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      refreshPrayerLog();
+      // Clear schedule cache to force rescheduling when returning to screen
+      // This handles phone time changes, timezone changes, etc.
+      clearScheduleCache();
+    }, [refreshPrayerLog, clearScheduleCache])
+  );
 
   useEffect(() => {
     if (latitude !== null && longitude !== null && latitude !== undefined && longitude !== undefined) {
@@ -153,7 +187,69 @@ export default function PrayerTimesScreen() {
     prayerAdjustments.Asr,
     prayerAdjustments.Maghrib,
     prayerAdjustments.Isha,
-    schedulePrayerNotifications
+    schedulePrayerNotifications,
+  ]);
+
+  // Schedule iqama notifications separately (independent of prayer notifications)
+  useEffect(() => {
+    if (prayerData?.timings && iqamaSettings.enabled) {
+      const adjustedTimings = {
+        ...prayerData.timings,
+        Fajr: applyAdjustment(prayerData.timings.Fajr, prayerAdjustments.Fajr),
+        Dhuhr: applyAdjustment(prayerData.timings.Dhuhr, prayerAdjustments.Dhuhr),
+        Asr: applyAdjustment(prayerData.timings.Asr, prayerAdjustments.Asr),
+        Maghrib: applyAdjustment(prayerData.timings.Maghrib, prayerAdjustments.Maghrib),
+        Isha: applyAdjustment(prayerData.timings.Isha, prayerAdjustments.Isha),
+      };
+      
+      scheduleIqamaNotifications(adjustedTimings, iqamaSettings);
+    }
+  }, [
+    prayerData?.timings,
+    iqamaSettings.enabled,
+    iqamaSettings.delayMinutes,
+    iqamaSettings.prayers.Fajr,
+    iqamaSettings.prayers.Dhuhr,
+    iqamaSettings.prayers.Asr,
+    iqamaSettings.prayers.Maghrib,
+    iqamaSettings.prayers.Isha,
+    prayerAdjustments.Fajr,
+    prayerAdjustments.Dhuhr,
+    prayerAdjustments.Asr,
+    prayerAdjustments.Maghrib,
+    prayerAdjustments.Isha,
+    scheduleIqamaNotifications
+  ]);
+
+  // Schedule missed prayer reminders when tracking is enabled
+  useEffect(() => {
+    if (prayerData?.timings && trackingEnabled) {
+      const adjustedTimings = {
+        ...prayerData.timings,
+        Fajr: applyAdjustment(prayerData.timings.Fajr, prayerAdjustments.Fajr),
+        Dhuhr: applyAdjustment(prayerData.timings.Dhuhr, prayerAdjustments.Dhuhr),
+        Asr: applyAdjustment(prayerData.timings.Asr, prayerAdjustments.Asr),
+        Maghrib: applyAdjustment(prayerData.timings.Maghrib, prayerAdjustments.Maghrib),
+        Isha: applyAdjustment(prayerData.timings.Isha, prayerAdjustments.Isha),
+      };
+      
+      scheduleMissedPrayerReminders(
+        adjustedTimings,
+        missedReminderDelayMinutes,
+        missedReminderEnabled
+      );
+    }
+  }, [
+    prayerData?.timings,
+    trackingEnabled,
+    missedReminderEnabled,
+    missedReminderDelayMinutes,
+    prayerAdjustments.Fajr,
+    prayerAdjustments.Dhuhr,
+    prayerAdjustments.Asr,
+    prayerAdjustments.Maghrib,
+    prayerAdjustments.Isha,
+    scheduleMissedPrayerReminders,
   ]);
 
   if (!permission?.granted) {
@@ -294,14 +390,32 @@ export default function PrayerTimesScreen() {
               },
             ]}
           >
+            {/* Stats button in top right */}
+            <Pressable
+              style={styles.statsButton}
+              onPress={() => navigation.navigate('PrayerStats')}
+            >
+              <Feather name="bar-chart-2" size={18} color="#FFFFFF" />
+            </Pressable>
+
             {/* Compact Header with Info */}
             <View style={styles.compactHeader}>
               <View style={styles.headerLeft}>
-                <View style={styles.nextPrayerBadge}>
-                  <Feather name="clock" size={12} color="#FFFFFF" />
-                  <ThemedText type="caption" style={{ color: "#FFFFFF", marginLeft: 5, fontWeight: '700', letterSpacing: 0.5, fontSize: 10 }}>
-                    NEXT PRAYER
-                  </ThemedText>
+                <View style={styles.nextPrayerBadgeRow}>
+                  <View style={styles.nextPrayerBadge}>
+                    <Feather name="clock" size={12} color="#FFFFFF" />
+                    <ThemedText type="caption" style={{ color: "#FFFFFF", marginLeft: 5, fontWeight: '700', letterSpacing: 0.5, fontSize: 10 }}>
+                      NEXT PRAYER
+                    </ThemedText>
+                  </View>
+                  {trackingEnabled && isPerfectDay && (
+                    <View style={styles.perfectDayBadge}>
+                      <Feather name="star" size={12} color="#FBBF24" />
+                      <ThemedText type="caption" style={{ color: "#FBBF24", marginLeft: 4, fontWeight: '700', fontSize: 10 }}>
+                        PERFECT DAY!
+                      </ThemedText>
+                    </View>
+                  )}
                 </View>
                 <View style={styles.prayerNameCompact}>
                   <ThemedText type="h2" style={{ color: "#FFFFFF", fontWeight: '800', fontSize: 28, letterSpacing: -1 }}>
@@ -374,8 +488,13 @@ export default function PrayerTimesScreen() {
           </View>
         ) : null}
 
+        {/* Streak indicator */}
+        {trackingEnabled && streak && streak.currentStreak > 0 && (
+          <StreakCard streak={streak} compact />
+        )}
+
         <View style={styles.prayersList}>
-          {PRAYERS.map((prayer, index) => {
+          {PRAYERS.map((prayer) => {
             const originalTime = prayerData?.timings?.[prayer.key] || "";
             const adjustment = prayerAdjustments[prayer.key as keyof typeof prayerAdjustments] || 0;
             const adjustedTime = adjustment !== 0 ? applyAdjustment(originalTime, adjustment) : originalTime;
@@ -383,6 +502,16 @@ export default function PrayerTimesScreen() {
             
             const isPast = isPrayerPast(originalTime);
             const isNext = nextPrayer?.name === prayer.nameEn;
+            const prayerStatus = getPrayerStatus(prayer.key as PrayerName);
+
+            const handleStatusToggle = () => {
+              const nextStatus = getNextStatus(prayerStatus);
+              markPrayer(prayer.key as PrayerName, nextStatus, originalTime);
+              // Cancel the missed prayer reminder if user marks the prayer
+              if (nextStatus !== 'unmarked' && missedReminderEnabled) {
+                cancelMissedPrayerReminder(prayer.key as PrayerName);
+              }
+            };
 
             return (
               <View
@@ -458,22 +587,16 @@ export default function PrayerTimesScreen() {
                         {adjustment > 0 ? '+' : ''}{adjustment} min
                       </ThemedText>
                     )}
-                    {isPast && !isNext && (
-                      <View style={[styles.completedBadge, {
-                        backgroundColor: isDark ? 'rgba(52, 211, 153, 0.15)' : 'rgba(16, 185, 129, 0.1)'
-                      }]}>
-                        <Feather name="check" size={14} color={isDark ? '#34D399' : '#059669'} />
-                        <ThemedText type="caption" style={{ 
-                          color: isDark ? '#34D399' : '#059669',
-                          marginLeft: 4,
-                          fontSize: 10,
-                          fontWeight: '600'
-                        }}>
-                          PRAYED
-                        </ThemedText>
-                      </View>
-                    )}
                   </View>
+                  {trackingEnabled && (
+                    <View style={styles.statusIndicatorContainer}>
+                      <PrayerStatusIndicator
+                        status={prayerStatus}
+                        onPress={handleStatusToggle}
+                        size="medium"
+                      />
+                    </View>
+                  )}
                 </View>
               </View>
             );
@@ -556,11 +679,30 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     marginBottom: Spacing.xl,
     overflow: 'hidden',
+    position: 'relative',
+  },
+  statsButton: {
+    position: 'absolute',
+    top: Spacing.md,
+    right: Spacing.md,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 10,
   },
   compactHeader: {
     marginBottom: Spacing.md,
   },
   headerLeft: {
+    marginBottom: Spacing.sm,
+  },
+  nextPrayerBadgeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
     marginBottom: Spacing.sm,
   },
   nextPrayerBadge: {
@@ -571,7 +713,14 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     borderRadius: 10,
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    marginBottom: Spacing.sm,
+  },
+  perfectDayBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 10,
+    backgroundColor: 'rgba(251, 191, 36, 0.2)',
   },
   prayerNameCompact: {
     flexDirection: 'row',
@@ -654,12 +803,7 @@ const styles = StyleSheet.create({
   prayerTimeContainer: {
     alignItems: 'flex-end',
   },
-  completedBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
-    marginTop: 6,
+  statusIndicatorContainer: {
+    marginTop: Spacing.sm,
   },
 });
