@@ -14,7 +14,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
-import { Spacing, BorderRadius, Colors } from '@/constants/theme';
+import { Spacing, BorderRadius } from '@/constants/theme';
 import { useDuaCollection } from '@/hooks/useDuaCollection';
 import { useDuaFavorites } from '@/hooks/useDuaFavorites';
 import { useCustomDuas } from '@/hooks/useCustomDuas';
@@ -144,7 +144,7 @@ export function DuaCollectionScreen() {
         styles.tab,
         activeTab === tab && {
           borderBottomWidth: 3,
-          borderBottomColor: isDark ? Colors.dark.primary : Colors.light.primary,
+          borderBottomColor: theme.primary,
         },
       ]}
     >
@@ -153,8 +153,8 @@ export function DuaCollectionScreen() {
         size={18}
         color={
           activeTab === tab
-            ? isDark ? Colors.dark.primary : Colors.light.primary
-            : isDark ? Colors.dark.textSecondary : Colors.light.textSecondary
+            ? theme.primary
+            : theme.textSecondary
         }
       />
       <ThemedText
@@ -165,8 +165,8 @@ export function DuaCollectionScreen() {
           fontWeight: activeTab === tab ? '700' : '500',
           color:
             activeTab === tab
-              ? isDark ? Colors.dark.primary : Colors.light.primary
-              : isDark ? Colors.dark.textSecondary : Colors.light.textSecondary,
+              ? theme.primary
+              : theme.textSecondary,
         }}
       >
         {label}
@@ -216,7 +216,7 @@ export function DuaCollectionScreen() {
           style={({ pressed }) => [
             styles.categoryCard,
             {
-              backgroundColor: isDark ? 'rgba(26, 95, 79, 0.2)' : Colors.light.backgroundDefault,
+              backgroundColor: theme.cardBackground,
               opacity: pressed ? 0.7 : 1,
             },
           ]}
@@ -224,13 +224,13 @@ export function DuaCollectionScreen() {
           <View
             style={[
               styles.categoryIcon,
-              { backgroundColor: isDark ? 'rgba(52, 211, 153, 0.15)' : 'rgba(16, 185, 129, 0.1)' },
+              { backgroundColor: `${theme.primary}15` },
             ]}
           >
             <Feather
               name={ICON_MAP[category.icon] || 'star'}
               size={24}
-              color={isDark ? Colors.dark.primary : Colors.light.primary}
+              color={theme.primary}
             />
           </View>
           <ThemedText type="small" style={styles.categoryTitle}>
@@ -291,7 +291,7 @@ export function DuaCollectionScreen() {
         <View
           style={[
             styles.searchBar,
-            { backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundSecondary },
+            { backgroundColor: theme.backgroundSecondary },
           ]}
         >
           <Feather name="search" size={20} color={theme.textSecondary} />
@@ -316,7 +316,7 @@ export function DuaCollectionScreen() {
         showsHorizontalScrollIndicator={false}
         style={[
           styles.tabsContainer,
-          { backgroundColor: isDark ? Colors.dark.backgroundDefault : Colors.light.backgroundDefault }
+          { backgroundColor: theme.backgroundDefault }
         ]}
         contentContainerStyle={styles.tabsContent}
       >
@@ -408,7 +408,7 @@ export function DuaCollectionScreen() {
                   style={({ pressed }) => [
                     styles.addButton,
                     { 
-                      backgroundColor: isDark ? Colors.dark.primary : Colors.light.primary,
+                      backgroundColor: theme.primary,
                       opacity: pressed ? 0.8 : 1,
                     },
                   ]}

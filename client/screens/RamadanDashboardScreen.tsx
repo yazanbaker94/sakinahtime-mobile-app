@@ -21,14 +21,14 @@ import {
 } from '@/components/ramadan';
 import { useTheme } from '@/hooks/useTheme';
 import { useRamadan } from '@/contexts/RamadanContext';
-import { Spacing, Colors } from '@/constants/theme';
+import { Spacing } from '@/constants/theme';
 import { RootStackParamList } from '@/navigation/RootStackNavigator';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function RamadanDashboardScreen() {
   const insets = useSafeAreaInsets();
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
   const navigation = useNavigation<NavigationProp>();
   const { isRamadan } = useRamadan();
 
@@ -48,7 +48,7 @@ export default function RamadanDashboardScreen() {
             Check back when Ramadan begins to access Suhoor/Iftar times, Quran reading schedules, Taraweeh tracking, and more.
           </ThemedText>
           <Pressable
-            style={[styles.backButton, { backgroundColor: isDark ? Colors.dark.primary : Colors.light.primary }]}
+            style={[styles.backButton, { backgroundColor: theme.primary }]}
             onPress={() => navigation.goBack()}
           >
             <Feather name="arrow-left" size={16} color="#fff" />
@@ -96,7 +96,7 @@ export default function RamadanDashboardScreen() {
         {/* Header */}
         <View style={styles.header}>
           <Pressable onPress={() => navigation.goBack()} style={styles.backButtonSmall}>
-            <Feather name="arrow-left" size={24} color={isDark ? Colors.dark.text : Colors.light.text} />
+            <Feather name="arrow-left" size={24} color={theme.text} />
           </Pressable>
           <ThemedText type="h2" style={styles.title}>Ramadan</ThemedText>
           <View style={{ width: 24 }} />

@@ -5,18 +5,21 @@
  * Tests Property 15: Year-Specific Storage Isolation
  */
 
+import { describe, it, expect, beforeEach, vi, type Mock } from 'vitest';
 import * as fc from 'fast-check';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RAMADAN_STORAGE_KEYS } from '../../constants/ramadan';
 
 // Mock AsyncStorage
-jest.mock('@react-native-async-storage/async-storage', () => ({
-  setItem: jest.fn(() => Promise.resolve()),
-  getItem: jest.fn(() => Promise.resolve(null)),
-  removeItem: jest.fn(() => Promise.resolve()),
-  multiGet: jest.fn(() => Promise.resolve([])),
-  multiRemove: jest.fn(() => Promise.resolve()),
-  getAllKeys: jest.fn(() => Promise.resolve([])),
+vi.mock('@react-native-async-storage/async-storage', () => ({
+  default: {
+    setItem: vi.fn(() => Promise.resolve()),
+    getItem: vi.fn(() => Promise.resolve(null)),
+    removeItem: vi.fn(() => Promise.resolve()),
+    multiGet: vi.fn(() => Promise.resolve([])),
+    multiRemove: vi.fn(() => Promise.resolve()),
+    getAllKeys: vi.fn(() => Promise.resolve([])),
+  },
 }));
 
 // Arbitrary for Quran schedule data
@@ -53,7 +56,7 @@ const charityEntriesArb = fc.array(
     id: fc.string({ minLength: 1, maxLength: 50 }),
     date: fc.date({ min: new Date('2020-01-01'), max: new Date('2030-12-31') }).map(d => d.toISOString()),
     type: fc.constantFrom('sadaqah', 'zakat', 'fidya', 'kaffarah', 'other'),
-    amount: fc.float({ min: 0.01, max: 100000, noNaN: true }),
+    amount: fc.float({ min: Math.fround(0.01), max: Math.fround(100000), noNaN: true }),
     currency: fc.constantFrom('USD', 'EUR', 'GBP'),
   }),
   { minLength: 0, maxLength: 50 }
@@ -61,7 +64,7 @@ const charityEntriesArb = fc.array(
 
 describe('Ramadan Data Persistence - Property Tests', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('Property 14: Data Persistence Round-Trip', () => {
@@ -75,8 +78,8 @@ describe('Ramadan Data Persistence - Property Tests', () => {
             const serialized = JSON.stringify(scheduleData);
             
             // Mock storage behavior
-            (AsyncStorage.setItem as jest.Mock).mockResolvedValueOnce(undefined);
-            (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce(serialized);
+            (AsyncStorage.setItem as Mock).mockResolvedValueOnce(undefined);
+            (AsyncStorage.getItem as Mock).mockResolvedValueOnce(serialized);
             
             // Save
             await AsyncStorage.setItem(storageKey, serialized);
@@ -103,8 +106,8 @@ describe('Ramadan Data Persistence - Property Tests', () => {
             const storageKey = RAMADAN_STORAGE_KEYS.TARAWEEH_ENTRIES(year);
             const serialized = JSON.stringify(entriesData);
             
-            (AsyncStorage.setItem as jest.Mock).mockResolvedValueOnce(undefined);
-            (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce(serialized);
+            (AsyncStorage.setItem as Mock).mockResolvedValueOnce(undefined);
+            (AsyncStorage.getItem as Mock).mockResolvedValueOnce(serialized);
             
             await AsyncStorage.setItem(storageKey, serialized);
             const loaded = await AsyncStorage.getItem(storageKey);
@@ -127,8 +130,8 @@ describe('Ramadan Data Persistence - Property Tests', () => {
             const storageKey = RAMADAN_STORAGE_KEYS.CHARITY_ENTRIES(year);
             const serialized = JSON.stringify(entriesData);
             
-            (AsyncStorage.setItem as jest.Mock).mockResolvedValueOnce(undefined);
-            (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce(serialized);
+            (AsyncStorage.setItem as Mock).mockResolvedValueOnce(undefined);
+            (AsyncStorage.getItem as Mock).mockResolvedValueOnce(serialized);
             
             await AsyncStorage.setItem(storageKey, serialized);
             const loaded = await AsyncStorage.getItem(storageKey);
@@ -146,8 +149,8 @@ describe('Ramadan Data Persistence - Property Tests', () => {
       const emptyData = { readings: [], year: 1446 };
       const serialized = JSON.stringify(emptyData);
       
-      (AsyncStorage.setItem as jest.Mock).mockResolvedValueOnce(undefined);
-      (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce(serialized);
+      (AsyncStorage.setItem as Mock).mockResolvedValueOnce(undefined);
+      (AsyncStorage.getItem as Mock).mockResolvedValueOnce(serialized);
       
       await AsyncStorage.setItem('test-key', serialized);
       const loaded = await AsyncStorage.getItem('test-key');
@@ -232,7 +235,7 @@ describe('Ramadan Data Persistence - Property Tests', () => {
       expect(key1).not.toBe(key2);
       
       // Mock storage to return different data for different keys
-      (AsyncStorage.getItem as jest.Mock).mockImplementation((key: string) => {
+      (AsyncStorage.getItem as Mock).mockImplementation((key: string) => {
         if (key === key1) return Promise.resolve(JSON.stringify(data1));
         if (key === key2) return Promise.resolve(JSON.stringify(data2));
         return Promise.resolve(null);
@@ -248,7 +251,7 @@ describe('Ramadan Data Persistence - Property Tests', () => {
 
   describe('Edge Cases', () => {
     it('handles null values gracefully', async () => {
-      (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce(null);
+      (AsyncStorage.getItem as Mock).mockResolvedValueOnce(null);
       
       const loaded = await AsyncStorage.getItem('non-existent-key');
       expect(loaded).toBeNull();
@@ -263,8 +266,8 @@ describe('Ramadan Data Persistence - Property Tests', () => {
       
       const serialized = JSON.stringify(dataWithSpecialChars);
       
-      (AsyncStorage.setItem as jest.Mock).mockResolvedValueOnce(undefined);
-      (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce(serialized);
+      (AsyncStorage.setItem as Mock).mockResolvedValueOnce(undefined);
+      (AsyncStorage.getItem as Mock).mockResolvedValueOnce(serialized);
       
       await AsyncStorage.setItem('test-key', serialized);
       const loaded = await AsyncStorage.getItem('test-key');
@@ -284,8 +287,8 @@ describe('Ramadan Data Persistence - Property Tests', () => {
       
       const serialized = JSON.stringify(largeData);
       
-      (AsyncStorage.setItem as jest.Mock).mockResolvedValueOnce(undefined);
-      (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce(serialized);
+      (AsyncStorage.setItem as Mock).mockResolvedValueOnce(undefined);
+      (AsyncStorage.getItem as Mock).mockResolvedValueOnce(serialized);
       
       await AsyncStorage.setItem('large-data-key', serialized);
       const loaded = await AsyncStorage.getItem('large-data-key');

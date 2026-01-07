@@ -9,7 +9,7 @@ import { View, StyleSheet, Pressable } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
-import { Spacing, BorderRadius, Colors } from '@/constants/theme';
+import { Spacing, BorderRadius } from '@/constants/theme';
 import { AzkarCategory } from '@/data/azkar';
 
 const ICON_MAP: Record<string, keyof typeof Feather.glyphMap> = {
@@ -27,31 +27,31 @@ interface CompactCategoryCardProps {
 }
 
 export function CompactCategoryCard({ category, onPress }: CompactCategoryCardProps) {
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
 
   const getIconColor = () => {
     if (category.id === 'morning') {
-      return isDark ? Colors.dark.gold : Colors.light.gold;
+      return theme.gold;
     }
     if (category.id === 'evening') {
-      return isDark ? Colors.dark.primary : Colors.light.primary;
+      return theme.primary;
     }
-    return isDark ? Colors.dark.textSecondary : Colors.light.textSecondary;
+    return theme.textSecondary;
   };
 
   const getIconBgColor = () => {
     if (category.id === 'morning') {
-      return isDark ? 'rgba(212, 175, 55, 0.2)' : 'rgba(212, 175, 55, 0.15)';
+      return `${theme.gold}33`;
     }
     if (category.id === 'evening') {
-      return isDark ? 'rgba(52, 211, 153, 0.2)' : 'rgba(16, 185, 129, 0.15)';
+      return `${theme.primary}33`;
     }
-    return isDark ? 'rgba(52, 211, 153, 0.15)' : 'rgba(128, 128, 128, 0.1)';
+    return `${theme.primary}15`;
   };
 
   const cardBgColor = isDark
-    ? 'rgba(26, 95, 79, 0.2)'
-    : Colors.light.backgroundDefault;
+    ? `${theme.primary}20`
+    : theme.backgroundDefault;
 
   return (
     <Pressable

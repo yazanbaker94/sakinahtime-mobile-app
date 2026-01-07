@@ -18,16 +18,16 @@ interface QuranProgressCardProps {
 }
 
 export function QuranProgressCard({ onPress, onOpenMushaf }: QuranProgressCardProps) {
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
   const { todayReading, progress, markDayComplete } = useQuranSchedule();
 
-  const progressColor = progress.onTrack ? '#10B981' : '#F59E0B';
-  const accentColor = isDark ? '#34D399' : '#059669';
+  const progressColor = progress.onTrack ? theme.primary : '#F59E0B';
+  const accentColor = theme.primary;
 
   return (
     <Card elevation={2} onPress={onPress}>
       <View style={styles.header}>
-        <View style={[styles.iconContainer, { backgroundColor: 'rgba(16, 185, 129, 0.15)' }]}>
+        <View style={[styles.iconContainer, { backgroundColor: `${theme.primary}26` }]}>
           <Feather name="book-open" size={20} color={accentColor} />
         </View>
         <View style={styles.headerText}>
@@ -68,7 +68,7 @@ export function QuranProgressCard({ onPress, onOpenMushaf }: QuranProgressCardPr
 
       {/* Today's Reading */}
       {todayReading && (
-        <View style={[styles.todaySection, { backgroundColor: isDark ? 'rgba(16, 185, 129, 0.1)' : 'rgba(16, 185, 129, 0.08)' }]}>
+        <View style={[styles.todaySection, { backgroundColor: `${theme.primary}1A` }]}>
           <View style={styles.todayHeader}>
             <ThemedText type="body" style={{ fontWeight: '600' }}>Today's Reading</ThemedText>
             {todayReading.completed && (

@@ -6,11 +6,11 @@
  */
 
 import React from 'react';
-import { View, StyleSheet, Pressable } from 'react-native';
+import { View, StyleSheet, Pressable, Platform } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
-import { Spacing, BorderRadius, Colors } from '@/constants/theme';
+import { Spacing, BorderRadius } from '@/constants/theme';
 import { useTimeAwareAzkar } from '@/hooks/useTimeAwareAzkar';
 
 interface TimeAwareHeroCardProps {
@@ -18,20 +18,20 @@ interface TimeAwareHeroCardProps {
 }
 
 export function TimeAwareHeroCard({ onPress }: TimeAwareHeroCardProps) {
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
   const { currentCategory, isMorning, estimatedDuration } = useTimeAwareAzkar();
 
   const backgroundColor = isDark
-    ? isMorning ? 'rgba(212, 175, 55, 0.25)' : 'rgba(5, 150, 105, 0.3)'
-    : isMorning ? 'rgba(212, 175, 55, 0.2)' : '#059669';
+    ? isMorning ? 'rgba(212, 175, 55, 0.25)' : `${theme.primary}4D`
+    : isMorning ? 'rgba(212, 175, 55, 0.2)' : theme.primary;
 
   const textColor = isDark
     ? '#fff'
-    : isMorning ? Colors.light.text : '#fff';
+    : isMorning ? theme.text : '#fff';
 
   const secondaryTextColor = isDark
     ? 'rgba(255, 255, 255, 0.85)'
-    : isMorning ? Colors.light.textSecondary : 'rgba(255, 255, 255, 0.9)';
+    : isMorning ? theme.textSecondary : 'rgba(255, 255, 255, 0.9)';
 
   const icon = isMorning ? 'sunrise' : 'sunset';
   const description = isMorning
@@ -39,8 +39,8 @@ export function TimeAwareHeroCard({ onPress }: TimeAwareHeroCardProps) {
     : 'End your day with peace and gratitude';
 
   const ctaColor = isMorning
-    ? isDark ? Colors.dark.gold : Colors.light.gold
-    : isDark ? Colors.dark.primary : '#059669';
+    ? theme.gold
+    : theme.primary;
 
   return (
     <Pressable
@@ -50,7 +50,10 @@ export function TimeAwareHeroCard({ onPress }: TimeAwareHeroCardProps) {
         { 
           backgroundColor,
           opacity: pressed ? 0.9 : 1, 
-          transform: [{ scale: pressed ? 0.98 : 1 }] 
+          transform: [{ scale: pressed ? 0.98 : 1 }],
+          // Disable elevation on Android dark mode to prevent box-in-box effect
+          elevation: (isDark && Platform.OS === 'android') ? 0 : 5,
+          shadowOpacity: isDark ? 0 : 0.15,
         },
       ]}
     >

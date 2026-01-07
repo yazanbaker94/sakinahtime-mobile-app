@@ -15,7 +15,6 @@ import { Feather } from '@expo/vector-icons';
 import { useHifzMode } from '../../contexts/HifzModeContext';
 import { useTheme } from '../../hooks/useTheme';
 import { ThemedText } from '../ThemedText';
-import { HIFZ_ACTIVE_COLOR } from '../../constants/hifz';
 import type { SavedLoop } from '../../types/hifz';
 
 interface SavedLoopsListProps {
@@ -36,7 +35,7 @@ export function SavedLoopsList({ onSelectLoop, style }: SavedLoopsListProps) {
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [loopName, setLoopName] = useState('');
 
-  const activeColor = isDark ? HIFZ_ACTIVE_COLOR.dark : HIFZ_ACTIVE_COLOR.light;
+  const activeColor = theme.primary;
 
   const handleSaveLoop = useCallback(async () => {
     if (!loopName.trim()) {

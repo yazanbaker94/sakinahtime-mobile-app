@@ -17,7 +17,6 @@ import {
   REPEAT_COUNT_OPTIONS,
   PAUSE_DURATION_OPTIONS,
   PLAYBACK_SPEED_OPTIONS,
-  HIFZ_ACTIVE_COLOR,
 } from '../../constants/hifz';
 
 interface RepeatControlsProps {
@@ -40,7 +39,7 @@ export function RepeatControls({ onStop, isRepeating, currentRepeat: externalCur
   } = useHifzMode();
   const { isDark, theme } = useTheme();
 
-  const activeColor = isDark ? HIFZ_ACTIVE_COLOR.dark : HIFZ_ACTIVE_COLOR.light;
+  const activeColor = theme.primary;
   
   // Use external values if provided (from AudioService), otherwise use context
   const displayCurrentRepeat = externalCurrentRepeat ?? contextCurrentRepeat;

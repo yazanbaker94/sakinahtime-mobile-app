@@ -3,7 +3,7 @@ import { View, StyleSheet, ScrollView } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Spacing, Colors, BorderRadius } from "@/constants/theme";
+import { Spacing, BorderRadius } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { Feather } from "@expo/vector-icons";
 import type { RouteProp } from "@react-navigation/native";
@@ -18,7 +18,7 @@ interface Props {
 export default function IslamicGuideDetailScreen({ route }: Props) {
   const { guide } = route.params;
   const insets = useSafeAreaInsets();
-  const { isDark } = useTheme();
+  const { theme } = useTheme();
 
   return (
     <ThemedView style={styles.container}>
@@ -43,9 +43,7 @@ export default function IslamicGuideDetailScreen({ route }: Props) {
             style={[
               styles.descriptionCard,
               {
-                backgroundColor: isDark
-                  ? Colors.dark.primary + "15"
-                  : Colors.light.primary + "15",
+                backgroundColor: `${theme.primary}15`,
               },
             ]}
           >
@@ -68,9 +66,7 @@ export default function IslamicGuideDetailScreen({ route }: Props) {
               style={[
                 styles.stepCard,
                 {
-                  backgroundColor: isDark
-                    ? 'rgba(26, 95, 79, 0.2)'
-                    : Colors.light.backgroundDefault,
+                  backgroundColor: theme.cardBackground,
                 },
               ]}
             >
@@ -79,16 +75,14 @@ export default function IslamicGuideDetailScreen({ route }: Props) {
                   style={[
                     styles.stepNumber,
                     {
-                      backgroundColor: isDark
-                        ? Colors.dark.primary + "20"
-                        : Colors.light.primary + "20",
+                      backgroundColor: `${theme.primary}20`,
                     },
                   ]}
                 >
                   <ThemedText
                     type="body"
                     style={{
-                      color: isDark ? Colors.dark.primary : Colors.light.primary,
+                      color: theme.primary,
                       fontWeight: "700",
                     }}
                   >
@@ -126,9 +120,7 @@ export default function IslamicGuideDetailScreen({ route }: Props) {
             style={[
               styles.referencesCard,
               {
-                backgroundColor: isDark
-                  ? 'rgba(26, 95, 79, 0.15)'
-                  : Colors.light.backgroundSecondary,
+                backgroundColor: theme.backgroundSecondary,
               },
             ]}
           >
@@ -136,14 +128,14 @@ export default function IslamicGuideDetailScreen({ route }: Props) {
               <Feather
                 name="book"
                 size={18}
-                color={isDark ? Colors.dark.primary : Colors.light.primary}
+                color={theme.primary}
               />
               <ThemedText
                 type="body"
                 style={{
                   marginLeft: Spacing.sm,
                   fontWeight: "600",
-                  color: isDark ? Colors.dark.primary : Colors.light.primary,
+                  color: theme.primary,
                 }}
               >
                 References
@@ -154,7 +146,7 @@ export default function IslamicGuideDetailScreen({ route }: Props) {
                 <Feather
                   name="check"
                   size={14}
-                  color={isDark ? Colors.dark.textSecondary : Colors.light.textSecondary}
+                  color={theme.textSecondary}
                 />
                 <ThemedText type="small" secondary style={styles.referenceText}>
                   {ref}

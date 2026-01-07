@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, StyleSheet, ScrollView, Pressable, Switch, Modal } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
-import { Spacing, Colors, BorderRadius } from "@/constants/theme";
+import { Spacing, BorderRadius } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { NotificationSettings } from "@/hooks/useNotifications";
 import { IqamaSettings, IQAMA_DELAY_OPTIONS } from "@/hooks/useIqamaSettings";
@@ -61,7 +61,7 @@ export function NotificationSettingsModal({
   onChangeIqamaDelay,
   onTogglePrayerIqama,
 }: NotificationSettingsModalProps) {
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp>();
   const [showMethodPicker, setShowMethodPicker] = useState(false);
@@ -85,16 +85,16 @@ export function NotificationSettingsModal({
       <View style={styles.modalOverlay}>
         <View style={[
           styles.modalContent,
-          { backgroundColor: isDark ? Colors.dark.backgroundDefault : Colors.light.backgroundDefault }
+          { backgroundColor: theme.backgroundDefault }
         ]}>
           {/* Header */}
           <View style={[
             styles.modalHeader,
-            { borderBottomColor: isDark ? Colors.dark.backgroundTertiary : Colors.light.backgroundSecondary }
+            { borderBottomColor: theme.border }
           ]}>
             <ThemedText type="h3">Notification Settings</ThemedText>
             <Pressable onPress={onClose} hitSlop={8}>
-              <Feather name="x" size={24} color={isDark ? Colors.dark.text : Colors.light.text} />
+              <Feather name="x" size={24} color={theme.text} />
             </Pressable>
           </View>
 
@@ -106,7 +106,7 @@ export function NotificationSettingsModal({
             {/* Prayer Notifications */}
             <View style={styles.settingRow}>
               <View style={styles.settingInfo}>
-                <Feather name="bell" size={20} color={isDark ? Colors.dark.primary : Colors.light.primary} />
+                <Feather name="bell" size={20} color={theme.primary} />
                 <View style={styles.settingText}>
                   <ThemedText type="body">Prayer Notifications</ThemedText>
                   <ThemedText type="small" secondary>
@@ -118,8 +118,8 @@ export function NotificationSettingsModal({
                 value={notificationSettings.enabled}
                 onValueChange={onToggleNotifications}
                 trackColor={{
-                  false: isDark ? Colors.dark.backgroundTertiary : Colors.light.backgroundSecondary,
-                  true: isDark ? Colors.dark.primary : Colors.light.primary,
+                  false: theme.backgroundSecondary,
+                  true: theme.primary,
                 }}
                 thumbColor="#FFFFFF"
               />
@@ -137,8 +137,8 @@ export function NotificationSettingsModal({
                         onTogglePrayerNotification(prayer.key as keyof NotificationSettings["prayers"], value)
                       }
                       trackColor={{
-                        false: isDark ? Colors.dark.backgroundTertiary : Colors.light.backgroundSecondary,
-                        true: isDark ? Colors.dark.primary : Colors.light.primary,
+                        false: theme.backgroundSecondary,
+                        true: theme.primary,
                       }}
                       thumbColor="#FFFFFF"
                     />
@@ -155,7 +155,7 @@ export function NotificationSettingsModal({
               style={styles.settingRow}
             >
               <View style={styles.settingInfo}>
-                <Feather name="clock" size={20} color={isDark ? Colors.dark.primary : Colors.light.primary} />
+                <Feather name="clock" size={20} color={theme.primary} />
                 <View style={styles.settingText}>
                   <ThemedText type="body">Time Adjustments</ThemedText>
                   <ThemedText type="small" secondary>
@@ -166,7 +166,7 @@ export function NotificationSettingsModal({
               <Feather
                 name={showAdjustments ? "chevron-up" : "chevron-down"}
                 size={20}
-                color={isDark ? Colors.dark.textSecondary : Colors.light.textSecondary}
+                color={theme.textSecondary}
               />
             </Pressable>
 
@@ -192,7 +192,7 @@ export function NotificationSettingsModal({
                           <Feather name="minus" size={16} color={isDark ? '#EF4444' : '#DC2626'} />
                         </Pressable>
                         <View style={[styles.adjustmentValue, {
-                          backgroundColor: isDark ? Colors.dark.backgroundTertiary : Colors.light.backgroundSecondary,
+                          backgroundColor: theme.backgroundSecondary,
                         }]}>
                           <ThemedText type="body" style={{ fontWeight: '700', minWidth: 50, textAlign: 'center' }}>
                             {adjustment > 0 ? '+' : ''}{adjustment} min
@@ -204,10 +204,10 @@ export function NotificationSettingsModal({
                             onAdjustPrayerTime(prayer.key as keyof PrayerAdjustments, adjustment + 1);
                           }}
                           style={[styles.adjustmentButton, {
-                            backgroundColor: isDark ? 'rgba(52, 211, 153, 0.15)' : 'rgba(16, 185, 129, 0.1)',
+                            backgroundColor: `${theme.primary}15`,
                           }]}
                         >
-                          <Feather name="plus" size={16} color={isDark ? Colors.dark.primary : Colors.light.primary} />
+                          <Feather name="plus" size={16} color={theme.primary} />
                         </Pressable>
                       </View>
                     </View>
@@ -221,7 +221,7 @@ export function NotificationSettingsModal({
             {/* Azan Sound */}
             <View style={styles.settingRow}>
               <View style={styles.settingInfo}>
-                <Feather name="volume-2" size={20} color={isDark ? Colors.dark.primary : Colors.light.primary} />
+                <Feather name="volume-2" size={20} color={theme.primary} />
                 <View style={styles.settingText}>
                   <ThemedText type="body">Azan Sound</ThemedText>
                   <ThemedText type="small" secondary>
@@ -233,8 +233,8 @@ export function NotificationSettingsModal({
                 value={azanEnabled}
                 onValueChange={onToggleAzan}
                 trackColor={{
-                  false: isDark ? Colors.dark.backgroundTertiary : Colors.light.backgroundSecondary,
-                  true: isDark ? Colors.dark.primary : Colors.light.primary,
+                  false: theme.backgroundSecondary,
+                  true: theme.primary,
                 }}
                 thumbColor="#FFFFFF"
               />
@@ -245,7 +245,7 @@ export function NotificationSettingsModal({
             {/* Iqama Reminder */}
             <View style={styles.settingRow}>
               <View style={styles.settingInfo}>
-                <Feather name="bell" size={20} color={isDark ? Colors.dark.primary : Colors.light.primary} />
+                <Feather name="bell" size={20} color={theme.primary} />
                 <View style={styles.settingText}>
                   <ThemedText type="body">Iqama Reminder</ThemedText>
                   <ThemedText type="small" secondary>
@@ -257,8 +257,8 @@ export function NotificationSettingsModal({
                 value={iqamaSettings.enabled}
                 onValueChange={onToggleIqama}
                 trackColor={{
-                  false: isDark ? Colors.dark.backgroundTertiary : Colors.light.backgroundSecondary,
-                  true: isDark ? Colors.dark.primary : Colors.light.primary,
+                  false: theme.backgroundSecondary,
+                  true: theme.primary,
                 }}
                 thumbColor="#FFFFFF"
               />
@@ -272,7 +272,7 @@ export function NotificationSettingsModal({
                   style={[styles.settingRow, { marginLeft: Spacing.xl + Spacing.md }]}
                 >
                   <View style={styles.settingInfo}>
-                    <Feather name="clock" size={18} color={isDark ? Colors.dark.textSecondary : Colors.light.textSecondary} />
+                    <Feather name="clock" size={18} color={theme.textSecondary} />
                     <View style={styles.settingText}>
                       <ThemedText type="body">Reminder Delay</ThemedText>
                       <ThemedText type="small" secondary>
@@ -283,7 +283,7 @@ export function NotificationSettingsModal({
                   <Feather
                     name={showIqamaDelayPicker ? "chevron-up" : "chevron-down"}
                     size={20}
-                    color={isDark ? Colors.dark.textSecondary : Colors.light.textSecondary}
+                    color={theme.textSecondary}
                   />
                 </Pressable>
 
@@ -300,13 +300,13 @@ export function NotificationSettingsModal({
                         style={[
                           styles.delayItem,
                           iqamaSettings.delayMinutes === delay && {
-                            backgroundColor: isDark ? 'rgba(52, 211, 153, 0.15)' : 'rgba(16, 185, 129, 0.1)'
+                            backgroundColor: `${theme.primary}15`
                           }
                         ]}
                       >
                         <ThemedText type="body">{delay} minutes</ThemedText>
                         {iqamaSettings.delayMinutes === delay && (
-                          <Feather name="check" size={20} color={isDark ? Colors.dark.primary : Colors.light.primary} />
+                          <Feather name="check" size={20} color={theme.primary} />
                         )}
                       </Pressable>
                     ))}
@@ -319,7 +319,7 @@ export function NotificationSettingsModal({
                   style={[styles.settingRow, { marginLeft: Spacing.xl + Spacing.md }]}
                 >
                   <View style={styles.settingInfo}>
-                    <Feather name="list" size={18} color={isDark ? Colors.dark.textSecondary : Colors.light.textSecondary} />
+                    <Feather name="list" size={18} color={theme.textSecondary} />
                     <View style={styles.settingText}>
                       <ThemedText type="body">Prayer Selection</ThemedText>
                       <ThemedText type="small" secondary>
@@ -330,7 +330,7 @@ export function NotificationSettingsModal({
                   <Feather
                     name={showIqamaPrayers ? "chevron-up" : "chevron-down"}
                     size={20}
-                    color={isDark ? Colors.dark.textSecondary : Colors.light.textSecondary}
+                    color={theme.textSecondary}
                   />
                 </Pressable>
 
@@ -345,8 +345,8 @@ export function NotificationSettingsModal({
                             onTogglePrayerIqama(prayer.key as keyof IqamaSettings["prayers"], value)
                           }
                           trackColor={{
-                            false: isDark ? Colors.dark.backgroundTertiary : Colors.light.backgroundSecondary,
-                            true: isDark ? Colors.dark.primary : Colors.light.primary,
+                            false: theme.backgroundSecondary,
+                            true: theme.primary,
                           }}
                           thumbColor="#FFFFFF"
                         />
@@ -367,7 +367,7 @@ export function NotificationSettingsModal({
               style={styles.settingRow}
             >
               <View style={styles.settingInfo}>
-                <Feather name="book" size={20} color={isDark ? Colors.dark.primary : Colors.light.primary} />
+                <Feather name="book" size={20} color={theme.primary} />
                 <View style={styles.settingText}>
                   <ThemedText type="body">Calculation Method</ThemedText>
                   <ThemedText type="small" secondary>
@@ -378,7 +378,7 @@ export function NotificationSettingsModal({
               <Feather
                 name={showMethodPicker ? "chevron-up" : "chevron-down"}
                 size={20}
-                color={isDark ? Colors.dark.textSecondary : Colors.light.textSecondary}
+                color={theme.textSecondary}
               />
             </Pressable>
 
@@ -395,13 +395,13 @@ export function NotificationSettingsModal({
                     style={[
                       styles.methodItem,
                       calculationMethod === method.id && {
-                        backgroundColor: isDark ? 'rgba(52, 211, 153, 0.15)' : 'rgba(16, 185, 129, 0.1)'
+                        backgroundColor: `${theme.primary}15`
                       }
                     ]}
                   >
                     <ThemedText type="body">{method.name}</ThemedText>
                     {calculationMethod === method.id && (
-                      <Feather name="check" size={20} color={isDark ? Colors.dark.primary : Colors.light.primary} />
+                      <Feather name="check" size={20} color={theme.primary} />
                     )}
                   </Pressable>
                 ))}

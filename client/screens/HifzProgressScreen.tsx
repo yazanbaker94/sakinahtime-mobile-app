@@ -25,7 +25,7 @@ import { useTheme } from '../hooks/useTheme';
 import { useHifzProgress } from '../hooks/useHifzProgress';
 import { useRevisionSchedule } from '../hooks/useRevisionSchedule';
 import { hifzNotificationService } from '../services/HifzNotificationService';
-import { HIFZ_ACTIVE_COLOR, QURAN_STATS } from '../constants/hifz';
+import { QURAN_STATS } from '../constants/hifz';
 import type { MemorizationStatus } from '../types/hifz';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -61,7 +61,7 @@ export default function HifzProgressScreen() {
     };
     loadNotificationSettings();
   }, []);
-  const activeColor = isDark ? HIFZ_ACTIVE_COLOR.dark : HIFZ_ACTIVE_COLOR.light;
+  const activeColor = theme.primary;
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -207,7 +207,7 @@ export default function HifzProgressScreen() {
             'book-open',
             'Verses Memorized',
             stats?.memorizedVerses || 0,
-            '#10B981'
+            theme.primary
           )}
           {renderStatCard(
             'loader',
@@ -257,7 +257,7 @@ export default function HifzProgressScreen() {
             'Verses',
             stats?.memorizedVerses || 0,
             QURAN_STATS.totalVerses,
-            '#10B981'
+            theme.primary
           )}
           {renderProgressBar(
             'Pages',

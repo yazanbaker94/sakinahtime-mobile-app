@@ -170,29 +170,74 @@ Each theme card shows:
 
 ## Implementation Tasks
 
-### Phase 1: Foundation (Core Infrastructure)
+### Phase 1: Foundation (Core Infrastructure) ✅
 - [x] **Task 1.1**: Create `client/types/theme.ts` with type definitions
 - [x] **Task 1.2**: Refactor `client/constants/theme.ts` to support multiple themes
 - [x] **Task 1.3**: Update `ThemeContext.tsx` to handle themeId + colorMode
 - [x] **Task 1.4**: Update `useTheme.ts` hook to return correct theme colors
 - [x] **Task 1.5**: Add storage migration for existing users (light/dark → default theme)
 
-### Phase 2: Theme Definitions
+### Phase 2: Theme Definitions ✅
 - [x] **Task 2.1**: Define Rose Gold theme (light + dark variants)
 - [x] **Task 2.2**: Define Lavender Dreams theme (light + dark variants)
 - [x] **Task 2.3**: Define Sage & Peach theme (light + dark variants)
 - [x] **Task 2.4**: Define Ocean Breeze theme (light + dark variants)
 
-### Phase 3: UI Components
+### Phase 3: UI Components ✅
 - [x] **Task 3.1**: Create `ThemePicker.tsx` component with visual swatches
 - [x] **Task 3.2**: Create `ColorModeSelector.tsx` component (integrated into ThemePicker)
 - [x] **Task 3.3**: Update `SettingsScreen.tsx` with Appearance section
 
-### Phase 4: Polish & Testing
-- [ ] **Task 4.1**: Test all themes in light and dark modes
-- [ ] **Task 4.2**: Ensure proper contrast ratios for accessibility
-- [ ] **Task 4.3**: Test theme persistence across app restarts
-- [ ] **Task 4.4**: Verify Quran/Arabic text readability in all themes
+### Phase 4: Screen Migration (Replace hardcoded colors with theme.*)
+- [x] **Task 4.1**: `QiblaScreen.tsx` - Replace Colors.light/dark with theme.* ✅ COMPLETE
+- [x] **Task 4.2**: `PrayerTimesScreen.tsx` - Replace Colors.light/dark and hardcoded #10B981/#059669
+- [x] **Task 4.3**: `MushafScreen.tsx` - Replace hardcoded emerald colors ✅ COMPLETE (verse menu, tafsir picker, audio player, speed selector, notes section all migrated)
+- [x] **Task 4.4**: `AzkarScreen.tsx` - Migrated to theme.*
+- [x] **Task 4.5**: `AzkarDetailScreen.tsx` - Migrated to theme.*
+- [x] **Task 4.6**: `PrayerStatsScreen.tsx` - Replace hardcoded colors
+- [x] **Task 4.7**: `ProgressScreen.tsx` - Migrated to theme.*
+- [x] **Task 4.8**: `RamadanDashboardScreen.tsx` - Replace Colors.light/dark
+- [x] **Task 4.9**: `TaraweehTrackerScreen.tsx` - Replace Colors.light/dark and hardcoded colors
+- [x] **Task 4.10**: `QuranScheduleScreen.tsx` - Replace Colors.light/dark
+- [x] **Task 4.11**: `ZakatCalculatorScreen.tsx` - Replace Colors.light/dark
+- [x] **Task 4.12**: `SetCharityGoalScreen.tsx` - Replace Colors.light/dark
+- [x] **Task 4.13**: `StorageManagementScreen.tsx` - Replace Colors.light/dark
+- [x] **Task 4.14**: `HifzProgressScreen.tsx` - Migrated to theme.*
+- [x] **Task 4.15**: `HijriCalendarScreen.tsx` - Migrated to theme.* ✅ COMPLETE
+- [x] **Task 4.16**: `MosqueFinderScreen.tsx` - Replace Colors.light/dark
+- [x] **Task 4.17**: `LogTaraweehScreen.tsx` - Migrated to theme.*
+- [x] **Task 4.18**: `IslamicGuideDetailScreen.tsx` - Migrated to theme.*
+- [x] **Task 4.19**: `DuaDetailScreen.tsx` - Migrated to theme.*
+- [x] **Task 4.20**: `DuaCollectionScreen.tsx` - Migrated to theme.*
+- [x] **Task 4.21**: `CustomDuaFormScreen.tsx` - Migrated to theme.*
+- [x] **Task 4.22**: `CharityTrackerScreen.tsx` - Migrated to theme.*
+- [x] **Task 4.23**: `AddDonationScreen.tsx` - Migrated to theme.*
+- [x] **Task 4.24**: `AudioDownloadScreen.tsx` - Migrated to theme.*
+
+### Phase 5: Component Migration
+- [x] **Task 5.1**: `WeeklyChart.tsx` - Replace Colors.light/dark
+- [x] **Task 5.2**: `TimeAwareHeroCard.tsx` - Replace Colors.light/dark
+- [x] **Task 5.3**: `TasbihCounter.tsx` - Replace Colors.light/dark
+- [x] **Task 5.4**: `SurahDownloadItem.tsx` - Replace Colors.light/dark
+- [x] **Task 5.5**: `StreakCard.tsx` - Replace Colors.light/dark
+- [x] **Task 5.6**: `StorageSettingsCard.tsx` - Replace Colors.light/dark
+- [x] **Task 5.7**: `StorageOverview.tsx` - Replace Colors.light/dark
+- [x] **Task 5.8**: `StorageBreakdown.tsx` - Check for hardcoded colors
+- [x] **Task 5.9**: `Card.tsx` - Already uses theme.* ✅
+- [x] **Task 5.10**: `Button.tsx` - Already uses theme.* ✅
+- [x] **Task 5.11**: `NotificationSettingsModal.tsx` - Migrated to theme.*
+- [x] **Task 5.12**: `DuaCard.tsx` - Migrated to theme.* ✅ COMPLETE
+- [x] **Task 5.13**: `CompactCategoryCard.tsx` - Migrated to theme.* ✅ COMPLETE
+- [x] **Task 5.14**: `QuickAccessStrip.tsx` - Migrated to theme.*
+- [x] **Task 5.15**: `DownloadProgress.tsx` - Migrated to theme.*
+- [x] **Task 5.16**: `QadaTrackerModal.tsx` - Migrated to theme.* ✅ COMPLETE
+
+### Phase 6: Testing
+- [ ] **Task 6.1**: Test all themes in light mode
+- [ ] **Task 6.2**: Test all themes in dark mode
+- [ ] **Task 6.3**: Ensure proper contrast ratios for accessibility
+- [ ] **Task 6.4**: Test theme persistence across app restarts
+- [ ] **Task 6.5**: Verify Quran/Arabic text readability in all themes
 
 ---
 

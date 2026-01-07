@@ -27,16 +27,16 @@ function formatCurrency(amount: number, currency: string = 'USD'): string {
 }
 
 export function CharityCard({ onPress, onAddEntry }: CharityCardProps) {
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
   const { stats, goal, goalProgress } = useCharityTracker();
 
-  const accentColor = isDark ? '#34D399' : '#059669';
-  const zakatColor = stats.zakatPaid ? '#10B981' : '#F59E0B';
+  const accentColor = theme.primary;
+  const zakatColor = stats.zakatPaid ? theme.primary : '#F59E0B';
 
   return (
     <Card elevation={2} onPress={onPress}>
       <View style={styles.header}>
-        <View style={[styles.iconContainer, { backgroundColor: 'rgba(16, 185, 129, 0.15)' }]}>
+        <View style={[styles.iconContainer, { backgroundColor: `${theme.primary}26` }]}>
           <Feather name="heart" size={20} color={accentColor} />
         </View>
         <View style={styles.headerText}>
@@ -70,15 +70,15 @@ export function CharityCard({ onPress, onAddEntry }: CharityCardProps) {
                 styles.progressFill, 
                 { 
                   width: `${goalProgress}%`,
-                  backgroundColor: goalProgress >= 100 ? '#10B981' : accentColor,
+                  backgroundColor: goalProgress >= 100 ? theme.primary : accentColor,
                 }
               ]} 
             />
           </View>
           {goalProgress >= 100 && (
-            <View style={[styles.goalCompleteBadge, { backgroundColor: 'rgba(16, 185, 129, 0.15)' }]}>
-              <Feather name="check-circle" size={14} color="#10B981" />
-              <ThemedText type="small" style={{ color: '#10B981', marginLeft: 4 }}>
+            <View style={[styles.goalCompleteBadge, { backgroundColor: `${theme.primary}26` }]}>
+              <Feather name="check-circle" size={14} color={theme.primary} />
+              <ThemedText type="small" style={{ color: theme.primary, marginLeft: 4 }}>
                 Goal Reached! Mashallah!
               </ThemedText>
             </View>
@@ -90,7 +90,7 @@ export function CharityCard({ onPress, onAddEntry }: CharityCardProps) {
       <View style={[
         styles.zakatSection, 
         { backgroundColor: stats.zakatPaid 
-          ? 'rgba(16, 185, 129, 0.1)' 
+          ? `${theme.primary}1A` 
           : 'rgba(245, 158, 11, 0.1)' 
         }
       ]}>

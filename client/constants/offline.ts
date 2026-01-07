@@ -19,6 +19,7 @@ export const STORAGE_KEYS = {
   PRAYER_CACHE_META: '@prayer_cache_meta',
   NETWORK_STATUS: '@network_status',
   DOWNLOADED_SURAHS: '@downloaded_surahs',
+  TAFSIR_META: '@tafsir_meta',
 };
 
 // Cache durations

@@ -12,7 +12,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
-import { Spacing, BorderRadius, Colors } from '@/constants/theme';
+import { Spacing, BorderRadius } from '@/constants/theme';
 import { DownloadProgress } from '@/components/DownloadProgress';
 import { SurahDownloadItem } from '@/components/SurahDownloadItem';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
@@ -172,16 +172,16 @@ export function AudioDownloadScreen() {
       <Pressable
         style={[
           styles.reciterSelector,
-          { backgroundColor: isDark ? 'rgba(26, 95, 79, 0.2)' : Colors.light.backgroundDefault }
+          { backgroundColor: theme.cardBackground }
         ]}
         onPress={() => setShowReciterModal(true)}
       >
         <View style={styles.reciterInfo}>
           <View style={[
             styles.reciterIcon,
-            { backgroundColor: isDark ? 'rgba(52, 211, 153, 0.15)' : 'rgba(16, 185, 129, 0.1)' }
+            { backgroundColor: `${theme.primary}15` }
           ]}>
-            <Feather name="mic" size={20} color={isDark ? Colors.dark.primary : Colors.light.primary} />
+            <Feather name="mic" size={20} color={theme.primary} />
           </View>
           <View style={{ flex: 1 }}>
             <ThemedText type="caption" secondary>Reciter</ThemedText>
@@ -206,9 +206,9 @@ export function AudioDownloadScreen() {
       >
         <View style={[
           styles.modalContainer,
-          { backgroundColor: isDark ? Colors.dark.backgroundDefault : Colors.light.backgroundDefault }
+          { backgroundColor: theme.backgroundDefault }
         ]}>
-          <View style={[styles.modalHeader, { borderBottomColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }]}>
+          <View style={[styles.modalHeader, { borderBottomColor: theme.border }]}>
             <ThemedText type="h3">Select Reciter</ThemedText>
             <Pressable onPress={() => setShowReciterModal(false)} style={styles.modalCloseButton}>
               <Feather name="x" size={24} color={theme.text} />
@@ -226,7 +226,7 @@ export function AudioDownloadScreen() {
                     styles.reciterModalOption,
                     { 
                       backgroundColor: reciter.id === selectedReciter 
-                        ? (isDark ? 'rgba(52, 211, 153, 0.2)' : 'rgba(16, 185, 129, 0.15)')
+                        ? `${theme.primary}20`
                         : 'transparent',
                       opacity: pressed ? 0.7 : 1,
                     }
@@ -259,7 +259,7 @@ export function AudioDownloadScreen() {
                     </ThemedText>
                   </View>
                   {reciter.id === selectedReciter && (
-                    <Feather name="check" size={20} color={isDark ? Colors.dark.primary : Colors.light.primary} />
+                    <Feather name="check" size={20} color={theme.primary} />
                   )}
                 </Pressable>
               );
@@ -271,10 +271,10 @@ export function AudioDownloadScreen() {
       {/* Progress Summary */}
       <View style={[
         styles.progressSummary,
-        { backgroundColor: isDark ? 'rgba(26, 95, 79, 0.2)' : Colors.light.backgroundDefault }
+        { backgroundColor: theme.cardBackground }
       ]}>
         <View style={styles.progressInfo}>
-          <ThemedText type="h2" style={{ color: isDark ? Colors.dark.primary : Colors.light.primary }}>
+          <ThemedText type="h2" style={{ color: theme.primary }}>
             {downloadedCount}
           </ThemedText>
           <ThemedText type="caption" secondary>
@@ -287,7 +287,7 @@ export function AudioDownloadScreen() {
               styles.progressFill,
               { 
                 width: `${(downloadedCount / totalSurahs) * 100}%`,
-                backgroundColor: isDark ? Colors.dark.primary : Colors.light.primary,
+                backgroundColor: theme.primary,
               }
             ]} 
           />
@@ -347,18 +347,18 @@ export function AudioDownloadScreen() {
             style={({ pressed }) => [
               styles.batchButton,
               { 
-                backgroundColor: isDark ? 'rgba(52, 211, 153, 0.15)' : 'rgba(16, 185, 129, 0.1)',
+                backgroundColor: `${theme.primary}15`,
                 opacity: pressed || !isOnline || downloadedCount === totalSurahs ? 0.5 : 1,
               }
             ]}
             onPress={handleDownloadAll}
             disabled={!isOnline || downloadedCount === totalSurahs}
           >
-            <Feather name="download-cloud" size={18} color={isDark ? Colors.dark.primary : Colors.light.primary} />
+            <Feather name="download-cloud" size={18} color={theme.primary} />
             <ThemedText 
               type="small" 
               style={{ 
-                color: isDark ? Colors.dark.primary : Colors.light.primary,
+                color: theme.primary,
                 marginLeft: Spacing.xs,
                 fontWeight: '600',
               }}

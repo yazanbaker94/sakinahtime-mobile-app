@@ -9,7 +9,7 @@ import { View, StyleSheet, Switch, Pressable } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
-import { Spacing, BorderRadius, Colors } from '@/constants/theme';
+import { Spacing, BorderRadius } from '@/constants/theme';
 import { OfflineSettings } from '../types/offline';
 import { formatBytes, STORAGE_LIMITS } from '../constants/offline';
 
@@ -31,17 +31,21 @@ export function StorageSettingsCard({ settings, onSettingsChange }: StorageSetti
   return (
     <View style={[
       styles.container,
-      { backgroundColor: isDark ? 'rgba(26, 95, 79, 0.2)' : Colors.light.backgroundDefault }
+      { 
+        backgroundColor: isDark ? `${theme.primary}33` : theme.backgroundDefault,
+        elevation: isDark ? 0 : 3,
+        shadowOpacity: isDark ? 0 : 0.08,
+      }
     ]}>
       <View style={styles.header}>
         <View style={[
           styles.iconCircle,
-          { backgroundColor: isDark ? 'rgba(52, 211, 153, 0.15)' : 'rgba(16, 185, 129, 0.1)' }
+          { backgroundColor: `${theme.primary}26` }
         ]}>
           <Feather 
             name="settings" 
             size={20} 
-            color={isDark ? Colors.dark.primary : Colors.light.primary} 
+            color={theme.primary} 
           />
         </View>
         <ThemedText type="body" style={{ fontWeight: '600' }}>
@@ -69,11 +73,11 @@ export function StorageSettingsCard({ settings, onSettingsChange }: StorageSetti
               styles.presetButton,
               {
                 backgroundColor: settings.storageLimit === preset.value
-                  ? (isDark ? 'rgba(52, 211, 153, 0.2)' : 'rgba(16, 185, 129, 0.15)')
+                  ? `${theme.primary}33`
                   : (isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.04)'),
                 borderWidth: settings.storageLimit === preset.value ? 2 : 1,
                 borderColor: settings.storageLimit === preset.value
-                  ? (isDark ? Colors.dark.primary : Colors.light.primary)
+                  ? theme.primary
                   : (isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'),
               }
             ]}
@@ -84,7 +88,7 @@ export function StorageSettingsCard({ settings, onSettingsChange }: StorageSetti
               style={{ 
                 fontWeight: settings.storageLimit === preset.value ? '600' : '400',
                 color: settings.storageLimit === preset.value 
-                  ? (isDark ? Colors.dark.primary : Colors.light.primary)
+                  ? theme.primary
                   : theme.text,
               }}
             >
@@ -103,7 +107,7 @@ export function StorageSettingsCard({ settings, onSettingsChange }: StorageSetti
             <Feather 
               name="wifi" 
               size={16} 
-              color={isDark ? Colors.dark.textSecondary : Colors.light.textSecondary} 
+              color={theme.textSecondary} 
             />
             <ThemedText type="small" style={{ fontWeight: '500', marginLeft: Spacing.xs }}>
               Download over WiFi only
@@ -118,10 +122,10 @@ export function StorageSettingsCard({ settings, onSettingsChange }: StorageSetti
           onValueChange={(value) => onSettingsChange({ wifiOnlyDownloads: value })}
           trackColor={{ 
             false: isDark ? 'rgba(255, 255, 255, 0.2)' : '#E5E7EB',
-            true: isDark ? 'rgba(52, 211, 153, 0.5)' : 'rgba(16, 185, 129, 0.5)',
+            true: `${theme.primary}80`,
           }}
           thumbColor={settings.wifiOnlyDownloads 
-            ? (isDark ? Colors.dark.primary : Colors.light.primary)
+            ? theme.primary
             : (isDark ? '#9CA3AF' : '#F3F4F6')
           }
         />
@@ -136,7 +140,7 @@ export function StorageSettingsCard({ settings, onSettingsChange }: StorageSetti
             <Feather 
               name="trash-2" 
               size={16} 
-              color={isDark ? Colors.dark.textSecondary : Colors.light.textSecondary} 
+              color={theme.textSecondary} 
             />
             <ThemedText type="small" style={{ fontWeight: '500', marginLeft: Spacing.xs }}>
               Auto-delete old cache
@@ -151,10 +155,10 @@ export function StorageSettingsCard({ settings, onSettingsChange }: StorageSetti
           onValueChange={(value) => onSettingsChange({ autoDeleteOldCache: value })}
           trackColor={{ 
             false: isDark ? 'rgba(255, 255, 255, 0.2)' : '#E5E7EB',
-            true: isDark ? 'rgba(52, 211, 153, 0.5)' : 'rgba(16, 185, 129, 0.5)',
+            true: `${theme.primary}80`,
           }}
           thumbColor={settings.autoDeleteOldCache 
-            ? (isDark ? Colors.dark.primary : Colors.light.primary)
+            ? theme.primary
             : (isDark ? '#9CA3AF' : '#F3F4F6')
           }
         />
@@ -169,9 +173,8 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
     shadowRadius: 8,
-    elevation: 3,
+    // elevation and shadowOpacity set dynamically
   },
   header: {
     flexDirection: 'row',

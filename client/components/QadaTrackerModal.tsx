@@ -19,7 +19,7 @@ import { ThemedView } from './ThemedView';
 import { useTheme } from '../hooks/useTheme';
 import { useQadaTracker } from '../hooks/useQadaTracker';
 import { PrayerName, PRAYER_NAMES } from '../types/prayerLog';
-import { Spacing, BorderRadius, Colors } from '../constants/theme';
+import { Spacing, BorderRadius } from '../constants/theme';
 
 interface QadaTrackerModalProps {
   visible: boolean;
@@ -35,7 +35,7 @@ const PRAYER_DISPLAY: Record<PrayerName, { nameEn: string; nameAr: string; icon:
 };
 
 export function QadaTrackerModal({ visible, onClose }: QadaTrackerModalProps) {
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
   const { qadaCounts, totalQada, logQadaPrayer, adjustQadaCount, loading } = useQadaTracker();
   const [editingPrayer, setEditingPrayer] = useState<PrayerName | null>(null);
   const [editValue, setEditValue] = useState('');
@@ -87,7 +87,7 @@ export function QadaTrackerModal({ visible, onClose }: QadaTrackerModalProps) {
         <ThemedView style={[
           styles.modalContainer,
           {
-            backgroundColor: isDark ? Colors.dark.backgroundDefault : Colors.light.backgroundDefault,
+            backgroundColor: theme.backgroundDefault,
           }
         ]}>
           {/* Header */}
@@ -99,7 +99,7 @@ export function QadaTrackerModal({ visible, onClose }: QadaTrackerModalProps) {
               <ThemedText type="h3">Qada Tracker</ThemedText>
             </View>
             <Pressable onPress={onClose} style={styles.closeButton}>
-              <Feather name="x" size={24} color={isDark ? Colors.dark.text : Colors.light.text} />
+              <Feather name="x" size={24} color={theme.text} />
             </Pressable>
           </View>
 
@@ -129,9 +129,7 @@ export function QadaTrackerModal({ visible, onClose }: QadaTrackerModalProps) {
                   style={[
                     styles.prayerRow,
                     {
-                      backgroundColor: isDark
-                        ? Colors.dark.backgroundSecondary
-                        : Colors.light.backgroundSecondary,
+                      backgroundColor: theme.backgroundSecondary,
                     },
                   ]}
                 >
@@ -143,7 +141,7 @@ export function QadaTrackerModal({ visible, onClose }: QadaTrackerModalProps) {
                       <Feather
                         name={display.icon as any}
                         size={18}
-                        color={isDark ? Colors.dark.textSecondary : Colors.light.textSecondary}
+                        color={theme.textSecondary}
                       />
                     </View>
                     <View>
@@ -163,7 +161,7 @@ export function QadaTrackerModal({ visible, onClose }: QadaTrackerModalProps) {
                           style={[
                             styles.editInput,
                             {
-                              color: isDark ? Colors.dark.text : Colors.light.text,
+                              color: theme.text,
                               borderColor: isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)',
                             },
                           ]}
@@ -173,7 +171,7 @@ export function QadaTrackerModal({ visible, onClose }: QadaTrackerModalProps) {
                           autoFocus
                         />
                         <Pressable onPress={handleSaveEdit} style={styles.saveButton}>
-                          <Feather name="check" size={18} color="#10B981" />
+                          <Feather name="check" size={18} color={theme.primary} />
                         </Pressable>
                       </View>
                     ) : (
@@ -202,7 +200,7 @@ export function QadaTrackerModal({ visible, onClose }: QadaTrackerModalProps) {
                   {count > 0 && !isEditing && (
                     <Pressable
                       onPress={() => handleLogQada(prayer)}
-                      style={[styles.logButton, { backgroundColor: '#10B981' }]}
+                      style={[styles.logButton, { backgroundColor: theme.primary }]}
                     >
                       <Feather name="check" size={14} color="#fff" />
                       <ThemedText type="caption" style={{ color: '#fff', fontWeight: '600', marginLeft: 4 }}>
@@ -217,7 +215,7 @@ export function QadaTrackerModal({ visible, onClose }: QadaTrackerModalProps) {
 
           {/* Info text */}
           <View style={styles.infoContainer}>
-            <Feather name="info" size={14} color={isDark ? Colors.dark.textSecondary : Colors.light.textSecondary} />
+            <Feather name="info" size={14} color={theme.textSecondary} />
             <ThemedText type="caption" secondary style={styles.infoText}>
               Tap the count to manually edit. Use "Log" when you complete a Qada prayer.
             </ThemedText>

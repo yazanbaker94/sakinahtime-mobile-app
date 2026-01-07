@@ -14,7 +14,7 @@ import {
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { useHifzMode } from '../../contexts/HifzModeContext';
 import { useTheme } from '../../hooks/useTheme';
-import { HIDDEN_TEXT_BG, HIFZ_ACTIVE_COLOR } from '../../constants/hifz';
+import { HIDDEN_TEXT_BG } from '../../constants/hifz';
 import type { VerseKey } from '../../types/hifz';
 
 interface HifzVerseOverlayProps {
@@ -39,7 +39,7 @@ export function HifzVerseOverlay({
 
   const isRevealed = isVerseRevealed(verseKey) || revealedVerses.has('__ALL__');
   const hiddenBgColor = isDark ? HIDDEN_TEXT_BG.dark : HIDDEN_TEXT_BG.light;
-  const activeColor = isDark ? HIFZ_ACTIVE_COLOR.dark : HIFZ_ACTIVE_COLOR.light;
+  const activeColor = theme.primary;
 
   const handlePress = useCallback(() => {
     if (isRevealed) {

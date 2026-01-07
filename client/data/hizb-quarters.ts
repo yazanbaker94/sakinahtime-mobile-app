@@ -31,7 +31,19 @@ export function getHizbQuarters(): HizbQuarter[] {
   const quarters: HizbQuarter[] = [];
   let lastQuarter = 0;
 
-  quranData.forEach((verse: any) => {
+  // Extract all verses from all surahs
+  const allVerses: Array<{ number: number; numberInSurah: number; hizbQuarter: number }> = [];
+  for (const surah of quranData.data.surahs) {
+    for (const ayah of surah.ayahs) {
+      allVerses.push({
+        number: ayah.number,
+        numberInSurah: ayah.numberInSurah,
+        hizbQuarter: ayah.hizbQuarter,
+      });
+    }
+  }
+
+  allVerses.forEach((verse) => {
     const hq = verse.hizbQuarter;
     if (hq !== lastQuarter) {
       const surahInfo = getSurahFromVerseNumber(verse.number);

@@ -9,7 +9,7 @@ import { View, StyleSheet, Pressable } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
-import { Spacing, BorderRadius, Colors } from '@/constants/theme';
+import { Spacing, BorderRadius } from '@/constants/theme';
 import { Dua } from '@/types/dua';
 
 interface DuaOfTheDayProps {
@@ -18,7 +18,7 @@ interface DuaOfTheDayProps {
 }
 
 export function DuaOfTheDay({ dua, onPress }: DuaOfTheDayProps) {
-  const { isDark } = useTheme();
+  const { theme } = useTheme();
 
   // Get source text
   const getSourceText = (): string => {
@@ -37,9 +37,7 @@ export function DuaOfTheDay({ dua, onPress }: DuaOfTheDayProps) {
       style={({ pressed }) => [
         styles.container,
         { 
-          backgroundColor: isDark 
-            ? 'rgba(52, 211, 153, 0.15)' 
-            : 'rgba(16, 185, 129, 0.1)',
+          backgroundColor: `${theme.primary}1A`,
           opacity: pressed ? 0.8 : 1,
         }
       ]}
@@ -48,7 +46,7 @@ export function DuaOfTheDay({ dua, onPress }: DuaOfTheDayProps) {
       <View style={styles.header}>
         <View style={[
           styles.iconContainer,
-          { backgroundColor: isDark ? Colors.dark.primary : Colors.light.primary }
+          { backgroundColor: theme.primary }
         ]}>
           <Feather name="sun" size={18} color="#fff" />
         </View>
@@ -63,7 +61,7 @@ export function DuaOfTheDay({ dua, onPress }: DuaOfTheDayProps) {
         <Feather 
           name="chevron-right" 
           size={20} 
-          color={isDark ? Colors.dark.textSecondary : Colors.light.textSecondary} 
+          color={theme.textSecondary} 
         />
       </View>
 
@@ -90,7 +88,7 @@ export function DuaOfTheDay({ dua, onPress }: DuaOfTheDayProps) {
       <View style={styles.tapHint}>
         <ThemedText 
           type="caption" 
-          style={{ color: isDark ? Colors.dark.primary : Colors.light.primary }}
+          style={{ color: theme.primary }}
         >
           Tap to read full dua
         </ThemedText>

@@ -14,7 +14,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/RootStackNavigator';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
-import { Spacing, BorderRadius, Colors } from '@/constants/theme';
+import { Spacing, BorderRadius } from '@/constants/theme';
 import { StorageOverview } from '@/components/StorageOverview';
 import { StorageBreakdown } from '@/components/StorageBreakdown';
 import { StorageSettingsCard } from '@/components/StorageSettingsCard';
@@ -96,7 +96,7 @@ export function StorageManagementScreen() {
     return (
       <ThemedView style={styles.container}>
         <View style={[styles.loadingContainer, { paddingTop: insets.top }]}>
-          <ActivityIndicator size="large" color={isDark ? Colors.dark.primary : Colors.light.primary} />
+          <ActivityIndicator size="large" color={theme.primary} />
           <ThemedText type="body" secondary style={{ marginTop: Spacing.md }}>
             Loading storage info...
           </ThemedText>
@@ -212,7 +212,7 @@ export function StorageManagementScreen() {
           style={({ pressed }) => [
             styles.refreshButton,
             { 
-              backgroundColor: isDark ? 'rgba(52, 211, 153, 0.15)' : 'rgba(16, 185, 129, 0.1)',
+              backgroundColor: `${theme.primary}26`,
               opacity: pressed ? 0.7 : 1,
             }
           ]}
@@ -221,12 +221,12 @@ export function StorageManagementScreen() {
           <Feather 
             name="refresh-cw" 
             size={16} 
-            color={isDark ? Colors.dark.primary : Colors.light.primary} 
+            color={theme.primary} 
           />
           <ThemedText 
             type="small" 
             style={{ 
-              color: isDark ? Colors.dark.primary : Colors.light.primary,
+              color: theme.primary,
               marginLeft: Spacing.xs,
               fontWeight: '500',
             }}

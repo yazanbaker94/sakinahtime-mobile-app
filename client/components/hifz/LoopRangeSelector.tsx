@@ -14,7 +14,6 @@ import { Feather } from '@expo/vector-icons';
 import { useHifzMode } from '../../contexts/HifzModeContext';
 import { useTheme } from '../../hooks/useTheme';
 import { ThemedText } from '../ThemedText';
-import { HIFZ_ACTIVE_COLOR } from '../../constants/hifz';
 import AudioService from '../../services/AudioService';
 
 interface LoopRangeSelectorProps {
@@ -40,7 +39,7 @@ export function LoopRangeSelector({
     setIsLooping,
   } = useHifzMode();
 
-  const activeColor = isDark ? HIFZ_ACTIVE_COLOR.dark : HIFZ_ACTIVE_COLOR.light;
+  const activeColor = theme.primary;
 
   const handleStartLoop = useCallback(async () => {
     if (loopRange.start && loopRange.end) {

@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ThemedText } from '@/components/ThemedText';
-import { Spacing, Colors, BorderRadius } from '@/constants/theme';
+import { Spacing, BorderRadius } from '@/constants/theme';
 import { useTheme } from '@/hooks/useTheme';
 import { Feather } from '@expo/vector-icons';
 import { useMosqueFinder } from '@/hooks/useMosqueFinder';
@@ -31,7 +31,7 @@ import * as Haptics from 'expo-haptics';
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'MosqueFinder'>;
 
 export default function MosqueFinderScreen() {
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
   const navigation = useNavigation<NavigationProp>();
   const insets = useSafeAreaInsets();
   const [showRadiusPicker, setShowRadiusPicker] = useState(false);
@@ -75,7 +75,7 @@ export default function MosqueFinderScreen() {
           <Feather 
             name="map-pin" 
             size={48} 
-            color={isDark ? Colors.dark.textSecondary : Colors.light.textSecondary} 
+            color={theme.textSecondary} 
           />
           <ThemedText type="body" style={styles.emptyTitle}>
             Location Required
@@ -104,7 +104,7 @@ export default function MosqueFinderScreen() {
           <Pressable
             onPress={refetch}
             style={[styles.retryButton, {
-              backgroundColor: isDark ? Colors.dark.primary : Colors.light.primary,
+              backgroundColor: theme.primary,
             }]}
           >
             <ThemedText type="body" style={{ color: '#FFFFFF' }}>
@@ -120,7 +120,7 @@ export default function MosqueFinderScreen() {
         <Feather 
           name="search" 
           size={48} 
-          color={isDark ? Colors.dark.textSecondary : Colors.light.textSecondary} 
+          color={theme.textSecondary} 
         />
         <ThemedText type="body" style={styles.emptyTitle}>
           No mosques found
@@ -135,7 +135,7 @@ export default function MosqueFinderScreen() {
   return (
     <SafeAreaView 
       style={[styles.container, { 
-        backgroundColor: isDark ? Colors.dark.backgroundDefault : Colors.light.backgroundDefault 
+        backgroundColor: theme.backgroundDefault 
       }]}
       edges={['top']}
     >
@@ -145,7 +145,7 @@ export default function MosqueFinderScreen() {
           <Feather 
             name="arrow-left" 
             size={24} 
-            color={isDark ? Colors.dark.text : Colors.light.text} 
+            color={theme.text} 
           />
         </Pressable>
         <ThemedText type="h3" style={styles.headerTitle}>Nearby Mosques</ThemedText>
@@ -156,21 +156,19 @@ export default function MosqueFinderScreen() {
       <View style={styles.searchContainer}>
         {/* Search Input */}
         <View style={[styles.searchInputContainer, {
-          backgroundColor: isDark 
-            ? Colors.dark.backgroundSecondary 
-            : Colors.light.backgroundSecondary,
+          backgroundColor: theme.backgroundSecondary,
         }]}>
           <Feather 
             name="search" 
             size={18} 
-            color={isDark ? Colors.dark.textSecondary : Colors.light.textSecondary} 
+            color={theme.textSecondary} 
           />
           <TextInput
             style={[styles.searchInput, {
-              color: isDark ? Colors.dark.text : Colors.light.text,
+              color: theme.text,
             }]}
             placeholder="Search mosques..."
-            placeholderTextColor={isDark ? Colors.dark.textSecondary : Colors.light.textSecondary}
+            placeholderTextColor={theme.textSecondary}
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
@@ -179,7 +177,7 @@ export default function MosqueFinderScreen() {
               <Feather 
                 name="x" 
                 size={18} 
-                color={isDark ? Colors.dark.textSecondary : Colors.light.textSecondary} 
+                color={theme.textSecondary} 
               />
             </Pressable>
           )}
@@ -189,15 +187,13 @@ export default function MosqueFinderScreen() {
         <Pressable
           onPress={() => setShowRadiusPicker(!showRadiusPicker)}
           style={[styles.radiusButton, {
-            backgroundColor: isDark 
-              ? Colors.dark.backgroundSecondary 
-              : Colors.light.backgroundSecondary,
+            backgroundColor: theme.backgroundSecondary,
           }]}
         >
           <Feather 
             name="sliders" 
             size={18} 
-            color={isDark ? Colors.dark.primary : Colors.light.primary} 
+            color={theme.primary} 
           />
           <ThemedText type="small" style={styles.radiusText}>
             {currentRadiusLabel}
@@ -208,9 +204,7 @@ export default function MosqueFinderScreen() {
       {/* Radius Picker Dropdown */}
       {showRadiusPicker && (
         <View style={[styles.radiusPicker, {
-          backgroundColor: isDark 
-            ? Colors.dark.backgroundSecondary 
-            : Colors.light.backgroundSecondary,
+          backgroundColor: theme.backgroundSecondary,
         }]}>
           {RADIUS_OPTIONS.map((option) => (
             <Pressable
@@ -219,9 +213,7 @@ export default function MosqueFinderScreen() {
               style={[
                 styles.radiusOption,
                 radius === option.value && {
-                  backgroundColor: isDark 
-                    ? 'rgba(52, 211, 153, 0.15)' 
-                    : 'rgba(16, 185, 129, 0.1)',
+                  backgroundColor: `${theme.primary}20`,
                 }
               ]}
             >
@@ -230,7 +222,7 @@ export default function MosqueFinderScreen() {
                 <Feather 
                   name="check" 
                   size={18} 
-                  color={isDark ? Colors.dark.primary : Colors.light.primary} 
+                  color={theme.primary} 
                 />
               )}
             </Pressable>
@@ -243,7 +235,7 @@ export default function MosqueFinderScreen() {
         <View style={styles.loadingContainer}>
           <ActivityIndicator 
             size="large" 
-            color={isDark ? Colors.dark.primary : Colors.light.primary} 
+            color={theme.primary} 
           />
           <ThemedText type="small" secondary style={styles.loadingText}>
             Finding nearby mosques...
@@ -267,7 +259,7 @@ export default function MosqueFinderScreen() {
             <RefreshControl
               refreshing={isLoading && filteredMosques.length > 0}
               onRefresh={refetch}
-              tintColor={isDark ? Colors.dark.primary : Colors.light.primary}
+              tintColor={theme.primary}
             />
           }
           showsVerticalScrollIndicator={false}

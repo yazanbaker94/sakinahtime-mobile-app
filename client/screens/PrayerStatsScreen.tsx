@@ -28,11 +28,11 @@ import { usePrayerStats, ViewMode } from '@/hooks/usePrayerStats';
 import { useQadaTracker } from '@/hooks/useQadaTracker';
 import { usePrayerLog } from '@/hooks/usePrayerLog';
 import { PRAYER_NAMES, PrayerName, MISSED_REMINDER_DELAY_OPTIONS } from '@/types/prayerLog';
-import { Spacing, BorderRadius, Colors } from '@/constants/theme';
+import { Spacing, BorderRadius } from '@/constants/theme';
 
 export default function PrayerStatsScreen() {
   const insets = useSafeAreaInsets();
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
   const navigation = useNavigation();
   const {
     streak,
@@ -155,22 +155,22 @@ Tracked with SakinahTime 🌙`;
         <View style={styles.header}>
           <View style={styles.headerLeft}>
             <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
-              <Feather name="arrow-left" size={24} color={isDark ? Colors.dark.text : Colors.light.text} />
+              <Feather name="arrow-left" size={24} color={theme.text} />
             </Pressable>
             <ThemedText type="h2" style={styles.title}>Prayer Statistics</ThemedText>
           </View>
           <Pressable onPress={handleExport} style={styles.exportButton}>
-            <Feather name="share" size={20} color={isDark ? Colors.dark.text : Colors.light.text} />
+            <Feather name="share" size={20} color={theme.text} />
           </Pressable>
         </View>
 
         {/* Tracking Toggle */}
         <View style={[
           styles.trackingToggle,
-          { backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault }
+          { backgroundColor: theme.cardBackground }
         ]}>
           <View style={styles.trackingInfo}>
-            <Feather name="check-square" size={20} color={isDark ? Colors.dark.primary : Colors.light.primary} />
+            <Feather name="check-square" size={20} color={theme.primary} />
             <View style={styles.trackingText}>
               <ThemedText type="body" style={{ fontWeight: '600' }}>Prayer Tracking</ThemedText>
               <ThemedText type="caption" secondary>
@@ -182,8 +182,8 @@ Tracked with SakinahTime 🌙`;
             value={trackingEnabled}
             onValueChange={toggleTracking}
             trackColor={{
-              false: isDark ? Colors.dark.backgroundTertiary : Colors.light.backgroundSecondary,
-              true: isDark ? Colors.dark.primary : Colors.light.primary,
+              false: theme.backgroundTertiary,
+              true: theme.primary,
             }}
             thumbColor="#FFFFFF"
           />
@@ -193,7 +193,7 @@ Tracked with SakinahTime 🌙`;
         {trackingEnabled && (
           <View style={[
             styles.legendCard,
-            { backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault }
+            { backgroundColor: theme.cardBackground }
           ]}>
             <ThemedText type="caption" secondary style={{ marginBottom: Spacing.sm }}>Tap to cycle through:</ThemedText>
             <View style={styles.legendRow}>
@@ -202,7 +202,7 @@ Tracked with SakinahTime 🌙`;
                 <ThemedText type="caption">Not marked</ThemedText>
               </View>
               <View style={styles.legendItem}>
-                <View style={[styles.legendDot, { backgroundColor: '#10B981' }]} />
+                <View style={[styles.legendDot, { backgroundColor: theme.primary }]} />
                 <ThemedText type="caption">Prayed</ThemedText>
               </View>
               <View style={styles.legendItem}>
@@ -221,11 +221,11 @@ Tracked with SakinahTime 🌙`;
         {trackingEnabled && (
           <View style={[
             styles.reminderCard,
-            { backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault }
+            { backgroundColor: theme.cardBackground }
           ]}>
             <View style={styles.reminderHeader}>
               <View style={styles.reminderInfo}>
-                <Feather name="bell" size={20} color={isDark ? Colors.dark.primary : Colors.light.primary} />
+                <Feather name="bell" size={20} color={theme.primary} />
                 <View style={styles.reminderText}>
                   <ThemedText type="body" style={{ fontWeight: '600' }}>Missed Prayer Reminder</ThemedText>
                   <ThemedText type="caption" secondary>
@@ -239,8 +239,8 @@ Tracked with SakinahTime 🌙`;
                 value={missedReminderEnabled}
                 onValueChange={toggleMissedReminder}
                 trackColor={{
-                  false: isDark ? Colors.dark.backgroundTertiary : Colors.light.backgroundSecondary,
-                  true: isDark ? Colors.dark.primary : Colors.light.primary,
+                  false: theme.backgroundTertiary,
+                  true: theme.primary,
                 }}
                 thumbColor="#FFFFFF"
               />
@@ -260,8 +260,8 @@ Tracked with SakinahTime 🌙`;
                         styles.delayButton,
                         {
                           backgroundColor: missedReminderDelayMinutes === minutes
-                            ? (isDark ? Colors.dark.primary : Colors.light.primary)
-                            : (isDark ? Colors.dark.backgroundTertiary : Colors.light.backgroundSecondary),
+                            ? theme.primary
+                            : theme.backgroundTertiary,
                         },
                       ]}
                       onPress={() => setMissedReminderDelay(minutes)}
@@ -287,17 +287,17 @@ Tracked with SakinahTime 🌙`;
         <View style={styles.quickStatsRow}>
           <View style={[
             styles.quickStatCard,
-            { backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault }
+            { backgroundColor: theme.cardBackground }
           ]}>
-            <Feather name="check-circle" size={20} color="#10B981" />
-            <ThemedText type="h3" style={{ color: '#10B981' }}>{totalPrayersLogged}</ThemedText>
+            <Feather name="check-circle" size={20} color={theme.primary} />
+            <ThemedText type="h3" style={{ color: theme.primary }}>{totalPrayersLogged}</ThemedText>
             <ThemedText type="caption" secondary>Total Logged</ThemedText>
           </View>
 
           <Pressable
             style={[
               styles.quickStatCard,
-              { backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault }
+              { backgroundColor: theme.cardBackground }
             ]}
             onPress={() => setQadaModalVisible(true)}
           >
@@ -313,13 +313,13 @@ Tracked with SakinahTime 🌙`;
         {/* View mode toggle */}
         <View style={[
           styles.toggleContainer,
-          { backgroundColor: isDark ? Colors.dark.backgroundSecondary : 'rgba(0,0,0,0.05)' }
+          { backgroundColor: theme.backgroundSecondary }
         ]}>
           <Pressable
             style={[
               styles.toggleButton,
               viewMode === 'weekly' && {
-                backgroundColor: isDark ? Colors.dark.primary : Colors.light.primary,
+                backgroundColor: theme.primary,
               },
             ]}
             onPress={() => setViewMode('weekly')}
@@ -338,7 +338,7 @@ Tracked with SakinahTime 🌙`;
             style={[
               styles.toggleButton,
               viewMode === 'monthly' && {
-                backgroundColor: isDark ? Colors.dark.primary : Colors.light.primary,
+                backgroundColor: theme.primary,
               },
             ]}
             onPress={() => setViewMode('monthly')}
@@ -371,7 +371,7 @@ Tracked with SakinahTime 🌙`;
           <View style={[
             styles.breakdownCard,
             {
-              backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault,
+              backgroundColor: theme.cardBackground,
               shadowColor: '#000',
               shadowOffset: { width: 0, height: 2 },
               shadowOpacity: isDark ? 0.3 : 0.1,
@@ -391,7 +391,7 @@ Tracked with SakinahTime 🌙`;
                         styles.breakdownFill,
                         {
                           width: `${data.percentage}%`,
-                          backgroundColor: isDark ? '#34D399' : '#10B981',
+                          backgroundColor: theme.primary,
                         },
                       ]}
                     />

@@ -7,7 +7,7 @@ import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/navigation/RootStackNavigator";
-import { Spacing, Colors, BorderRadius } from "@/constants/theme";
+import { Spacing, BorderRadius } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { useLocation } from "@/contexts/LocationContext";
 import {
@@ -36,11 +36,11 @@ const QIBLA_INDICATOR_RADIUS = INNER_RING_SIZE / 2 - 40;
 export default function QiblaScreen() {
   const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
-  const { isDark } = useTheme();
+  const { theme, isDark } = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const wasAlignedRef = useRef(false);
   const [showCalibrationHint, setShowCalibrationHint] = React.useState(false);
-  const calibrationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const calibrationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const glowOpacity = useSharedValue(0);
   const pulseScale = useSharedValue(1);
   const successScale = useSharedValue(1);
@@ -201,13 +201,13 @@ export default function QiblaScreen() {
               style={[
                 styles.iconCircle,
                 { 
-                  backgroundColor: isDark ? 'rgba(52, 211, 153, 0.15)' : 'rgba(16, 185, 129, 0.1)',
+                  backgroundColor: `${theme.primary}15`,
                   borderWidth: 2,
-                  borderColor: isDark ? 'rgba(52, 211, 153, 0.3)' : 'rgba(16, 185, 129, 0.3)',
+                  borderColor: `${theme.primary}30`,
                 },
               ]}
             >
-              <Feather name="map-pin" size={48} color={isDark ? Colors.dark.primary : Colors.light.primary} />
+              <Feather name="map-pin" size={48} color={theme.primary} />
             </View>
             <ThemedText type="h3" style={styles.permissionTitle}>
               Location Access Required
@@ -223,8 +223,8 @@ export default function QiblaScreen() {
               <Pressable
                 onPress={requestPermission}
                 style={[styles.permissionButton, { 
-                  backgroundColor: isDark ? Colors.dark.primary : Colors.light.primary,
-                  shadowColor: isDark ? Colors.dark.primary : Colors.light.primary,
+                  backgroundColor: theme.primary,
+                  shadowColor: theme.primary,
                   shadowOffset: { width: 0, height: 4 },
                   shadowOpacity: 0.3,
                   shadowRadius: 8,
@@ -239,8 +239,8 @@ export default function QiblaScreen() {
               <Pressable
                 onPress={openSettings}
                 style={[styles.permissionButton, { 
-                  backgroundColor: isDark ? Colors.dark.primary : Colors.light.primary,
-                  shadowColor: isDark ? Colors.dark.primary : Colors.light.primary,
+                  backgroundColor: theme.primary,
+                  shadowColor: theme.primary,
                   shadowOffset: { width: 0, height: 4 },
                   shadowOpacity: 0.3,
                   shadowRadius: 8,
@@ -278,8 +278,8 @@ export default function QiblaScreen() {
     );
   }
 
-  const primaryColor = isDark ? Colors.dark.primary : Colors.light.primary;
-  const goldColor = isDark ? '#F59E0B' : '#D97706';
+  const primaryColor = theme.primary;
+  const goldColor = theme.gold;
 
   return (
     <ThemedView style={styles.container}>
@@ -311,7 +311,7 @@ export default function QiblaScreen() {
         <View style={styles.compassWrapper}>
           {/* Animated Glow Rings */}
           <Animated.View style={[styles.glowRing, { 
-            borderColor: isAligned ? primaryColor : 'rgba(52, 211, 153, 0.2)',
+            borderColor: isAligned ? primaryColor : `${primaryColor}33`,
             shadowColor: primaryColor,
             shadowOffset: { width: 0, height: 0 },
             shadowOpacity: isAligned ? 0.7 : 0,
@@ -319,9 +319,9 @@ export default function QiblaScreen() {
           }, glowStyle]} />
           
           <View style={[styles.compassOuter, { 
-            backgroundColor: isDark ? 'rgba(17, 24, 39, 0.98)' : 'rgba(255, 255, 255, 0.98)',
+            backgroundColor: isDark ? `${theme.backgroundDefault}FA` : `${theme.backgroundDefault}FA`,
             borderWidth: 3,
-            borderColor: isDark ? 'rgba(52, 211, 153, 0.25)' : 'rgba(16, 185, 129, 0.25)',
+            borderColor: `${primaryColor}40`,
             shadowColor: '#000',
             shadowOffset: { width: 0, height: 12 },
             shadowOpacity: isDark ? 0.6 : 0.18,
@@ -330,7 +330,7 @@ export default function QiblaScreen() {
           }]}>
             <Animated.View style={[styles.compassInner, compassRotationStyle]}>
               <View style={[styles.innerRing, { 
-                borderColor: isDark ? 'rgba(52, 211, 153, 0.35)' : 'rgba(16, 185, 129, 0.35)',
+                borderColor: `${primaryColor}59`,
                 borderWidth: 2.5,
               }]}>
                 {/* Cardinal Directions */}
@@ -460,7 +460,7 @@ export default function QiblaScreen() {
             style={[
               styles.directionText,
               { 
-                color: isAligned ? primaryColor : (isDark ? Colors.dark.text : Colors.light.text),
+                color: isAligned ? primaryColor : theme.text,
                 fontWeight: '800',
                 fontSize: 18,
                 letterSpacing: -0.5,
@@ -501,8 +501,8 @@ export default function QiblaScreen() {
             navigation.navigate('MosqueFinder');
           }}
           style={[styles.mosquesButton, {
-            backgroundColor: isDark ? 'rgba(52, 211, 153, 0.15)' : 'rgba(16, 185, 129, 0.1)',
-            borderColor: isDark ? 'rgba(52, 211, 153, 0.3)' : 'rgba(16, 185, 129, 0.3)',
+            backgroundColor: `${primaryColor}15`,
+            borderColor: `${primaryColor}4D`,
           }]}
         >
           <Feather name="map" size={18} color={primaryColor} />

@@ -7,6 +7,18 @@ module.exports = defineConfig([
   expoConfig,
   eslintPluginPrettierRecommended,
   {
-    ignores: ["dist/*"],
+    ignores: ["dist/*", "server_dist/*", "node_modules/*"],
+  },
+  {
+    files: ["client/**/*.{ts,tsx}"],
+    rules: {
+      // Warn about console statements - should use logger utility instead
+      "no-console": ["warn", { allow: [] }],
+      // Warn about unused variables
+      "@typescript-eslint/no-unused-vars": ["warn", { 
+        argsIgnorePattern: "^_",
+        varsIgnorePattern: "^_",
+      }],
+    },
   },
 ]);

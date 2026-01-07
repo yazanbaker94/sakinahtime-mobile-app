@@ -13,7 +13,7 @@ import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
-import { Spacing, BorderRadius, Colors } from '@/constants/theme';
+import { Spacing, BorderRadius } from '@/constants/theme';
 import { useCustomDuas } from '@/hooks/useCustomDuas';
 import type { RootStackParamList } from '@/navigation/RootStackNavigator';
 
@@ -108,7 +108,7 @@ export function CustomDuaFormScreen() {
   const inputStyle = [
     styles.input,
     { 
-      backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundSecondary,
+      backgroundColor: theme.backgroundSecondary,
       color: theme.text,
     },
   ];
@@ -129,7 +129,7 @@ export function CustomDuaFormScreen() {
           style={({ pressed }) => [
             styles.saveButton,
             { 
-              backgroundColor: isDark ? Colors.dark.primary : Colors.light.primary,
+              backgroundColor: theme.primary,
               opacity: pressed || isSaving ? 0.7 : 1,
             },
           ]}

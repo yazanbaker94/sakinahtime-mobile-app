@@ -38,7 +38,7 @@ interface DayDetailModalProps {
   isDark: boolean;
 }
 
-function DayDetailModal({ visible, day, onClose, isDark }: DayDetailModalProps) {
+function DayDetailModal({ visible, day, onClose, isDark, theme }: DayDetailModalProps & { theme: any }) {
   if (!day) return null;
 
   return (
@@ -53,11 +53,11 @@ function DayDetailModal({ visible, day, onClose, isDark }: DayDetailModalProps) 
         activeOpacity={1}
         onPress={onClose}
       >
-        <View style={[styles.modalContent, { backgroundColor: isDark ? '#1F2937' : '#FFFFFF' }]}>
-          <Text style={[styles.modalTitle, { color: isDark ? '#F9FAFB' : '#1F2937' }]}>
+        <View style={[styles.modalContent, { backgroundColor: theme.backgroundDefault }]}>
+          <Text style={[styles.modalTitle, { color: theme.text }]}>
             {day.hijriDate.day} {day.hijriDate.monthNameEn} {day.hijriDate.year}
           </Text>
-          <Text style={[styles.modalSubtitle, { color: isDark ? '#9CA3AF' : '#6B7280' }]}>
+          <Text style={[styles.modalSubtitle, { color: theme.textSecondary }]}>
             {day.gregorianDate.toLocaleDateString('en-US', {
               weekday: 'long',
               year: 'numeric',
@@ -67,25 +67,25 @@ function DayDetailModal({ visible, day, onClose, isDark }: DayDetailModalProps) 
           </Text>
           
           {day.event && (
-            <View style={[styles.modalSection, { borderTopColor: isDark ? '#374151' : '#F3F4F6' }]}>
-              <Text style={[styles.modalSectionTitle, { color: isDark ? '#6B7280' : '#9CA3AF' }]}>Event</Text>
-              <Text style={[styles.modalEventName, { color: isDark ? '#F9FAFB' : '#1F2937' }]}>{day.event.nameEn}</Text>
-              <Text style={[styles.modalEventArabic, { color: isDark ? '#9CA3AF' : '#6B7280' }]}>{day.event.nameAr}</Text>
+            <View style={[styles.modalSection, { borderTopColor: theme.border }]}>
+              <Text style={[styles.modalSectionTitle, { color: theme.textSecondary }]}>Event</Text>
+              <Text style={[styles.modalEventName, { color: theme.text }]}>{day.event.nameEn}</Text>
+              <Text style={[styles.modalEventArabic, { color: theme.textSecondary }]}>{day.event.nameAr}</Text>
               {day.event.description && (
-                <Text style={[styles.modalDescription, { color: isDark ? '#9CA3AF' : '#6B7280' }]}>{day.event.description}</Text>
+                <Text style={[styles.modalDescription, { color: theme.textSecondary }]}>{day.event.description}</Text>
               )}
             </View>
           )}
           
           {day.fastingDay && (
-            <View style={[styles.modalSection, { borderTopColor: isDark ? '#374151' : '#F3F4F6' }]}>
-              <Text style={[styles.modalSectionTitle, { color: isDark ? '#6B7280' : '#9CA3AF' }]}>Fasting</Text>
+            <View style={[styles.modalSection, { borderTopColor: theme.border }]}>
+              <Text style={[styles.modalSectionTitle, { color: theme.textSecondary }]}>Fasting</Text>
               <FastingDayBadge type={day.fastingDay.type} isDark={isDark} />
-              <Text style={[styles.modalDescription, { color: isDark ? '#9CA3AF' : '#6B7280' }]}>{day.fastingDay.label}</Text>
+              <Text style={[styles.modalDescription, { color: theme.textSecondary }]}>{day.fastingDay.label}</Text>
             </View>
           )}
           
-          <TouchableOpacity style={styles.modalCloseButton} onPress={onClose}>
+          <TouchableOpacity style={[styles.modalCloseButton, { backgroundColor: theme.primary }]} onPress={onClose}>
             <Text style={styles.modalCloseText}>Close</Text>
           </TouchableOpacity>
         </View>
@@ -116,18 +116,18 @@ export function HijriCalendarScreen() {
   }, []);
 
   return (
-    <View style={[styles.container, { backgroundColor: isDark ? '#111827' : '#F3F4F6', paddingTop: insets.top }]}>
-      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={isDark ? '#111827' : '#F3F4F6'} />
+    <View style={[styles.container, { backgroundColor: theme.backgroundRoot, paddingTop: insets.top }]}>
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={theme.backgroundRoot} />
       
       {/* Header with Back Button */}
-      <View style={[styles.header, { backgroundColor: isDark ? '#111827' : '#F3F4F6' }]}>
+      <View style={[styles.header, { backgroundColor: theme.backgroundRoot }]}>
         <Pressable 
-          style={[styles.backButton, { backgroundColor: isDark ? '#1F2937' : '#FFFFFF' }]} 
+          style={[styles.backButton, { backgroundColor: theme.backgroundDefault }]} 
           onPress={() => navigation.goBack()}
         >
-          <Feather name="arrow-left" size={24} color={isDark ? '#34D399' : '#065F46'} />
+          <Feather name="arrow-left" size={24} color={theme.primary} />
         </Pressable>
-        <Text style={[styles.headerTitle, { color: isDark ? '#F9FAFB' : '#1F2937' }]}>Islamic Calendar</Text>
+        <Text style={[styles.headerTitle, { color: theme.text }]}>Islamic Calendar</Text>
         <View style={styles.headerSpacer} />
       </View>
 
@@ -192,6 +192,7 @@ export function HijriCalendarScreen() {
         day={selectedDay}
         onClose={handleCloseModal}
         isDark={isDark}
+        theme={theme}
       />
     </View>
   );
@@ -327,7 +328,6 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   modalCloseButton: {
-    backgroundColor: '#065F46',
     borderRadius: 10,
     padding: 14,
     marginTop: 20,

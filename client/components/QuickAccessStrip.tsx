@@ -9,7 +9,7 @@ import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
-import { Spacing, BorderRadius, Colors } from '@/constants/theme';
+import { Spacing, BorderRadius } from '@/constants/theme';
 import { AzkarCategory } from '@/data/azkar';
 
 const ICON_MAP: Record<string, keyof typeof Feather.glyphMap> = {
@@ -37,26 +37,26 @@ interface QuickAccessStripProps {
 }
 
 export function QuickAccessStrip({ categories, onCategoryPress }: QuickAccessStripProps) {
-  const { isDark } = useTheme();
+  const { theme } = useTheme();
 
   const getCategoryColor = (categoryId: string) => {
     if (categoryId === 'morning') {
-      return isDark ? Colors.dark.gold : Colors.light.gold;
+      return theme.gold;
     }
     if (categoryId === 'evening') {
-      return isDark ? Colors.dark.primary : Colors.light.primary;
+      return theme.primary;
     }
-    return isDark ? Colors.dark.textSecondary : Colors.light.textSecondary;
+    return theme.textSecondary;
   };
 
   const getCategoryBgColor = (categoryId: string) => {
     if (categoryId === 'morning') {
-      return isDark ? 'rgba(212, 175, 55, 0.15)' : 'rgba(212, 175, 55, 0.1)';
+      return `${theme.gold}20`;
     }
     if (categoryId === 'evening') {
-      return isDark ? 'rgba(52, 211, 153, 0.15)' : 'rgba(16, 185, 129, 0.1)';
+      return `${theme.primary}15`;
     }
-    return isDark ? 'rgba(52, 211, 153, 0.1)' : 'rgba(128, 128, 128, 0.08)';
+    return `${theme.primary}10`;
   };
 
   return (

@@ -13,7 +13,7 @@ import { ThemedView } from '@/components/ThemedView';
 import { Card } from '@/components/Card';
 import { useTheme } from '@/hooks/useTheme';
 import { useCharityTracker } from '@/hooks/useCharityTracker';
-import { Spacing, BorderRadius, Colors } from '@/constants/theme';
+import { Spacing, BorderRadius } from '@/constants/theme';
 
 function formatCurrency(amount: number, currency: string = 'USD'): string {
   return new Intl.NumberFormat('en-US', {
@@ -26,14 +26,14 @@ function formatCurrency(amount: number, currency: string = 'USD'): string {
 
 export default function ZakatCalculatorScreen() {
   const insets = useSafeAreaInsets();
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
   const navigation = useNavigation();
   const { calculateZakat } = useCharityTracker();
 
   const [wealth, setWealth] = useState('');
   const [result, setResult] = useState<ReturnType<typeof calculateZakat> | null>(null);
 
-  const accentColor = isDark ? '#34D399' : '#059669';
+  const accentColor = theme.primary;
 
   const handleCalculate = () => {
     Keyboard.dismiss();
@@ -46,7 +46,7 @@ export default function ZakatCalculatorScreen() {
     <ThemedView style={styles.container}>
       <View style={[styles.header, { paddingTop: insets.top + Spacing.md }]}>
         <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Feather name="arrow-left" size={24} color={isDark ? Colors.dark.text : Colors.light.text} />
+          <Feather name="arrow-left" size={24} color={theme.text} />
         </Pressable>
         <ThemedText type="h2" style={styles.title}>Zakat Calculator</ThemedText>
         <View style={{ width: 24 }} />
@@ -65,7 +65,7 @@ export default function ZakatCalculatorScreen() {
               styles.input,
               {
                 backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)',
-                color: isDark ? Colors.dark.text : Colors.light.text,
+                color: theme.text,
               }
             ]}
             value={wealth}
@@ -99,11 +99,11 @@ export default function ZakatCalculatorScreen() {
             </View>
             <View style={styles.resultRow}>
               <ThemedText type="body" secondary>Meets Nisab:</ThemedText>
-              <ThemedText type="body" style={{ color: result.meetsNisab ? '#10B981' : '#EF4444' }}>
+              <ThemedText type="body" style={{ color: result.meetsNisab ? theme.primary : '#EF4444' }}>
                 {result.meetsNisab ? 'Yes' : 'No'}
               </ThemedText>
             </View>
-            <View style={[styles.zakatDueSection, { backgroundColor: isDark ? 'rgba(16, 185, 129, 0.1)' : 'rgba(16, 185, 129, 0.05)' }]}>
+            <View style={[styles.zakatDueSection, { backgroundColor: `${theme.primary}1A` }]}>
               <ThemedText type="body" secondary>Zakat Due (2.5%)</ThemedText>
               <ThemedText type="h2" style={{ color: accentColor }}>{formatCurrency(result.zakatDue)}</ThemedText>
             </View>

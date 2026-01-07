@@ -43,19 +43,6 @@ const linking: LinkingOptions<RootStackParamList> = {
           SettingsTab: 'settings',
         },
       },
-      VideoGenerator: {
-        path: 'video-generator',
-        parse: {
-          surah: (surah: string) => parseInt(surah, 10),
-          ayahStart: (ayahStart: string) => parseInt(ayahStart, 10),
-          ayahEnd: (ayahEnd: string) => parseInt(ayahEnd, 10),
-        },
-        stringify: {
-          surah: (surah: number) => String(surah),
-          ayahStart: (ayahStart: number) => String(ayahStart),
-          ayahEnd: (ayahEnd: number) => String(ayahEnd),
-        },
-      },
       AzkarDetail: 'azkar-detail',
       IslamicGuideDetail: 'islamic-guide',
       Mushaf: 'mushaf',
@@ -123,7 +110,7 @@ async function syncWidgetDataOnLaunch() {
 
 export default function App() {
   const [fontsLoaded, setFontsLoaded] = React.useState(false);
-  const notificationResponseListener = React.useRef<Notifications.Subscription>();
+  const notificationResponseListener = React.useRef<Notifications.Subscription | null>(null);
 
   React.useEffect(() => {
     async function loadFonts() {

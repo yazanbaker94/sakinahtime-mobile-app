@@ -8,7 +8,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/navigation/RootStackNavigator";
-import { Spacing, Colors, BorderRadius } from "@/constants/theme";
+import { Spacing, BorderRadius } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { useLocation } from "@/contexts/LocationContext";
 import {
@@ -27,6 +27,7 @@ import { usePrayerLog } from "@/hooks/usePrayerLog";
 import { OfflineIndicator } from "@/components/OfflineIndicator";
 import { PrayerStatusIndicator, getNextStatus } from "@/components/PrayerStatusIndicator";
 import { StreakCard } from "@/components/StreakCard";
+import { LocationIndicator } from "@/components/LocationIndicator";
 import { Feather } from "@expo/vector-icons";
 import { PrayerName } from "@/types/prayerLog";
 
@@ -252,6 +253,27 @@ export default function PrayerTimesScreen() {
     scheduleMissedPrayerReminders,
   ]);
 
+  // Show loading while permission status is being determined
+  if (permission === null) {
+    return (
+      <ThemedView style={styles.container}>
+        <View
+          style={[
+            styles.loadingContent,
+            {
+              paddingTop: headerHeight + Spacing.xl,
+              paddingBottom: tabBarHeight + Spacing.xl,
+            },
+          ]}
+        >
+          <ThemedText type="body" secondary>
+            Checking location permission...
+          </ThemedText>
+        </View>
+      </ThemedView>
+    );
+  }
+
   if (!permission?.granted) {
     return (
       <ThemedView style={styles.container}>
@@ -268,10 +290,10 @@ export default function PrayerTimesScreen() {
             <View
               style={[
                 styles.iconCircle,
-                { backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundSecondary },
+                { backgroundColor: theme.backgroundSecondary },
               ]}
             >
-              <Feather name="map-pin" size={48} color={isDark ? Colors.dark.primary : Colors.light.primary} />
+              <Feather name="map-pin" size={48} color={theme.primary} />
             </View>
             <ThemedText type="h3" style={styles.permissionTitle}>
               Location Access Required
@@ -283,10 +305,10 @@ export default function PrayerTimesScreen() {
               <ThemedText type="small" secondary style={styles.permissionText}>
                 Please enable location in your browser settings.
               </ThemedText>
-            ) : canAskAgain ? (
+            ) : canAskAgain || permission?.status === 'undetermined' ? (
               <Pressable
                 onPress={requestPermission}
-                style={[styles.permissionButton, { backgroundColor: isDark ? Colors.dark.primary : Colors.light.primary }]}
+                style={[styles.permissionButton, { backgroundColor: theme.primary }]}
               >
                 <ThemedText type="body" style={{ color: "#FFFFFF" }}>
                   Enable Location
@@ -295,7 +317,7 @@ export default function PrayerTimesScreen() {
             ) : (
               <Pressable
                 onPress={openSettings}
-                style={[styles.permissionButton, { backgroundColor: isDark ? Colors.dark.primary : Colors.light.primary }]}
+                style={[styles.permissionButton, { backgroundColor: theme.primary }]}
               >
                 <ThemedText type="body" style={{ color: "#FFFFFF" }}>
                   Open Settings
@@ -340,13 +362,13 @@ export default function PrayerTimesScreen() {
             },
           ]}
         >
-          <Feather name="alert-circle" size={48} color={isDark ? Colors.dark.muted : Colors.light.muted} />
+          <Feather name="alert-circle" size={48} color={theme.muted} />
           <ThemedText type="body" secondary style={styles.errorText}>
             Failed to load prayer times
           </ThemedText>
           <Pressable
             onPress={() => refetch()}
-            style={[styles.retryButton, { backgroundColor: isDark ? Colors.dark.primary : Colors.light.primary }]}
+            style={[styles.retryButton, { backgroundColor: theme.primary }]}
           >
             <ThemedText type="small" style={{ color: "#FFFFFF" }}>
               Retry
@@ -381,12 +403,12 @@ export default function PrayerTimesScreen() {
             style={[
               styles.nextPrayerCard,
               {
-                backgroundColor: isDark ? 'rgba(26, 95, 79, 0.95)' : 'rgba(16, 185, 129, 0.95)',
-                shadowColor: isDark ? '#34D399' : '#059669',
+                backgroundColor: isDark ? `${theme.primary}30` : `${theme.primary}F2`,
+                shadowColor: theme.primary,
                 shadowOffset: { width: 0, height: 6 },
-                shadowOpacity: 0.25,
+                shadowOpacity: isDark ? 0 : 0.25,
                 shadowRadius: 12,
-                elevation: 6,
+                elevation: isDark ? 0 : 6,
               },
             ]}
           >
@@ -429,26 +451,20 @@ export default function PrayerTimesScreen() {
               
               {/* Metadata */}
               <View style={styles.metadataCompact}>
-                {prayerData?.date && (
+                {prayerData?.date?.hijri && (
                   <Pressable 
                     style={styles.calendarButton}
                     onPress={() => navigation.navigate('HijriCalendar')}
                   >
                     <Feather name="calendar" size={14} color="#FFFFFF" />
                     <ThemedText type="caption" style={{ color: "#FFFFFF", marginLeft: 8, fontSize: 13, fontWeight: '600' }}>
-                      {toArabicNumerals(Number(prayerData.date.hijri.day) || 0)} {prayerData.date.hijri.month.ar} • View Calendar
+                      {toArabicNumerals(Number(prayerData.date.hijri.day) || 0)} {prayerData.date.hijri.month?.ar || ''} • View Calendar
                     </ThemedText>
                     <Feather name="chevron-right" size={16} color="#FFFFFF" style={{ marginLeft: 6 }} />
                   </Pressable>
                 )}
-                {city && (
-                  <View style={styles.metaRow}>
-                    <Feather name="map-pin" size={11} color="rgba(255,255,255,0.8)" />
-                    <ThemedText type="caption" style={{ color: "rgba(255,255,255,0.9)", marginLeft: 5, fontSize: 11 }}>
-                      {city}
-                    </ThemedText>
-                  </View>
-                )}
+                {/* Location indicator under calendar */}
+                <LocationIndicator variant="card" />
               </View>
             </View>
             
@@ -520,22 +536,22 @@ export default function PrayerTimesScreen() {
                   styles.prayerCard,
                   {
                     backgroundColor: isNext 
-                      ? (isDark ? 'rgba(52, 211, 153, 0.15)' : Colors.light.backgroundDefault)
-                      : (isDark ? 'rgba(26, 95, 79, 0.2)' : Colors.light.backgroundDefault),
+                      ? (isDark ? `${theme.primary}20` : theme.cardBackground)
+                      : (isDark ? theme.cardBackground : theme.cardBackground),
                     opacity: isPast && !isNext ? 0.6 : 1,
                     shadowColor: '#000',
                     shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: isDark ? 0.3 : 0.08,
+                    shadowOpacity: isDark ? 0 : 0.08,
                     shadowRadius: 8,
-                    elevation: 3,
-                    borderWidth: isNext ? 2 : 0,
-                    borderColor: isNext ? (isDark ? '#34D399' : '#059669') : 'transparent',
+                    elevation: isDark ? 0 : 3,
+                    borderWidth: isNext ? 2 : (isDark ? 1 : 0),
+                    borderColor: isNext ? theme.primary : (isDark ? theme.border : 'transparent'),
                   },
                 ]}
               >
                 {isNext && (
                   <View style={[styles.activePrayerIndicator, { 
-                    backgroundColor: isDark ? '#34D399' : '#059669' 
+                    backgroundColor: theme.primary 
                   }]} />
                 )}
                 
@@ -545,17 +561,17 @@ export default function PrayerTimesScreen() {
                       styles.prayerIcon,
                       {
                         backgroundColor: isNext
-                          ? (isDark ? 'rgba(52, 211, 153, 0.2)' : 'rgba(16, 185, 129, 0.15)')
-                          : (isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.04)'),
+                          ? `${theme.primary}20`
+                          : (isDark ? theme.backgroundSecondary : 'rgba(0, 0, 0, 0.04)'),
                         borderWidth: isNext ? 2 : 0,
-                        borderColor: isNext ? (isDark ? '#34D399' : '#059669') : 'transparent',
+                        borderColor: isNext ? theme.primary : 'transparent',
                       },
                     ]}
                   >
                     <Feather
                       name={prayer.icon as any}
                       size={22}
-                      color={isNext ? (isDark ? '#34D399' : '#059669') : (isDark ? Colors.dark.textSecondary : Colors.light.textSecondary)}
+                      color={isNext ? theme.primary : theme.textSecondary}
                     />
                   </View>
                   <View style={styles.prayerNames}>
@@ -570,7 +586,7 @@ export default function PrayerTimesScreen() {
                 <View style={styles.prayerCardRight}>
                   <View style={styles.prayerTimeContainer}>
                     <ThemedText type="h3" style={{ 
-                      color: isNext ? (isDark ? '#34D399' : '#059669') : theme.text,
+                      color: isNext ? theme.primary : theme.text,
                       fontWeight: '700',
                       fontSize: 22,
                       letterSpacing: -0.5
@@ -579,7 +595,7 @@ export default function PrayerTimesScreen() {
                     </ThemedText>
                     {adjustment !== 0 && (
                       <ThemedText type="caption" style={{ 
-                        color: adjustment > 0 ? (isDark ? '#34D399' : '#059669') : (isDark ? '#F59E0B' : '#D97706'),
+                        color: adjustment > 0 ? theme.primary : theme.gold,
                         fontSize: 10,
                         fontWeight: '600',
                         marginTop: 2,

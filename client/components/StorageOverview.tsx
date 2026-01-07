@@ -9,7 +9,7 @@ import { View, StyleSheet, Pressable } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
-import { Spacing, BorderRadius, Colors } from '@/constants/theme';
+import { Spacing, BorderRadius } from '@/constants/theme';
 import { StorageInfo } from '../types/offline';
 import { formatBytes, STORAGE_LIMITS } from '../constants/offline';
 
@@ -19,7 +19,7 @@ interface StorageOverviewProps {
 }
 
 export function StorageOverview({ storageInfo, onManagePress }: StorageOverviewProps) {
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
 
   const usagePercent = (storageInfo.totalUsed / storageInfo.storageLimit) * 100;
   const isWarning = usagePercent >= STORAGE_LIMITS.WARNING_THRESHOLD * 100;
@@ -28,24 +28,28 @@ export function StorageOverview({ storageInfo, onManagePress }: StorageOverviewP
   const getBarColor = () => {
     if (isCritical) return isDark ? '#F87171' : '#EF4444';
     if (isWarning) return isDark ? '#FBBF24' : '#F59E0B';
-    return isDark ? '#34D399' : '#10B981';
+    return theme.primary;
   };
 
   return (
     <View style={[
       styles.container,
-      { backgroundColor: isDark ? 'rgba(26, 95, 79, 0.2)' : Colors.light.backgroundDefault }
+      { 
+        backgroundColor: isDark ? `${theme.primary}33` : theme.backgroundDefault,
+        elevation: isDark ? 0 : 3,
+        shadowOpacity: isDark ? 0 : 0.08,
+      }
     ]}>
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <View style={[
             styles.iconCircle,
-            { backgroundColor: isDark ? 'rgba(52, 211, 153, 0.15)' : 'rgba(16, 185, 129, 0.1)' }
+            { backgroundColor: `${theme.primary}26` }
           ]}>
             <Feather 
               name="hard-drive" 
               size={20} 
-              color={isDark ? Colors.dark.primary : Colors.light.primary} 
+              color={theme.primary} 
             />
           </View>
           <View>
@@ -59,13 +63,13 @@ export function StorageOverview({ storageInfo, onManagePress }: StorageOverviewP
         </View>
         {onManagePress && (
           <Pressable onPress={onManagePress} style={styles.manageButton}>
-            <ThemedText type="small" style={{ color: isDark ? Colors.dark.primary : Colors.light.primary }}>
+            <ThemedText type="small" style={{ color: theme.primary }}>
               Manage
             </ThemedText>
             <Feather 
               name="chevron-right" 
               size={16} 
-              color={isDark ? Colors.dark.primary : Colors.light.primary} 
+              color={theme.primary} 
             />
           </Pressable>
         )}
@@ -107,7 +111,7 @@ export function StorageOverview({ storageInfo, onManagePress }: StorageOverviewP
         <Feather 
           name="smartphone" 
           size={12} 
-          color={isDark ? Colors.dark.textSecondary : Colors.light.textSecondary} 
+          color={theme.textSecondary} 
         />
         <ThemedText type="caption" secondary style={{ marginLeft: 4 }}>
           {formatBytes(storageInfo.deviceAvailable)} available on device
@@ -123,9 +127,8 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
     shadowRadius: 8,
-    elevation: 3,
+    // elevation and shadowOpacity set dynamically
   },
   header: {
     flexDirection: 'row',

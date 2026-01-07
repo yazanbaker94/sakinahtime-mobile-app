@@ -9,7 +9,7 @@ import { View, StyleSheet, Pressable } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
-import { Spacing, BorderRadius, Colors } from '@/constants/theme';
+import { Spacing, BorderRadius } from '@/constants/theme';
 import { Dua, CustomDua } from '@/types/dua';
 import { FavoriteButton } from './FavoriteButton';
 
@@ -67,7 +67,7 @@ export function DuaCard({
   const content = (
     <View style={[
       styles.container,
-      { backgroundColor: isDark ? 'rgba(26, 95, 79, 0.2)' : Colors.light.backgroundDefault },
+      { backgroundColor: isDark ? `${theme.primary}20` : theme.backgroundDefault },
       isCompact && styles.compactContainer,
     ]}>
       {/* Header Row with Favorite Button */}
@@ -118,18 +118,18 @@ export function DuaCard({
       <View style={styles.sourceRow}>
         <View style={[
           styles.sourceBadge,
-          { backgroundColor: isDark ? 'rgba(52, 211, 153, 0.15)' : 'rgba(16, 185, 129, 0.1)' }
+          { backgroundColor: `${theme.primary}15` }
         ]}>
           <Feather 
             name={isStandard && dua.source === 'quran' ? 'book-open' : 'bookmark'} 
             size={12} 
-            color={isDark ? Colors.dark.primary : Colors.light.primary} 
+            color={theme.primary} 
           />
           <ThemedText 
             type="caption" 
             style={{ 
               marginLeft: 4, 
-              color: isDark ? Colors.dark.primary : Colors.light.primary,
+              color: theme.primary,
             }}
           >
             {getSourceText()}
@@ -140,11 +140,11 @@ export function DuaCard({
         {isStandard && dua.repetitions && dua.repetitions > 1 && (
           <View style={[
             styles.repetitionBadge,
-            { backgroundColor: isDark ? 'rgba(251, 191, 36, 0.15)' : 'rgba(245, 158, 11, 0.1)' }
+            { backgroundColor: `${theme.gold}15` }
           ]}>
             <ThemedText 
               type="caption" 
-              style={{ color: isDark ? '#FBBF24' : '#F59E0B' }}
+              style={{ color: theme.gold }}
             >
               ×{dua.repetitions}
             </ThemedText>
@@ -167,7 +167,7 @@ export function DuaCard({
                 <Feather 
                   name={isPlaying ? 'pause-circle' : 'play-circle'} 
                   size={20} 
-                  color={isDark ? Colors.dark.primary : Colors.light.primary} 
+                  color={theme.primary} 
                 />
               )}
             </Pressable>

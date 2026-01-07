@@ -16,19 +16,19 @@ import { useTheme } from '@/hooks/useTheme';
 import { useTaraweehTracker } from '@/hooks/useTaraweehTracker';
 import { useRamadan } from '@/contexts/RamadanContext';
 import { RAMADAN_DAYS } from '@/constants/ramadan';
-import { Spacing, BorderRadius, Colors } from '@/constants/theme';
+import { Spacing, BorderRadius } from '@/constants/theme';
 import type { RootStackParamList } from '@/navigation/RootStackNavigator';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function TaraweehTrackerScreen() {
   const insets = useSafeAreaInsets();
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
   const navigation = useNavigation<NavigationProp>();
   const { currentDay } = useRamadan();
   const { entries, stats } = useTaraweehTracker();
 
-  const accentColor = isDark ? '#A78BFA' : '#7C3AED';
+  const accentColor = theme.primary;
   const streakColor = '#FBBF24';
 
   // Create a map of entries by day
@@ -43,7 +43,7 @@ export default function TaraweehTrackerScreen() {
 
   const renderCalendarGrid = () => {
     const days = Array.from({ length: RAMADAN_DAYS }, (_, i) => i + 1);
-    const rows = [];
+    const rows: number[][] = [];
     
     for (let i = 0; i < days.length; i += 7) {
       rows.push(days.slice(i, i + 7));
@@ -65,7 +65,7 @@ export default function TaraweehTrackerScreen() {
                     styles.calendarDay,
                     {
                       backgroundColor: entry
-                        ? (entry.location === 'mosque' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(167, 139, 250, 0.2)')
+                        ? (entry.location === 'mosque' ? `${theme.primary}30` : `${accentColor}30`)
                         : (isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)'),
                       borderColor: isToday ? accentColor : 'transparent',
                       borderWidth: isToday ? 2 : 0,
@@ -81,7 +81,7 @@ export default function TaraweehTrackerScreen() {
                   {entry && (
                     <View style={[
                       styles.dayIndicator,
-                      { backgroundColor: entry.location === 'mosque' ? '#10B981' : accentColor }
+                      { backgroundColor: entry.location === 'mosque' ? theme.primary : accentColor }
                     ]}>
                       <Feather name="check" size={8} color="#fff" />
                     </View>
@@ -114,7 +114,7 @@ export default function TaraweehTrackerScreen() {
         {/* Header */}
         <View style={styles.header}>
           <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
-            <Feather name="arrow-left" size={24} color={isDark ? Colors.dark.text : Colors.light.text} />
+            <Feather name="arrow-left" size={24} color={theme.text} />
           </Pressable>
           <ThemedText type="h2" style={styles.title}>Taraweeh Tracker</ThemedText>
           <View style={{ width: 24 }} />
@@ -122,17 +122,17 @@ export default function TaraweehTrackerScreen() {
 
         {/* Stats Cards */}
         <View style={styles.statsRow}>
-          <View style={[styles.statCard, { backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault }]}>
-            <Feather name="check-circle" size={20} color="#10B981" />
-            <ThemedText type="h3" style={{ color: '#10B981' }}>{stats.nightsCompleted}</ThemedText>
+          <View style={[styles.statCard, { backgroundColor: theme.cardBackground }]}>
+            <Feather name="check-circle" size={20} color={theme.primary} />
+            <ThemedText type="h3" style={{ color: theme.primary }}>{stats.nightsCompleted}</ThemedText>
             <ThemedText type="caption" secondary>Nights</ThemedText>
           </View>
-          <View style={[styles.statCard, { backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault }]}>
+          <View style={[styles.statCard, { backgroundColor: theme.cardBackground }]}>
             <Feather name="zap" size={20} color={streakColor} />
             <ThemedText type="h3" style={{ color: streakColor }}>{stats.currentStreak}</ThemedText>
             <ThemedText type="caption" secondary>Streak</ThemedText>
           </View>
-          <View style={[styles.statCard, { backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault }]}>
+          <View style={[styles.statCard, { backgroundColor: theme.cardBackground }]}>
             <Feather name="award" size={20} color={accentColor} />
             <ThemedText type="h3" style={{ color: accentColor }}>{stats.bestStreak}</ThemedText>
             <ThemedText type="caption" secondary>Best</ThemedText>
@@ -146,7 +146,7 @@ export default function TaraweehTrackerScreen() {
           {/* Legend */}
           <View style={styles.legend}>
             <View style={styles.legendItem}>
-              <View style={[styles.legendDot, { backgroundColor: '#10B981' }]} />
+              <View style={[styles.legendDot, { backgroundColor: theme.primary }]} />
               <ThemedText type="caption" secondary>Mosque</ThemedText>
             </View>
             <View style={styles.legendItem}>
@@ -163,7 +163,7 @@ export default function TaraweehTrackerScreen() {
           <ThemedText type="h4" style={styles.sectionTitle}>Location Breakdown</ThemedText>
           <View style={styles.breakdownRow}>
             <View style={styles.breakdownItem}>
-              <Feather name="map-pin" size={20} color="#10B981" />
+              <Feather name="map-pin" size={20} color={theme.primary} />
               <ThemedText type="h3" style={{ marginLeft: Spacing.sm }}>{stats.mosqueNights}</ThemedText>
               <ThemedText type="body" secondary style={{ marginLeft: Spacing.xs }}>at Mosque</ThemedText>
             </View>

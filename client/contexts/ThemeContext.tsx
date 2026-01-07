@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useColorScheme as useSystemColorScheme } from "react-native";
+import { useColorScheme as useSystemColorScheme, Platform, StatusBar } from "react-native";
+import * as NavigationBar from "expo-navigation-bar";
+import { getThemeColors } from "@/constants/theme";
 import type { ThemeId, ColorMode } from "@/types/theme";
 
 interface ThemeContextType {
@@ -85,6 +87,31 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     : colorMode === "dark";
 
   const themeMode = colorMode === "auto" ? "system" : colorMode;
+
+  // Update Android navigation bar to match theme
+  useEffect(() => {
+    if (Platform.OS === "android") {
+      const updateNavigationBar = async () => {
+        try {
+          const theme = getThemeColors(themeId, isDark);
+          await NavigationBar.setBackgroundColorAsync(theme.backgroundRoot);
+          await NavigationBar.setButtonStyleAsync(isDark ? "light" : "dark");
+        } catch {
+          // expo-navigation-bar not available in Expo Go, works in production builds
+        }
+      };
+      updateNavigationBar();
+    }
+  }, [themeId, isDark]);
+
+  // Update status bar to match theme (time, battery, signal icons)
+  useEffect(() => {
+    StatusBar.setBarStyle(isDark ? "light-content" : "dark-content", true);
+    if (Platform.OS === "android") {
+      const theme = getThemeColors(themeId, isDark);
+      StatusBar.setBackgroundColor(theme.backgroundRoot, true);
+    }
+  }, [themeId, isDark]);
 
   return (
     <ThemeContext.Provider value={{ 

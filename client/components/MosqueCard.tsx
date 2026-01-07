@@ -6,7 +6,7 @@
 import React from 'react';
 import { View, StyleSheet, Pressable } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
-import { Spacing, Colors, BorderRadius } from '@/constants/theme';
+import { Spacing, BorderRadius } from '@/constants/theme';
 import { useTheme } from '@/hooks/useTheme';
 import { Feather } from '@expo/vector-icons';
 import { Mosque } from '@/types/mosque';
@@ -20,7 +20,7 @@ export interface MosqueCardProps {
 }
 
 export function MosqueCard({ mosque, onPress, onDirections }: MosqueCardProps) {
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
 
   const handlePress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -38,9 +38,7 @@ export function MosqueCard({ mosque, onPress, onDirections }: MosqueCardProps) {
       style={({ pressed }) => [
         styles.container,
         {
-          backgroundColor: isDark 
-            ? Colors.dark.backgroundSecondary 
-            : Colors.light.backgroundSecondary,
+          backgroundColor: theme.backgroundSecondary,
           opacity: pressed ? 0.8 : 1,
         },
       ]}
@@ -58,7 +56,7 @@ export function MosqueCard({ mosque, onPress, onDirections }: MosqueCardProps) {
               <Feather 
                 name="map-pin" 
                 size={14} 
-                color={isDark ? Colors.dark.textSecondary : Colors.light.textSecondary} 
+                color={theme.textSecondary} 
               />
               <ThemedText type="small" secondary style={styles.detailText}>
                 {formatDistance(mosque.distance)}
@@ -86,7 +84,7 @@ export function MosqueCard({ mosque, onPress, onDirections }: MosqueCardProps) {
                 styles.statusBadge,
                 {
                   backgroundColor: mosque.isOpen 
-                    ? (isDark ? 'rgba(52, 211, 153, 0.15)' : 'rgba(16, 185, 129, 0.1)')
+                    ? `${theme.primary}26`
                     : (isDark ? 'rgba(239, 68, 68, 0.15)' : 'rgba(220, 38, 38, 0.1)'),
                 }
               ]}>
@@ -94,7 +92,7 @@ export function MosqueCard({ mosque, onPress, onDirections }: MosqueCardProps) {
                   type="small" 
                   style={{ 
                     color: mosque.isOpen 
-                      ? (isDark ? Colors.dark.primary : Colors.light.primary)
+                      ? theme.primary
                       : '#EF4444',
                     fontWeight: '600',
                   }}
@@ -117,9 +115,7 @@ export function MosqueCard({ mosque, onPress, onDirections }: MosqueCardProps) {
           style={({ pressed }) => [
             styles.directionsButton,
             {
-              backgroundColor: isDark 
-                ? Colors.dark.primary 
-                : Colors.light.primary,
+              backgroundColor: theme.primary,
               opacity: pressed ? 0.8 : 1,
             },
           ]}

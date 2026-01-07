@@ -23,6 +23,8 @@ import SetCharityGoalScreen from "@/screens/SetCharityGoalScreen";
 import LogTaraweehScreen from "@/screens/LogTaraweehScreen";
 import MosqueFinderScreen from "@/screens/MosqueFinderScreen";
 import MosqueDetailScreen from "@/screens/MosqueDetailScreen";
+import DhikrOverlaySettingsScreen from "@/screens/DhikrOverlaySettingsScreen";
+import NotificationSettingsScreen from "@/screens/NotificationSettingsScreen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 import type { AzkarCategory } from "@/data/azkar";
 import type { IslamicGuide } from "@/data/islamicGuides";
@@ -53,6 +55,8 @@ export type RootStackParamList = {
   LogTaraweeh: { day: number; existingEntry?: TaraweehEntry };
   MosqueFinder: undefined;
   MosqueDetail: { mosqueId: string; mosque?: Mosque };
+  DhikrOverlaySettings: undefined;
+  NotificationSettings: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -222,6 +226,20 @@ export default function RootStackNavigator() {
       <Stack.Screen
         name="MosqueDetail"
         component={MosqueDetailScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="DhikrOverlaySettings"
+        component={DhikrOverlaySettingsScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="NotificationSettings"
+        component={NotificationSettingsScreen}
         options={{
           headerShown: false,
         }}

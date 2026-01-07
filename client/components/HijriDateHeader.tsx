@@ -28,7 +28,7 @@ export function HijriDateHeader({
   showMoonPhase = true,
   compact = false,
 }: HijriDateHeaderProps) {
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
   
   const gregorianFormatted = gregorianDate.toLocaleDateString('en-US', {
     weekday: compact ? 'short' : 'long',
@@ -37,10 +37,11 @@ export function HijriDateHeader({
     day: 'numeric',
   });
 
-  // Dark mode uses a darker green, light mode uses the original green
-  const bgColor = isDark ? '#064E3B' : '#065F46';
-  const secondaryTextColor = isDark ? '#6EE7B7' : '#A7F3D0';
-  const tertiaryTextColor = isDark ? '#34D399' : '#6EE7B7';
+  // Use theme primary color for the header background
+  // Always use white text with varying opacity for consistent readability across all themes
+  const bgColor = theme.primary;
+  const secondaryTextColor = 'rgba(255, 255, 255, 0.85)';
+  const tertiaryTextColor = 'rgba(255, 255, 255, 0.7)';
 
   if (compact) {
     return (

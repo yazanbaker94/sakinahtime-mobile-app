@@ -9,7 +9,7 @@ import { View, StyleSheet, Pressable, ActivityIndicator } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
-import { Spacing, BorderRadius, Colors } from '@/constants/theme';
+import { Spacing, BorderRadius } from '@/constants/theme';
 
 interface DuaAudioPlayerProps {
   isPlaying: boolean;
@@ -61,7 +61,7 @@ export function DuaAudioPlayer({
   return (
     <View style={[
       styles.container,
-      { backgroundColor: isDark ? 'rgba(26, 95, 79, 0.3)' : 'rgba(16, 185, 129, 0.1)' }
+      { backgroundColor: `${theme.primary}26` }
     ]}>
       {/* Play/Pause Button */}
       <Pressable
@@ -70,7 +70,7 @@ export function DuaAudioPlayer({
         style={({ pressed }) => [
           styles.playButton,
           { 
-            backgroundColor: isDark ? Colors.dark.primary : Colors.light.primary,
+            backgroundColor: theme.primary,
             opacity: pressed ? 0.7 : 1,
           }
         ]}
@@ -109,7 +109,7 @@ export function DuaAudioPlayer({
                 styles.progressFill,
                 { 
                   width: `${progressPercent}%`,
-                  backgroundColor: isDark ? Colors.dark.primary : Colors.light.primary,
+                  backgroundColor: theme.primary,
                 }
               ]} 
             />

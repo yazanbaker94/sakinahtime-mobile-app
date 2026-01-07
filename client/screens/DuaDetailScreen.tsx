@@ -13,7 +13,7 @@ import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
-import { Spacing, Colors } from '@/constants/theme';
+import { Spacing } from '@/constants/theme';
 import { useDuaCollection } from '@/hooks/useDuaCollection';
 import { useDuaFavorites } from '@/hooks/useDuaFavorites';
 import { useDuaAudio } from '@/hooks/useDuaAudio';
@@ -198,7 +198,7 @@ export function DuaDetailScreen() {
             style={({ pressed }) => [
               styles.quranLink,
               { 
-                backgroundColor: isDark ? 'rgba(52, 211, 153, 0.15)' : 'rgba(16, 185, 129, 0.1)',
+                backgroundColor: `${theme.primary}15`,
                 opacity: pressed ? 0.7 : 1,
               },
             ]}
@@ -206,7 +206,7 @@ export function DuaDetailScreen() {
             <Feather 
               name="book-open" 
               size={20} 
-              color={isDark ? Colors.dark.primary : Colors.light.primary} 
+              color={theme.primary} 
             />
             <View style={styles.quranLinkText}>
               <ThemedText type="body" style={{ fontWeight: '600' }}>

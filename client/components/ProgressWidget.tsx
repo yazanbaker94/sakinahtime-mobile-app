@@ -66,7 +66,7 @@ export function ProgressWidget({
           <Feather
             name="book-open"
             size={16}
-            color={isGoalMet ? '#34C759' : theme.textSecondary}
+            color={isGoalMet ? theme.primary : theme.textSecondary}
           />
         </View>
         <ThemedText style={styles.statValue}>
@@ -83,12 +83,12 @@ export function ProgressWidget({
 
       {/* Completion */}
       <View style={styles.statItem}>
-        <View style={styles.progressRing}>
+        <View style={[styles.progressRing, { backgroundColor: `${theme.primary}33` }]}>
           <View
             style={[
               styles.progressFill,
               {
-                backgroundColor: '#10B981',
+                backgroundColor: theme.primary,
                 width: `${Math.min(100, completionPercentage)}%`,
               },
             ]}
@@ -144,7 +144,6 @@ const styles = StyleSheet.create({
   progressRing: {
     width: 24,
     height: 4,
-    backgroundColor: 'rgba(16, 185, 129, 0.2)',
     borderRadius: 2,
     overflow: 'hidden',
     marginBottom: 2,

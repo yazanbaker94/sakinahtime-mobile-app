@@ -9,7 +9,7 @@ import { View, StyleSheet, Pressable, Animated, Alert } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
-import { Spacing, BorderRadius, Colors } from '@/constants/theme';
+import { Spacing, BorderRadius } from '@/constants/theme';
 import { useTasbihCounter } from '@/hooks/useTasbihCounter';
 
 interface TasbihCounterProps {
@@ -86,13 +86,9 @@ export function TasbihCounter({
     );
   }, [reset, onCountChange]);
 
-  const bgColor = isDark
-    ? 'rgba(52, 211, 153, 0.1)'
-    : 'rgba(16, 185, 129, 0.08)';
+  const bgColor = `${theme.primary}1A`;
 
-  const counterBgColor = isDark
-    ? 'rgba(52, 211, 153, 0.15)'
-    : 'rgba(16, 185, 129, 0.12)';
+  const counterBgColor = `${theme.primary}26`;
 
   return (
     <View style={[styles.container, { backgroundColor: bgColor }]}>
@@ -102,15 +98,15 @@ export function TasbihCounter({
           <Feather
             name="circle"
             size={18}
-            color={isDark ? Colors.dark.primary : Colors.light.primary}
+            color={theme.primary}
           />
           <ThemedText type="body" style={styles.title}>
             Tasbih Counter
           </ThemedText>
         </View>
         {target && (
-          <View style={styles.targetBadge}>
-            <ThemedText type="caption" style={{ color: isDark ? Colors.dark.primary : Colors.light.primary }}>
+          <View style={[styles.targetBadge, { backgroundColor: `${theme.primary}1A` }]}>
+            <ThemedText type="caption" style={{ color: theme.primary }}>
               Target: {target}
             </ThemedText>
           </View>
@@ -135,7 +131,7 @@ export function TasbihCounter({
               type="h1"
               style={[
                 styles.countText,
-                { color: isDark ? Colors.dark.primary : Colors.light.primary },
+                { color: theme.primary },
                 isComplete && styles.completeText,
               ]}
             >
@@ -149,7 +145,7 @@ export function TasbihCounter({
               <View
                 style={[
                   styles.progressBar,
-                  { backgroundColor: isDark ? 'rgba(52, 211, 153, 0.2)' : 'rgba(16, 185, 129, 0.15)' },
+                  { backgroundColor: `${theme.primary}33` },
                 ]}
               >
                 <View
@@ -157,7 +153,7 @@ export function TasbihCounter({
                     styles.progressFill,
                     {
                       width: `${progress * 100}%`,
-                      backgroundColor: isDark ? Colors.dark.primary : Colors.light.primary,
+                      backgroundColor: theme.primary,
                     },
                   ]}
                 />
@@ -179,11 +175,11 @@ export function TasbihCounter({
 
       {/* Completion indicator */}
       {isComplete && (
-        <View style={styles.completeIndicator}>
-          <Feather name="check-circle" size={16} color={isDark ? Colors.dark.primary : Colors.light.primary} />
+        <View style={[styles.completeIndicator, { backgroundColor: `${theme.primary}1A` }]}>
+          <Feather name="check-circle" size={16} color={theme.primary} />
           <ThemedText
             type="small"
-            style={{ color: isDark ? Colors.dark.primary : Colors.light.primary, marginLeft: Spacing.xs }}
+            style={{ color: theme.primary, marginLeft: Spacing.xs }}
           >
             Target reached!
           </ThemedText>
@@ -217,7 +213,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.full,
-    backgroundColor: 'rgba(52, 211, 153, 0.1)',
   },
   counterArea: {
     alignItems: 'center',
@@ -266,7 +261,6 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.md,
     borderRadius: BorderRadius.full,
-    backgroundColor: 'rgba(52, 211, 153, 0.1)',
     alignSelf: 'center',
   },
 });

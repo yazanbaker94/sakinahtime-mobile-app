@@ -155,14 +155,14 @@ export default function ProgressScreen() {
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Overall Progress Card */}
-        <View style={[styles.card, { backgroundColor: isDark ? '#1a5f4f' : '#f5f5f5' }]}>
+        <View style={[styles.card, { backgroundColor: theme.backgroundSecondary }]}>
           <ThemedText type="h3" style={styles.cardTitle}>
             Overall Progress
           </ThemedText>
           
           {/* Circular Progress */}
           <View style={styles.progressCircleContainer}>
-            <View style={[styles.progressCircle, { borderColor: isDark ? '#D4AF37' : '#059669' }]}>
+            <View style={[styles.progressCircle, { borderColor: theme.primary }]}>
               <ThemedText type="h2" style={styles.progressPercentage}>
                 {stats?.completionPercentage.toFixed(1)}%
               </ThemedText>
@@ -187,7 +187,7 @@ export default function ProgressScreen() {
         </View>
 
         {/* Today's Progress Card */}
-        <View style={[styles.card, { backgroundColor: isDark ? '#1a5f4f' : '#f5f5f5' }]}>
+        <View style={[styles.card, { backgroundColor: theme.backgroundSecondary }]}>
           <ThemedText type="h3" style={styles.cardTitle}>
             Today's Progress
           </ThemedText>
@@ -197,7 +197,7 @@ export default function ProgressScreen() {
               <Feather 
                 name={isGoalMet ? 'check-circle' : 'circle'} 
                 size={24} 
-                color={isGoalMet ? '#10B981' : (isDark ? '#D4AF37' : '#059669')} 
+                color={isGoalMet ? theme.primary : theme.gold} 
               />
               <ThemedText type="body" style={styles.todayStatText}>
                 {progress?.dailyGoal.type === 'verses' 
@@ -213,7 +213,7 @@ export default function ProgressScreen() {
                     styles.goalProgressFill, 
                     { 
                       width: `${Math.min(100, todayProgress?.goalProgress || 0)}%`,
-                      backgroundColor: isGoalMet ? '#10B981' : (isDark ? '#D4AF37' : '#059669'),
+                      backgroundColor: isGoalMet ? theme.primary : theme.gold,
                     }
                   ]} 
                 />
@@ -237,7 +237,7 @@ export default function ProgressScreen() {
         </View>
 
         {/* Streak Card */}
-        <View style={[styles.card, { backgroundColor: isDark ? '#1a5f4f' : '#f5f5f5' }]}>
+        <View style={[styles.card, { backgroundColor: theme.backgroundSecondary }]}>
           <ThemedText type="h3" style={styles.cardTitle}>
             Reading Streak
           </ThemedText>
@@ -258,7 +258,7 @@ export default function ProgressScreen() {
 
         {/* Weekly Chart */}
         {weeklyData && (
-          <View style={[styles.card, { backgroundColor: isDark ? '#1a5f4f' : '#f5f5f5' }]}>
+          <View style={[styles.card, { backgroundColor: theme.backgroundSecondary }]}>
             <ThemedText type="h3" style={styles.cardTitle}>
               This Week
             </ThemedText>
@@ -271,7 +271,7 @@ export default function ProgressScreen() {
                       styles.dayBar,
                       { 
                         height: Math.max(4, (day.pagesRead / 20) * 60),
-                        backgroundColor: day.goalMet ? '#10B981' : (isDark ? '#D4AF37' : '#059669'),
+                        backgroundColor: day.goalMet ? theme.primary : theme.gold,
                       }
                     ]} 
                   />
@@ -289,7 +289,7 @@ export default function ProgressScreen() {
         )}
 
         {/* Goal Settings */}
-        <View style={[styles.card, { backgroundColor: isDark ? '#1a5f4f' : '#f5f5f5' }]}>
+        <View style={[styles.card, { backgroundColor: theme.backgroundSecondary }]}>
           <Pressable 
             style={styles.cardHeader}
             onPress={() => setShowGoalSettings(!showGoalSettings)}
@@ -300,7 +300,7 @@ export default function ProgressScreen() {
             <Feather 
               name={showGoalSettings ? 'chevron-up' : 'chevron-down'} 
               size={20} 
-              color={isDark ? '#fff' : '#000'} 
+              color={theme.text} 
             />
           </Pressable>
           
@@ -311,7 +311,7 @@ export default function ProgressScreen() {
                 <Switch
                   value={goalEnabled}
                   onValueChange={setGoalEnabled}
-                  trackColor={{ false: '#767577', true: isDark ? '#D4AF37' : '#059669' }}
+                  trackColor={{ false: '#767577', true: theme.primary }}
                 />
               </View>
               
@@ -321,7 +321,7 @@ export default function ProgressScreen() {
                   <Pressable
                     style={[
                       styles.goalTypeButton,
-                      goalType === 'pages' && styles.goalTypeButtonActive,
+                      goalType === 'pages' && { backgroundColor: theme.primary },
                     ]}
                     onPress={() => setGoalType('pages')}
                   >
@@ -332,7 +332,7 @@ export default function ProgressScreen() {
                   <Pressable
                     style={[
                       styles.goalTypeButton,
-                      goalType === 'verses' && styles.goalTypeButtonActive,
+                      goalType === 'verses' && { backgroundColor: theme.primary },
                     ]}
                     onPress={() => setGoalType('verses')}
                   >
@@ -346,7 +346,7 @@ export default function ProgressScreen() {
               <View style={styles.settingRow}>
                 <ThemedText>Target ({goalType === 'pages' ? '1-20' : '1-100'})</ThemedText>
                 <TextInput
-                  style={[styles.goalInput, { color: isDark ? '#fff' : '#000' }]}
+                  style={[styles.goalInput, { color: theme.text }]}
                   value={goalTarget}
                   onChangeText={setGoalTarget}
                   keyboardType="number-pad"
@@ -354,7 +354,7 @@ export default function ProgressScreen() {
                 />
               </View>
               
-              <Pressable style={styles.saveButton} onPress={handleSaveGoal}>
+              <Pressable style={[styles.saveButton, { backgroundColor: theme.primary }]} onPress={handleSaveGoal}>
                 <ThemedText style={styles.saveButtonText}>Save Goal</ThemedText>
               </Pressable>
             </View>
@@ -362,7 +362,7 @@ export default function ProgressScreen() {
         </View>
 
         {/* Reminder Settings */}
-        <View style={[styles.card, { backgroundColor: isDark ? '#1a5f4f' : '#f5f5f5' }]}>
+        <View style={[styles.card, { backgroundColor: theme.backgroundSecondary }]}>
           <ThemedText type="h3" style={styles.cardTitle}>
             Reading Reminder
           </ThemedText>
@@ -372,7 +372,7 @@ export default function ProgressScreen() {
             <Switch
               value={reminderEnabled}
               onValueChange={handleReminderToggle}
-              trackColor={{ false: '#767577', true: isDark ? '#D4AF37' : '#059669' }}
+              trackColor={{ false: '#767577', true: theme.primary }}
             />
           </View>
           
@@ -380,10 +380,10 @@ export default function ProgressScreen() {
             <View style={styles.settingRow}>
               <ThemedText>Reminder Time</ThemedText>
               <Pressable 
-                style={[styles.timeButton, { borderColor: isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)' }]}
+                style={[styles.timeButton, { borderColor: theme.border }]}
                 onPress={() => setShowTimePicker(true)}
               >
-                <Feather name="clock" size={16} color={isDark ? '#D4AF37' : '#059669'} />
+                <Feather name="clock" size={16} color={theme.primary} />
                 <ThemedText style={styles.timeButtonText}>
                   {(() => {
                     const [h, m] = reminderTime.split(':').map(Number);
@@ -400,7 +400,7 @@ export default function ProgressScreen() {
             <View style={styles.timePickerContainer}>
               <View style={styles.timePickerHeader}>
                 <Pressable onPress={() => setShowTimePicker(false)}>
-                  <ThemedText style={{ color: isDark ? '#D4AF37' : '#059669', fontWeight: '600' }}>
+                  <ThemedText style={{ color: theme.primary, fontWeight: '600' }}>
                     Done
                   </ThemedText>
                 </Pressable>
@@ -604,7 +604,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.1)',
   },
   goalTypeButtonActive: {
-    backgroundColor: '#059669',
+    backgroundColor: undefined, // Will be set dynamically with theme.primary
   },
   goalTypeTextActive: {
     color: '#fff',
@@ -652,7 +652,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   saveButton: {
-    backgroundColor: '#059669',
+    // backgroundColor set dynamically with theme.primary
     borderRadius: 8,
     paddingVertical: 12,
     alignItems: 'center',

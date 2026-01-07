@@ -9,7 +9,7 @@ import { View, StyleSheet } from 'react-native';
 import { ThemedText } from './ThemedText';
 import { useTheme } from '../hooks/useTheme';
 import { WeeklyStats } from '../types/prayerLog';
-import { Spacing, BorderRadius, Colors } from '../constants/theme';
+import { Spacing, BorderRadius } from '../constants/theme';
 
 interface WeeklyChartProps {
   stats: WeeklyStats | null;
@@ -22,19 +22,19 @@ function getDayName(dateStr: string): string {
   return DAY_NAMES[date.getDay()];
 }
 
-function getBarColor(prayedCount: number, isDark: boolean): string {
-  if (prayedCount === 5) return isDark ? '#34D399' : '#10B981';
+function getBarColor(prayedCount: number, isDark: boolean, primaryColor: string): string {
+  if (prayedCount === 5) return primaryColor;
   if (prayedCount >= 3) return isDark ? '#FBBF24' : '#F59E0B';
   if (prayedCount >= 1) return isDark ? '#FB923C' : '#F97316';
   return isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
 }
 
 export function WeeklyChart({ stats }: WeeklyChartProps) {
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
 
   if (!stats) {
     return (
-      <View style={[styles.container, { backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault }]}>
+      <View style={[styles.container, { backgroundColor: theme.cardBackground }]}>
         <ThemedText type="body" secondary>No data available</ThemedText>
       </View>
     );
@@ -46,7 +46,7 @@ export function WeeklyChart({ stats }: WeeklyChartProps) {
     <View style={[
       styles.container,
       {
-        backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault,
+        backgroundColor: theme.cardBackground,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: isDark ? 0.3 : 0.1,
@@ -56,8 +56,8 @@ export function WeeklyChart({ stats }: WeeklyChartProps) {
     ]}>
       <View style={styles.header}>
         <ThemedText type="h3" style={styles.title}>This Week</ThemedText>
-        <View style={[styles.percentageBadge, { backgroundColor: isDark ? 'rgba(52, 211, 153, 0.15)' : 'rgba(16, 185, 129, 0.1)' }]}>
-          <ThemedText type="body" style={{ color: isDark ? '#34D399' : '#10B981', fontWeight: '700' }}>
+        <View style={[styles.percentageBadge, { backgroundColor: `${theme.primary}26` }]}>
+          <ThemedText type="body" style={{ color: theme.primary, fontWeight: '700' }}>
             {stats.completionPercentage}%
           </ThemedText>
         </View>
@@ -66,7 +66,7 @@ export function WeeklyChart({ stats }: WeeklyChartProps) {
       <View style={styles.chartContainer}>
         {stats.dailyBreakdown.map((day, index) => {
           const barHeight = (day.prayedCount / 5) * maxHeight;
-          const barColor = getBarColor(day.prayedCount, isDark);
+          const barColor = getBarColor(day.prayedCount, isDark, theme.primary);
           const isToday = index === stats.dailyBreakdown.length - 1;
 
           return (
@@ -101,7 +101,7 @@ export function WeeklyChart({ stats }: WeeklyChartProps) {
 
       <View style={styles.statsRow}>
         <View style={styles.statItem}>
-          <ThemedText type="h3" style={{ color: isDark ? '#34D399' : '#10B981' }}>
+          <ThemedText type="h3" style={{ color: theme.primary }}>
             {stats.totalPrayed}
           </ThemedText>
           <ThemedText type="caption" secondary>Prayed</ThemedText>

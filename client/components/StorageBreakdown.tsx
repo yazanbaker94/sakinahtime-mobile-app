@@ -9,7 +9,7 @@ import { View, StyleSheet, Pressable } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
-import { Spacing, BorderRadius, Colors } from '@/constants/theme';
+import { Spacing, BorderRadius } from '@/constants/theme';
 import { StorageInfo, StorageCategory } from '../types/offline';
 import { formatBytes } from '../constants/offline';
 
@@ -27,7 +27,7 @@ interface CategoryItem {
 }
 
 export function StorageBreakdown({ storageInfo, onCategoryPress }: StorageBreakdownProps) {
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
 
   const categories: CategoryItem[] = [
     {
@@ -49,7 +49,7 @@ export function StorageBreakdown({ storageInfo, onCategoryPress }: StorageBreakd
       label: 'Prayer Times',
       icon: 'clock',
       size: storageInfo.prayerCacheSize,
-      color: isDark ? '#34D399' : '#10B981',
+      color: theme.primary,
     },
     {
       key: 'cache',
@@ -65,7 +65,11 @@ export function StorageBreakdown({ storageInfo, onCategoryPress }: StorageBreakd
   return (
     <View style={[
       styles.container,
-      { backgroundColor: isDark ? 'rgba(26, 95, 79, 0.2)' : Colors.light.backgroundDefault }
+      { 
+        backgroundColor: isDark ? `${theme.primary}33` : theme.backgroundDefault,
+        elevation: isDark ? 0 : 3,
+        shadowOpacity: isDark ? 0 : 0.08,
+      }
     ]}>
       <ThemedText type="body" style={styles.title}>
         Storage Breakdown
@@ -119,7 +123,7 @@ export function StorageBreakdown({ storageInfo, onCategoryPress }: StorageBreakd
               <Feather 
                 name="chevron-right" 
                 size={16} 
-                color={isDark ? Colors.dark.textSecondary : Colors.light.textSecondary} 
+                color={theme.textSecondary} 
               />
             )}
           </Pressable>
@@ -135,9 +139,8 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
     shadowRadius: 8,
-    elevation: 3,
+    // elevation and shadowOpacity set dynamically
   },
   title: {
     fontWeight: '600',

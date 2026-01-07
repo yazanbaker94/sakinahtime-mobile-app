@@ -9,7 +9,7 @@ import { View, StyleSheet, Pressable, ActivityIndicator } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
-import { Spacing, BorderRadius, Colors } from '@/constants/theme';
+import { Spacing, BorderRadius } from '@/constants/theme';
 import { DownloadStatus } from '../types/offline';
 import { formatBytes } from '../constants/offline';
 
@@ -38,7 +38,7 @@ export function SurahDownloadItem({
   onResume,
   onDelete,
 }: SurahDownloadItemProps) {
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
 
   const isDownloaded = status === 'completed';
   const isDownloading = status === 'downloading';
@@ -56,11 +56,11 @@ export function SurahDownloadItem({
   };
 
   const getStatusColor = () => {
-    if (isDownloaded) return isDark ? '#34D399' : '#10B981';
+    if (isDownloaded) return theme.primary;
     if (isDownloading) return isDark ? '#60A5FA' : '#3B82F6';
     if (isPaused) return isDark ? '#FBBF24' : '#F59E0B';
     if (isFailed) return isDark ? '#F87171' : '#EF4444';
-    return isDark ? Colors.dark.textSecondary : Colors.light.textSecondary;
+    return theme.textSecondary;
   };
 
   const handlePress = () => {
@@ -87,7 +87,7 @@ export function SurahDownloadItem({
       style={({ pressed }) => [
         styles.container,
         { 
-          backgroundColor: isDark ? 'rgba(26, 95, 79, 0.15)' : Colors.light.backgroundDefault,
+          backgroundColor: isDark ? `${theme.primary}26` : theme.backgroundDefault,
           opacity: pressed ? 0.7 : 1,
         }
       ]}
@@ -96,7 +96,7 @@ export function SurahDownloadItem({
       <View style={styles.leftSection}>
         <View style={[
           styles.numberCircle,
-          { backgroundColor: isDark ? 'rgba(52, 211, 153, 0.15)' : 'rgba(16, 185, 129, 0.1)' }
+          { backgroundColor: `${theme.primary}26` }
         ]}>
           <ThemedText type="small" style={{ fontWeight: '600' }}>
             {surahNumber}

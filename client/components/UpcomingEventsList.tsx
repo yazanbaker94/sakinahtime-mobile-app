@@ -15,7 +15,7 @@ interface UpcomingEventsListProps {
   showDescriptions?: boolean;
 }
 
-function EventItem({ event, showDescription, isDark }: { event: EventWithDate; showDescription: boolean; isDark: boolean }) {
+function EventItem({ event, showDescription, isDark, theme }: { event: EventWithDate; showDescription: boolean; isDark: boolean; theme: any }) {
   const countdownText = islamicEventsService.getCountdownText(event.daysUntil);
   const isToday = event.daysUntil === 0;
   const isTomorrow = event.daysUntil === 1;
@@ -23,29 +23,29 @@ function EventItem({ event, showDescription, isDark }: { event: EventWithDate; s
   return (
     <View style={[
       styles.eventItem, 
-      isToday && { backgroundColor: isDark ? 'rgba(16, 185, 129, 0.15)' : '#F0FDF4', marginHorizontal: -8, paddingHorizontal: 8, borderRadius: 8 }
+      isToday && { backgroundColor: `${theme.primary}15`, marginHorizontal: -8, paddingHorizontal: 8, borderRadius: 8 }
     ]}>
-      <View style={[styles.indicator, { backgroundColor: event.color || '#D4AF37' }]} />
+      <View style={[styles.indicator, { backgroundColor: event.color || theme.gold }]} />
       <View style={styles.eventContent}>
         <View style={styles.eventHeader}>
-          <Text style={[styles.eventName, { color: isDark ? (isToday ? '#34D399' : '#F9FAFB') : (isToday ? '#065F46' : '#1F2937') }]}>
+          <Text style={[styles.eventName, { color: isToday ? theme.primary : theme.text }]}>
             {event.nameEn}
           </Text>
           <Text style={[
             styles.countdown,
-            { color: isDark ? '#9CA3AF' : '#6B7280' },
-            isToday && { color: isDark ? '#34D399' : '#059669', fontWeight: '600' },
-            isTomorrow && { color: isDark ? '#FBBF24' : '#D97706', fontWeight: '500' },
+            { color: theme.textSecondary },
+            isToday && { color: theme.primary, fontWeight: '600' },
+            isTomorrow && { color: theme.gold, fontWeight: '500' },
           ]}>
             {countdownText}
           </Text>
         </View>
-        <Text style={[styles.eventDate, { color: isDark ? '#6B7280' : '#9CA3AF' }]}>
+        <Text style={[styles.eventDate, { color: theme.textSecondary }]}>
           {event.hijriDate.day} {event.hijriDate.monthNameEn} • {' '}
           {event.gregorianDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
         </Text>
         {showDescription && event.description && (
-          <Text style={[styles.description, { color: isDark ? '#9CA3AF' : '#6B7280' }]} numberOfLines={2}>
+          <Text style={[styles.description, { color: theme.textSecondary }]} numberOfLines={2}>
             {event.description}
           </Text>
         )}
@@ -59,28 +59,28 @@ export function UpcomingEventsList({
   limit = 5,
   showDescriptions = true,
 }: UpcomingEventsListProps) {
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
   const displayEvents = events.slice(0, limit);
   
   if (displayEvents.length === 0) {
     return (
-      <View style={[styles.emptyContainer, { backgroundColor: isDark ? '#1F2937' : '#FFFFFF' }]}>
-        <Text style={[styles.emptyText, { color: isDark ? '#6B7280' : '#9CA3AF' }]}>No upcoming events</Text>
+      <View style={[styles.emptyContainer, { backgroundColor: theme.cardBackground }]}>
+        <Text style={[styles.emptyText, { color: theme.textSecondary }]}>No upcoming events</Text>
       </View>
     );
   }
   
   return (
-    <View style={[styles.container, { backgroundColor: isDark ? '#1F2937' : '#FFFFFF' }]}>
-      <Text style={[styles.title, { color: isDark ? '#F9FAFB' : '#1F2937' }]}>Upcoming Events</Text>
+    <View style={[styles.container, { backgroundColor: theme.cardBackground }]}>
+      <Text style={[styles.title, { color: theme.text }]}>Upcoming Events</Text>
       <FlatList
         data={displayEvents}
         keyExtractor={(item) => `${item.id}-${item.hijriDate.year}`}
         renderItem={({ item }) => (
-          <EventItem event={item} showDescription={showDescriptions} isDark={isDark} />
+          <EventItem event={item} showDescription={showDescriptions} isDark={isDark} theme={theme} />
         )}
         scrollEnabled={false}
-        ItemSeparatorComponent={() => <View style={[styles.separator, { backgroundColor: isDark ? '#374151' : '#F3F4F6' }]} />}
+        ItemSeparatorComponent={() => <View style={[styles.separator, { backgroundColor: theme.border }]} />}
       />
     </View>
   );
@@ -136,8 +136,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   todayCountdown: {
-    color: '#059669',
-    fontWeight: '600',
+    // Removed - now using theme.primary inline
   },
   tomorrowCountdown: {
     color: '#D97706',

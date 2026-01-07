@@ -9,7 +9,18 @@
 
 import * as FileSystem from 'expo-file-system/legacy';
 import { cacheService } from './CacheService';
-import { ffmpegService } from './ffmpegService';
+
+// FFmpeg service stub - video generation feature not yet implemented
+const ffmpegService = {
+  getAudioDuration: async (_audioPath: string): Promise<number> => {
+    // Stub: return 0 duration
+    return 0;
+  },
+  execute: async (_command: string): Promise<{ success: boolean; error?: string }> => {
+    // Stub: video generation not implemented
+    return { success: false, error: 'FFmpeg not available' };
+  },
+};
 
 /**
  * Reciter configuration with directory mapping for everyayah.com

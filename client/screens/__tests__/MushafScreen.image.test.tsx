@@ -4,6 +4,7 @@
  * Tests to verify image rendering quality on different devices/platforms
  */
 
+import { describe, it, expect } from 'vitest';
 import { Dimensions, PixelRatio, Platform } from 'react-native';
 
 // Source image dimensions (from assets/images/quran/*.png)

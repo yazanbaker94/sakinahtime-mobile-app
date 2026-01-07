@@ -19,7 +19,6 @@ import Animated, { SlideInDown, SlideOutDown } from 'react-native-reanimated';
 import { useTheme } from '../../hooks/useTheme';
 import { useRevisionSchedule } from '../../hooks/useRevisionSchedule';
 import { ThemedText } from '../ThemedText';
-import { HIFZ_ACTIVE_COLOR } from '../../constants/hifz';
 import type { RevisionEntry, VerseKey } from '../../types/hifz';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -48,7 +47,7 @@ export function RevisionModal({
   const [selectedRevision, setSelectedRevision] = useState<RevisionEntry | null>(null);
   const [showRating, setShowRating] = useState(false);
 
-  const activeColor = isDark ? HIFZ_ACTIVE_COLOR.dark : HIFZ_ACTIVE_COLOR.light;
+  const activeColor = theme.primary;
   const todayCompleted = getTodayCompletedCount();
   const dailyGoal = getDailyGoal();
   const progressPercent = Math.min((todayCompleted / dailyGoal) * 100, 100);
@@ -93,13 +92,13 @@ export function RevisionModal({
             <View
               style={[
                 styles.metaTag,
-                { backgroundColor: isOverdue ? '#FEE2E2' : '#DCFCE7' },
+                { backgroundColor: isOverdue ? '#FEE2E2' : `${theme.primary}26` },
               ]}
             >
               <ThemedText
                 style={[
                   styles.metaText,
-                  { color: isOverdue ? '#EF4444' : '#10B981' },
+                  { color: isOverdue ? '#EF4444' : theme.primary },
                 ]}
               >
                 {isOverdue ? 'Overdue' : 'Due'}
@@ -193,7 +192,7 @@ export function RevisionModal({
                   {renderQualityButton(0, 'Forgot', '#EF4444')}
                   {renderQualityButton(1, 'Hard', '#F59E0B')}
                   {renderQualityButton(2, 'Okay', '#3B82F6')}
-                  {renderQualityButton(3, 'Good', '#10B981')}
+                  {renderQualityButton(3, 'Good', theme.primary)}
                   {renderQualityButton(4, 'Easy', '#8B5CF6')}
                   {renderQualityButton(5, 'Perfect', activeColor)}
                 </View>
@@ -236,7 +235,7 @@ export function RevisionModal({
                         { backgroundColor: theme.backgroundSecondary },
                       ]}
                     >
-                      <Feather name="check" size={16} color="#10B981" />
+                      <Feather name="check" size={16} color={theme.primary} />
                       <ThemedText style={styles.completedText}>
                         {revision.verseKey}
                       </ThemedText>

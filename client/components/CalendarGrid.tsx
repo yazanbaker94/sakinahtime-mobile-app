@@ -29,20 +29,20 @@ const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const DAY_SIZE = Math.floor((SCREEN_WIDTH - 48) / 7);
 
-function CalendarLegend({ isDark }: { isDark: boolean }) {
+function CalendarLegend({ isDark, theme }: { isDark: boolean; theme: any }) {
   return (
-    <View style={[styles.legend, { borderTopColor: isDark ? '#374151' : '#F3F4F6' }]}>
+    <View style={[styles.legend, { borderTopColor: theme.border }]}>
       <View style={styles.legendItem}>
-        <View style={[styles.legendDot, { backgroundColor: '#D4AF37' }]} />
-        <Text style={[styles.legendText, { color: isDark ? '#9CA3AF' : '#6B7280' }]}>Event</Text>
+        <View style={[styles.legendDot, { backgroundColor: theme.gold }]} />
+        <Text style={[styles.legendText, { color: theme.textSecondary }]}>Event</Text>
       </View>
       <View style={styles.legendItem}>
         <View style={[styles.legendDot, { backgroundColor: '#3B82F6' }]} />
-        <Text style={[styles.legendText, { color: isDark ? '#9CA3AF' : '#6B7280' }]}>Fasting</Text>
+        <Text style={[styles.legendText, { color: theme.textSecondary }]}>Fasting</Text>
       </View>
       <View style={styles.legendItem}>
         <View style={[styles.legendDot, { backgroundColor: '#8B5CF6' }]} />
-        <Text style={[styles.legendText, { color: isDark ? '#9CA3AF' : '#6B7280' }]}>White Day</Text>
+        <Text style={[styles.legendText, { color: theme.textSecondary }]}>White Day</Text>
       </View>
     </View>
   );
@@ -54,7 +54,7 @@ export function CalendarGrid({
   onDayPress,
   onMonthChange,
 }: CalendarGridProps) {
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
   const [month, setMonth] = useState(initialMonth);
   const [year, setYear] = useState(initialYear);
 
@@ -142,20 +142,20 @@ export function CalendarGrid({
   const monthName = hijriDateService.getMonthName(month, 'en');
 
   return (
-    <View style={[styles.container, { backgroundColor: isDark ? '#1F2937' : '#FFFFFF' }]}>
+    <View style={[styles.container, { backgroundColor: theme.cardBackground }]}>
       {/* Month Navigation */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigateMonth(-1)} style={[styles.navButton, { backgroundColor: isDark ? '#374151' : '#F3F4F6' }]}>
-          <Text style={[styles.navText, { color: isDark ? '#F9FAFB' : '#374151' }]}>‹</Text>
+        <TouchableOpacity onPress={() => navigateMonth(-1)} style={[styles.navButton, { backgroundColor: theme.backgroundSecondary }]}>
+          <Text style={[styles.navText, { color: theme.text }]}>‹</Text>
         </TouchableOpacity>
         <View style={styles.monthTitle}>
-          <Text style={[styles.monthName, { color: isDark ? '#F9FAFB' : '#1F2937' }]}>{monthName} {year}</Text>
-          <Text style={[styles.monthNameAr, { color: isDark ? '#9CA3AF' : '#6B7280' }]}>
+          <Text style={[styles.monthName, { color: theme.text }]}>{monthName} {year}</Text>
+          <Text style={[styles.monthNameAr, { color: theme.textSecondary }]}>
             {hijriDateService.getMonthName(month, 'ar')}
           </Text>
         </View>
-        <TouchableOpacity onPress={() => navigateMonth(1)} style={[styles.navButton, { backgroundColor: isDark ? '#374151' : '#F3F4F6' }]}>
-          <Text style={[styles.navText, { color: isDark ? '#F9FAFB' : '#374151' }]}>›</Text>
+        <TouchableOpacity onPress={() => navigateMonth(1)} style={[styles.navButton, { backgroundColor: theme.backgroundSecondary }]}>
+          <Text style={[styles.navText, { color: theme.text }]}>›</Text>
         </TouchableOpacity>
       </View>
 
@@ -165,8 +165,8 @@ export function CalendarGrid({
           <View key={day} style={styles.weekdayCell}>
             <Text style={[
               styles.weekdayText,
-              { color: isDark ? '#6B7280' : '#9CA3AF' },
-              index === 5 && { color: isDark ? '#34D399' : '#059669' }, // Friday
+              { color: theme.textSecondary },
+              index === 5 && { color: theme.primary }, // Friday
             ]}>
               {day}
             </Text>
@@ -181,7 +181,7 @@ export function CalendarGrid({
             key={index}
             style={[
               styles.dayCell,
-              day.isToday && styles.todayCell,
+              day.isToday && [styles.todayCell, { backgroundColor: theme.primary }],
               !day.isCurrentMonth && styles.emptyCell,
             ]}
             onPress={() => handleDayPress(day)}
@@ -191,14 +191,14 @@ export function CalendarGrid({
               <>
                 <Text style={[
                   styles.dayNumber,
-                  { color: isDark ? '#F9FAFB' : '#1F2937' },
+                  { color: theme.text },
                   day.isToday && styles.todayNumber,
                 ]}>
                   {day.hijriDate.day}
                 </Text>
                 <View style={styles.indicators}>
                   {day.event && (
-                    <View style={[styles.indicator, { backgroundColor: day.event.color || '#D4AF37' }]} />
+                    <View style={[styles.indicator, { backgroundColor: day.event.color || theme.gold }]} />
                   )}
                   {day.fastingDay && day.fastingDay.type === 'white_day' && (
                     <View style={[styles.indicator, { backgroundColor: '#8B5CF6' }]} />
@@ -213,7 +213,7 @@ export function CalendarGrid({
         ))}
       </View>
 
-      <CalendarLegend isDark={isDark} />
+      <CalendarLegend isDark={isDark} theme={theme} />
     </View>
   );
 }
@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   fridayText: {
-    color: '#059669',
+    // Removed - now using theme.primary inline
   },
   daysGrid: {
     flexDirection: 'row',
@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
     borderRadius: DAY_SIZE / 2,
   },
   todayCell: {
-    backgroundColor: '#059669',
+    // backgroundColor set dynamically with theme.primary
   },
   emptyCell: {
     opacity: 0,

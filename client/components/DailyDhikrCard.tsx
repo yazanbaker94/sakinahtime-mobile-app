@@ -9,7 +9,7 @@ import { View, StyleSheet, Pressable } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
-import { Spacing, BorderRadius, Colors } from '@/constants/theme';
+import { Spacing, BorderRadius } from '@/constants/theme';
 import { useDailyDhikr } from '@/hooks/useDailyDhikr';
 
 interface DailyDhikrCardProps {
@@ -21,10 +21,10 @@ export function DailyDhikrCard({ onPress }: DailyDhikrCardProps) {
   const { dhikr } = useDailyDhikr();
 
   const bgColor = isDark
-    ? 'rgba(26, 95, 79, 0.2)'
-    : Colors.light.backgroundDefault;
+    ? `${theme.primary}33`
+    : theme.backgroundDefault;
 
-  const accentColor = isDark ? Colors.dark.primary : Colors.light.primary;
+  const accentColor = theme.primary;
 
   return (
     <Pressable
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
   arabicContainer: {
     paddingVertical: Spacing.sm,
     borderLeftWidth: 3,
-    borderLeftColor: 'rgba(52, 211, 153, 0.3)',
+    borderLeftColor: 'rgba(128, 128, 128, 0.3)',
     paddingLeft: Spacing.md,
     marginBottom: Spacing.sm,
   },

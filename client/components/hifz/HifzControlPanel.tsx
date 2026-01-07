@@ -27,7 +27,6 @@ import AudioService from '../../services/AudioService';
 import {
   HIDE_MODE_OPTIONS,
   AUTO_HIDE_DELAY_OPTIONS,
-  HIFZ_ACTIVE_COLOR,
 } from '../../constants/hifz';
 import type { HideMode, MemorizationStatus } from '../../types/hifz';
 
@@ -63,7 +62,7 @@ export function HifzControlPanel({
   } = useHifzMode();
 
   const [activeTab, setActiveTab] = useState<'hide' | 'repeat' | 'loop' | 'progress'>('hide');
-  const activeColor = isDark ? HIFZ_ACTIVE_COLOR.dark : HIFZ_ACTIVE_COLOR.light;
+  const activeColor = theme.primary;
   
   // Audio state for repeat progress
   const [audioState, setAudioState] = useState<any>(null);
@@ -358,7 +357,7 @@ export function HifzControlPanel({
                         
                         <TouchableOpacity
                           onPress={() => handleMarkStatus('memorized')}
-                          style={[styles.statusButton, { backgroundColor: theme.cardBackground, borderColor: '#10B981' }]}
+                          style={[styles.statusButton, { backgroundColor: theme.cardBackground, borderColor: theme.primary }]}
                         >
                           <MemorizationBadge status="memorized" size="large" />
                           <ThemedText style={styles.statusText}>Memorized</ThemedText>
@@ -394,9 +393,9 @@ export function HifzControlPanel({
                             </TouchableOpacity>
                             <TouchableOpacity
                               onPress={() => handleMarkPageStatus('memorized')}
-                              style={[styles.bulkButton, { backgroundColor: '#10B98120', borderColor: '#10B981' }]}
+                              style={[styles.bulkButton, { backgroundColor: `${theme.primary}20`, borderColor: theme.primary }]}
                             >
-                              <ThemedText style={[styles.bulkButtonText, { color: '#10B981' }]}>
+                              <ThemedText style={[styles.bulkButtonText, { color: theme.primary }]}>
                                 Memorized
                               </ThemedText>
                             </TouchableOpacity>
@@ -428,9 +427,9 @@ export function HifzControlPanel({
                             </TouchableOpacity>
                             <TouchableOpacity
                               onPress={() => handleMarkJuzStatus('memorized')}
-                              style={[styles.bulkButton, { backgroundColor: '#10B98120', borderColor: '#10B981' }]}
+                              style={[styles.bulkButton, { backgroundColor: `${theme.primary}20`, borderColor: theme.primary }]}
                             >
-                              <ThemedText style={[styles.bulkButtonText, { color: '#10B981' }]}>
+                              <ThemedText style={[styles.bulkButtonText, { color: theme.primary }]}>
                                 Memorized
                               </ThemedText>
                             </TouchableOpacity>

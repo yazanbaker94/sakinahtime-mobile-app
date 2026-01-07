@@ -16,20 +16,20 @@ interface RamadanCountdownProps {
 }
 
 export function RamadanCountdown({ compact = false }: RamadanCountdownProps) {
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
   const { isRamadan, currentDay, daysRemaining, isLastTenNights } = useRamadan();
 
   if (!isRamadan || currentDay === null) {
     return null;
   }
 
-  const accentColor = isLastTenNights ? '#FBBF24' : (isDark ? '#34D399' : '#059669');
+  const accentColor = isLastTenNights ? '#FBBF24' : theme.primary;
 
   if (compact) {
     return (
       <View style={[
         styles.compactContainer,
-        { backgroundColor: isDark ? 'rgba(16, 185, 129, 0.15)' : 'rgba(16, 185, 129, 0.1)' }
+        { backgroundColor: `${theme.primary}26` }
       ]}>
         <Feather name="moon" size={14} color={accentColor} />
         <ThemedText type="small" style={{ color: accentColor, fontWeight: '600', marginLeft: 4 }}>
@@ -50,7 +50,7 @@ export function RamadanCountdown({ compact = false }: RamadanCountdownProps) {
       { 
         backgroundColor: isLastTenNights 
           ? (isDark ? 'rgba(251, 191, 36, 0.15)' : 'rgba(251, 191, 36, 0.1)')
-          : (isDark ? 'rgba(16, 185, 129, 0.15)' : 'rgba(16, 185, 129, 0.1)')
+          : `${theme.primary}26`
       }
     ]}>
       <View style={styles.header}>

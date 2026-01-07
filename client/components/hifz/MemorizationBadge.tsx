@@ -7,7 +7,22 @@ import React from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
 import { MemorizationStatus } from '../../types/hifz';
-import { MEMORIZATION_COLORS } from '../../constants/hifz';
+
+// Semantic colors for non-memorized statuses
+const STATUS_COLORS = {
+  not_started: {
+    light: '#9CA3AF', // Gray
+    dark: '#6B7280',
+  },
+  in_progress: {
+    light: '#F59E0B', // Amber
+    dark: '#FBBF24',
+  },
+  due_revision: {
+    light: '#EF4444', // Red
+    dark: '#F87171',
+  },
+};
 
 interface MemorizationBadgeProps {
   status: MemorizationStatus;
@@ -28,9 +43,12 @@ export function MemorizationBadge({
 
   const getColor = () => {
     if (isDueForRevision && status === 'memorized') {
-      return isDark ? MEMORIZATION_COLORS.due_revision.dark : MEMORIZATION_COLORS.due_revision.light;
+      return isDark ? STATUS_COLORS.due_revision.dark : STATUS_COLORS.due_revision.light;
     }
-    return isDark ? MEMORIZATION_COLORS[status].dark : MEMORIZATION_COLORS[status].light;
+    if (status === 'memorized') {
+      return theme.primary;
+    }
+    return isDark ? STATUS_COLORS[status].dark : STATUS_COLORS[status].light;
   };
 
   const getLabel = () => {

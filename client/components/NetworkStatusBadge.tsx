@@ -18,7 +18,7 @@ interface NetworkStatusBadgeProps {
 }
 
 export function NetworkStatusBadge({ status, compact = false }: NetworkStatusBadgeProps) {
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
 
   const getIcon = () => {
     if (!status.isConnected) return 'wifi-off';
@@ -28,7 +28,7 @@ export function NetworkStatusBadge({ status, compact = false }: NetworkStatusBad
 
   const getColor = () => {
     if (!status.isConnected) return isDark ? '#F87171' : '#EF4444';
-    return isDark ? '#34D399' : '#10B981';
+    return theme.primary;
   };
 
   const getLabel = () => {

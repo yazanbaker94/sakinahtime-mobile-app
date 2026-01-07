@@ -10,7 +10,7 @@ import { Feather } from '@expo/vector-icons';
 import { ThemedText } from './ThemedText';
 import { useTheme } from '../hooks/useTheme';
 import { PrayerStreakData } from '../types/prayerLog';
-import { Spacing, BorderRadius, Colors } from '../constants/theme';
+import { Spacing, BorderRadius } from '../constants/theme';
 
 interface StreakCardProps {
   streak: PrayerStreakData | null;
@@ -34,7 +34,7 @@ function getStreakMessage(currentStreak: number): string {
 }
 
 export function StreakCard({ streak, compact = false }: StreakCardProps) {
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
 
   const currentStreak = streak?.currentStreak || 0;
   const longestStreak = streak?.longestStreak || 0;
@@ -57,7 +57,7 @@ export function StreakCard({ streak, compact = false }: StreakCardProps) {
     <View style={[
       styles.container,
       {
-        backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault,
+        backgroundColor: theme.cardBackground,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: isDark ? 0.3 : 0.1,
@@ -83,7 +83,7 @@ export function StreakCard({ streak, compact = false }: StreakCardProps) {
         <View style={[styles.divider, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }]} />
 
         <View style={styles.streakItem}>
-          <ThemedText type="h1" style={[styles.streakNumber, { color: isDark ? '#34D399' : '#059669' }]}>
+          <ThemedText type="h1" style={[styles.streakNumber, { color: theme.primary }]}>
             {longestStreak}
           </ThemedText>
           <ThemedText type="caption" secondary>Longest Streak</ThemedText>

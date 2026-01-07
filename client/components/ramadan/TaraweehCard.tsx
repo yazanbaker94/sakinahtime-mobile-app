@@ -18,7 +18,7 @@ interface TaraweehCardProps {
 }
 
 export function TaraweehCard({ onPress }: TaraweehCardProps) {
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
   const { currentDay } = useRamadan();
   const { todayEntry, stats, logTaraweeh } = useTaraweehTracker();
   
@@ -69,14 +69,14 @@ export function TaraweehCard({ onPress }: TaraweehCardProps) {
       <View style={[
         styles.statusSection, 
         { backgroundColor: todayEntry 
-          ? 'rgba(16, 185, 129, 0.1)' 
+          ? `${theme.primary}1A` 
           : (isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)') 
         }
       ]}>
         {todayEntry ? (
           <View style={styles.loggedStatus}>
             <View style={styles.loggedHeader}>
-              <Feather name="check-circle" size={20} color="#10B981" />
+              <Feather name="check-circle" size={20} color={theme.primary} />
               <ThemedText type="body" style={{ marginLeft: Spacing.sm, fontWeight: '600' }}>
                 Logged Tonight
               </ThemedText>

@@ -9,7 +9,7 @@ import { View, StyleSheet, Pressable, ActivityIndicator } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
-import { Spacing, BorderRadius, Colors } from '@/constants/theme';
+import { Spacing, BorderRadius } from '@/constants/theme';
 import { DownloadItem } from '../types/offline';
 import { formatBytes, SURAH_INFO } from '../constants/offline';
 
@@ -21,7 +21,7 @@ interface DownloadProgressProps {
 }
 
 export function DownloadProgress({ item, onPause, onResume, onCancel }: DownloadProgressProps) {
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
   const [isCancelling, setIsCancelling] = React.useState(false);
 
   const surahInfo = SURAH_INFO.find(s => s.number === item.surahNumber);
@@ -45,14 +45,14 @@ export function DownloadProgress({ item, onPause, onResume, onCancel }: Download
   return (
     <View style={[
       styles.container,
-      { backgroundColor: isDark ? 'rgba(26, 95, 79, 0.2)' : Colors.light.backgroundDefault }
+      { backgroundColor: theme.cardBackground }
     ]}>
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           {isDownloading ? (
             <ActivityIndicator 
               size="small" 
-              color={isDark ? Colors.dark.primary : Colors.light.primary} 
+              color={theme.primary} 
             />
           ) : (
             <Feather 
@@ -74,12 +74,12 @@ export function DownloadProgress({ item, onPause, onResume, onCancel }: Download
         <View style={styles.controls}>
           {isDownloading && onPause && (
             <Pressable onPress={onPause} style={styles.controlButton}>
-              <Feather name="pause" size={18} color={isDark ? Colors.dark.text : Colors.light.text} />
+              <Feather name="pause" size={18} color={theme.text} />
             </Pressable>
           )}
           {isPaused && onResume && (
             <Pressable onPress={onResume} style={styles.controlButton}>
-              <Feather name="play" size={18} color={isDark ? Colors.dark.primary : Colors.light.primary} />
+              <Feather name="play" size={18} color={theme.primary} />
             </Pressable>
           )}
           {onCancel && (

@@ -127,7 +127,7 @@ export default function AzkarDetailScreen() {
           style={({ pressed }) => [
             styles.dhikrCard,
             {
-              backgroundColor: isDark ? 'rgba(26, 95, 79, 0.2)' : Colors.light.backgroundDefault,
+              backgroundColor: theme.cardBackground,
               opacity: pressed ? 0.7 : 1,
             },
           ]}
@@ -137,7 +137,7 @@ export default function AzkarDetailScreen() {
               style={[
                 styles.dhikrNumber,
                 {
-                  backgroundColor: isDark ? 'rgba(52, 211, 153, 0.15)' : Colors.light.backgroundSecondary,
+                  backgroundColor: theme.backgroundSecondary,
                 },
               ]}
             >
@@ -169,7 +169,7 @@ export default function AzkarDetailScreen() {
               <View style={styles.repBadge}>
                 <ThemedText
                   type="caption"
-                  style={{ color: isDark ? Colors.dark.primary : Colors.light.primary }}
+                  style={{ color: theme.primary }}
                 >
                   Repeat {item.repetitions}x
                 </ThemedText>
@@ -192,17 +192,17 @@ export default function AzkarDetailScreen() {
                 </Pressable>
                 <View style={[styles.counterBadge, {
                   backgroundColor: isComplete 
-                    ? (isDark ? 'rgba(52, 211, 153, 0.2)' : 'rgba(16, 185, 129, 0.15)')
-                    : (isDark ? 'rgba(212, 175, 55, 0.2)' : 'rgba(217, 119, 6, 0.15)'),
+                    ? `${theme.primary}20`
+                    : `${theme.gold}20`,
                   borderColor: isComplete
-                    ? (isDark ? Colors.dark.primary : Colors.light.primary)
-                    : (isDark ? Colors.dark.gold : Colors.light.gold),
+                    ? theme.primary
+                    : theme.gold,
                 }]}>
                   {isComplete && (
                     <Feather 
                       name="check" 
                       size={14} 
-                      color={isDark ? Colors.dark.primary : Colors.light.primary} 
+                      color={theme.primary} 
                       style={{ marginRight: 4 }}
                     />
                   )}
@@ -210,8 +210,8 @@ export default function AzkarDetailScreen() {
                     type="body"
                     style={{ 
                       color: isComplete
-                        ? (isDark ? Colors.dark.primary : Colors.light.primary)
-                        : (isDark ? Colors.dark.gold : Colors.light.gold),
+                        ? theme.primary
+                        : theme.gold,
                       fontWeight: '700',
                       fontSize: 16,
                     }}
@@ -223,8 +223,8 @@ export default function AzkarDetailScreen() {
                       type="caption"
                       style={{ 
                         color: isComplete
-                          ? (isDark ? Colors.dark.primary : Colors.light.primary)
-                          : (isDark ? Colors.dark.gold : Colors.light.gold),
+                          ? theme.primary
+                          : theme.gold,
                         marginLeft: 4,
                         opacity: 0.7,
                       }}
@@ -248,8 +248,8 @@ export default function AzkarDetailScreen() {
         style={[
           styles.header,
           {
-            backgroundColor: isDark ? 'rgba(26, 95, 79, 0.3)' : Colors.light.backgroundDefault,
-            borderBottomColor: isDark ? 'rgba(52, 211, 153, 0.2)' : Colors.light.border,
+            backgroundColor: theme.cardBackground,
+            borderBottomColor: theme.border,
           },
         ]}
       >
@@ -270,11 +270,11 @@ export default function AzkarDetailScreen() {
               styles.toggleButton,
               {
                 backgroundColor: showTransliteration
-                  ? (isDark ? Colors.dark.primary + "20" : Colors.light.primary + "20")
-                  : (isDark ? 'rgba(52, 211, 153, 0.1)' : Colors.light.backgroundSecondary),
+                  ? `${theme.primary}20`
+                  : theme.backgroundSecondary,
                 borderColor: showTransliteration
-                  ? (isDark ? Colors.dark.primary : Colors.light.primary)
-                  : (isDark ? 'rgba(52, 211, 153, 0.2)' : "transparent"),
+                  ? theme.primary
+                  : 'transparent',
                 opacity: pressed ? 0.7 : 1,
               },
             ]}
@@ -283,8 +283,8 @@ export default function AzkarDetailScreen() {
               name="type"
               size={14}
               color={showTransliteration
-                ? (isDark ? Colors.dark.primary : Colors.light.primary)
-                : (isDark ? 'rgba(52, 211, 153, 0.7)' : theme.textSecondary)
+                ? theme.primary
+                : theme.textSecondary
               }
             />
             <ThemedText
@@ -292,8 +292,8 @@ export default function AzkarDetailScreen() {
               style={{
                 marginLeft: 4,
                 color: showTransliteration
-                  ? (isDark ? Colors.dark.primary : Colors.light.primary)
-                  : (isDark ? 'rgba(52, 211, 153, 0.7)' : theme.textSecondary),
+                  ? theme.primary
+                  : theme.textSecondary,
               }}
             >
               Translit
@@ -306,11 +306,11 @@ export default function AzkarDetailScreen() {
               styles.toggleButton,
               {
                 backgroundColor: showTranslation
-                  ? (isDark ? Colors.dark.gold + "20" : Colors.light.gold + "20")
-                  : (isDark ? 'rgba(212, 175, 55, 0.1)' : Colors.light.backgroundSecondary),
+                  ? `${theme.gold}20`
+                  : theme.backgroundSecondary,
                 borderColor: showTranslation
-                  ? (isDark ? Colors.dark.gold : Colors.light.gold)
-                  : (isDark ? 'rgba(212, 175, 55, 0.2)' : "transparent"),
+                  ? theme.gold
+                  : 'transparent',
                 opacity: pressed ? 0.7 : 1,
               },
             ]}
@@ -319,8 +319,8 @@ export default function AzkarDetailScreen() {
               name="globe"
               size={14}
               color={showTranslation
-                ? (isDark ? Colors.dark.gold : Colors.light.gold)
-                : (isDark ? 'rgba(212, 175, 55, 0.7)' : theme.textSecondary)
+                ? theme.gold
+                : theme.textSecondary
               }
             />
             <ThemedText
@@ -328,8 +328,8 @@ export default function AzkarDetailScreen() {
               style={{
                 marginLeft: 4,
                 color: showTranslation
-                  ? (isDark ? Colors.dark.gold : Colors.light.gold)
-                  : (isDark ? 'rgba(212, 175, 55, 0.7)' : theme.textSecondary),
+                  ? theme.gold
+                  : theme.textSecondary,
               }}
             >
               English
@@ -342,11 +342,11 @@ export default function AzkarDetailScreen() {
               styles.toggleButton,
               {
                 backgroundColor: showCounter
-                  ? (isDark ? '#8B5CF6' + "20" : '#7C3AED' + "20")
-                  : (isDark ? 'rgba(139, 92, 246, 0.1)' : Colors.light.backgroundSecondary),
+                  ? '#8B5CF620'
+                  : theme.backgroundSecondary,
                 borderColor: showCounter
-                  ? (isDark ? '#8B5CF6' : '#7C3AED')
-                  : (isDark ? 'rgba(139, 92, 246, 0.2)' : "transparent"),
+                  ? '#8B5CF6'
+                  : 'transparent',
                 opacity: pressed ? 0.7 : 1,
               },
             ]}
@@ -355,8 +355,8 @@ export default function AzkarDetailScreen() {
               name="hash"
               size={14}
               color={showCounter
-                ? (isDark ? '#8B5CF6' : '#7C3AED')
-                : (isDark ? 'rgba(139, 92, 246, 0.7)' : theme.textSecondary)
+                ? '#8B5CF6'
+                : theme.textSecondary
               }
             />
             <ThemedText
@@ -364,8 +364,8 @@ export default function AzkarDetailScreen() {
               style={{
                 marginLeft: 4,
                 color: showCounter
-                  ? (isDark ? '#8B5CF6' : '#7C3AED')
-                  : (isDark ? 'rgba(139, 92, 246, 0.7)' : theme.textSecondary),
+                  ? '#8B5CF6'
+                  : theme.textSecondary,
               }}
             >
               Counter

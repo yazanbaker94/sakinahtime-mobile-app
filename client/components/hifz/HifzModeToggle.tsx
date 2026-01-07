@@ -18,7 +18,6 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useHifzMode } from '../../contexts/HifzModeContext';
 import { useTheme } from '../../hooks/useTheme';
-import { HIFZ_ACTIVE_COLOR } from '../../constants/hifz';
 import { ThemedText } from '../ThemedText';
 
 interface HifzModeToggleProps {
@@ -39,7 +38,7 @@ export function HifzModeToggle({
   const { isActive, toggleHifzMode } = useHifzMode();
   const { isDark, theme } = useTheme();
 
-  const activeColor = isDark ? HIFZ_ACTIVE_COLOR.dark : HIFZ_ACTIVE_COLOR.light;
+  const activeColor = theme.primary;
   const inactiveColor = isDark ? theme.cardBackground : theme.backgroundDefault;
   const textColor = isActive ? '#FFFFFF' : theme.text;
 

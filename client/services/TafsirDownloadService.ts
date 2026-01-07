@@ -188,9 +188,9 @@ class TafsirDownloadServiceImpl {
       type: 'tafsir',
       status: 'downloading',
       progress: 0,
-      totalSize: tafsirInfo.estimatedSize,
-      downloadedSize: 0,
-      startedAt: Date.now(),
+      totalBytes: tafsirInfo.estimatedSize,
+      downloadedBytes: 0,
+      createdAt: new Date(),
     };
 
     this.downloadQueue.set(tafsirId, downloadItem);
@@ -209,8 +209,8 @@ class TafsirDownloadServiceImpl {
           const item = this.downloadQueue.get(tafsirId);
           if (item) {
             item.progress = progress;
-            item.downloadedSize = downloadProgress.totalBytesWritten;
-            item.totalSize = downloadProgress.totalBytesExpectedToWrite;
+            item.downloadedBytes = downloadProgress.totalBytesWritten;
+            item.totalBytes = downloadProgress.totalBytesExpectedToWrite;
           }
           this.notifyProgress(tafsirId, 'downloading', progress);
         }

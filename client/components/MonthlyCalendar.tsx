@@ -25,15 +25,15 @@ const MONTH_NAMES = [
 
 const DAY_HEADERS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
-function getDayColor(prayedCount: number, isDark: boolean): string {
-  if (prayedCount === 5) return isDark ? '#34D399' : '#10B981';
+function getDayColor(prayedCount: number, isDark: boolean, theme: any): string {
+  if (prayedCount === 5) return theme.primary;
   if (prayedCount >= 3) return isDark ? '#FBBF24' : '#F59E0B';
   if (prayedCount >= 1) return isDark ? '#FB923C' : '#F97316';
   return 'transparent';
 }
 
 export function MonthlyCalendar({ stats, onPrevMonth, onNextMonth }: MonthlyCalendarProps) {
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
 
   if (!stats) {
     return (
@@ -98,8 +98,8 @@ export function MonthlyCalendar({ stats, onPrevMonth, onNextMonth }: MonthlyCale
 
       {/* Stats summary */}
       <View style={styles.summaryRow}>
-        <View style={[styles.summaryBadge, { backgroundColor: isDark ? 'rgba(52, 211, 153, 0.15)' : 'rgba(16, 185, 129, 0.1)' }]}>
-          <ThemedText type="small" style={{ color: isDark ? '#34D399' : '#10B981', fontWeight: '600' }}>
+        <View style={[styles.summaryBadge, { backgroundColor: `${theme.primary}26` }]}>
+          <ThemedText type="small" style={{ color: theme.primary, fontWeight: '600' }}>
             {completionPercentage}% Complete
           </ThemedText>
         </View>
@@ -132,7 +132,7 @@ export function MonthlyCalendar({ stats, onPrevMonth, onNextMonth }: MonthlyCale
             const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
             const dayData = calendarData[dateStr];
             const prayedCount = dayData?.prayedCount || 0;
-            const dayColor = getDayColor(prayedCount, isDark);
+            const dayColor = getDayColor(prayedCount, isDark, theme);
             const isToday = isCurrentMonth && day === todayDate;
             const isFuture = new Date(year, month - 1, day) > today;
 
@@ -168,7 +168,7 @@ export function MonthlyCalendar({ stats, onPrevMonth, onNextMonth }: MonthlyCale
       {/* Legend */}
       <View style={styles.legend}>
         <View style={styles.legendItem}>
-          <View style={[styles.legendDot, { backgroundColor: isDark ? '#34D399' : '#10B981' }]} />
+          <View style={[styles.legendDot, { backgroundColor: theme.primary }]} />
           <ThemedText type="caption" secondary>5/5</ThemedText>
         </View>
         <View style={styles.legendItem}>

@@ -13,17 +13,17 @@ import { ThemedView } from '@/components/ThemedView';
 import { Card } from '@/components/Card';
 import { useTheme } from '@/hooks/useTheme';
 import { useCharityTracker } from '@/hooks/useCharityTracker';
-import { Spacing, BorderRadius, Colors } from '@/constants/theme';
+import { Spacing, BorderRadius } from '@/constants/theme';
 
 export default function SetCharityGoalScreen() {
   const insets = useSafeAreaInsets();
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
   const navigation = useNavigation();
   const { goal, setGoal } = useCharityTracker();
 
   const [goalAmount, setGoalAmount] = useState(goal?.amount.toString() || '');
 
-  const accentColor = isDark ? '#34D399' : '#059669';
+  const accentColor = theme.primary;
 
   const handleSetGoal = async () => {
     Keyboard.dismiss();
@@ -37,7 +37,7 @@ export default function SetCharityGoalScreen() {
     <ThemedView style={styles.container}>
       <View style={[styles.header, { paddingTop: insets.top + Spacing.md }]}>
         <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Feather name="arrow-left" size={24} color={isDark ? Colors.dark.text : Colors.light.text} />
+          <Feather name="arrow-left" size={24} color={theme.text} />
         </Pressable>
         <ThemedText type="h2" style={styles.title}>Set Goal</ThemedText>
         <View style={{ width: 24 }} />
@@ -56,7 +56,7 @@ export default function SetCharityGoalScreen() {
               styles.input,
               {
                 backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)',
-                color: isDark ? Colors.dark.text : Colors.light.text,
+                color: theme.text,
               }
             ]}
             value={goalAmount}

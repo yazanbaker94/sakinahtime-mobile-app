@@ -314,7 +314,7 @@ export function useNotifications() {
           ];
 
           const now = new Date();
-          const prayerAlarms = [];
+          const prayerAlarms: Array<{ name: string; timestamp: number }> = [];
 
           for (const prayer of prayers) {
             if (!settings.prayers[prayer.key]) continue;
@@ -549,7 +549,7 @@ export function useNotifications() {
         ];
 
         const now = new Date();
-        const iqamaAlarms = [];
+        const iqamaAlarms: Array<{ name: string; timestamp: number }> = [];
         const delayMs = iqamaSettings.delayMinutes * 60 * 1000;
 
         for (const prayer of prayers) {

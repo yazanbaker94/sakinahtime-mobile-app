@@ -16,21 +16,21 @@ import { useTheme } from '@/hooks/useTheme';
 import { useQuranSchedule } from '@/hooks/useQuranSchedule';
 import { useRamadan } from '@/contexts/RamadanContext';
 import { DayReading } from '@/types/ramadan';
-import { Spacing, BorderRadius, Colors } from '@/constants/theme';
+import { Spacing, BorderRadius } from '@/constants/theme';
 import { RootStackParamList } from '@/navigation/RootStackNavigator';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function QuranScheduleScreen() {
   const insets = useSafeAreaInsets();
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
   const navigation = useNavigation<NavigationProp>();
   const { currentDay } = useRamadan();
   const { schedule, progress, markDayComplete, navigateToMushaf } = useQuranSchedule();
   
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
 
-  const accentColor = isDark ? '#34D399' : '#059669';
+  const accentColor = theme.primary;
 
   const handleOpenMushaf = (page: number) => {
     // Navigate directly to the specific page in QuranTab
@@ -51,8 +51,8 @@ export default function QuranScheduleScreen() {
           styles.dayItem,
           {
             backgroundColor: isSelected
-              ? (isDark ? 'rgba(16, 185, 129, 0.2)' : 'rgba(16, 185, 129, 0.1)')
-              : (isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault),
+              ? (isDark ? `${theme.primary}30` : `${theme.primary}15`)
+              : theme.cardBackground,
             borderColor: isToday ? accentColor : 'transparent',
             borderWidth: isToday ? 2 : 0,
           },
@@ -144,7 +144,7 @@ export default function QuranScheduleScreen() {
       {/* Header */}
       <View style={[styles.header, { paddingTop: insets.top + Spacing.md }]}>
         <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Feather name="arrow-left" size={24} color={isDark ? Colors.dark.text : Colors.light.text} />
+          <Feather name="arrow-left" size={24} color={theme.text} />
         </Pressable>
         <ThemedText type="h2" style={styles.title}>Quran Schedule</ThemedText>
         <View style={{ width: 24 }} />
@@ -153,7 +153,7 @@ export default function QuranScheduleScreen() {
       {/* Progress Summary */}
       <View style={[
         styles.progressCard,
-        { backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault }
+        { backgroundColor: theme.cardBackground }
       ]}>
         <View style={styles.progressStats}>
           <View style={styles.progressStat}>

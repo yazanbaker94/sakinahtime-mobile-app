@@ -15,7 +15,7 @@ import { Card } from '@/components/Card';
 import { useTheme } from '@/hooks/useTheme';
 import { useCharityTracker } from '@/hooks/useCharityTracker';
 import { CharityEntry, CharityType } from '@/types/ramadan';
-import { Spacing, BorderRadius, Colors } from '@/constants/theme';
+import { Spacing, BorderRadius } from '@/constants/theme';
 import type { RootStackParamList } from '@/navigation/RootStackNavigator';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -39,11 +39,11 @@ function formatCurrency(amount: number, currency: string = 'USD'): string {
 
 export default function CharityTrackerScreen() {
   const insets = useSafeAreaInsets();
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
   const navigation = useNavigation<NavigationProp>();
   const { entries, stats, goal, goalProgress, deleteEntry } = useCharityTracker();
 
-  const accentColor = isDark ? '#34D399' : '#059669';
+  const accentColor = theme.primary;
 
   const renderEntryItem = ({ item }: { item: CharityEntry }) => {
     const typeInfo = CHARITY_TYPES.find(t => t.value === item.type);
@@ -51,7 +51,7 @@ export default function CharityTrackerScreen() {
     return (
       <View style={[
         styles.entryItem,
-        { backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault }
+        { backgroundColor: theme.backgroundSecondary }
       ]}>
         <View style={[styles.entryIcon, { backgroundColor: `${accentColor}20` }]}>
           <Feather name={typeInfo?.icon as any || 'heart'} size={16} color={accentColor} />
@@ -89,7 +89,7 @@ export default function CharityTrackerScreen() {
         {/* Header */}
         <View style={styles.header}>
           <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
-            <Feather name="arrow-left" size={24} color={isDark ? Colors.dark.text : Colors.light.text} />
+            <Feather name="arrow-left" size={24} color={theme.text} />
           </Pressable>
           <ThemedText type="h2" style={styles.title}>Charity Tracker</ThemedText>
           <Pressable onPress={() => navigation.navigate('AddDonation')}>
@@ -115,7 +115,7 @@ export default function CharityTrackerScreen() {
                 <View
                   style={[
                     styles.progressFill,
-                    { width: `${goalProgress}%`, backgroundColor: goalProgress >= 100 ? '#10B981' : accentColor },
+                    { width: `${goalProgress}%`, backgroundColor: goalProgress >= 100 ? theme.primary : accentColor },
                   ]}
                 />
               </View>
@@ -136,14 +136,14 @@ export default function CharityTrackerScreen() {
         {/* Quick Actions */}
         <View style={styles.quickActions}>
           <Pressable
-            style={[styles.quickAction, { backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault }]}
+            style={[styles.quickAction, { backgroundColor: theme.backgroundSecondary }]}
             onPress={() => navigation.navigate('ZakatCalculator')}
           >
             <Feather name="percent" size={20} color={accentColor} />
             <ThemedText type="small">Zakat Calculator</ThemedText>
           </Pressable>
           <Pressable
-            style={[styles.quickAction, { backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault }]}
+            style={[styles.quickAction, { backgroundColor: theme.backgroundSecondary }]}
             onPress={() => navigation.navigate('SetCharityGoal')}
           >
             <Feather name="target" size={20} color={accentColor} />
@@ -157,12 +157,12 @@ export default function CharityTrackerScreen() {
             <Feather
               name={stats.zakatPaid ? 'check-circle' : 'alert-circle'}
               size={20}
-              color={stats.zakatPaid ? '#10B981' : '#F59E0B'}
+              color={stats.zakatPaid ? theme.primary : '#F59E0B'}
             />
             <ThemedText type="h4" style={{ marginLeft: Spacing.sm }}>Zakat Status</ThemedText>
           </View>
           {stats.zakatPaid ? (
-            <ThemedText type="body" style={{ color: '#10B981' }}>
+            <ThemedText type="body" style={{ color: theme.primary }}>
               Paid: {formatCurrency(stats.zakatAmount)}
             </ThemedText>
           ) : (

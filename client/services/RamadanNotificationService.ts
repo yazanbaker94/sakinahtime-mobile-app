@@ -64,7 +64,7 @@ class RamadanNotificationService {
   async cancelAllRamadanNotifications(): Promise<void> {
     const scheduled = await Notifications.getAllScheduledNotificationsAsync();
     const ramadanNotifications = scheduled.filter(
-      n => n.content.data?.type?.startsWith('ramadan_')
+      n => typeof n.content.data?.type === 'string' && n.content.data.type.startsWith('ramadan_')
     );
     
     for (const notification of ramadanNotifications) {

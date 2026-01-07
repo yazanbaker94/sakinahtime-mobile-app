@@ -185,11 +185,11 @@ export default function AzkarScreen() {
       onPress={() => setActiveTab(tab)}
       style={[
         styles.tab,
-        activeTab === tab && { borderBottomWidth: 3, borderBottomColor: isDark ? Colors.dark.primary : Colors.light.primary },
+        activeTab === tab && { borderBottomWidth: 3, borderBottomColor: theme.primary },
       ]}
     >
-      <Feather name={icon} size={18} color={activeTab === tab ? (isDark ? Colors.dark.primary : Colors.light.primary) : (isDark ? Colors.dark.textSecondary : Colors.light.textSecondary)} />
-      <ThemedText type="body" style={{ marginLeft: Spacing.xs, fontWeight: activeTab === tab ? '700' : '500', fontSize: 14, color: activeTab === tab ? (isDark ? Colors.dark.primary : Colors.light.primary) : (isDark ? Colors.dark.textSecondary : Colors.light.textSecondary) }}>
+      <Feather name={icon} size={18} color={activeTab === tab ? theme.primary : theme.textSecondary} />
+      <ThemedText type="body" style={{ marginLeft: Spacing.xs, fontWeight: activeTab === tab ? '700' : '500', fontSize: 14, color: activeTab === tab ? theme.primary : theme.textSecondary }}>
         {label}
       </ThemedText>
     </Pressable>
@@ -199,10 +199,10 @@ export default function AzkarScreen() {
     <Pressable
       key={tab}
       onPress={() => { setDuaSubTab(tab); setSelectedDuaCategory(null); }}
-      style={[styles.duaSubTab, duaSubTab === tab && { backgroundColor: isDark ? 'rgba(52, 211, 153, 0.15)' : 'rgba(16, 185, 129, 0.1)' }]}
+      style={[styles.duaSubTab, duaSubTab === tab && { backgroundColor: `${theme.primary}15` }]}
     >
-      <Feather name={icon} size={14} color={duaSubTab === tab ? (isDark ? Colors.dark.primary : Colors.light.primary) : theme.textSecondary} />
-      <ThemedText type="caption" style={{ marginLeft: 4, color: duaSubTab === tab ? (isDark ? Colors.dark.primary : Colors.light.primary) : theme.textSecondary, fontWeight: duaSubTab === tab ? '600' : '400' }}>
+      <Feather name={icon} size={14} color={duaSubTab === tab ? theme.primary : theme.textSecondary} />
+      <ThemedText type="caption" style={{ marginLeft: 4, color: duaSubTab === tab ? theme.primary : theme.textSecondary, fontWeight: duaSubTab === tab ? '600' : '400' }}>
         {label}
       </ThemedText>
     </Pressable>
@@ -233,7 +233,7 @@ export default function AzkarScreen() {
   return (
     <ThemedView style={styles.container}>
       {/* Tab Selector */}
-      <View style={[styles.tabContainer, { paddingTop: insets.top + Spacing.md, backgroundColor: isDark ? Colors.dark.backgroundDefault : Colors.light.backgroundDefault, borderBottomWidth: 1, borderBottomColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }]}>
+      <View style={[styles.tabContainer, { paddingTop: insets.top + Spacing.md, backgroundColor: theme.backgroundDefault, borderBottomWidth: 1, borderBottomColor: theme.border }]}>
         {renderTab('azkar', 'Azkar', 'sun')}
         {renderTab('duas', 'Duas', 'book-open')}
         {renderTab('guides', 'Guides', 'compass')}
@@ -250,13 +250,13 @@ export default function AzkarScreen() {
             <View style={styles.categoriesGrid}>
               {azkarCategories.map((category) => (<CompactCategoryCard key={category.id} category={category} onPress={() => handleCategoryPress(category)} />))}
             </View>
-            <View style={[styles.tipCard, { backgroundColor: isDark ? Colors.dark.primary + '15' : Colors.light.primary + '10' }]}>
+            <View style={[styles.tipCard, { backgroundColor: `${theme.primary}15` }]}>
               <View style={styles.tipHeader}>
-                <Feather name="info" size={20} color={isDark ? Colors.dark.primary : Colors.light.primary} />
+                <Feather name="info" size={20} color={theme.primary} />
                 <ThemedText type="body" style={{ marginLeft: Spacing.sm, fontWeight: '600' }}>Daily Tip</ThemedText>
               </View>
               <ThemedText type="small" secondary style={styles.tipText}>The Prophet (peace be upon him) said: &quot;The best remembrance is La ilaha illallah (There is no god but Allah).&quot;</ThemedText>
-              <ThemedText type="caption" style={{ color: isDark ? Colors.dark.primary : Colors.light.primary }}>- Tirmidhi</ThemedText>
+              <ThemedText type="caption" style={{ color: theme.primary }}>- Tirmidhi</ThemedText>
             </View>
           </>
         )}
@@ -264,7 +264,7 @@ export default function AzkarScreen() {
         {activeTab === 'duas' && (
           <View style={styles.duasContainer}>
             {/* Search Bar */}
-            <View style={[styles.searchContainer, { backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundSecondary }]}>
+            <View style={[styles.searchContainer, { backgroundColor: theme.backgroundSecondary }]}>
               <Feather name="search" size={20} color={theme.textSecondary} />
               <TextInput style={[styles.searchInput, { color: theme.text }]} placeholder="Search duas..." placeholderTextColor={theme.textSecondary} value={duaSearchQuery} onChangeText={setDuaSearchQuery} />
               {duaSearchQuery.length > 0 && (<Pressable onPress={() => setDuaSearchQuery('')}><Feather name="x" size={20} color={theme.textSecondary} /></Pressable>)}
@@ -291,9 +291,9 @@ export default function AzkarScreen() {
                     <DuaOfTheDay dua={duaOfTheDay} onPress={() => handleDuaPress(duaOfTheDay)} />
                     <View style={styles.duaCategoriesGrid}>
                       {duaCategories.map((category) => (
-                        <Pressable key={category.id} onPress={() => handleDuaCategoryPress(category)} style={({ pressed }) => [styles.duaCategoryCard, { backgroundColor: isDark ? 'rgba(26, 95, 79, 0.2)' : Colors.light.backgroundDefault, opacity: pressed ? 0.7 : 1 }]}>
-                          <View style={[styles.duaCategoryIcon, { backgroundColor: isDark ? 'rgba(52, 211, 153, 0.15)' : 'rgba(16, 185, 129, 0.1)' }]}>
-                            <Feather name={DUA_ICON_MAP[category.icon] || 'star'} size={24} color={isDark ? Colors.dark.primary : Colors.light.primary} />
+                        <Pressable key={category.id} onPress={() => handleDuaCategoryPress(category)} style={({ pressed }) => [styles.duaCategoryCard, { backgroundColor: theme.cardBackground, opacity: pressed ? 0.7 : 1 }]}>
+                          <View style={[styles.duaCategoryIcon, { backgroundColor: `${theme.primary}15` }]}>
+                            <Feather name={DUA_ICON_MAP[category.icon] || 'star'} size={24} color={theme.primary} />
                           </View>
                           <ThemedText type="small" style={styles.duaCategoryTitle}>{category.titleEn}</ThemedText>
                           <ThemedText type="caption" secondary>{category.count} duas</ThemedText>
@@ -316,7 +316,7 @@ export default function AzkarScreen() {
                 {duaSubTab === 'favorites' && (<FlatList data={favoriteDuas} renderItem={renderDuaItem} keyExtractor={item => item.id} scrollEnabled={false} ListEmptyComponent={renderEmptyState('No favorite duas yet.\nTap the heart icon on any dua.', 'heart')} />)}
                 {duaSubTab === 'custom' && (
                   <>
-                    <Pressable onPress={handleAddCustomDua} style={({ pressed }) => [styles.addButton, { backgroundColor: isDark ? Colors.dark.primary : Colors.light.primary, opacity: pressed ? 0.8 : 1 }]}>
+                    <Pressable onPress={handleAddCustomDua} style={({ pressed }) => [styles.addButton, { backgroundColor: theme.primary, opacity: pressed ? 0.8 : 1 }]}>
                       <Feather name="plus" size={20} color="#fff" />
                       <ThemedText type="body" style={{ color: '#fff', marginLeft: Spacing.sm, fontWeight: '600' }}>Add Custom Dua</ThemedText>
                     </Pressable>
@@ -330,32 +330,32 @@ export default function AzkarScreen() {
 
         {activeTab === 'guides' && (
           <View style={styles.guidesContainer}>
-            <View style={[styles.searchContainer, { backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundSecondary }]}>
-              <Feather name="search" size={20} color={isDark ? Colors.dark.textSecondary : Colors.light.textSecondary} />
-              <TextInput style={[styles.searchInput, { color: isDark ? Colors.dark.text : Colors.light.text }]} placeholder="Search guides..." placeholderTextColor={isDark ? Colors.dark.textSecondary : Colors.light.textSecondary} value={searchQuery} onChangeText={setSearchQuery} />
-              {searchQuery.length > 0 && (<Pressable onPress={() => setSearchQuery('')}><Feather name="x" size={20} color={isDark ? Colors.dark.textSecondary : Colors.light.textSecondary} /></Pressable>)}
+            <View style={[styles.searchContainer, { backgroundColor: theme.backgroundSecondary }]}>
+              <Feather name="search" size={20} color={theme.textSecondary} />
+              <TextInput style={[styles.searchInput, { color: theme.text }]} placeholder="Search guides..." placeholderTextColor={theme.textSecondary} value={searchQuery} onChangeText={setSearchQuery} />
+              {searchQuery.length > 0 && (<Pressable onPress={() => setSearchQuery('')}><Feather name="x" size={20} color={theme.textSecondary} /></Pressable>)}
             </View>
             {filteredCategories.length === 0 ? (
-              <View style={styles.noResults}><Feather name="search" size={48} color={isDark ? Colors.dark.textSecondary : Colors.light.textSecondary} /><ThemedText type="body" secondary style={{ marginTop: Spacing.md }}>No guides found for &quot;{searchQuery}&quot;</ThemedText></View>
+              <View style={styles.noResults}><Feather name="search" size={48} color={theme.textSecondary} /><ThemedText type="body" secondary style={{ marginTop: Spacing.md }}>No guides found for &quot;{searchQuery}&quot;</ThemedText></View>
             ) : (
               filteredCategories.map((category) => (
                 <View key={category.id} style={styles.guideCategory}>
                   <View style={styles.guideCategoryHeader}>
-                    <View style={[styles.guideCategoryIcon, { backgroundColor: isDark ? 'rgba(52, 211, 153, 0.2)' : 'rgba(16, 185, 129, 0.15)' }]}>
-                      <Feather name={category.icon} size={20} color={isDark ? Colors.dark.primary : Colors.light.primary} />
+                    <View style={[styles.guideCategoryIcon, { backgroundColor: `${theme.primary}20` }]}>
+                      <Feather name={category.icon} size={20} color={theme.primary} />
                     </View>
                     <View style={styles.guideCategoryTitles}>
                       <View style={styles.categoryTitleRow}><ThemedText type="h4" style={{ flex: 1 }}>{category.titleEn}</ThemedText><ThemedText type="arabic" secondary style={{ fontFamily: 'AlMushafQuran' }}>{category.titleAr}</ThemedText></View>
                     </View>
-                    <View style={[styles.guideCount, { backgroundColor: isDark ? 'rgba(52, 211, 153, 0.2)' : 'rgba(16, 185, 129, 0.15)' }]}>
-                      <ThemedText type="caption" style={{ color: isDark ? Colors.dark.primary : Colors.light.primary }}>{category.guides.length}</ThemedText>
+                    <View style={[styles.guideCount, { backgroundColor: `${theme.primary}20` }]}>
+                      <ThemedText type="caption" style={{ color: theme.primary }}>{category.guides.length}</ThemedText>
                     </View>
                   </View>
                   <View style={styles.guidesList}>
                     {category.guides.map((guide) => (
-                      <Pressable key={guide.id} onPress={() => handleGuidePress(guide)} style={({ pressed }) => [styles.guideItem, { backgroundColor: isDark ? 'rgba(26, 95, 79, 0.2)' : Colors.light.backgroundDefault, opacity: pressed ? 0.7 : 1 }]}>
+                      <Pressable key={guide.id} onPress={() => handleGuidePress(guide)} style={({ pressed }) => [styles.guideItem, { backgroundColor: theme.cardBackground, opacity: pressed ? 0.7 : 1 }]}>
                         <ThemedText type="body" style={styles.guideTitle}>{guide.title}</ThemedText>
-                        <Feather name="chevron-right" size={18} color={isDark ? Colors.dark.textSecondary : Colors.light.textSecondary} />
+                        <Feather name="chevron-right" size={18} color={theme.textSecondary} />
                       </Pressable>
                     ))}
                   </View>

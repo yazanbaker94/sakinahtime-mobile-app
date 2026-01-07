@@ -71,6 +71,7 @@
       "./plugins/withAndroidNativeModules.js",
       "./plugins/withAndroidWidgets.js",
       "./plugins/withAndroidManifest.js",
+      "./plugins/withDhikrOverlay.js",
       "expo-media-library"
     ],
     "extra": {

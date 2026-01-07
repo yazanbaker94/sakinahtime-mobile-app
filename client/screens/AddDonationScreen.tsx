@@ -14,7 +14,7 @@ import { Card } from '@/components/Card';
 import { useTheme } from '@/hooks/useTheme';
 import { useCharityTracker } from '@/hooks/useCharityTracker';
 import { CharityType } from '@/types/ramadan';
-import { Spacing, BorderRadius, Colors } from '@/constants/theme';
+import { Spacing, BorderRadius } from '@/constants/theme';
 
 const CHARITY_TYPES: { value: CharityType; label: string; icon: string }[] = [
   { value: 'sadaqah', label: 'Sadaqah', icon: 'heart' },
@@ -26,7 +26,7 @@ const CHARITY_TYPES: { value: CharityType; label: string; icon: string }[] = [
 
 export default function AddDonationScreen() {
   const insets = useSafeAreaInsets();
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
   const navigation = useNavigation();
   const { addEntry } = useCharityTracker();
 
@@ -35,7 +35,7 @@ export default function AddDonationScreen() {
   const [entryRecipient, setEntryRecipient] = useState('');
   const [entryNotes, setEntryNotes] = useState('');
 
-  const accentColor = isDark ? '#34D399' : '#059669';
+  const accentColor = theme.primary;
 
   const handleAddEntry = async () => {
     Keyboard.dismiss();
@@ -57,7 +57,7 @@ export default function AddDonationScreen() {
     <ThemedView style={styles.container}>
       <View style={[styles.header, { paddingTop: insets.top + Spacing.md }]}>
         <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Feather name="arrow-left" size={24} color={isDark ? Colors.dark.text : Colors.light.text} />
+          <Feather name="arrow-left" size={24} color={theme.text} />
         </Pressable>
         <ThemedText type="h2" style={styles.title}>Add Donation</ThemedText>
         <View style={{ width: 24 }} />
@@ -88,30 +88,30 @@ export default function AddDonationScreen() {
 
           <ThemedText type="body" style={styles.label}>Amount</ThemedText>
           <TextInput
-            style={[styles.input, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)', color: isDark ? Colors.dark.text : Colors.light.text }]}
+            style={[styles.input, { backgroundColor: theme.backgroundSecondary, color: theme.text }]}
             value={entryAmount}
             onChangeText={setEntryAmount}
             placeholder="0.00"
-            placeholderTextColor={isDark ? '#6B7280' : '#9CA3AF'}
+            placeholderTextColor={theme.textSecondary}
             keyboardType="decimal-pad"
           />
 
           <ThemedText type="body" style={styles.label}>Recipient (optional)</ThemedText>
           <TextInput
-            style={[styles.input, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)', color: isDark ? Colors.dark.text : Colors.light.text }]}
+            style={[styles.input, { backgroundColor: theme.backgroundSecondary, color: theme.text }]}
             value={entryRecipient}
             onChangeText={setEntryRecipient}
             placeholder="Organization or person"
-            placeholderTextColor={isDark ? '#6B7280' : '#9CA3AF'}
+            placeholderTextColor={theme.textSecondary}
           />
 
           <ThemedText type="body" style={styles.label}>Notes (optional)</ThemedText>
           <TextInput
-            style={[styles.input, styles.notesInput, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)', color: isDark ? Colors.dark.text : Colors.light.text }]}
+            style={[styles.input, styles.notesInput, { backgroundColor: theme.backgroundSecondary, color: theme.text }]}
             value={entryNotes}
             onChangeText={setEntryNotes}
             placeholder="Add any notes..."
-            placeholderTextColor={isDark ? '#6B7280' : '#9CA3AF'}
+            placeholderTextColor={theme.textSecondary}
             multiline
             blurOnSubmit={true}
             returnKeyType="done"

@@ -37,7 +37,7 @@ interface RamadanProviderProps {
   children: ReactNode;
 }
 
-export function RamadanProvider({ children }: RamadanProviderProps): JSX.Element {
+export function RamadanProvider({ children }: RamadanProviderProps): React.ReactElement {
   const [state, setState] = useState<RamadanState>(defaultState);
   const [debugMode, setDebugModeState] = useState(false);
   const [debugDay, setDebugDayState] = useState(15);

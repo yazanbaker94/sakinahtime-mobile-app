@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, StyleSheet, ScrollView, Pressable, Platform, Linking } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
@@ -11,84 +11,16 @@ import { Spacing, BorderRadius } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
-import { NotificationSettingsModal } from "@/components/NotificationSettingsModal";
 import { ThemePicker } from "@/components/ThemePicker";
 import { useNotifications } from "@/hooks/useNotifications";
-import { useAzan } from "@/hooks/useAzan";
-import { useIqamaSettings, IqamaSettings } from "@/hooks/useIqamaSettings";
-import { useCalculationMethod } from "@/hooks/usePrayerTimes";
-import { usePrayerAdjustments, PrayerAdjustments } from "@/hooks/usePrayerAdjustments";
 
 export default function SettingsScreen() {
-  const headerHeight = useHeaderHeight();
+  const insets = useSafeAreaInsets();
   const tabBarHeight = useBottomTabBarHeight();
   const { theme, isDark } = useTheme();
-  const [showNotificationModal, setShowNotificationModal] = useState(false);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-  const { method: calculationMethod, setMethod: setCalculationMethod } = useCalculationMethod();
-  const { adjustments: prayerAdjustments, setAdjustment } = usePrayerAdjustments();
-  const {
-    settings: notificationSettings,
-    toggleNotifications,
-    togglePrayerNotification,
-    sendTestNotification,
-    schedulePrayerNotifications,
-  } = useNotifications();
-  const {
-    settings: azanSettings,
-    toggleAzan,
-  } = useAzan();
-  const {
-    settings: iqamaSettings,
-    toggleIqama,
-    setDelayMinutes: setIqamaDelay,
-    togglePrayerIqama,
-  } = useIqamaSettings();
-
-  const handleToggleNotifications = async (value: boolean) => {
-    if (Platform.OS !== "web") {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    }
-    await toggleNotifications(value);
-  };
-
-  const handleToggleAzan = async (value: boolean) => {
-    if (Platform.OS !== "web") {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    }
-    await toggleAzan(value);
-  };
-
-  const handleToggleIqama = async (value: boolean) => {
-    if (Platform.OS !== "web") {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    }
-    await toggleIqama(value);
-  };
-
-  const handleChangeIqamaDelay = async (minutes: number) => {
-    if (Platform.OS !== "web") {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    }
-    await setIqamaDelay(minutes);
-  };
-
-  const handleTogglePrayerIqama = async (prayer: keyof IqamaSettings["prayers"], value: boolean) => {
-    if (Platform.OS !== "web") {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    }
-    await togglePrayerIqama(prayer, value);
-  };
-
-  const handleAdjustPrayerTime = async (prayer: keyof PrayerAdjustments, minutes: number) => {
-    if (Platform.OS !== "web") {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    }
-    await setAdjustment(prayer, minutes);
-    // Reschedule notifications with new adjustments
-    // This will be handled automatically by the useEffect in PrayerTimesScreen
-  };
+  const { settings: notificationSettings } = useNotifications();
 
   return (
     <ThemedView style={styles.container}>
@@ -96,7 +28,7 @@ export default function SettingsScreen() {
         contentContainerStyle={[
           styles.scrollContent,
           {
-            paddingTop: headerHeight + Spacing.lg,
+            paddingTop: insets.top + Spacing.lg,
             paddingBottom: tabBarHeight + Spacing.xl,
           },
         ]}
@@ -104,10 +36,14 @@ export default function SettingsScreen() {
       >
         {/* Appearance Section */}
         <View style={styles.section}>
-          <View style={[styles.card, { backgroundColor: isDark ? 'rgba(26, 95, 79, 0.2)' : theme.cardBackground }]}>
+          <View style={[styles.card, { 
+            backgroundColor: isDark ? `${theme.primary}33` : theme.cardBackground,
+            elevation: isDark ? 0 : 3,
+            shadowOpacity: isDark ? 0 : 0.08,
+          }]}>
             <View style={styles.settingRow}>
               <View style={styles.settingLeft}>
-                <View style={[styles.iconCircle, { backgroundColor: isDark ? 'rgba(52, 211, 153, 0.15)' : `${theme.primary}15` }]}>
+                <View style={[styles.iconCircle, { backgroundColor: `${theme.primary}26` }]}>
                   <Feather name="droplet" size={20} color={theme.primary} />
                 </View>
                 <View style={styles.settingText}>
@@ -126,13 +62,17 @@ export default function SettingsScreen() {
 
         {/* Notifications Section */}
         <View style={styles.section}>
-          <View style={[styles.card, { backgroundColor: isDark ? 'rgba(26, 95, 79, 0.2)' : theme.cardBackground }]}>
+          <View style={[styles.card, { 
+            backgroundColor: isDark ? `${theme.primary}33` : theme.cardBackground,
+            elevation: isDark ? 0 : 3,
+            shadowOpacity: isDark ? 0 : 0.08,
+          }]}>
             <Pressable
               onPress={() => {
                 if (Platform.OS !== "web") {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 }
-                setShowNotificationModal(true);
+                navigation.navigate('NotificationSettings');
               }}
               style={({ pressed }) => [
                 styles.settingRow,
@@ -140,7 +80,7 @@ export default function SettingsScreen() {
               ]}
             >
               <View style={styles.settingLeft}>
-                <View style={[styles.iconCircle, { backgroundColor: isDark ? 'rgba(52, 211, 153, 0.15)' : `${theme.primary}15` }]}>
+                <View style={[styles.iconCircle, { backgroundColor: `${theme.primary}26` }]}>
                   <Feather name="bell" size={20} color={theme.primary} />
                 </View>
                 <View style={styles.settingText}>
@@ -159,7 +99,11 @@ export default function SettingsScreen() {
 
         {/* Storage & Downloads Section */}
         <View style={styles.section}>
-          <View style={[styles.card, { backgroundColor: isDark ? 'rgba(26, 95, 79, 0.2)' : theme.cardBackground }]}>
+          <View style={[styles.card, { 
+            backgroundColor: isDark ? `${theme.primary}33` : theme.cardBackground,
+            elevation: isDark ? 0 : 3,
+            shadowOpacity: isDark ? 0 : 0.08,
+          }]}>
             <Pressable
               onPress={() => {
                 if (Platform.OS !== "web") {
@@ -190,9 +134,50 @@ export default function SettingsScreen() {
           </View>
         </View>
 
+        {/* Dhikr Reminders Section */}
+        <View style={styles.section}>
+          <View style={[styles.card, { 
+            backgroundColor: isDark ? `${theme.primary}33` : theme.cardBackground,
+            elevation: isDark ? 0 : 3,
+            shadowOpacity: isDark ? 0 : 0.08,
+          }]}>
+            <Pressable
+              onPress={() => {
+                if (Platform.OS !== "web") {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                }
+                navigation.navigate('DhikrOverlaySettings');
+              }}
+              style={({ pressed }) => [
+                styles.settingRow,
+                { opacity: pressed ? 0.7 : 1 },
+              ]}
+            >
+              <View style={styles.settingLeft}>
+                <View style={[styles.iconCircle, { backgroundColor: `${theme.gold}26` }]}>
+                  <Feather name="sun" size={20} color={theme.gold} />
+                </View>
+                <View style={styles.settingText}>
+                  <ThemedText type="body" style={{ fontWeight: '600' }}>
+                    Dhikr Reminders
+                  </ThemedText>
+                  <ThemedText type="caption" secondary>
+                    Floating overlay reminders
+                  </ThemedText>
+                </View>
+              </View>
+              <Feather name="chevron-right" size={20} color={theme.textSecondary} />
+            </Pressable>
+          </View>
+        </View>
+
         {/* Support Section */}
         <View style={styles.section}>
-          <View style={[styles.card, { backgroundColor: isDark ? 'rgba(26, 95, 79, 0.2)' : theme.cardBackground }]}>
+          <View style={[styles.card, { 
+            backgroundColor: isDark ? `${theme.primary}33` : theme.cardBackground,
+            elevation: isDark ? 0 : 3,
+            shadowOpacity: isDark ? 0 : 0.08,
+          }]}>
             <Pressable
               onPress={async () => {
                 if (Platform.OS !== "web") {
@@ -210,7 +195,7 @@ export default function SettingsScreen() {
               ]}
             >
               <View style={styles.settingLeft}>
-                <View style={[styles.iconCircle, { backgroundColor: isDark ? 'rgba(212, 175, 55, 0.15)' : `${theme.gold}15` }]}>
+                <View style={[styles.iconCircle, { backgroundColor: `${theme.gold}26` }]}>
                   <Feather name="message-circle" size={20} color={theme.gold} />
                 </View>
                 <View style={styles.settingText}>
@@ -227,25 +212,6 @@ export default function SettingsScreen() {
           </View>
         </View>
       </ScrollView>
-
-      <NotificationSettingsModal
-        visible={showNotificationModal}
-        onClose={() => setShowNotificationModal(false)}
-        notificationSettings={notificationSettings}
-        azanEnabled={azanSettings.enabled}
-        calculationMethod={calculationMethod}
-        prayerAdjustments={prayerAdjustments}
-        iqamaSettings={iqamaSettings}
-        onToggleNotifications={handleToggleNotifications}
-        onTogglePrayerNotification={togglePrayerNotification}
-        onToggleAzan={handleToggleAzan}
-        onChangeCalculationMethod={setCalculationMethod}
-        onAdjustPrayerTime={handleAdjustPrayerTime}
-        onTestNotification={() => sendTestNotification(azanSettings.enabled)}
-        onToggleIqama={handleToggleIqama}
-        onChangeIqamaDelay={handleChangeIqamaDelay}
-        onTogglePrayerIqama={handleTogglePrayerIqama}
-      />
     </ThemedView>
   );
 }
@@ -265,9 +231,8 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
     shadowRadius: 8,
-    elevation: 3,
+    // elevation and shadowOpacity set dynamically based on dark mode
   },
   settingRow: {
     flexDirection: 'row',
