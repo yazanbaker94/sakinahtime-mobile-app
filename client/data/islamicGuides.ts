@@ -429,6 +429,93 @@ const knowledgeGuides: IslamicGuide[] = [
   },
 ];
 
+const financeGuides: IslamicGuide[] = [
+  {
+    id: "understanding-riba",
+    title: "Understanding Riba (Interest)",
+    titleAr: "فهم الربا",
+    category: "finance",
+    description: "Learn about the prohibition of interest in Islam",
+    descriptionAr: "تعرف على تحريم الربا في الإسلام",
+    steps: [
+      { title: "1. What is Riba?", content: "Riba means 'increase' or 'excess'. In Islamic finance, it refers to any guaranteed interest on loaned money, regardless of the amount." },
+      { title: "2. Why is it Prohibited?", content: "Allah says: 'Allah has permitted trade and forbidden riba' (Quran 2:275). Riba exploits the needy and creates wealth without productive effort." },
+      { title: "3. Types of Riba", content: "Riba al-Nasiah: Interest on loans. Riba al-Fadl: Exchanging same commodities in unequal amounts (e.g., gold for gold with excess)." },
+      { title: "4. Severity of the Sin", content: "The Prophet (ﷺ) said riba has 73 types, the least of which is like committing adultery with one's own mother. Both the giver and taker are cursed." },
+      { title: "5. Alternatives", content: "Use Islamic banks, profit-sharing arrangements (Mudarabah), or interest-free loans (Qard Hasan) instead of conventional interest-based loans." },
+    ],
+    references: ["Quran 2:275-279", "Sahih Muslim 1598"],
+  },
+  {
+    id: "halal-income",
+    title: "Earning Halal Income",
+    titleAr: "كسب الرزق الحلال",
+    category: "finance",
+    description: "Guidelines for lawful earnings in Islam",
+    descriptionAr: "إرشادات للكسب الحلال في الإسلام",
+    steps: [
+      { title: "1. Importance of Halal Income", content: "The Prophet (ﷺ) said: 'No one has ever eaten better food than what he earns from the work of his own hands.' Halal income is essential for accepted worship." },
+      { title: "2. Prohibited Industries", content: "Avoid income from: alcohol, gambling, pork, interest-based banking, adult entertainment, and anything harmful to society." },
+      { title: "3. Honest Dealings", content: "Be truthful in business. The Prophet (ﷺ) said: 'The truthful, trustworthy merchant will be with the prophets, truthful ones, and martyrs.'" },
+      { title: "4. Fair Pricing", content: "Don't exploit customers or hoard goods to raise prices. The Prophet (ﷺ) cursed those who hoard food to increase prices." },
+      { title: "5. Fulfill Contracts", content: "Honor all agreements and contracts. Allah says: 'O you who believe, fulfill your contracts' (Quran 5:1)." },
+      { title: "6. Pay Workers Promptly", content: "The Prophet (ﷺ) said: 'Give the worker his wages before his sweat dries.' Delaying payment is oppression." },
+    ],
+    references: ["Sahih al-Bukhari 2072", "Sunan Ibn Majah 2443"],
+  },
+  {
+    id: "islamic-banking",
+    title: "Islamic Banking Basics",
+    titleAr: "أساسيات المصرفية الإسلامية",
+    category: "finance",
+    description: "Understanding Sharia-compliant banking",
+    descriptionAr: "فهم المصرفية المتوافقة مع الشريعة",
+    steps: [
+      { title: "1. Core Principles", content: "Islamic banking prohibits interest (riba), excessive uncertainty (gharar), and gambling (maysir). Profits must come from real economic activity." },
+      { title: "2. Murabaha (Cost-Plus)", content: "The bank buys an asset and sells it to you at a disclosed profit margin. You pay in installments. The profit is fixed upfront, not interest." },
+      { title: "3. Mudarabah (Profit-Sharing)", content: "You provide capital, the bank manages it. Profits are shared according to agreed ratios; losses are borne by the capital provider." },
+      { title: "4. Musharakah (Partnership)", content: "Both parties contribute capital and share profits and losses according to their investment ratio." },
+      { title: "5. Ijara (Leasing)", content: "The bank buys an asset and leases it to you. You may have the option to purchase it at the end of the lease term." },
+      { title: "6. Choosing a Bank", content: "Look for banks with a Sharia supervisory board. Research their products and ensure they're genuinely compliant, not just rebranded conventional products." },
+    ],
+    references: ["Quran 2:275", "Islamic Finance Standards by AAOIFI"],
+  },
+  {
+    id: "halal-investing",
+    title: "Halal Investing Guidelines",
+    titleAr: "إرشادات الاستثمار الحلال",
+    category: "finance",
+    description: "How to invest in a Sharia-compliant manner",
+    descriptionAr: "كيفية الاستثمار بطريقة متوافقة مع الشريعة",
+    steps: [
+      { title: "1. Screen for Prohibited Industries", content: "Avoid companies involved in: alcohol, tobacco, gambling, conventional banking/insurance, pork, weapons, and adult entertainment." },
+      { title: "2. Financial Ratios", content: "Many scholars require: debt-to-assets ratio below 33%, interest income below 5% of revenue, and cash/receivables below 50% of assets." },
+      { title: "3. Purification of Returns", content: "If a small portion of company income is from non-compliant sources, calculate and donate that percentage of your dividends to charity." },
+      { title: "4. Islamic Funds", content: "Consider Sharia-compliant mutual funds and ETFs that are pre-screened by Islamic scholars." },
+      { title: "5. Real Estate", content: "Property investment is generally halal. Avoid financing with conventional mortgages; use Islamic home financing instead." },
+      { title: "6. Consult Scholars", content: "When in doubt, consult knowledgeable scholars or use established Islamic finance screening services." },
+    ],
+    references: ["AAOIFI Sharia Standards", "Quran 2:188"],
+  },
+  {
+    id: "debt-management",
+    title: "Islamic Debt Management",
+    titleAr: "إدارة الديون في الإسلام",
+    category: "finance",
+    description: "Managing debt according to Islamic principles",
+    descriptionAr: "إدارة الديون وفقاً للمبادئ الإسلامية",
+    steps: [
+      { title: "1. Avoid Unnecessary Debt", content: "The Prophet (ﷺ) sought refuge from debt. Only borrow when truly necessary and have a clear plan to repay." },
+      { title: "2. Document All Debts", content: "Allah commands: 'When you contract a debt for a specified term, write it down' (Quran 2:282). This protects both parties." },
+      { title: "3. Intend to Repay", content: "The Prophet (ﷺ) said: 'Whoever takes people's money intending to repay it, Allah will help him repay. Whoever takes it intending to waste it, Allah will waste him.'" },
+      { title: "4. Repay Promptly", content: "Don't delay repayment if you have the means. The Prophet (ﷺ) said: 'Delay in payment by a wealthy person is injustice.'" },
+      { title: "5. Be Lenient as a Creditor", content: "If your debtor is struggling, give them time. Allah says: 'If someone is in hardship, then let there be postponement until ease' (Quran 2:280)." },
+      { title: "6. Forgive if Possible", content: "Forgiving a debt is highly rewarded. Allah says: 'And if you give charity, it is better for you' (Quran 2:280)." },
+    ],
+    references: ["Quran 2:280-282", "Sahih al-Bukhari 2387"],
+  },
+];
+
 // Combine all guides
 export const islamicGuides: IslamicGuide[] = [
   ...worshipGuides,
@@ -439,4 +526,5 @@ export const islamicGuides: IslamicGuide[] = [
   ...funeralGuides,
   ...characterGuides,
   ...knowledgeGuides,
+  ...financeGuides,
 ];

@@ -81,6 +81,9 @@ export function LocationIndicator({ variant = 'default' }: LocationIndicatorProp
 
   // Card variant - styled for inside the prayer card
   if (variant === 'card') {
+    // Shorter location text for compact display
+    const shortLocationText = city || (loading ? 'Detecting...' : 'Set location');
+
     return (
       <>
         <Pressable
@@ -88,33 +91,22 @@ export function LocationIndicator({ variant = 'default' }: LocationIndicatorProp
           style={({ pressed }) => [
             styles.cardContainer,
             {
-              backgroundColor: 'rgba(255, 255, 255, 0.15)',
-              borderColor: 'rgba(255, 255, 255, 0.25)',
               opacity: pressed ? 0.8 : 1,
             },
           ]}
         >
-          <View style={styles.cardContent}>
-            <Feather
-              name={isManual ? 'edit-3' : 'map-pin'}
-              size={13}
-              color="#FFFFFF"
-            />
-            <ThemedText
-              type="caption"
-              style={styles.cardText}
-            >
-              {locationText}
-            </ThemedText>
-            {isManual && (
-              <View style={styles.cardBadge}>
-                <ThemedText type="caption" style={styles.cardBadgeText}>
-                  Manual
-                </ThemedText>
-              </View>
-            )}
-          </View>
-          <Feather name="chevron-down" size={13} color="rgba(255,255,255,0.7)" />
+          <Feather
+            name={isManual ? 'edit-3' : 'map-pin'}
+            size={14}
+            color="#FFFFFF"
+          />
+          <ThemedText
+            type="caption"
+            style={styles.cardText}
+            numberOfLines={1}
+          >
+            {shortLocationText}
+          </ThemedText>
         </Pressable>
 
         {/* Bottom Sheet Modal */}
@@ -517,12 +509,11 @@ const styles = StyleSheet.create({
   cardContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: Spacing.xs,
-    borderRadius: BorderRadius.md,
-    borderWidth: 1,
-    marginTop: Spacing.md,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 16,
+    gap: 6,
   },
   cardContent: {
     flexDirection: 'row',
@@ -532,20 +523,8 @@ const styles = StyleSheet.create({
   },
   cardText: {
     fontSize: 12,
-    fontWeight: '500',
-    color: '#FFFFFF',
-  },
-  cardBadge: {
-    paddingHorizontal: 5,
-    paddingVertical: 2,
-    borderRadius: 4,
-    marginLeft: 4,
-    backgroundColor: 'rgba(255, 255, 255, 0.25)',
-  },
-  cardBadgeText: {
-    color: '#fff',
-    fontSize: 9,
     fontWeight: '600',
+    color: '#FFFFFF',
   },
   overlay: {
     flex: 1,

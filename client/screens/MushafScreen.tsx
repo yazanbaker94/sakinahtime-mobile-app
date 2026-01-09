@@ -3556,11 +3556,6 @@ function MushafScreenContent() {
                     ? theme.primary
                     : 'transparent',
                   transform: [{ scale: pressed ? 0.98 : 1 }],
-                  shadowColor: isActive ? theme.primary : '#000',
-                  shadowOffset: { width: 0, height: isActive ? 4 : 2 },
-                  shadowOpacity: isActive ? 0.15 : 0.05,
-                  shadowRadius: isActive ? 8 : 4,
-                  elevation: isActive ? 4 : 2,
                 }]}
               >
                 <View style={{ flex: 1, marginRight: 12 }}>
@@ -3846,11 +3841,6 @@ function MushafScreenContent() {
                     ? theme.primary
                     : 'transparent',
                   transform: [{ scale: pressed ? 0.98 : 1 }],
-                  shadowColor: isActive ? theme.primary : '#000',
-                  shadowOffset: { width: 0, height: isActive ? 4 : 2 },
-                  shadowOpacity: isActive ? 0.15 : 0.05,
-                  shadowRadius: isActive ? 8 : 4,
-                  elevation: isActive ? 4 : 2,
                 }]}
               >
                 <View style={{ flex: 1, marginRight: 12 }}>

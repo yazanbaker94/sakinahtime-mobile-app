@@ -449,21 +449,20 @@ export default function PrayerTimesScreen() {
                 </View>
               </View>
               
-              {/* Metadata */}
-              <View style={styles.metadataCompact}>
+              {/* Metadata - compact row with calendar and location */}
+              <View style={styles.metadataRow}>
                 {prayerData?.date?.hijri && (
                   <Pressable 
-                    style={styles.calendarButton}
+                    style={styles.compactButton}
                     onPress={() => navigation.navigate('HijriCalendar')}
                   >
                     <Feather name="calendar" size={14} color="#FFFFFF" />
-                    <ThemedText type="caption" style={{ color: "#FFFFFF", marginLeft: 8, fontSize: 13, fontWeight: '600' }}>
-                      {toArabicNumerals(Number(prayerData.date.hijri.day) || 0)} {prayerData.date.hijri.month?.ar || ''} • View Calendar
+                    <ThemedText type="caption" style={styles.compactButtonText}>
+                      {toArabicNumerals(Number(prayerData.date.hijri.day) || 0)} {prayerData.date.hijri.month?.ar || ''}
                     </ThemedText>
-                    <Feather name="chevron-right" size={16} color="#FFFFFF" style={{ marginLeft: 6 }} />
                   </Pressable>
                 )}
-                {/* Location indicator under calendar */}
+                {/* Location button */}
                 <LocationIndicator variant="card" />
               </View>
             </View>
@@ -742,8 +741,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  metadataCompact: {
-    gap: 4,
+  metadataRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    flexWrap: 'wrap',
+  },
+  compactButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 16,
+    gap: 6,
+  },
+  compactButtonText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '600',
   },
   metaRow: {
     flexDirection: 'row',

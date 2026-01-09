@@ -279,10 +279,10 @@ export function HifzControlPanel({
                     </TouchableOpacity>
                     <TouchableOpacity
                       onPress={hideAll}
-                      style={[styles.actionButton, { backgroundColor: activeColor }]}
+                      style={[styles.actionButton, { backgroundColor: theme.cardBackground, borderColor: theme.border }]}
                     >
-                      <Feather name="eye-off" size={18} color="#FFFFFF" />
-                      <ThemedText style={[styles.actionText, { color: '#FFFFFF' }]}>
+                      <Feather name="eye-off" size={18} color={theme.text} />
+                      <ThemedText style={styles.actionText}>
                         Hide All
                       </ThemedText>
                     </TouchableOpacity>
