@@ -8,7 +8,7 @@ import { Spacing, Colors, BorderRadius } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { azkarData, Dhikr } from "@/data/azkar";
 import { Feather } from "@expo/vector-icons";
-import { useRoute } from "@react-navigation/native";
+import { useRoute, useNavigation } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import type { RootStackParamList } from "@/navigation/RootStackNavigator";
 
@@ -24,6 +24,7 @@ export default function AzkarDetailScreen() {
   const insets = useSafeAreaInsets();
   const { theme, isDark } = useTheme();
   const route = useRoute<AzkarDetailRouteProp>();
+  const navigation = useNavigation();
   const { category } = route.params;
 
   const [showTransliteration, setShowTransliteration] = useState(false);
@@ -114,11 +115,22 @@ export default function AzkarDetailScreen() {
 
   const dhikrList = azkarData[category.id] || [];
 
+  // Check if source is a Quran reference
+  const isQuranVerse = (source: string): boolean => {
+    const quranSources = [
+      'Al-Baqarah', 'Al-Ikhlas', 'Al-Falaq', 'An-Nas', 'Al-Fatiha',
+      'Al-Mulk', 'Al-Kahf', 'Ya-Sin', 'Ar-Rahman', 'Al-Waqiah',
+      'Al-Hashr', 'Al-Jumu\'ah', 'Al-Munafiqun', 'At-Taghabun',
+    ];
+    return quranSources.some(s => source.includes(s)) || /^\d+:\d+/.test(source);
+  };
+
   const renderDhikr = useCallback(
     ({ item, index }: { item: Dhikr; index: number }) => {
       const currentCount = counters[item.id] || 0;
       const targetCount = item.repetitions || 0;
       const isComplete = targetCount > 0 && currentCount >= targetCount;
+      const isQuran = isQuranVerse(item.source);
 
       return (
         <Pressable
@@ -130,6 +142,10 @@ export default function AzkarDetailScreen() {
               backgroundColor: theme.cardBackground,
               opacity: pressed ? 0.7 : 1,
             },
+            isQuran && {
+              borderLeftWidth: 4,
+              borderLeftColor: theme.gold,
+            },
           ]}
         >
           <View style={styles.dhikrHeader}>
@@ -137,17 +153,31 @@ export default function AzkarDetailScreen() {
               style={[
                 styles.dhikrNumber,
                 {
-                  backgroundColor: theme.backgroundSecondary,
+                  backgroundColor: isQuran ? `${theme.gold}20` : theme.backgroundSecondary,
                 },
               ]}
             >
-              <ThemedText type="small">{index + 1}</ThemedText>
+              {isQuran ? (
+                <Feather name="book-open" size={14} color={theme.gold} />
+              ) : (
+                <ThemedText type="small">{index + 1}</ThemedText>
+              )}
             </View>
-            <ThemedText type="caption" secondary>
-              {item.source}
-            </ThemedText>
+            <View style={styles.sourceContainer}>
+              {isQuran && (
+                <View style={[styles.quranBadge, { backgroundColor: `${theme.gold}15` }]}>
+                  <ThemedText type="caption" style={{ color: theme.gold, fontWeight: '600' }}>
+                    Quran
+                  </ThemedText>
+                </View>
+              )}
+              <ThemedText type="caption" secondary>
+                {item.source}
+              </ThemedText>
+            </View>
           </View>
 
+          {/* Arabic text - same rendering for both Quran and regular dhikr */}
           <ThemedText type="arabicLarge" style={[styles.arabicText, { fontFamily: 'AlMushafQuran' }]}>
             {item.textAr}
           </ThemedText>
@@ -166,12 +196,13 @@ export default function AzkarDetailScreen() {
 
           <View style={styles.bottomRow}>
             {item.repetitions > 0 ? (
-              <View style={styles.repBadge}>
+              <View style={[styles.repBadge, { backgroundColor: `${theme.primary}10` }]}>
+                <Feather name="repeat" size={12} color={theme.primary} style={{ marginRight: 4 }} />
                 <ThemedText
                   type="caption"
-                  style={{ color: theme.primary }}
+                  style={{ color: theme.primary, fontWeight: '600' }}
                 >
-                  Repeat {item.repetitions}x
+                  {item.repetitions}x
                 </ThemedText>
               </View>
             ) : null}
@@ -244,21 +275,26 @@ export default function AzkarDetailScreen() {
 
   return (
     <ThemedView style={styles.container}>
+      {/* Header with back button */}
       <View
         style={[
           styles.header,
           {
+            paddingTop: insets.top + Spacing.md,
             backgroundColor: theme.cardBackground,
             borderBottomColor: theme.border,
           },
         ]}
       >
-        <View style={styles.headerInfo}>
-          <View style={styles.headerTitleRow}>
-            <ThemedText type="body" style={{ fontWeight: "500", flex: 1 }}>
+        <View style={styles.headerTop}>
+          <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
+            <Feather name="arrow-left" size={24} color={theme.text} />
+          </Pressable>
+          <View style={styles.headerInfo}>
+            <ThemedText type="h3" style={{ fontWeight: "700", flex: 1 }} numberOfLines={1}>
               {category.titleEn}
             </ThemedText>
-            <ThemedText type="arabic" secondary style={{ fontSize: 14, fontFamily: 'AlMushafQuran', marginLeft: Spacing.sm }}>
+            <ThemedText type="arabic" secondary style={{ fontSize: 16, fontFamily: 'AlMushafQuran', marginLeft: Spacing.sm }}>
               {category.titleAr}
             </ThemedText>
           </View>
@@ -395,16 +431,22 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
+    paddingBottom: Spacing.md,
     borderBottomWidth: 1,
   },
-  headerInfo: {
-    marginBottom: Spacing.md,
-  },
-  headerTitleRow: {
+  headerTop: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    marginBottom: Spacing.md,
+  },
+  backButton: {
+    marginRight: Spacing.md,
+    padding: Spacing.xs,
+  },
+  headerInfo: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
   },
   toggleContainer: {
     flexDirection: "row",
@@ -431,6 +473,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: Spacing.lg,
   },
+  sourceContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+  },
+  quranBadge: {
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 2,
+    borderRadius: BorderRadius.sm,
+  },
   dhikrNumber: {
     width: 28,
     height: 28,
@@ -440,8 +492,8 @@ const styles = StyleSheet.create({
   },
   arabicText: {
     marginBottom: Spacing.md,
-    lineHeight: 44,
-    textAlign: "right",
+    lineHeight: 56,
+    textAlign: "center",
   },
   transliteration: {
     fontStyle: "italic",
@@ -451,10 +503,12 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   repBadge: {
+    flexDirection: "row",
+    alignItems: "center",
     alignSelf: "flex-start",
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
-    borderRadius: BorderRadius.sm,
+    borderRadius: BorderRadius.md,
   },
   bottomRow: {
     flexDirection: "row",

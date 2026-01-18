@@ -25,6 +25,9 @@ import MosqueFinderScreen from "@/screens/MosqueFinderScreen";
 import MosqueDetailScreen from "@/screens/MosqueDetailScreen";
 import DhikrOverlaySettingsScreen from "@/screens/DhikrOverlaySettingsScreen";
 import NotificationSettingsScreen from "@/screens/NotificationSettingsScreen";
+import WordByWordSettingsScreen from "@/screens/WordByWordSettingsScreen";
+import { ReciterSelectionScreen } from "@/screens/ReciterSelectionScreen";
+import LocationSettingsScreen from "@/screens/LocationSettingsScreen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 import type { AzkarCategory } from "@/data/azkar";
 import type { IslamicGuide } from "@/data/islamicGuides";
@@ -57,6 +60,9 @@ export type RootStackParamList = {
   MosqueDetail: { mosqueId: string; mosque?: Mosque };
   DhikrOverlaySettings: undefined;
   NotificationSettings: undefined;
+  WordByWordSettings: undefined;
+  ReciterSelection: { currentReciter: string; onSelect: (reciterId: string) => void };
+  LocationSettings: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -74,20 +80,16 @@ export default function RootStackNavigator() {
       <Stack.Screen
         name="AzkarDetail"
         component={AzkarDetailScreen}
-        options={({ route }) => ({
-          presentation: "modal",
-          headerTitle: "Azkar",
-          headerTransparent: false,
-        })}
+        options={{
+          headerShown: false,
+        }}
       />
       <Stack.Screen
         name="IslamicGuideDetail"
         component={IslamicGuideDetailScreen}
-        options={({ route }) => ({
-          presentation: "modal",
-          headerTitle: "Islamic Guide",
-          headerTransparent: false,
-        })}
+        options={{
+          headerShown: false,
+        }}
       />
       <Stack.Screen
         name="Mushaf"
@@ -240,6 +242,27 @@ export default function RootStackNavigator() {
       <Stack.Screen
         name="NotificationSettings"
         component={NotificationSettingsScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="WordByWordSettings"
+        component={WordByWordSettingsScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="ReciterSelection"
+        component={ReciterSelectionScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="LocationSettings"
+        component={LocationSettingsScreen}
         options={{
           headerShown: false,
         }}

@@ -4,6 +4,43 @@ import { audioDownloadService } from './AudioDownloadService';
 import { networkService } from './NetworkService';
 import { offlineStorageService } from './OfflineStorageService';
 import { SURAH_INFO } from '../constants/offline';
+import wordAudioService from './WordAudioService';
+
+// Word timing data cache - loaded from GitHub or local cache
+interface WordTimingEntry {
+  ayah: number;
+  surah: number;
+  segments: number[][]; // [[wordIdx, unknownField, startMs, endMs], ...]
+  stats?: { deletions: number; transpositions: number; insertions: number };
+}
+
+// Cache for loaded word timing data per reciter (in memory)
+const wordTimingCache: Map<string, Map<string, number[][]>> = new Map();
+
+// GitHub raw URL for timing data
+const TIMING_DATA_BASE_URL = 'https://raw.githubusercontent.com/yazanbaker94/reciters-timing-data/main';
+
+// Reciters that have timing data available
+const SUPPORTED_TIMING_RECITERS = [
+  'Alafasy_128kbps',
+  'Abdul_Basit_Mujawwad_128kbps',
+  'Abdul_Basit_Murattal_64kbps',
+  'Abdurrahmaan_As-Sudais_192kbps',
+  'Abu_Bakr_Ash-Shaatree_128kbps',
+  'Hani_Rifai_192kbps',
+  'Husary_64kbps',
+  'Husary_Muallim_128kbps',
+  'Minshawy_Mujawwad_192kbps',
+  'Minshawy_Murattal_128kbps',
+  'Mohammad_al_Tablaway_128kbps',
+  'Saood_ash-Shuraym_128kbps',
+];
+
+// Map app reciter IDs to timing file names (for different bitrates)
+const RECITER_TIMING_MAP: Record<string, string> = {
+  'Abdul_Basit_Murattal_192kbps': 'Abdul_Basit_Murattal_64kbps',
+  'Husary_128kbps': 'Husary_64kbps',
+};
 
 export type PlaybackMode = 'single' | 'fromVerse' | 'fullSurah';
 
@@ -23,6 +60,11 @@ class AudioService {
   private listeners: Set<(state: any) => void> = new Set();
   private playbackRate = 1.0;
   private lastPlayed: AudioMetadata | null = null;
+  
+  // Position tracking for word-by-word highlighting
+  private positionMs = 0;
+  private durationMs = 0;
+  private segments: number[][] = []; // Word timing segments [[wordIdx, startMs, endMs], ...]
   
   // Hifz mode repeat/loop properties
   private repeatCount = 0;
@@ -66,6 +108,10 @@ class AudioService {
       current: this.currentMetadata || this.lastPlayed,
       queue: this.playbackQueue,
       playbackRate: this.playbackRate,
+      // Position tracking for word-by-word highlighting
+      positionMs: this.positionMs,
+      durationMs: this.durationMs,
+      segments: this.segments, // Word timing data
       // Hifz mode state
       isRepeating: this.isRepeating,
       currentRepeat: this.currentRepeat,
@@ -185,6 +231,23 @@ class AudioService {
 
   setReciter(reciter: string) {
     this.reciter = reciter;
+    // Pre-fetch timing data in background when reciter changes
+    this.prefetchTimingData(reciter);
+  }
+
+  /**
+   * Pre-fetch timing data for a reciter in the background.
+   * Call this on app launch or when reciter is selected to ensure
+   * word-by-word highlighting is ready when user hits play.
+   */
+  async prefetchTimingData(reciter?: string): Promise<void> {
+    const targetReciter = reciter || this.reciter;
+    try {
+      await this.loadReciterTimingData(targetReciter);
+    } catch (error) {
+      // Silently fail - timing data is optional enhancement
+      console.log('[AudioService] Background prefetch failed:', error);
+    }
   }
 
   async playQueue(verses: Array<{ surah: number; ayah: number }>) {
@@ -212,6 +275,9 @@ class AudioService {
     this.isTransitioning = true;
     
     try {
+      // Stop any playing word audio first to avoid overlap
+      wordAudioService.stop();
+      
       if (this.sound) {
         await this.sound.stopAsync();
         await this.sound.unloadAsync();
@@ -239,10 +305,131 @@ class AudioService {
     }
   }
 
+  // Fetch word timing segments from local JSON files only
+  // Returns empty array if no local data available (will use full verse highlight)
+  private async fetchWordSegments(surah: number, ayah: number): Promise<number[][]> {
+    try {
+      const localSegments = await this.loadLocalWordSegments(surah, ayah);
+      if (localSegments.length > 0) {
+        console.log('[AudioService] Got local segments for', surah, ':', ayah, '-', localSegments.length, 'words');
+      }
+      return localSegments;
+    } catch (error) {
+      console.log('[AudioService] Error fetching segments:', error);
+      return [];
+    }
+  }
+
+  // Load word timing segments from local JSON files
+  private async loadLocalWordSegments(surah: number, ayah: number): Promise<number[][]> {
+    try {
+      const reciter = this.reciter;
+      const cacheKey = `${surah}:${ayah}`;
+      
+      // Check if we have cached data for this reciter
+      if (wordTimingCache.has(reciter)) {
+        const reciterCache = wordTimingCache.get(reciter)!;
+        if (reciterCache.has(cacheKey)) {
+          return reciterCache.get(cacheKey)!;
+        }
+        // Reciter loaded but no data for this ayah
+        return [];
+      }
+      
+      // Load the JSON file for this reciter
+      await this.loadReciterTimingData(reciter);
+      
+      // Check cache again after loading
+      if (wordTimingCache.has(reciter)) {
+        const reciterCache = wordTimingCache.get(reciter)!;
+        if (reciterCache.has(cacheKey)) {
+          return reciterCache.get(cacheKey)!;
+        }
+      }
+      
+      return [];
+    } catch (error) {
+      console.log('[AudioService] Error loading local segments:', error);
+      return [];
+    }
+  }
+
+  // Load and cache all timing data for a reciter
+  private async loadReciterTimingData(reciter: string): Promise<void> {
+    // Skip if already loaded or marked as unavailable
+    if (wordTimingCache.has(reciter)) {
+      return;
+    }
+    
+    // Get the timing file name (might be different from reciter ID for different bitrates)
+    const timingFileName = RECITER_TIMING_MAP[reciter] || reciter;
+    
+    // Check if this reciter has timing data
+    if (!SUPPORTED_TIMING_RECITERS.includes(timingFileName)) {
+      // No timing data for this reciter - mark as empty so we don't try again
+      wordTimingCache.set(reciter, new Map());
+      console.log('[AudioService] No word timing data available for:', reciter);
+      return;
+    }
+    
+    try {
+      // Check if we have cached the file locally
+      const localPath = `${FileSystem.documentDirectory}timing-data/${timingFileName}.json`;
+      const fileInfo = await FileSystem.getInfoAsync(localPath);
+      
+      let entries: WordTimingEntry[];
+      
+      if (fileInfo.exists) {
+        // Load from local cache
+        console.log('[AudioService] Loading timing data from local cache:', timingFileName);
+        const content = await FileSystem.readAsStringAsync(localPath);
+        entries = JSON.parse(content);
+      } else {
+        // Download from GitHub
+        const url = `${TIMING_DATA_BASE_URL}/${timingFileName}.json`;
+        console.log('[AudioService] Downloading timing data from:', url);
+        
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch: ${response.status}`);
+        }
+        
+        entries = await response.json();
+        
+        // Cache locally for offline use
+        const dirPath = `${FileSystem.documentDirectory}timing-data/`;
+        const dirInfo = await FileSystem.getInfoAsync(dirPath);
+        if (!dirInfo.exists) {
+          await FileSystem.makeDirectoryAsync(dirPath, { intermediates: true });
+        }
+        await FileSystem.writeAsStringAsync(localPath, JSON.stringify(entries));
+        console.log('[AudioService] Cached timing data to:', localPath);
+      }
+      
+      // Parse and cache the data in memory
+      const reciterCache = new Map<string, number[][]>();
+      
+      for (const entry of entries) {
+        const key = `${entry.surah}:${entry.ayah}`;
+        // Convert segments from [wordIdx, unknownField, startMs, endMs] to [wordIdx, startMs, endMs]
+        const normalizedSegments = entry.segments.map(seg => [seg[0], seg[2], seg[3]]);
+        reciterCache.set(key, normalizedSegments);
+      }
+      
+      wordTimingCache.set(reciter, reciterCache);
+      console.log('[AudioService] Loaded timing data for', reciter, '- entries:', entries.length);
+    } catch (error) {
+      // Mark as empty so we don't try again this session
+      wordTimingCache.set(reciter, new Map());
+      console.log('[AudioService] Error loading timing data for', reciter, ':', error);
+    }
+  }
+
   private async playNext() {
     if (this.playbackQueue.length === 0) {
       this.isPlaying = false;
       this.currentMetadata = null;
+      this.segments = [];
       // Don't clear lastPlayed - we need it for replay
       console.log('[AudioService] Queue empty, lastPlayed:', this.lastPlayed);
       this.notifyListeners();
@@ -254,7 +441,13 @@ class AudioService {
     this.lastPlayed = next; // Set lastPlayed immediately when we know what we're playing
 
     try {
-      const uri = await this.downloadAudio(next.surah, next.ayah);
+      // Fetch word segments in parallel with audio download
+      const [uri, segments] = await Promise.all([
+        this.downloadAudio(next.surah, next.ayah),
+        this.fetchWordSegments(next.surah, next.ayah)
+      ]);
+      
+      this.segments = segments;
       
       const { sound } = await Audio.Sound.createAsync(
         { uri },
@@ -265,7 +458,7 @@ class AudioService {
       this.sound = sound;
       await sound.setRateAsync(this.playbackRate, true);
       this.isPlaying = true;
-      console.log('[AudioService] Now playing:', next.surah, ':', next.ayah);
+      console.log('[AudioService] Now playing:', next.surah, ':', next.ayah, 'with', segments.length, 'segments');
       this.notifyListeners();
     } catch (error) {
       console.error('Playback error:', error);
@@ -274,8 +467,22 @@ class AudioService {
   }
 
   private async onPlaybackStatusUpdate(status: any) {
+    if (status.isLoaded) {
+      // Update position for word-by-word highlighting
+      this.positionMs = status.positionMillis || 0;
+      this.durationMs = status.durationMillis || 0;
+      
+      // Only notify on significant position changes (every ~100ms worth of change)
+      // to avoid excessive re-renders
+      if (this.isPlaying) {
+        this.notifyListeners();
+      }
+    }
+    
     if (status.didJustFinish) {
       this.isPlaying = false;
+      this.positionMs = 0;
+      this.durationMs = 0;
       this.notifyListeners();
       await this.playNext();
     }

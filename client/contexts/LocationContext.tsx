@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
 import * as Location from "expo-location";
-import { Platform, Linking } from "react-native";
+import { Platform, Linking, AppState, AppStateStatus } from "react-native";
 import { LocationMode, ManualLocation } from "@/types/location";
 import {
   getLocationMode,
@@ -65,6 +65,31 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
   const [initialized, setInitialized] = useState(false);
 
   const [permission, requestPermission] = Location.useForegroundPermissions();
+  const appState = useRef(AppState.currentState);
+
+  // Re-check permission when app comes back to foreground (from settings)
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', async (nextAppState: AppStateStatus) => {
+      if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
+        // App came back to foreground - re-check permission
+        try {
+          const { status } = await Location.getForegroundPermissionsAsync();
+          if (status === 'granted' && !permission?.granted) {
+            // Permission was just granted in settings - refetch location
+            console.log('[LocationContext] Permission granted after returning from settings');
+            await requestPermission(); // This will update the permission state
+          }
+        } catch (err) {
+          console.error('[LocationContext] Error checking permission:', err);
+        }
+      }
+      appState.current = nextAppState;
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, [permission?.granted, requestPermission]);
 
   // Load saved settings on mount
   useEffect(() => {

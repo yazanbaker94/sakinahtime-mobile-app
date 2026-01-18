@@ -134,6 +134,43 @@ export default function SettingsScreen() {
           </View>
         </View>
 
+        {/* Word by Word Settings Section */}
+        <View style={styles.section}>
+          <View style={[styles.card, { 
+            backgroundColor: isDark ? `${theme.primary}33` : theme.cardBackground,
+            elevation: isDark ? 0 : 3,
+            shadowOpacity: isDark ? 0 : 0.08,
+          }]}>
+            <Pressable
+              onPress={() => {
+                if (Platform.OS !== "web") {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                }
+                navigation.navigate('WordByWordSettings');
+              }}
+              style={({ pressed }) => [
+                styles.settingRow,
+                { opacity: pressed ? 0.7 : 1 },
+              ]}
+            >
+              <View style={styles.settingLeft}>
+                <View style={[styles.iconCircle, { backgroundColor: `${theme.primary}26` }]}>
+                  <Feather name="book-open" size={20} color={theme.primary} />
+                </View>
+                <View style={styles.settingText}>
+                  <ThemedText type="body" style={{ fontWeight: '600' }}>
+                    Word by Word
+                  </ThemedText>
+                  <ThemedText type="caption" secondary>
+                    Translation language
+                  </ThemedText>
+                </View>
+              </View>
+              <Feather name="chevron-right" size={20} color={theme.textSecondary} />
+            </Pressable>
+          </View>
+        </View>
+
         {/* Dhikr Reminders Section */}
         <View style={styles.section}>
           <View style={[styles.card, { 

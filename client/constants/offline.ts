@@ -72,7 +72,7 @@ export const RECITERS: ReciterInfo[] = [
   { id: 'Muhammad_Ayyoub_128kbps', nameEn: 'Muhammad Ayyub', nameAr: 'محمد أيوب', style: '128kbps', downloadedSurahs: 0, totalSize: 0 },
   { id: 'Muhammad_Jibreel_128kbps', nameEn: 'Muhammad Jibreel', nameAr: 'محمد جبريل', style: '128kbps', downloadedSurahs: 0, totalSize: 0 },
   { id: 'Muhsin_Al_Qasim_192kbps', nameEn: 'Muhsin Al-Qasim', nameAr: 'محسن القاسم', style: '192kbps', downloadedSurahs: 0, totalSize: 0 },
-  { id: 'Mustafa_Ismail_48kbps', nameEn: 'Mustafa Ismail', nameAr: 'مصطفى إسماعيل', style: '48kbps', downloadedSurahs: 0, totalSize: 0 },
+
   { id: 'Nasser_Alqatami_128kbps', nameEn: 'Nasser Al-Qatami', nameAr: 'ناصر القطامي', style: '128kbps', downloadedSurahs: 0, totalSize: 0 },
   { id: 'Salaah_AbdulRahman_Bukhatir_128kbps', nameEn: 'Salah Bukhatir', nameAr: 'صلاح بوخاطر', style: '128kbps', downloadedSurahs: 0, totalSize: 0 },
   { id: 'Salah_Al_Budair_128kbps', nameEn: 'Salah Al-Budair', nameAr: 'صلاح البدير', style: '128kbps', downloadedSurahs: 0, totalSize: 0 },

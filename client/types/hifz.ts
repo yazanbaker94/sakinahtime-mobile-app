@@ -44,6 +44,7 @@ export interface HifzSettings {
   autoAdvance: boolean;
   showRevisionReminders: boolean;
   dailyRevisionGoal: number; // pages per day
+  playWordAudioOnReveal: boolean; // Play word pronunciation when revealing hidden word
 }
 
 // Saved loop range for audio

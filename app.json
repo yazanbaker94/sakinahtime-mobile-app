@@ -72,7 +72,8 @@
       "./plugins/withAndroidWidgets.js",
       "./plugins/withAndroidManifest.js",
       "./plugins/withDhikrOverlay.js",
-      "expo-media-library"
+      "expo-media-library",
+      "expo-web-browser"
     ],
     "extra": {
       "eas": {

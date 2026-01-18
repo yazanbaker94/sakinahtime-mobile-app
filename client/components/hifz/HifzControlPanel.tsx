@@ -59,6 +59,7 @@ export function HifzControlPanel({
     setAutoHideDelay,
     revealAll,
     hideAll,
+    updateSettings,
   } = useHifzMode();
 
   const [activeTab, setActiveTab] = useState<'hide' | 'repeat' | 'loop' | 'progress'>('hide');
@@ -266,6 +267,45 @@ export function HifzControlPanel({
                       )}
                     </TouchableOpacity>
                   ))}
+
+                  {/* Word Audio Toggle - only show in word-by-word mode */}
+                  {settings.hideMode === 'word' && (
+                    <TouchableOpacity
+                      onPress={() => updateSettings({ playWordAudioOnReveal: !settings.playWordAudioOnReveal })}
+                      style={[
+                        styles.modeOption,
+                        {
+                          backgroundColor: settings.playWordAudioOnReveal ? `${activeColor}20` : theme.cardBackground,
+                          borderColor: settings.playWordAudioOnReveal ? activeColor : theme.border,
+                          marginTop: 4,
+                        },
+                      ]}
+                    >
+                      <View style={styles.modeOptionContent}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                          <ThemedText style={styles.modeLabel}>🔊 Word Audio</ThemedText>
+                          <View style={{ backgroundColor: theme.textSecondary + '30', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 }}>
+                            <ThemedText style={{ fontSize: 10, color: theme.textSecondary }}>requires internet</ThemedText>
+                          </View>
+                        </View>
+                        <ThemedText style={[styles.modeDescription, { color: theme.textSecondary }]}>
+                          Play pronunciation when revealing a word
+                        </ThemedText>
+                      </View>
+                      <View style={{ 
+                        width: 24, 
+                        height: 24, 
+                        borderRadius: 6, 
+                        backgroundColor: settings.playWordAudioOnReveal ? activeColor : 'transparent', 
+                        borderWidth: 2, 
+                        borderColor: settings.playWordAudioOnReveal ? activeColor : theme.border,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}>
+                        {settings.playWordAudioOnReveal && <Feather name="check" size={14} color="#FFFFFF" />}
+                      </View>
+                    </TouchableOpacity>
+                  )}
 
                   {/* Quick Actions */}
                   <ThemedText style={[styles.sectionTitle, { marginTop: 20 }]}>Quick Actions</ThemedText>

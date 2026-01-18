@@ -4,8 +4,8 @@
  * Screen for managing Quran audio downloads.
  */
 
-import React, { useState, useMemo, useEffect } from 'react';
-import { View, StyleSheet, Pressable, Alert, FlatList, Modal } from 'react-native';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import { View, StyleSheet, Pressable, Alert, FlatList } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -20,16 +20,18 @@ import { useAudioDownload } from '@/hooks/useAudioDownload';
 import { useNetworkStatus } from '@/hooks/useNetworkStatus';
 import { audioDownloadService } from '@/services/AudioDownloadService';
 import { SURAH_INFO, RECITERS, formatBytes, getEstimatedSurahSize, getTotalQuranSizeEstimate } from '@/constants/offline';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '@/navigation/RootStackNavigator';
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'AudioDownload'>;
 
 export function AudioDownloadScreen() {
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const { isDark, theme } = useTheme();
   const { isOnline, lastOnline } = useNetworkStatus();
   
   const [selectedReciter, setSelectedReciter] = useState(RECITERS[0].id);
-  const [showReciterModal, setShowReciterModal] = useState(false);
-  const [recitersWithDownloads, setRecitersWithDownloads] = useState<string[]>([]);
   
   const {
     downloadedSurahs,
@@ -48,19 +50,21 @@ export function AudioDownloadScreen() {
     deleteAll,
   } = useAudioDownload(selectedReciter);
 
-  // Load reciters with downloads
-  useEffect(() => {
-    const loadRecitersWithDownloads = async () => {
-      const reciters = await audioDownloadService.getRecitersWithDownloads();
-      setRecitersWithDownloads(reciters);
-    };
-    loadRecitersWithDownloads();
-  }, [downloadedSurahs]); // Refresh when downloads change
-
   const reciterInfo = RECITERS.find(r => r.id === selectedReciter);
   const downloadedCount = downloadedSurahs.length;
   const totalSurahs = 114;
   const totalSize = getTotalQuranSizeEstimate();
+
+  const handleReciterSelect = useCallback((reciterId: string) => {
+    setSelectedReciter(reciterId);
+  }, []);
+
+  const openReciterSelection = useCallback(() => {
+    navigation.navigate('ReciterSelection', {
+      currentReciter: selectedReciter,
+      onSelect: handleReciterSelect,
+    });
+  }, [navigation, selectedReciter, handleReciterSelect]);
 
   const surahList = useMemo(() => {
     return SURAH_INFO.map(surah => {
@@ -174,7 +178,7 @@ export function AudioDownloadScreen() {
           styles.reciterSelector,
           { backgroundColor: theme.cardBackground }
         ]}
-        onPress={() => setShowReciterModal(true)}
+        onPress={openReciterSelection}
       >
         <View style={styles.reciterInfo}>
           <View style={[
@@ -196,77 +200,6 @@ export function AudioDownloadScreen() {
           color={theme.textSecondary} 
         />
       </Pressable>
-
-      {/* Reciter Selection Modal */}
-      <Modal
-        visible={showReciterModal}
-        animationType="slide"
-        presentationStyle="pageSheet"
-        onRequestClose={() => setShowReciterModal(false)}
-      >
-        <View style={[
-          styles.modalContainer,
-          { backgroundColor: theme.backgroundDefault }
-        ]}>
-          <View style={[styles.modalHeader, { borderBottomColor: theme.border }]}>
-            <ThemedText type="h3">Select Reciter</ThemedText>
-            <Pressable onPress={() => setShowReciterModal(false)} style={styles.modalCloseButton}>
-              <Feather name="x" size={24} color={theme.text} />
-            </Pressable>
-          </View>
-          <FlatList
-            data={RECITERS}
-            keyExtractor={item => item.id}
-            contentContainerStyle={styles.reciterListContent}
-            renderItem={({ item: reciter }) => {
-              const hasDownloads = recitersWithDownloads.includes(reciter.id);
-              return (
-                <Pressable
-                  style={({ pressed }) => [
-                    styles.reciterModalOption,
-                    { 
-                      backgroundColor: reciter.id === selectedReciter 
-                        ? `${theme.primary}20`
-                        : 'transparent',
-                      opacity: pressed ? 0.7 : 1,
-                    }
-                  ]}
-                  onPress={() => {
-                    setSelectedReciter(reciter.id);
-                    setShowReciterModal(false);
-                  }}
-                >
-                  <View style={{ flex: 1 }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                      <ThemedText type="body" style={{ fontWeight: reciter.id === selectedReciter ? '600' : '400' }}>
-                        {reciter.nameEn}
-                      </ThemedText>
-                      {hasDownloads && (
-                        <View style={[
-                          styles.downloadedBadge,
-                          { backgroundColor: isDark ? 'rgba(59, 130, 246, 0.3)' : 'rgba(59, 130, 246, 0.15)' }
-                        ]}>
-                          <Feather 
-                            name="download" 
-                            size={12} 
-                            color={isDark ? '#60A5FA' : '#3B82F6'} 
-                          />
-                        </View>
-                      )}
-                    </View>
-                    <ThemedText type="caption" secondary>
-                      {reciter.nameAr} • {reciter.style}
-                    </ThemedText>
-                  </View>
-                  {reciter.id === selectedReciter && (
-                    <Feather name="check" size={20} color={theme.primary} />
-                  )}
-                </Pressable>
-              );
-            }}
-          />
-        </View>
-      </Modal>
 
       {/* Progress Summary */}
       <View style={[
@@ -454,30 +387,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginRight: Spacing.sm,
   },
-  modalContainer: {
-    flex: 1,
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: Spacing.lg,
-    borderBottomWidth: 1,
-  },
-  modalCloseButton: {
-    padding: Spacing.xs,
-  },
-  reciterListContent: {
-    padding: Spacing.md,
-  },
-  reciterModalOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: Spacing.md,
-    borderRadius: BorderRadius.md,
-    marginBottom: Spacing.xs,
-  },
   progressSummary: {
     marginHorizontal: Spacing.lg,
     padding: Spacing.md,
@@ -526,11 +435,6 @@ const styles = StyleSheet.create({
   listContent: {
     paddingHorizontal: Spacing.lg,
     paddingTop: Spacing.sm,
-  },
-  downloadedBadge: {
-    marginLeft: 6,
-    padding: 4,
-    borderRadius: 10,
   },
 });
 

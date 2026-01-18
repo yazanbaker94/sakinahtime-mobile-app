@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -9,10 +9,12 @@ import {
   Platform,
   Alert,
   ActivityIndicator,
+  AppState,
+  AppStateStatus,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '@/hooks/useTheme';
 import { useDhikrOverlaySettings } from '@/hooks/useDhikrOverlaySettings';
 import { DhikrOverlayService } from '@/services/DhikrOverlayService';
@@ -69,16 +71,55 @@ export default function DhikrOverlaySettingsScreen() {
 
   const supportsOverlay = DhikrOverlayService.supportsFloatingOverlay();
 
+  const [pendingEnable, setPendingEnable] = useState(false);
+  const appState = useRef(AppState.currentState);
+
   useEffect(() => {
     checkPermission();
   }, []);
 
-  // Re-check permission when screen comes into focus (user returns from settings)
-  useFocusEffect(
-    useCallback(() => {
-      checkPermission();
-    }, [])
-  );
+  // Listen for app coming back to foreground (from system settings)
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', async (nextAppState: AppStateStatus) => {
+      // App came back to foreground
+      if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
+        console.log('[DhikrOverlay] App came to foreground, checking permission...');
+        const granted = await DhikrOverlayService.checkPermission();
+        console.log('[DhikrOverlay] Permission granted:', granted, 'pendingEnable:', pendingEnable);
+        setHasPermission(granted);
+        
+        // Auto-enable if permission was just granted and we were waiting for it
+        if (granted && pendingEnable) {
+          console.log('[DhikrOverlay] Auto-enabling service...');
+          setPendingEnable(false);
+          // Directly start the service instead of calling handleToggleEnabled
+          // This avoids the race condition with hasPermission state
+          setTimeout(async () => {
+            setIsStartingService(true);
+            await updateEnabled(true);
+            const success = await DhikrOverlayService.startService({
+              intervalMinutes: settings.intervalMinutes,
+              autoDismissSeconds: settings.autoDismissSeconds,
+              quietHours: settings.quietHours,
+              skipDuringPrayer: settings.skipDuringPrayer,
+              enabledCategories: getEnabledCategories(),
+              themeColors: theme,
+            });
+            if (!success) {
+              await updateEnabled(false);
+              Alert.alert('Error', 'Failed to start dhikr reminder service');
+            }
+            setIsStartingService(false);
+          }, 200);
+        }
+      }
+      appState.current = nextAppState;
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, [pendingEnable, settings, theme, getEnabledCategories, updateEnabled]);
 
   // Update service with new theme colors when theme changes
   useEffect(() => {
@@ -110,33 +151,10 @@ export default function DhikrOverlaySettingsScreen() {
   };
 
   const handleRequestPermission = async () => {
-    const granted = await DhikrOverlayService.requestPermission();
-    if (Platform.OS === 'android') {
-      Alert.alert(
-        'Permission Required',
-        'Please enable "Display over other apps" permission for SakinahTime, then return to this screen.',
-        [{ 
-          text: 'OK', 
-          onPress: async () => {
-            // Check permission after a delay and auto-enable if granted
-            setTimeout(async () => {
-              const nowGranted = await DhikrOverlayService.checkPermission();
-              setHasPermission(nowGranted);
-              // Auto-enable the toggle if permission was granted
-              if (nowGranted && !settings.enabled) {
-                handleToggleEnabled(true);
-              }
-            }, 1000);
-          }
-        }]
-      );
-    } else {
-      setHasPermission(granted);
-      // Auto-enable on iOS if permission granted
-      if (granted && !settings.enabled) {
-        handleToggleEnabled(true);
-      }
-    }
+    // Set flag so we know to auto-enable when user returns
+    setPendingEnable(true);
+    // Open the settings
+    await DhikrOverlayService.requestPermission();
   };
 
   const handleToggleEnabled = async (enabled: boolean) => {

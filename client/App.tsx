@@ -10,6 +10,7 @@ import * as SplashScreen from "expo-splash-screen";
 import * as Notifications from "expo-notifications";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { widgetDataService } from "./services/WidgetDataService";
+import audioService from "./services/AudioService";
 
 import { hijriDateService } from "./services/HijriDateService";
 import { moonPhaseService } from "./services/MoonPhaseService";
@@ -124,6 +125,10 @@ export default function App() {
         if (Platform.OS === 'android') {
           syncWidgetDataOnLaunch();
         }
+        
+        // Pre-fetch word timing data for default reciter in background
+        // This ensures word-by-word highlighting is ready when user plays audio
+        audioService.prefetchTimingData();
       } catch (error) {
         console.error('Error loading fonts:', error);
       } finally {

@@ -25,6 +25,7 @@ export const DEFAULT_HIFZ_SETTINGS: HifzSettings = {
   autoAdvance: true,
   showRevisionReminders: true,
   dailyRevisionGoal: 2, // 2 pages per day
+  playWordAudioOnReveal: true, // Play word pronunciation when revealing
 };
 
 // Hide mode is fixed to 'solid' for image-based Mushaf

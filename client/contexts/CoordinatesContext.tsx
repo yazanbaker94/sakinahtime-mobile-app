@@ -1,4 +1,8 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext } from 'react';
+
+// Static import - coords are bundled with the app and available immediately
+// This eliminates the 1-2 second loading delay for verse tap interactions
+import allCoordsData from '../../assets/coordinates/all-pages.json';
 
 interface CoordinatesContextType {
   allCoords: any;
@@ -9,24 +13,12 @@ interface CoordinatesContextType {
 const CoordinatesContext = createContext<CoordinatesContextType | undefined>(undefined);
 
 export function CoordinatesProvider({ children }: { children: React.ReactNode }) {
-  const [allCoords, setAllCoords] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [hasLoaded, setHasLoaded] = useState(false);
+  // Coords are available immediately - no async loading needed
+  const allCoords = allCoordsData;
 
-  const loadCoordinates = async () => {
-    if (hasLoaded || isLoading) return; // Don't load if already loaded or loading
-    
-    setIsLoading(true);
-    try {
-      const data = await import('../../assets/coordinates/all-pages.json');
-      setAllCoords(data.default || data);
-      setHasLoaded(true);
-    } catch (error) {
-      console.error('Error loading coordinates:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // Keep the interface compatible but these are now no-ops
+  const isLoading = false;
+  const loadCoordinates = async () => { };
 
   return (
     <CoordinatesContext.Provider value={{ allCoords, isLoading, loadCoordinates }}>

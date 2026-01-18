@@ -1,10 +1,10 @@
 import React, { useMemo, useEffect, useRef } from "react";
-import { View, StyleSheet, Platform, Pressable, Dimensions } from "react-native";
+import { View, StyleSheet, Platform, Pressable, useWindowDimensions, PixelRatio } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useIsFocused } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { Spacing, BorderRadius } from "@/constants/theme";
@@ -28,16 +28,64 @@ import Animated, {
   interpolate,
 } from "react-native-reanimated";
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const COMPASS_SIZE = Math.min(SCREEN_WIDTH - 80, 340);
-const INNER_RING_SIZE = COMPASS_SIZE - 70;
-const QIBLA_INDICATOR_RADIUS = INNER_RING_SIZE / 2 - 40;
+// Helper to normalize sizes across different pixel densities
+const normalize = (size: number) => {
+  const scale = PixelRatio.get();
+  // Normalize to a baseline of 2x density
+  if (scale < 2) return Math.round(size * 0.85);
+  if (scale > 3) return Math.round(size * 1.1);
+  return size;
+};
+
+// Hook to get responsive compass dimensions
+const useCompassDimensions = () => {
+  const { width, height } = useWindowDimensions();
+  
+  return useMemo(() => {
+    const screenMin = Math.min(width, height);
+    // Use percentage of screen width, with min/max bounds
+    // Account for padding (40px each side = 80px total)
+    const availableWidth = width - 80;
+    // Also consider height - we want compass to fit comfortably
+    const availableHeight = height * 0.42; // ~42% of screen height for compass
+    
+    const compassSize = Math.min(
+      Math.max(availableWidth * 0.85, 220), // Min 220
+      Math.min(availableHeight, 340) // Max 340
+    );
+    
+    const innerRingSize = compassSize * 0.8; // 80% of compass size
+    const qiblaIndicatorRadius = innerRingSize / 2 - normalize(40);
+    
+    return {
+      compassSize,
+      innerRingSize,
+      qiblaIndicatorRadius,
+      // Scaled values for various elements
+      borderWidth: normalize(3),
+      tickMajorLength: normalize(14),
+      tickMinorLength: normalize(10),
+      tickSmallLength: normalize(5),
+      tickMajorWidth: normalize(2.5),
+      tickMinorWidth: normalize(1.5),
+      tickSmallWidth: normalize(1),
+      kaabaSize: normalize(50),
+      centerDotSize: normalize(22),
+      pointerWidth: normalize(11),
+      pointerHeight: normalize(65),
+      cardinalFontSize: normalize(17),
+      cardinalNorthFontSize: normalize(20),
+      cardinalRadius: innerRingSize / 2 - normalize(32),
+    };
+  }, [width, height]);
+};
 
 export default function QiblaScreen() {
   const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
   const { theme, isDark } = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const isFocused = useIsFocused();
   const wasAlignedRef = useRef(false);
   const [showCalibrationHint, setShowCalibrationHint] = React.useState(false);
   const calibrationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -45,6 +93,9 @@ export default function QiblaScreen() {
   const pulseScale = useSharedValue(1);
   const successScale = useSharedValue(1);
   const rotationProgress = useSharedValue(0);
+  
+  // Get responsive dimensions
+  const dims = useCompassDimensions();
 
   const {
     latitude,
@@ -107,6 +158,9 @@ export default function QiblaScreen() {
   const isAligned = direction === "aligned";
 
   useEffect(() => {
+    // Only trigger haptics and animations when screen is focused
+    if (!isFocused) return;
+    
     if (isAligned && !wasAlignedRef.current) {
       if (Platform.OS !== "web") {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -129,7 +183,7 @@ export default function QiblaScreen() {
       pulseScale.value = 1;
     }
     wasAlignedRef.current = isAligned;
-  }, [isAligned, glowOpacity, pulseScale, successScale]);
+  }, [isAligned, isFocused, glowOpacity, pulseScale, successScale]);
 
   const compassRotationStyle = useAnimatedStyle(() => {
     return {
@@ -160,8 +214,8 @@ export default function QiblaScreen() {
 
   const qiblaIndicatorAnimStyle = useAnimatedStyle(() => {
     const angleRad = ((qiblaDirection - 90) * Math.PI) / 180;
-    const x = Math.cos(angleRad) * QIBLA_INDICATOR_RADIUS;
-    const y = Math.sin(angleRad) * QIBLA_INDICATOR_RADIUS;
+    const x = Math.cos(angleRad) * dims.qiblaIndicatorRadius;
+    const y = Math.sin(angleRad) * dims.qiblaIndicatorRadius;
     return {
       transform: [
         { translateX: x }, 
@@ -169,7 +223,7 @@ export default function QiblaScreen() {
         { scale: isAligned ? successScale.value : 1 }
       ],
     };
-  }, [qiblaDirection, isAligned]);
+  }, [qiblaDirection, isAligned, dims.qiblaIndicatorRadius]);
 
   const getDirectionText = () => {
     if (direction === "aligned") return "Facing Qibla";
@@ -308,9 +362,15 @@ export default function QiblaScreen() {
         ) : null}
 
         {/* Premium Compass */}
-        <View style={styles.compassWrapper}>
+        <View style={[styles.compassWrapper, { 
+          width: dims.compassSize + 35,
+          height: dims.compassSize + 35,
+        }]}>
           {/* Animated Glow Rings */}
           <Animated.View style={[styles.glowRing, { 
+            width: dims.compassSize + 28,
+            height: dims.compassSize + 28,
+            borderRadius: (dims.compassSize + 28) / 2,
             borderColor: isAligned ? primaryColor : `${primaryColor}33`,
             shadowColor: primaryColor,
             shadowOffset: { width: 0, height: 0 },
@@ -319,8 +379,11 @@ export default function QiblaScreen() {
           }, glowStyle]} />
           
           <View style={[styles.compassOuter, { 
+            width: dims.compassSize,
+            height: dims.compassSize,
+            borderRadius: dims.compassSize / 2,
             backgroundColor: isDark ? `${theme.backgroundDefault}FA` : `${theme.backgroundDefault}FA`,
-            borderWidth: 3,
+            borderWidth: dims.borderWidth,
             borderColor: `${primaryColor}40`,
             shadowColor: '#000',
             shadowOffset: { width: 0, height: 12 },
@@ -328,18 +391,25 @@ export default function QiblaScreen() {
             shadowRadius: 30,
             elevation: 12,
           }]}>
-            <Animated.View style={[styles.compassInner, compassRotationStyle]}>
+            <Animated.View style={[styles.compassInner, { 
+              width: dims.innerRingSize,
+              height: dims.innerRingSize,
+            }, compassRotationStyle]}>
               <View style={[styles.innerRing, { 
+                width: dims.innerRingSize,
+                height: dims.innerRingSize,
+                borderRadius: dims.innerRingSize / 2,
                 borderColor: `${primaryColor}59`,
-                borderWidth: 2.5,
+                borderWidth: normalize(2.5),
               }]}>
                 {/* Cardinal Directions */}
                 {["N", "E", "S", "W"].map((dir, index) => {
                   const angle = index * 90;
                   const angleRad = ((angle - 90) * Math.PI) / 180;
-                  const radius = INNER_RING_SIZE / 2 - 32;
+                  const radius = dims.cardinalRadius;
                   const x = Math.cos(angleRad) * radius;
                   const y = Math.sin(angleRad) * radius;
+                  const labelSize = 40;
                   
                   return (
                     <View
@@ -347,7 +417,11 @@ export default function QiblaScreen() {
                       style={[
                         styles.directionLabelContainer,
                         {
-                          transform: [{ translateX: x - 20 }, { translateY: y - 20 }],
+                          width: labelSize,
+                          height: labelSize,
+                          // Position from center of innerRing
+                          left: dims.innerRingSize / 2 - labelSize / 2 + x,
+                          top: dims.innerRingSize / 2 - labelSize / 2 + y,
                         },
                       ]}
                     >
@@ -356,7 +430,7 @@ export default function QiblaScreen() {
                         style={{
                           color: dir === "N" ? primaryColor : (isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.4)'),
                           fontWeight: dir === "N" ? '800' : '600',
-                          fontSize: dir === "N" ? 20 : 17,
+                          fontSize: dir === "N" ? dims.cardinalNorthFontSize : dims.cardinalFontSize,
                         }}
                       >
                         {dir}
@@ -370,8 +444,19 @@ export default function QiblaScreen() {
                   const angle = i * 5;
                   const isMajor = i % 18 === 0;
                   const isMinor = i % 9 === 0 && !isMajor;
-                  const tickLength = isMajor ? 14 : isMinor ? 10 : 5;
-                  const tickWidth = isMajor ? 2.5 : isMinor ? 1.5 : 1;
+                  const tickLength = isMajor ? dims.tickMajorLength : isMinor ? dims.tickMinorLength : dims.tickSmallLength;
+                  const tickWidth = isMajor ? dims.tickMajorWidth : isMinor ? dims.tickMinorWidth : dims.tickSmallWidth;
+                  
+                  // Calculate position on the circle edge
+                  const angleRad = ((angle - 90) * Math.PI) / 180;
+                  const outerRadius = dims.innerRingSize / 2 - 4; // Just inside the border
+                  const innerRadius = outerRadius - tickLength;
+                  const centerX = dims.innerRingSize / 2;
+                  const centerY = dims.innerRingSize / 2;
+                  
+                  // Position tick at outer edge, pointing inward
+                  const x = centerX + Math.cos(angleRad) * (outerRadius - tickLength / 2);
+                  const y = centerY + Math.sin(angleRad) * (outerRadius - tickLength / 2);
                   
                   return (
                     <View
@@ -384,10 +469,9 @@ export default function QiblaScreen() {
                           backgroundColor: isMajor 
                             ? (isDark ? '#FFFFFF' : '#000000')
                             : (isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.3)'),
-                          left: INNER_RING_SIZE / 2 - tickWidth / 2,
-                          top: 3,
+                          left: x - tickWidth / 2,
+                          top: y - tickLength / 2,
                           transform: [{ rotate: `${angle}deg` }],
-                          transformOrigin: `${tickWidth / 2}px ${INNER_RING_SIZE / 2 - 3}px`,
                           opacity: isMajor ? 1 : isMinor ? 0.75 : 0.5,
                         },
                       ]}
@@ -403,16 +487,19 @@ export default function QiblaScreen() {
                   ]}
                 >
                   <View style={[styles.kaabaCircle, { 
+                    width: dims.kaabaSize,
+                    height: dims.kaabaSize,
+                    borderRadius: dims.kaabaSize / 2,
                     backgroundColor: isAligned ? primaryColor : goldColor,
                     shadowColor: isAligned ? primaryColor : goldColor,
                     shadowOffset: { width: 0, height: 0 },
                     shadowOpacity: 0.9,
                     shadowRadius: isAligned ? 18 : 10,
                     elevation: 10,
-                    borderWidth: 3,
+                    borderWidth: dims.borderWidth,
                     borderColor: '#FFFFFF',
                   }]}>
-                    <Feather name="home" size={20} color="#FFFFFF" />
+                    <Feather name="home" size={normalize(20)} color="#FFFFFF" />
                   </View>
                 </Animated.View>
               </View>
@@ -421,20 +508,27 @@ export default function QiblaScreen() {
             {/* Center Pointer */}
             <View style={styles.centerPoint}>
               <View style={[styles.pointerUp, { 
+                borderLeftWidth: dims.pointerWidth,
+                borderRightWidth: dims.pointerWidth,
+                borderBottomWidth: dims.pointerHeight,
                 borderBottomColor: isAligned ? primaryColor : goldColor,
                 shadowColor: isAligned ? primaryColor : goldColor,
                 shadowOffset: { width: 0, height: 0 },
                 shadowOpacity: 0.7,
                 shadowRadius: 12,
+                marginBottom: -dims.centerDotSize / 2,
               }]} />
               <View style={[styles.centerDot, { 
+                width: dims.centerDotSize,
+                height: dims.centerDotSize,
+                borderRadius: dims.centerDotSize / 2,
                 backgroundColor: isAligned ? primaryColor : goldColor,
                 shadowColor: isAligned ? primaryColor : goldColor,
                 shadowOffset: { width: 0, height: 0 },
                 shadowOpacity: 0.9,
                 shadowRadius: 10,
                 elevation: 6,
-                borderWidth: 3,
+                borderWidth: dims.borderWidth,
                 borderColor: '#FFFFFF',
               }]} />
             </View>
@@ -613,44 +707,28 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   compassWrapper: {
-    width: COMPASS_SIZE + 35,
-    height: COMPASS_SIZE + 35,
     alignItems: "center",
     justifyContent: "center",
   },
   glowRing: {
     position: "absolute",
-    width: COMPASS_SIZE + 28,
-    height: COMPASS_SIZE + 28,
-    borderRadius: (COMPASS_SIZE + 28) / 2,
     borderWidth: 4,
   },
   compassOuter: {
-    width: COMPASS_SIZE,
-    height: COMPASS_SIZE,
-    borderRadius: COMPASS_SIZE / 2,
     alignItems: "center",
     justifyContent: "center",
     overflow: "hidden",
   },
   compassInner: {
-    width: INNER_RING_SIZE,
-    height: INNER_RING_SIZE,
     alignItems: "center",
     justifyContent: "center",
   },
   innerRing: {
-    width: INNER_RING_SIZE,
-    height: INNER_RING_SIZE,
-    borderRadius: INNER_RING_SIZE / 2,
     alignItems: "center",
     justifyContent: "center",
   },
   directionLabelContainer: {
     position: "absolute",
-    width: 40,
-    height: 40,
-    borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -661,9 +739,6 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   kaabaCircle: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -675,17 +750,10 @@ const styles = StyleSheet.create({
   pointerUp: {
     width: 0,
     height: 0,
-    borderLeftWidth: 11,
-    borderRightWidth: 11,
-    borderBottomWidth: 65,
     borderLeftColor: "transparent",
     borderRightColor: "transparent",
-    marginBottom: -11,
   },
   centerDot: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
   },
   directionIndicator: {
     flexDirection: "row",
