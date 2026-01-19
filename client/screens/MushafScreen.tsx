@@ -38,9 +38,9 @@ import Animated, { SlideInUp, SlideOutDown, SlideInDown, useSharedValue, useAnim
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as FileSystem from "expo-file-system/legacy";
 import { mushafImages } from "@/data/mushaf-images";
+import { surahPages } from "@/data/surah-pages";
 import quranData from "@/data/quran-uthmani.json";
 import { surahs } from "@/data/quran";
-import { surahPages } from "@/data/surah-pages";
 import AudioService from "@/services/AudioService";
 import { useCoordinates } from "@/contexts/CoordinatesContext";
 import { useProgressTracker } from "@/hooks/useProgressTracker";
@@ -182,6 +182,40 @@ function MushafScreenContent() {
   const [showArabicTafsir, setShowArabicTafsir] = useState(false);
   const [showSurahList, setShowSurahList] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
+
+  // Prefetch surah start pages when Mushaf screen is focused for instant page jumps
+  // This runs in the background so pages are pre-decoded before user opens navigation
+  useFocusEffect(
+    useCallback(() => {
+      // Pre-decode all 114 surah start pages in background
+      const surahStartPages = Object.values(surahPages);
+      // Use unique pages only (some surahs share pages at end of Quran)
+      const uniquePages = [...new Set(surahStartPages)];
+
+      // Prefetch all pages aggressively - they're small WebP files (~130KB each)
+      const prefetchAll = async () => {
+        // Prefetch in parallel batches for speed
+        const batchSize = 15;
+        for (let i = 0; i < uniquePages.length; i += batchSize) {
+          const batch = uniquePages.slice(i, i + batchSize);
+          await Promise.all(
+            batch.map(page => {
+              const imageSource = mushafImages[page];
+              if (imageSource) {
+                return Image.prefetch(imageSource).catch(() => { });
+              }
+              return Promise.resolve();
+            })
+          );
+        }
+      };
+
+      // Start prefetching immediately
+      prefetchAll();
+
+      return () => { };
+    }, [])
+  );
   const [bookmarks, setBookmarks] = useState<string[]>([]);
   const [isWordScrubberActive, setIsWordScrubberActive] = useState(false);
   const [wordScrubberTouchPosition, setWordScrubberTouchPosition] = useState<{ x: number; y: number } | undefined>(undefined);
@@ -807,6 +841,20 @@ function MushafScreenContent() {
     buttonOpacity.value = withTiming(1, { duration: 200 });
   };
 
+  // Navigate to page and close overlay - scrolls FIRST, then closes modal to prevent flash
+  const navigateToPageFromOverlay = useCallback((page: number) => {
+    const pageIndex = 604 - page;
+    const offset = pageIndex * layout.screenWidth;
+
+    // Scroll to the page first (while overlay is still shown)
+    flatListRef.current?.scrollToOffset({ offset, animated: false });
+
+    // Then close the overlay after a brief delay to ensure scroll is complete
+    requestAnimationFrame(() => {
+      setShowSurahList(false);
+    });
+  }, [layout.screenWidth]);
+
   const animatedButtonStyle = useAnimatedStyle(() => ({
     opacity: buttonOpacity.value,
   }));
@@ -1418,8 +1466,6 @@ function MushafScreenContent() {
     if (page) {
       const index = 604 - page;
       const offset = index * layout.screenWidth;
-      setShowSurahList(false);
-      setIsNavigating(true);
 
       // Update current page immediately
       setCurrentPage(page);
@@ -1427,13 +1473,12 @@ function MushafScreenContent() {
       // Save the page to recent pages immediately
       saveRecentPage(page);
 
+      // Scroll to page FIRST (while overlay is still visible)
+      flatListRef.current?.scrollToOffset({ offset, animated: false });
+
+      // Then close modal after scroll completes
       requestAnimationFrame(() => {
-        flatListRef.current?.scrollToOffset({ offset, animated: false });
-        setTimeout(() => {
-          setIsNavigating(false);
-          // Ensure page is set correctly after scroll completes
-          setCurrentPage(page);
-        }, 300);
+        setShowSurahList(false);
       });
     }
   };
@@ -1528,15 +1573,7 @@ function MushafScreenContent() {
         )}
         <Pressable
           onPress={() => {
-            const page = item.verse.page;
-            const pageIndex = 604 - page;
-            const offset = pageIndex * layout.screenWidth;
-            setShowSurahList(false);
-            setIsNavigating(true);
-            requestAnimationFrame(() => {
-              flatListRef.current?.scrollToOffset({ offset, animated: false });
-              setTimeout(() => setIsNavigating(false), 300);
-            });
+            navigateToPageFromOverlay(item.verse.page);
           }}
           style={({ pressed }) => [{
             marginLeft: 44,
@@ -2379,13 +2416,7 @@ function MushafScreenContent() {
                     return (
                       <Pressable
                         key={`recent-${page}-${index}`}
-                        onPress={() => {
-                          setShowSurahList(false);
-                          requestAnimationFrame(() => {
-                            const pageIndex = 604 - page;
-                            flatListRef.current?.scrollToOffset({ offset: pageIndex * layout.screenWidth, animated: false });
-                          });
-                        }}
+                        onPress={() => navigateToPageFromOverlay(page)}
                         style={({ pressed }) => [{
                           flexDirection: 'row',
                           alignItems: 'center',
@@ -2739,8 +2770,8 @@ function MushafScreenContent() {
             index,
           })}
           initialNumToRender={3}
-          maxToRenderPerBatch={3}
-          windowSize={5}
+          maxToRenderPerBatch={5}
+          windowSize={11}
           removeClippedSubviews={false}
           updateCellsBatchingPeriod={10}
         />
