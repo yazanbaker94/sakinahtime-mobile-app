@@ -24,11 +24,9 @@ import { useHijriDate } from '../hooks/useHijriDate';
 import { useIslamicEvents } from '../hooks/useIslamicEvents';
 import { useFastingDays } from '../hooks/useFastingDays';
 import { HijriDateHeader } from '../components/HijriDateHeader';
-import { EventCountdown } from '../components/EventCountdown';
 import { CalendarGrid } from '../components/CalendarGrid';
 import { UpcomingEventsList } from '../components/UpcomingEventsList';
 import { FastingDayBadge } from '../components/FastingDayBadge';
-import { FastingNotificationSettings } from '../components/FastingNotificationSettings';
 import { CalendarDay } from '../types/hijri';
 
 interface DayDetailModalProps {
@@ -65,7 +63,7 @@ function DayDetailModal({ visible, day, onClose, isDark, theme }: DayDetailModal
               day: 'numeric',
             })}
           </Text>
-          
+
           {day.event && (
             <View style={[styles.modalSection, { borderTopColor: theme.border }]}>
               <Text style={[styles.modalSectionTitle, { color: theme.textSecondary }]}>Event</Text>
@@ -76,7 +74,7 @@ function DayDetailModal({ visible, day, onClose, isDark, theme }: DayDetailModal
               )}
             </View>
           )}
-          
+
           {day.fastingDay && (
             <View style={[styles.modalSection, { borderTopColor: theme.border }]}>
               <Text style={[styles.modalSectionTitle, { color: theme.textSecondary }]}>Fasting</Text>
@@ -84,7 +82,7 @@ function DayDetailModal({ visible, day, onClose, isDark, theme }: DayDetailModal
               <Text style={[styles.modalDescription, { color: theme.textSecondary }]}>{day.fastingDay.label}</Text>
             </View>
           )}
-          
+
           <TouchableOpacity style={[styles.modalCloseButton, { backgroundColor: theme.primary }]} onPress={onClose}>
             <Text style={styles.modalCloseText}>Close</Text>
           </TouchableOpacity>
@@ -101,7 +99,7 @@ export function HijriCalendarScreen() {
   const { hijriDate, gregorianDate, moonPhase } = useHijriDate();
   const { upcomingEvents, nextMajorEvent } = useIslamicEvents();
   const { todayFasting, isFastingProhibited } = useFastingDays();
-  
+
   const [selectedDay, setSelectedDay] = useState<CalendarDay | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -118,11 +116,11 @@ export function HijriCalendarScreen() {
   return (
     <View style={[styles.container, { backgroundColor: theme.backgroundRoot, paddingTop: insets.top }]}>
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={theme.backgroundRoot} />
-      
+
       {/* Header with Back Button */}
       <View style={[styles.header, { backgroundColor: theme.backgroundRoot }]}>
-        <Pressable 
-          style={[styles.backButton, { backgroundColor: theme.backgroundDefault }]} 
+        <Pressable
+          style={[styles.backButton, { backgroundColor: theme.backgroundDefault }]}
           onPress={() => navigation.goBack()}
         >
           <Feather name="arrow-left" size={24} color={theme.primary} />
@@ -136,35 +134,14 @@ export function HijriCalendarScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Hijri Date Header */}
+        {/* Hijri Date Header with integrated fasting status and event countdown */}
         <HijriDateHeader
           hijriDate={hijriDate}
           gregorianDate={gregorianDate}
           moonPhase={moonPhase}
+          fastingInfo={{ todayFasting, isFastingProhibited }}
+          nextEvent={nextMajorEvent}
         />
-
-        {/* Today's Fasting Status */}
-        {todayFasting && !isFastingProhibited && (
-          <View style={[styles.fastingBanner, { backgroundColor: isDark ? 'rgba(59, 130, 246, 0.2)' : '#DBEAFE' }]}>
-            <Text style={[styles.fastingText, { color: isDark ? '#60A5FA' : '#1D4ED8' }]}>Today is a recommended fasting day</Text>
-            <FastingDayBadge type={todayFasting.type} isDark={isDark} />
-          </View>
-        )}
-        
-        {isFastingProhibited && (
-          <View style={[styles.prohibitedBanner, { backgroundColor: isDark ? 'rgba(239, 68, 68, 0.2)' : '#FEE2E2' }]}>
-            <Text style={[styles.prohibitedText, { color: isDark ? '#F87171' : '#DC2626' }]}>
-              ⚠️ Fasting is prohibited today (Eid/Tashreeq)
-            </Text>
-          </View>
-        )}
-
-        {/* Next Major Event Countdown */}
-        {nextMajorEvent && (
-          <View style={styles.section}>
-            <EventCountdown event={nextMajorEvent} />
-          </View>
-        )}
 
         {/* Calendar Grid */}
         <View style={styles.section}>
@@ -175,14 +152,8 @@ export function HijriCalendarScreen() {
           />
         </View>
 
-        {/* Upcoming Events List */}
         <View style={styles.section}>
           <UpcomingEventsList events={upcomingEvents} limit={5} />
-        </View>
-
-        {/* Fasting Notification Settings */}
-        <View style={styles.section}>
-          <FastingNotificationSettings />
         </View>
       </ScrollView>
 

@@ -25,11 +25,11 @@ import { useIqamaSettings } from "@/hooks/useIqamaSettings";
 import { usePrayerAdjustments, applyAdjustment } from "@/hooks/usePrayerAdjustments";
 import { usePrayerLog } from "@/hooks/usePrayerLog";
 import { OfflineIndicator } from "@/components/OfflineIndicator";
-import { PrayerStatusIndicator, getNextStatus } from "@/components/PrayerStatusIndicator";
+import { PrayerStatusIndicator } from "@/components/PrayerStatusIndicator";
 import { StreakCard } from "@/components/StreakCard";
 import { LocationIndicator } from "@/components/LocationIndicator";
 import { Feather } from "@expo/vector-icons";
-import { PrayerName } from "@/types/prayerLog";
+import { PrayerName, PrayerStatus } from "@/types/prayerLog";
 
 const PRAYERS = [
   { key: "Fajr", nameEn: "Fajr", nameAr: "الفجر", icon: "sunrise" },
@@ -160,8 +160,10 @@ export default function PrayerTimesScreen() {
     return () => clearInterval(interval);
   }, [prayerData?.timings]);
 
+  // Schedule prayer alarms when notifications OR azan is enabled
+  // This fixes the first-install azan issue: azan defaults to true, notifications to false
   useEffect(() => {
-    if (prayerData?.timings && notificationSettings.enabled) {
+    if (prayerData?.timings && (notificationSettings.enabled || azanSettings.enabled)) {
       // Apply adjustments to prayer times before scheduling
       const adjustedTimings = {
         ...prayerData.timings,
@@ -171,11 +173,11 @@ export default function PrayerTimesScreen() {
         Maghrib: applyAdjustment(prayerData.timings.Maghrib, prayerAdjustments.Maghrib),
         Isha: applyAdjustment(prayerData.timings.Isha, prayerAdjustments.Isha),
       };
-      
+
       schedulePrayerNotifications(adjustedTimings, azanSettings.enabled);
     }
   }, [
-    prayerData?.timings, 
+    prayerData?.timings,
     notificationSettings.enabled,
     notificationSettings.prayers.Fajr,
     notificationSettings.prayers.Dhuhr,
@@ -202,7 +204,7 @@ export default function PrayerTimesScreen() {
         Maghrib: applyAdjustment(prayerData.timings.Maghrib, prayerAdjustments.Maghrib),
         Isha: applyAdjustment(prayerData.timings.Isha, prayerAdjustments.Isha),
       };
-      
+
       scheduleIqamaNotifications(adjustedTimings, iqamaSettings);
     }
   }, [
@@ -233,7 +235,7 @@ export default function PrayerTimesScreen() {
         Maghrib: applyAdjustment(prayerData.timings.Maghrib, prayerAdjustments.Maghrib),
         Isha: applyAdjustment(prayerData.timings.Isha, prayerAdjustments.Isha),
       };
-      
+
       scheduleMissedPrayerReminders(
         adjustedTimings,
         missedReminderDelayMinutes,
@@ -393,9 +395,9 @@ export default function PrayerTimesScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Offline indicator when using cached data */}
-        <OfflineIndicator 
-          isOffline={isOffline || isUsingCache} 
-          lastSync={cacheLastSync} 
+        <OfflineIndicator
+          isOffline={isOffline || isUsingCache}
+          lastSync={cacheLastSync}
         />
 
         {nextPrayer ? (
@@ -448,11 +450,11 @@ export default function PrayerTimesScreen() {
                   </ThemedText>
                 </View>
               </View>
-              
+
               {/* Metadata - compact row with calendar and location */}
               <View style={styles.metadataRow}>
                 {prayerData?.date?.hijri && (
-                  <Pressable 
+                  <Pressable
                     style={styles.compactButton}
                     onPress={() => navigation.navigate('HijriCalendar')}
                   >
@@ -466,7 +468,7 @@ export default function PrayerTimesScreen() {
                 <LocationIndicator variant="card" />
               </View>
             </View>
-            
+
             {/* Compact Countdown */}
             <View style={styles.countdownCompact}>
               <View style={styles.countdownItem}>
@@ -514,16 +516,15 @@ export default function PrayerTimesScreen() {
             const adjustment = prayerAdjustments[prayer.key as keyof typeof prayerAdjustments] || 0;
             const adjustedTime = adjustment !== 0 ? applyAdjustment(originalTime, adjustment) : originalTime;
             const displayTime = adjustedTime;
-            
+
             const isPast = isPrayerPast(originalTime);
             const isNext = nextPrayer?.name === prayer.nameEn;
             const prayerStatus = getPrayerStatus(prayer.key as PrayerName);
 
-            const handleStatusToggle = () => {
-              const nextStatus = getNextStatus(prayerStatus);
-              markPrayer(prayer.key as PrayerName, nextStatus, originalTime);
+            const handleStatusChange = (newStatus: PrayerStatus) => {
+              markPrayer(prayer.key as PrayerName, newStatus, originalTime);
               // Cancel the missed prayer reminder if user marks the prayer
-              if (nextStatus !== 'unmarked' && missedReminderEnabled) {
+              if (newStatus !== 'unmarked' && missedReminderEnabled) {
                 cancelMissedPrayerReminder(prayer.key as PrayerName);
               }
             };
@@ -534,7 +535,7 @@ export default function PrayerTimesScreen() {
                 style={[
                   styles.prayerCard,
                   {
-                    backgroundColor: isNext 
+                    backgroundColor: isNext
                       ? (isDark ? `${theme.primary}20` : theme.cardBackground)
                       : (isDark ? theme.cardBackground : theme.cardBackground),
                     opacity: isPast && !isNext ? 0.6 : 1,
@@ -549,11 +550,11 @@ export default function PrayerTimesScreen() {
                 ]}
               >
                 {isNext && (
-                  <View style={[styles.activePrayerIndicator, { 
-                    backgroundColor: theme.primary 
+                  <View style={[styles.activePrayerIndicator, {
+                    backgroundColor: theme.primary
                   }]} />
                 )}
-                
+
                 <View style={styles.prayerCardLeft}>
                   <View
                     style={[
@@ -584,7 +585,7 @@ export default function PrayerTimesScreen() {
                 </View>
                 <View style={styles.prayerCardRight}>
                   <View style={styles.prayerTimeContainer}>
-                    <ThemedText type="h3" style={{ 
+                    <ThemedText type="h3" style={{
                       color: isNext ? theme.primary : theme.text,
                       fontWeight: '700',
                       fontSize: 22,
@@ -593,7 +594,7 @@ export default function PrayerTimesScreen() {
                       {formatTime(displayTime)}
                     </ThemedText>
                     {adjustment !== 0 && (
-                      <ThemedText type="caption" style={{ 
+                      <ThemedText type="caption" style={{
                         color: adjustment > 0 ? theme.primary : theme.gold,
                         fontSize: 10,
                         fontWeight: '600',
@@ -607,8 +608,8 @@ export default function PrayerTimesScreen() {
                     <View style={styles.statusIndicatorContainer}>
                       <PrayerStatusIndicator
                         status={prayerStatus}
-                        onPress={handleStatusToggle}
-                        size="medium"
+                        onStatusChange={handleStatusChange}
+                        size="compact"
                       />
                     </View>
                   )}

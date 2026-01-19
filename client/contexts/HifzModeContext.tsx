@@ -19,6 +19,7 @@ import {
   DEFAULT_HIFZ_SETTINGS,
 } from '../constants/hifz';
 import AudioService from '../services/AudioService';
+import wordAudioService from '../services/WordAudioService';
 
 interface HifzModeContextValue {
   // State
@@ -35,12 +36,12 @@ interface HifzModeContextValue {
   isLooping: boolean;
   isPaused: boolean;
   savedLoops: SavedLoop[];
-  
+
   // Mode control
   enterHifzMode: () => void;
   exitHifzMode: () => void;
   toggleHifzMode: () => void;
-  
+
   // Verse reveal/hide
   revealVerse: (verseKey: VerseKey) => void;
   hideVerse: (verseKey: VerseKey) => void;
@@ -49,14 +50,14 @@ interface HifzModeContextValue {
   isVerseRevealed: (verseKey: VerseKey) => boolean;
   revealAll: () => void;
   hideAll: () => void;
-  
+
   // Word reveal/hide (for word-by-word mode)
   revealWord: (wordKey: WordKey) => void;
   hideWord: (wordKey: WordKey) => void;
   isWordRevealed: (wordKey: WordKey) => boolean;
   revealNextWord: (verseKey: VerseKey, totalWords: number) => void;
   getRevealedWordCount: (verseKey: VerseKey) => number;
-  
+
   // Settings
   updateSettings: (newSettings: Partial<HifzSettings>) => Promise<void>;
   setHideMode: (mode: HideMode) => void;
@@ -64,23 +65,23 @@ interface HifzModeContextValue {
   setRepeatCount: (count: number) => void;
   setPauseBetweenRepeats: (pause: number) => void;
   setPlaybackSpeed: (speed: number) => void;
-  
+
   // Loop control
   setLoopStart: (verseKey: VerseKey | null) => void;
   setLoopEnd: (verseKey: VerseKey | null) => void;
   clearLoop: () => void;
   setLoopRange: (start: VerseKey, end: VerseKey) => void;
-  
+
   // Saved loops
   saveCurrentLoop: (name: string) => Promise<void>;
   deleteLoop: (loopId: string) => Promise<void>;
   loadLoop: (loop: SavedLoop) => void;
-  
+
   // Repeat control
   setCurrentRepeat: (repeat: number) => void;
   incrementRepeat: () => void;
   resetRepeat: () => void;
-  
+
   // Playback state
   setIsLooping: (looping: boolean) => void;
   setIsPaused: (paused: boolean) => void;
@@ -99,11 +100,11 @@ export function HifzModeProvider({ children }: HifzModeProviderProps) {
   const [revealedVerses, setRevealedVerses] = useState<Set<VerseKey>>(new Set());
   const [revealedWords, setRevealedWords] = useState<Set<WordKey>>(new Set());
   const [revealCounter, setRevealCounter] = useState(0); // Trigger re-renders
-  
+
   // Repeat state
   const [currentRepeat, setCurrentRepeat] = useState(0);
   const [totalRepeats, setTotalRepeats] = useState(0);
-  
+
   // Loop state
   const [loopStart, setLoopStart] = useState<VerseKey | null>(null);
   const [loopEnd, setLoopEnd] = useState<VerseKey | null>(null);
@@ -247,6 +248,20 @@ export function HifzModeProvider({ children }: HifzModeProviderProps) {
     });
     setRevealCounter(c => c + 1);
 
+    // Play word audio if enabled
+    if (settings.playWordAudioOnReveal) {
+      // wordKey format: "surah:ayah:wordIndex" (e.g., "1:1:0")
+      const parts = wordKey.split(':');
+      if (parts.length >= 3) {
+        const surah = parseInt(parts[0], 10);
+        const ayah = parseInt(parts[1], 10);
+        const wordIndex = parseInt(parts[2], 10) + 1; // API is 1-indexed
+        if (!isNaN(surah) && !isNaN(ayah) && !isNaN(wordIndex)) {
+          wordAudioService.playWord(surah, ayah, wordIndex);
+        }
+      }
+    }
+
     // Auto-hide after delay if configured
     if (settings.autoHideDelay > 0) {
       setTimeout(() => {
@@ -258,7 +273,7 @@ export function HifzModeProvider({ children }: HifzModeProviderProps) {
         setRevealCounter(c => c + 1);
       }, settings.autoHideDelay);
     }
-  }, [settings.autoHideDelay]);
+  }, [settings.autoHideDelay, settings.playWordAudioOnReveal]);
 
   const hideWord = useCallback((wordKey: WordKey) => {
     setRevealedWords(prev => {
@@ -341,7 +356,7 @@ export function HifzModeProvider({ children }: HifzModeProviderProps) {
   // Saved loops management
   const saveCurrentLoop = useCallback(async (name: string) => {
     if (!loopStart || !loopEnd) return;
-    
+
     const newLoop: SavedLoop = {
       id: `loop_${Date.now()}`,
       name,
@@ -349,7 +364,7 @@ export function HifzModeProvider({ children }: HifzModeProviderProps) {
       endVerse: loopEnd,
       createdAt: Date.now(),
     };
-    
+
     const updated = [...savedLoops, newLoop];
     setSavedLoops(updated);
     await saveSavedLoops(updated);
@@ -390,12 +405,12 @@ export function HifzModeProvider({ children }: HifzModeProviderProps) {
     isLooping,
     isPaused,
     savedLoops,
-    
+
     // Mode control
     enterHifzMode,
     exitHifzMode,
     toggleHifzMode,
-    
+
     // Verse reveal/hide
     revealVerse,
     hideVerse,
@@ -404,14 +419,14 @@ export function HifzModeProvider({ children }: HifzModeProviderProps) {
     isVerseRevealed,
     revealAll,
     hideAll,
-    
+
     // Word reveal/hide
     revealWord,
     hideWord,
     isWordRevealed,
     revealNextWord,
     getRevealedWordCount,
-    
+
     // Settings
     updateSettings,
     setHideMode,
@@ -419,23 +434,23 @@ export function HifzModeProvider({ children }: HifzModeProviderProps) {
     setRepeatCount,
     setPauseBetweenRepeats,
     setPlaybackSpeed,
-    
+
     // Loop control
     setLoopStart,
     setLoopEnd,
     clearLoop,
     setLoopRange,
-    
+
     // Saved loops
     saveCurrentLoop,
     deleteLoop,
     loadLoop,
-    
+
     // Repeat control
     setCurrentRepeat,
     incrementRepeat,
     resetRepeat,
-    
+
     // Playback state
     setIsLooping,
     setIsPaused,

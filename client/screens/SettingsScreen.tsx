@@ -36,7 +36,7 @@ export default function SettingsScreen() {
       >
         {/* Appearance Section */}
         <View style={styles.section}>
-          <View style={[styles.card, { 
+          <View style={[styles.card, {
             backgroundColor: isDark ? `${theme.primary}33` : theme.cardBackground,
             elevation: isDark ? 0 : 3,
             shadowOpacity: isDark ? 0 : 0.08,
@@ -62,7 +62,7 @@ export default function SettingsScreen() {
 
         {/* Notifications Section */}
         <View style={styles.section}>
-          <View style={[styles.card, { 
+          <View style={[styles.card, {
             backgroundColor: isDark ? `${theme.primary}33` : theme.cardBackground,
             elevation: isDark ? 0 : 3,
             shadowOpacity: isDark ? 0 : 0.08,
@@ -85,10 +85,10 @@ export default function SettingsScreen() {
                 </View>
                 <View style={styles.settingText}>
                   <ThemedText type="body" style={{ fontWeight: '600' }}>
-                    Prayer Notifications
+                    Prayer & Fasting
                   </ThemedText>
                   <ThemedText type="caption" secondary>
-                    {notificationSettings.enabled ? "Enabled" : "Disabled"}
+                    Notifications, azan, and reminders
                   </ThemedText>
                 </View>
               </View>
@@ -99,7 +99,7 @@ export default function SettingsScreen() {
 
         {/* Storage & Downloads Section */}
         <View style={styles.section}>
-          <View style={[styles.card, { 
+          <View style={[styles.card, {
             backgroundColor: isDark ? `${theme.primary}33` : theme.cardBackground,
             elevation: isDark ? 0 : 3,
             shadowOpacity: isDark ? 0 : 0.08,
@@ -136,7 +136,7 @@ export default function SettingsScreen() {
 
         {/* Word by Word Settings Section */}
         <View style={styles.section}>
-          <View style={[styles.card, { 
+          <View style={[styles.card, {
             backgroundColor: isDark ? `${theme.primary}33` : theme.cardBackground,
             elevation: isDark ? 0 : 3,
             shadowOpacity: isDark ? 0 : 0.08,
@@ -173,7 +173,7 @@ export default function SettingsScreen() {
 
         {/* Dhikr Reminders Section */}
         <View style={styles.section}>
-          <View style={[styles.card, { 
+          <View style={[styles.card, {
             backgroundColor: isDark ? `${theme.primary}33` : theme.cardBackground,
             elevation: isDark ? 0 : 3,
             shadowOpacity: isDark ? 0 : 0.08,
@@ -210,7 +210,7 @@ export default function SettingsScreen() {
 
         {/* Support Section */}
         <View style={styles.section}>
-          <View style={[styles.card, { 
+          <View style={[styles.card, {
             backgroundColor: isDark ? `${theme.primary}33` : theme.cardBackground,
             elevation: isDark ? 0 : 3,
             shadowOpacity: isDark ? 0 : 0.08,

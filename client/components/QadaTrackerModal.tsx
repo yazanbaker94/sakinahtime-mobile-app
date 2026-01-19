@@ -12,7 +12,9 @@ import {
   Pressable,
   ScrollView,
   TextInput,
+  ActivityIndicator,
 } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { Feather } from '@expo/vector-icons';
 import { ThemedText } from './ThemedText';
 import { ThemedView } from './ThemedView';
@@ -47,12 +49,14 @@ export function QadaTrackerModal({ visible, onClose }: QadaTrackerModalProps) {
   };
 
   const handleIncrement = async (prayer: PrayerName) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     if (qadaCounts) {
       await adjustQadaCount(prayer, qadaCounts[prayer] + 1);
     }
   };
 
   const handleDecrement = async (prayer: PrayerName) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     if (qadaCounts && qadaCounts[prayer] > 0) {
       await adjustQadaCount(prayer, qadaCounts[prayer] - 1);
     }
@@ -113,6 +117,17 @@ export function QadaTrackerModal({ visible, onClose }: QadaTrackerModalProps) {
             </ThemedText>
             <ThemedText type="body" secondary>
               Total Qada prayers remaining
+            </ThemedText>
+          </View>
+
+          {/* Hint banner */}
+          <View style={[
+            styles.hintBanner,
+            { backgroundColor: isDark ? 'rgba(59, 130, 246, 0.1)' : 'rgba(59, 130, 246, 0.08)' }
+          ]}>
+            <Feather name="info" size={14} color="#3B82F6" />
+            <ThemedText type="caption" style={{ color: '#3B82F6', flex: 1, marginLeft: 8 }}>
+              Tap the count number on each prayer to edit it directly
             </ThemedText>
           </View>
 
@@ -178,10 +193,17 @@ export function QadaTrackerModal({ visible, onClose }: QadaTrackerModalProps) {
                       <>
                         <Pressable
                           onPress={() => handleDecrement(prayer)}
-                          style={[styles.controlButton, { opacity: count === 0 ? 0.3 : 1 }]}
-                          disabled={count === 0}
+                          disabled={count === 0 || loading}
+                          style={({ pressed }) => [
+                            styles.controlButton,
+                            {
+                              opacity: count === 0 ? 0.3 : 1,
+                              backgroundColor: pressed ? 'rgba(239, 68, 68, 0.3)' : 'rgba(128, 128, 128, 0.2)',
+                              transform: [{ scale: pressed ? 0.9 : 1 }],
+                            }
+                          ]}
                         >
-                          <Feather name="minus" size={18} color={isDark ? '#fff' : '#000'} />
+                          <Feather name="minus" size={18} color="#EF4444" />
                         </Pressable>
 
                         <Pressable onPress={() => handleStartEdit(prayer)}>
@@ -190,8 +212,18 @@ export function QadaTrackerModal({ visible, onClose }: QadaTrackerModalProps) {
                           </ThemedText>
                         </Pressable>
 
-                        <Pressable onPress={() => handleIncrement(prayer)} style={styles.controlButton}>
-                          <Feather name="plus" size={18} color={isDark ? '#fff' : '#000'} />
+                        <Pressable
+                          onPress={() => handleIncrement(prayer)}
+                          disabled={loading}
+                          style={({ pressed }) => [
+                            styles.controlButton,
+                            {
+                              backgroundColor: pressed ? 'rgba(16, 185, 129, 0.3)' : 'rgba(128, 128, 128, 0.2)',
+                              transform: [{ scale: pressed ? 0.9 : 1 }],
+                            }
+                          ]}
+                        >
+                          <Feather name="plus" size={18} color="#10B981" />
                         </Pressable>
                       </>
                     )}
@@ -230,15 +262,15 @@ const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
   },
   modalContainer: {
+    flex: 1,
     borderTopLeftRadius: BorderRadius['2xl'],
     borderTopRightRadius: BorderRadius['2xl'],
     paddingTop: Spacing.lg,
     paddingHorizontal: Spacing.lg,
     paddingBottom: Spacing['2xl'],
-    maxHeight: '85%',
+    marginTop: 60, // Leave space at top for status bar feel
   },
   header: {
     flexDirection: 'row',
@@ -345,6 +377,13 @@ const styles = StyleSheet.create({
   infoText: {
     flex: 1,
     lineHeight: 18,
+  },
+  hintBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: Spacing.md,
+    borderRadius: BorderRadius.lg,
+    marginBottom: Spacing.md,
   },
 });
 

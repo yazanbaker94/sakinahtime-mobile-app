@@ -7,6 +7,7 @@ import MushafScreen from "@/screens/MushafScreen";
 import ProgressScreen from "@/screens/ProgressScreen";
 import HifzProgressScreen from "@/screens/HifzProgressScreen";
 import PrayerStatsScreen from "@/screens/PrayerStatsScreen";
+import QadaTrackerScreen from "@/screens/QadaTrackerScreen";
 import { HijriCalendarScreen } from "@/screens/HijriCalendarScreen";
 import { StorageManagementScreen } from "@/screens/StorageManagementScreen";
 import { AudioDownloadScreen } from "@/screens/AudioDownloadScreen";
@@ -42,6 +43,7 @@ export type RootStackParamList = {
   Progress: undefined;
   HifzProgress: undefined;
   PrayerStats: undefined;
+  QadaTracker: undefined;
   HijriCalendar: undefined;
   StorageManagement: undefined;
   AudioDownload: undefined;
@@ -115,6 +117,13 @@ export default function RootStackNavigator() {
       <Stack.Screen
         name="PrayerStats"
         component={PrayerStatsScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="QadaTracker"
+        component={QadaTrackerScreen}
         options={{
           headerShown: false,
         }}

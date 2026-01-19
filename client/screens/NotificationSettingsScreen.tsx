@@ -13,6 +13,7 @@ import { useAzan } from "@/hooks/useAzan";
 import { useIqamaSettings, IqamaSettings, IQAMA_DELAY_OPTIONS } from "@/hooks/useIqamaSettings";
 import { useCalculationMethod, CALCULATION_METHODS } from "@/hooks/usePrayerTimes";
 import { usePrayerAdjustments, PrayerAdjustments } from "@/hooks/usePrayerAdjustments";
+import { FastingNotificationSettings } from "@/components/FastingNotificationSettings";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 
@@ -30,7 +31,7 @@ export default function NotificationSettingsScreen() {
   const { isDark, theme } = useTheme();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp>();
-  
+
   const { method: calculationMethod, setMethod: setCalculationMethod } = useCalculationMethod();
   const { adjustments: prayerAdjustments, setAdjustment } = usePrayerAdjustments();
   const {
@@ -102,7 +103,7 @@ export default function NotificationSettingsScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Prayer Notifications */}
-        <View style={[styles.card, { 
+        <View style={[styles.card, {
           backgroundColor: isDark ? theme.cardBackground : theme.cardBackground,
           borderColor: isDark ? theme.border : 'transparent',
           borderWidth: isDark ? 1 : 0,
@@ -148,7 +149,7 @@ export default function NotificationSettingsScreen() {
         </View>
 
         {/* Time Adjustments */}
-        <View style={[styles.card, { 
+        <View style={[styles.card, {
           backgroundColor: isDark ? theme.cardBackground : theme.cardBackground,
           borderColor: isDark ? theme.border : 'transparent',
           borderWidth: isDark ? 1 : 0,
@@ -204,7 +205,7 @@ export default function NotificationSettingsScreen() {
         </View>
 
         {/* Azan Sound */}
-        <View style={[styles.card, { 
+        <View style={[styles.card, {
           backgroundColor: isDark ? theme.cardBackground : theme.cardBackground,
           borderColor: isDark ? theme.border : 'transparent',
           borderWidth: isDark ? 1 : 0,
@@ -233,7 +234,7 @@ export default function NotificationSettingsScreen() {
         </View>
 
         {/* Iqama Reminder */}
-        <View style={[styles.card, { 
+        <View style={[styles.card, {
           backgroundColor: isDark ? theme.cardBackground : theme.cardBackground,
           borderColor: isDark ? theme.border : 'transparent',
           borderWidth: isDark ? 1 : 0,
@@ -329,7 +330,7 @@ export default function NotificationSettingsScreen() {
         </View>
 
         {/* Calculation Method */}
-        <View style={[styles.card, { 
+        <View style={[styles.card, {
           backgroundColor: isDark ? theme.cardBackground : theme.cardBackground,
           borderColor: isDark ? theme.border : 'transparent',
           borderWidth: isDark ? 1 : 0,
@@ -370,6 +371,9 @@ export default function NotificationSettingsScreen() {
             </View>
           )}
         </View>
+
+        {/* Fasting Reminders */}
+        <FastingNotificationSettings />
       </ScrollView>
     </ThemedView>
   );

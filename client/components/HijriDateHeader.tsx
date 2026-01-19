@@ -3,11 +3,13 @@
  * 
  * Displays Hijri date prominently with Arabic/English month names,
  * moon phase indicator, and Gregorian date.
+ * Optionally shows today's fasting status and next major event countdown.
  */
 
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { HijriDate, MoonPhase } from '../types/hijri';
+import { HijriDate, MoonPhase, FastingDay } from '../types/hijri';
+import { EventWithDate } from '../services/IslamicEventsService';
 import { MoonPhaseIndicator } from './MoonPhaseIndicator';
 import { useTheme } from '../hooks/useTheme';
 
@@ -18,6 +20,12 @@ interface HijriDateHeaderProps {
   showGregorian?: boolean;
   showMoonPhase?: boolean;
   compact?: boolean;
+  // New optional props for integrated display
+  fastingInfo?: {
+    todayFasting: FastingDay | null;
+    isFastingProhibited: boolean;
+  };
+  nextEvent?: EventWithDate | null;
 }
 
 export function HijriDateHeader({
@@ -27,9 +35,11 @@ export function HijriDateHeader({
   showGregorian = true,
   showMoonPhase = true,
   compact = false,
+  fastingInfo,
+  nextEvent,
 }: HijriDateHeaderProps) {
   const { isDark, theme } = useTheme();
-  
+
   const gregorianFormatted = gregorianDate.toLocaleDateString('en-US', {
     weekday: compact ? 'short' : 'long',
     year: 'numeric',
@@ -63,27 +73,47 @@ export function HijriDateHeader({
 
   return (
     <View style={[styles.container, { backgroundColor: bgColor }]}>
-      <View style={styles.mainRow}>
-        {showMoonPhase && (
-          <View style={styles.moonContainer}>
-            <MoonPhaseIndicator phase={moonPhase} size="large" showIllumination isDark={isDark} />
-          </View>
-        )}
-        <View style={styles.dateContainer}>
-          <Text style={styles.hijriDay}>{hijriDate.day}</Text>
-          <View style={styles.monthYear}>
-            <Text style={styles.hijriMonth}>{hijriDate.monthNameEn}</Text>
-            <Text style={[styles.hijriYear, { color: secondaryTextColor }]}>{hijriDate.year} AH</Text>
-          </View>
+      {/* Moon on top */}
+      {showMoonPhase && (
+        <View style={styles.moonContainer}>
+          <MoonPhaseIndicator phase={moonPhase} size="medium" isDark={isDark} />
         </View>
-      </View>
-      
-      <Text style={[styles.arabicDate, { color: secondaryTextColor }]}>
-        {hijriDate.day} {hijriDate.monthNameAr} {hijriDate.year} هـ
+      )}
+
+      {/* Hijri date centered */}
+      <Text style={styles.hijriDate}>
+        {hijriDate.day} {hijriDate.monthNameEn} {hijriDate.year} AH
       </Text>
-      
+
+      {/* Gregorian date */}
       {showGregorian && (
         <Text style={[styles.gregorianDate, { color: tertiaryTextColor }]}>{gregorianFormatted}</Text>
+      )}
+
+      {/* Integrated info badges */}
+      {(fastingInfo || nextEvent) && (
+        <View style={styles.infoSection}>
+          {/* Fasting Status */}
+          {fastingInfo?.isFastingProhibited && (
+            <View style={[styles.infoBadge, styles.prohibitedBadge]}>
+              <Text style={styles.infoBadgeText}>⚠️ Fasting prohibited today</Text>
+            </View>
+          )}
+          {fastingInfo?.todayFasting && !fastingInfo.isFastingProhibited && (
+            <View style={[styles.infoBadge, styles.fastingBadge]}>
+              <Text style={styles.infoBadgeText}>🌙 {fastingInfo.todayFasting.label}</Text>
+            </View>
+          )}
+
+          {/* Next Event Countdown */}
+          {nextEvent && nextEvent.daysUntil > 0 && (
+            <View style={[styles.infoBadge, styles.eventBadge]}>
+              <Text style={styles.infoBadgeText}>
+                ⭐ {nextEvent.nameEn} in {nextEvent.daysUntil} {nextEvent.daysUntil === 1 ? 'day' : 'days'}
+              </Text>
+            </View>
+          )}
+        </View>
       )}
     </View>
   );
@@ -93,49 +123,22 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#065F46',
     borderRadius: 16,
-    padding: 20,
+    padding: 16,
     alignItems: 'center',
-  },
-  mainRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
   },
   moonContainer: {
-    marginRight: 20,
-  },
-  dateContainer: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-  },
-  hijriDay: {
-    fontSize: 56,
-    fontWeight: '700',
-    color: '#FFFFFF',
-    marginRight: 12,
-  },
-  monthYear: {
-    justifyContent: 'center',
-  },
-  hijriMonth: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  hijriYear: {
-    fontSize: 16,
-    color: '#A7F3D0',
-    marginTop: 2,
-  },
-  arabicDate: {
-    fontSize: 18,
-    color: '#A7F3D0',
-    fontFamily: 'System',
     marginBottom: 8,
   },
+  hijriDate: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    marginBottom: 4,
+  },
   gregorianDate: {
-    fontSize: 14,
-    color: '#6EE7B7',
+    fontSize: 13,
+    color: 'rgba(255, 255, 255, 0.7)',
+    marginBottom: 4,
   },
   compactContainer: {
     flexDirection: 'row',
@@ -157,5 +160,31 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: '#A7F3D0',
     marginTop: 2,
+  },
+  // Integrated info badges
+  infoSection: {
+    marginTop: 12,
+    width: '100%',
+    gap: 6,
+  },
+  infoBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  fastingBadge: {
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+  },
+  prohibitedBadge: {
+    backgroundColor: 'rgba(239, 68, 68, 0.3)',
+  },
+  eventBadge: {
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+  },
+  infoBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '500',
   },
 });

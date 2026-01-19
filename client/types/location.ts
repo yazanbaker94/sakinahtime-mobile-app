@@ -27,6 +27,7 @@ export const LOCATION_STORAGE_KEYS = {
   LOCATION_MODE: '@sakinah/location_mode',
   MANUAL_LOCATION: '@sakinah/manual_location',
   RECENT_LOCATIONS: '@sakinah/recent_locations',
+  LAST_GPS_LOCATION: '@sakinah/last_gps_location',
 } as const;
 
 export const MAX_RECENT_LOCATIONS = 5;

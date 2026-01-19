@@ -237,7 +237,7 @@ class PrayerLogService {
   ): Promise<PrayerLogData> {
     const data = this.cachedData || await this.loadPrayerLog();
     const record = this.getOrCreateDailyRecord(data, date);
-    
+
     const previousStatus = record.prayers[prayer].status;
 
     // Update prayer entry
@@ -250,21 +250,35 @@ class PrayerLogService {
     // Update perfect day status
     record.isPerfectDay = this.checkPerfectDay(record);
 
-    // Save record
-    data.dailyRecords[date] = record;
+    // Create new object for optimistic update to trigger React re-render
+    const updatedData: PrayerLogData = {
+      ...data,
+      dailyRecords: {
+        ...data.dailyRecords,
+        [date]: { ...record },
+      },
+      qadaCounts: { ...data.qadaCounts },
+    };
 
     // Handle qada count changes
     if (status === 'missed' && previousStatus !== 'missed') {
-      data.qadaCounts[prayer] = Math.max(0, data.qadaCounts[prayer] + 1);
+      updatedData.qadaCounts[prayer] = Math.max(0, data.qadaCounts[prayer] + 1);
     } else if (previousStatus === 'missed' && status !== 'missed') {
-      data.qadaCounts[prayer] = Math.max(0, data.qadaCounts[prayer] - 1);
+      updatedData.qadaCounts[prayer] = Math.max(0, data.qadaCounts[prayer] - 1);
     }
 
     // Update streak
-    this.updateStreak(data);
+    this.updateStreak(updatedData);
 
-    await this.savePrayerLog(data);
-    return data;
+    // Update cache immediately for optimistic UI update
+    this.cachedData = updatedData;
+
+    // Save to storage in the background (don't await)
+    this.savePrayerLog(updatedData).catch(error => {
+      console.error('Failed to save prayer log:', error);
+    });
+
+    return updatedData;
   }
 
   /**
@@ -388,7 +402,7 @@ class PrayerLogService {
    */
   getMonthlyStats(data: PrayerLogData, month: number, year: number): MonthlyStats {
     const daysInMonth = getDaysInMonth(month, year);
-    
+
     let totalPrayed = 0;
     let totalMissed = 0;
     let totalLate = 0;
@@ -438,8 +452,8 @@ class PrayerLogService {
     // Calculate percentages for each prayer
     PRAYER_NAMES.forEach(name => {
       const total = prayerBreakdown[name].prayed + prayerBreakdown[name].missed + prayerBreakdown[name].late;
-      prayerBreakdown[name].percentage = total > 0 
-        ? Math.round((prayerBreakdown[name].prayed / total) * 100) 
+      prayerBreakdown[name].percentage = total > 0
+        ? Math.round((prayerBreakdown[name].prayed / total) * 100)
         : 0;
     });
 
@@ -464,9 +478,16 @@ class PrayerLogService {
    */
   async incrementQada(prayer: PrayerName): Promise<PrayerLogData> {
     const data = this.cachedData || await this.loadPrayerLog();
-    data.qadaCounts[prayer] = data.qadaCounts[prayer] + 1;
-    await this.savePrayerLog(data);
-    return data;
+    // Create new object reference to trigger React re-render
+    const updatedData: PrayerLogData = {
+      ...data,
+      qadaCounts: {
+        ...data.qadaCounts,
+        [prayer]: data.qadaCounts[prayer] + 1,
+      },
+    };
+    await this.savePrayerLog(updatedData);
+    return updatedData;
   }
 
   /**
@@ -474,9 +495,16 @@ class PrayerLogService {
    */
   async decrementQada(prayer: PrayerName): Promise<PrayerLogData> {
     const data = this.cachedData || await this.loadPrayerLog();
-    data.qadaCounts[prayer] = Math.max(0, data.qadaCounts[prayer] - 1);
-    await this.savePrayerLog(data);
-    return data;
+    // Create new object reference to trigger React re-render
+    const updatedData: PrayerLogData = {
+      ...data,
+      qadaCounts: {
+        ...data.qadaCounts,
+        [prayer]: Math.max(0, data.qadaCounts[prayer] - 1),
+      },
+    };
+    await this.savePrayerLog(updatedData);
+    return updatedData;
   }
 
   /**
@@ -484,9 +512,16 @@ class PrayerLogService {
    */
   async setQadaCount(prayer: PrayerName, count: number): Promise<PrayerLogData> {
     const data = this.cachedData || await this.loadPrayerLog();
-    data.qadaCounts[prayer] = Math.max(0, count);
-    await this.savePrayerLog(data);
-    return data;
+    // Create new object reference to trigger React re-render
+    const updatedData: PrayerLogData = {
+      ...data,
+      qadaCounts: {
+        ...data.qadaCounts,
+        [prayer]: Math.max(0, count),
+      },
+    };
+    await this.savePrayerLog(updatedData);
+    return updatedData;
   }
 
   /**

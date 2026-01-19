@@ -73,7 +73,7 @@ export function FastingNotificationSettings({ compact = false }: FastingNotifica
   return (
     <View style={[styles.container, { backgroundColor: theme.cardBackground }]}>
       <Text style={[styles.sectionTitle, { color: theme.text }]}>Fasting Reminders</Text>
-      
+
       {/* Main Toggle */}
       <View style={[styles.settingRow, { borderBottomColor: theme.border }]}>
         <View style={styles.settingInfo}>
@@ -100,7 +100,7 @@ export function FastingNotificationSettings({ compact = false }: FastingNotifica
                 style={[
                   styles.reminderTimeOption,
                   { backgroundColor: theme.backgroundSecondary },
-                  settings.reminderTime === 'evening' && { 
+                  settings.reminderTime === 'evening' && {
                     backgroundColor: `${theme.primary}20`,
                     borderWidth: 2,
                     borderColor: theme.primary,
@@ -121,7 +121,7 @@ export function FastingNotificationSettings({ compact = false }: FastingNotifica
                 style={[
                   styles.reminderTimeOption,
                   { backgroundColor: theme.backgroundSecondary },
-                  settings.reminderTime === 'morning' && { 
+                  settings.reminderTime === 'morning' && {
                     backgroundColor: `${theme.primary}20`,
                     borderWidth: 2,
                     borderColor: theme.primary,
@@ -134,9 +134,9 @@ export function FastingNotificationSettings({ compact = false }: FastingNotifica
                   { color: theme.textSecondary },
                   settings.reminderTime === 'morning' && { color: theme.primary },
                 ]}>
-                  Morning Of
+                  Before Fajr
                 </Text>
-                <Text style={[styles.reminderTimeSubtext, { color: theme.muted }]}>5:00 AM</Text>
+                <Text style={[styles.reminderTimeSubtext, { color: theme.muted }]}>30 min before</Text>
               </TouchableOpacity>
             </View>
           </View>

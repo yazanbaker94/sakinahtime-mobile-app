@@ -10,6 +10,8 @@ import {
   clearManualLocation as clearSavedManualLocation,
   getRecentLocations,
   addRecentLocation,
+  getLastGpsLocation,
+  setLastGpsLocation,
 } from "@/utils/locationStorage";
 
 interface LocationState {
@@ -20,14 +22,14 @@ interface LocationState {
   country: string | null;
   loading: boolean;
   error: string | null;
-  
+
   // GPS-specific
   permission: Location.PermissionResponse | null;
   requestPermission: () => Promise<Location.PermissionResponse>;
   refetch: () => Promise<void>;
   openSettings: () => Promise<void>;
   canAskAgain: boolean;
-  
+
   // Manual location support
   locationMode: LocationMode;
   manualLocation: ManualLocation | null;
@@ -35,7 +37,7 @@ interface LocationState {
   setLocationMode: (mode: LocationMode) => Promise<void>;
   setManualLocation: (location: ManualLocation) => Promise<void>;
   clearManualLocation: () => Promise<void>;
-  
+
   // GPS location (always available for reference)
   gpsLatitude: number | null;
   gpsLongitude: number | null;
@@ -53,12 +55,12 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
     city: null as string | null,
     country: null as string | null,
   });
-  
+
   // Manual location state
   const [locationMode, setLocationModeState] = useState<LocationMode>('gps');
   const [manualLocation, setManualLocationState] = useState<ManualLocation | null>(null);
   const [recentLocations, setRecentLocations] = useState<ManualLocation[]>([]);
-  
+
   // Loading and error state
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -91,19 +93,32 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
     };
   }, [permission?.granted, requestPermission]);
 
-  // Load saved settings on mount
+  // Load saved settings on mount (including cached GPS location)
   useEffect(() => {
     async function loadSavedSettings() {
       try {
-        const [savedMode, savedManual, savedRecent] = await Promise.all([
+        const [savedMode, savedManual, savedRecent, cachedGps] = await Promise.all([
           getLocationMode(),
           getManualLocation(),
           getRecentLocations(),
+          getLastGpsLocation(),
         ]);
-        
+
         setLocationModeState(savedMode);
         setManualLocationState(savedManual);
         setRecentLocations(savedRecent);
+
+        // Restore cached GPS location as fallback
+        if (cachedGps) {
+          console.log('[LocationContext] Loaded cached GPS location:', cachedGps.city);
+          setGpsState({
+            latitude: cachedGps.latitude,
+            longitude: cachedGps.longitude,
+            city: cachedGps.city,
+            country: cachedGps.country,
+          });
+        }
+
         setInitialized(true);
       } catch (err) {
         console.error('Failed to load location settings:', err);
@@ -131,8 +146,8 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
 
       const { latitude, longitude } = location.coords;
 
-      let city = null;
-      let country = null;
+      let city: string | null = null;
+      let country: string | null = null;
 
       try {
         const [geocode] = await Location.reverseGeocodeAsync({ latitude, longitude });
@@ -145,17 +160,33 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
       }
 
       setGpsState({ latitude, longitude, city, country });
+
+      // Cache GPS location for when GPS is unavailable
+      setLastGpsLocation({
+        latitude,
+        longitude,
+        city,
+        country,
+        timestamp: Date.now(),
+      });
+      console.log('[LocationContext] Cached GPS location:', city);
+
       setLoading(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to get location");
+      // Only set error if we don't have cached location to fall back on
+      if (!gpsState.latitude) {
+        setError(err instanceof Error ? err.message : "Failed to get location");
+      } else {
+        console.log('[LocationContext] GPS fetch failed, using cached location');
+      }
       setLoading(false);
     }
-  }, [permission?.granted]);
+  }, [permission?.granted, gpsState.latitude]);
 
   // Fetch GPS when permission granted
   useEffect(() => {
     if (!initialized) return;
-    
+
     if (permission?.granted === true) {
       fetchGpsLocation();
     } else if (permission?.status === "denied" || permission?.status === "undetermined") {
@@ -186,7 +217,7 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
     try {
       await saveLocationMode(mode);
       setLocationModeState(mode);
-      
+
       // If switching to GPS, refetch
       if (mode === 'gps' && permission?.granted) {
         await fetchGpsLocation();
@@ -202,11 +233,11 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
     try {
       await saveManualLocation(location);
       setManualLocationState(location);
-      
+
       // Add to recent locations
       const updated = await addRecentLocation(location);
       setRecentLocations(updated);
-      
+
       // Switch to manual mode
       await saveLocationMode('manual');
       setLocationModeState('manual');
@@ -221,7 +252,7 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
     try {
       await clearSavedManualLocation();
       setManualLocationState(null);
-      
+
       // Switch back to GPS
       await saveLocationMode('gps');
       setLocationModeState('gps');
@@ -234,17 +265,17 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
   // Compute effective location based on mode
   const effectiveLocation = locationMode === 'manual' && manualLocation
     ? {
-        latitude: manualLocation.latitude,
-        longitude: manualLocation.longitude,
-        city: manualLocation.city,
-        country: manualLocation.country,
-      }
+      latitude: manualLocation.latitude,
+      longitude: manualLocation.longitude,
+      city: manualLocation.city,
+      country: manualLocation.country,
+    }
     : {
-        latitude: gpsState.latitude,
-        longitude: gpsState.longitude,
-        city: gpsState.city,
-        country: gpsState.country,
-      };
+      latitude: gpsState.latitude,
+      longitude: gpsState.longitude,
+      city: gpsState.city,
+      country: gpsState.country,
+    };
 
   return (
     <LocationContext.Provider
@@ -256,14 +287,14 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
         country: effectiveLocation.country,
         loading,
         error,
-        
+
         // GPS-specific
         permission,
         requestPermission: handleRequestPermission,
         refetch: fetchGpsLocation,
         openSettings,
         canAskAgain: permission?.canAskAgain ?? true,
-        
+
         // Manual location support
         locationMode,
         manualLocation,
@@ -271,7 +302,7 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
         setLocationMode: handleSetLocationMode,
         setManualLocation: handleSetManualLocation,
         clearManualLocation: handleClearManualLocation,
-        
+
         // GPS location (always available)
         gpsLatitude: gpsState.latitude,
         gpsLongitude: gpsState.longitude,

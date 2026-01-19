@@ -48,18 +48,18 @@ async function setupAndroidChannel() {
   if (Platform.OS === 'android') {
     try {
       console.log('🔊 Setting up Android notification channel with native module');
-      
+
       if (NotificationSoundModule) {
         // Use native module to create channel with proper sound
         const result = await NotificationSoundModule.createNotificationChannel();
         console.log('✅ Native module result:', result);
-        
+
         // Verify channel was created
         const channel = await Notifications.getNotificationChannelAsync('prayer-times');
         console.log('✅ Android notification channel created:', JSON.stringify(channel, null, 2));
       } else {
         console.warn('⚠️ NotificationSoundModule not available, falling back to expo-notifications');
-        
+
         // Fallback to expo-notifications
         try {
           await Notifications.deleteNotificationChannelAsync('prayer-times');
@@ -67,7 +67,7 @@ async function setupAndroidChannel() {
         } catch (e) {
           console.log('No old channel to delete');
         }
-        
+
         await Notifications.setNotificationChannelAsync('prayer-times', {
           name: 'Prayer Times',
           importance: Notifications.AndroidImportance.MAX,
@@ -77,7 +77,7 @@ async function setupAndroidChannel() {
           enableVibrate: true,
           enableLights: true,
         });
-        
+
         const channel = await Notifications.getNotificationChannelAsync('prayer-times');
         console.log('✅ Fallback channel created:', JSON.stringify(channel, null, 2));
       }
@@ -95,7 +95,7 @@ if (Platform.OS === 'android') {
   console.log('🔍 Checking native modules...');
   console.log('📱 PrayerAlarmModule:', PrayerAlarmModule ? '✅ Available' : '❌ Not available');
   console.log('🔊 NotificationSoundModule:', NotificationSoundModule ? '✅ Available' : '❌ Not available');
-  
+
   if (!PrayerAlarmModule) {
     console.error('❌ CRITICAL: PrayerAlarmModule not found! Azan will not play when app is closed.');
   }
@@ -113,11 +113,11 @@ function parseTimeString(timeStr: string): { hours: number; minutes: number } | 
   const cleanTime = timeStr.replace(/\s*\([^)]*\)\s*/g, "").trim();
   const match = cleanTime.match(/^(\d{1,2}):(\d{2})(?:\s*(AM|PM))?$/i);
   if (!match) return null;
-  
+
   let hours = parseInt(match[1], 10);
   const minutes = parseInt(match[2], 10);
   const ampm = match[3];
-  
+
   if (ampm) {
     if (ampm.toUpperCase() === "PM" && hours !== 12) {
       hours += 12;
@@ -125,11 +125,11 @@ function parseTimeString(timeStr: string): { hours: number; minutes: number } | 
       hours = 0;
     }
   }
-  
+
   if (isNaN(hours) || isNaN(minutes) || hours < 0 || hours > 23 || minutes < 0 || minutes > 59) {
     return null;
   }
-  
+
   return { hours, minutes };
 }
 
@@ -159,7 +159,7 @@ export function useNotifications() {
   useEffect(() => {
     loadSettings();
     checkPermission();
-    
+
     // Stop azan when app opens
     if (Platform.OS === 'android' && PrayerAlarmModule) {
       PrayerAlarmModule.stopAzan().catch(() => {
@@ -169,7 +169,7 @@ export function useNotifications() {
         // Ignore errors if iqama isn't playing
       });
     }
-    
+
     // Listen for notifications being received (foreground and background)
     const receivedSubscription = Notifications.addNotificationReceivedListener(notification => {
       console.log('📬 Notification RECEIVED:', {
@@ -179,7 +179,7 @@ export function useNotifications() {
         channelId: (notification.request.content as any).channelId,
         data: notification.request.content.data,
       });
-      
+
       // Trigger azan playback if it's a prayer notification
       if (notification.request.content.data?.prayer) {
         console.log('🕌 Prayer notification received, azan should play via useAzan hook');
@@ -192,7 +192,7 @@ export function useNotifications() {
         title: response.notification.request.content.title,
         data: response.notification.request.content.data,
       });
-      
+
       // Stop azan when notification is tapped
       if (Platform.OS === 'android' && PrayerAlarmModule) {
         console.log('🛑 Stopping azan/iqama (notification tapped)');
@@ -249,10 +249,10 @@ export function useNotifications() {
       const granted = await requestPermission();
       if (!granted) return;
     }
-    
+
     const newSettings = { ...settings, enabled };
     await saveSettings(newSettings);
-    
+
     if (!enabled) {
       await cancelAllNotifications();
     }
@@ -271,12 +271,17 @@ export function useNotifications() {
   };
 
   const schedulePrayerNotifications = useCallback(async (timings: PrayerTimes, azanEnabled: boolean = false) => {
-    if (!settings.enabled || permission !== "granted") {
-      console.log('⚠️ Notifications disabled or permission not granted:', { enabled: settings.enabled, permission });
+    // For expo notifications, we need both enabled and permission
+    const canScheduleExpoNotifications = settings.enabled && permission === "granted";
+
+    // For native azan alarms, we only need azanEnabled (works independently of expo notifications)
+    // Native PrayerAlarmModule uses Android AlarmManager which doesn't require notification permission
+    if (!canScheduleExpoNotifications && !azanEnabled) {
+      console.log('⚠️ Neither notifications enabled nor azan enabled, skipping scheduling');
       return;
     }
 
-    console.log('📅 Scheduling prayer notifications...', { azanEnabled });
+    console.log('📅 Scheduling prayer alarms...', { azanEnabled, notificationsEnabled: settings.enabled });
 
     // Include current date in schedule key so alarms are rescheduled each day
     // and when phone time changes
@@ -287,12 +292,12 @@ export function useNotifications() {
       prayers: settings.prayers,
       azanEnabled,
     });
-    
+
     if (lastScheduledRef.current === scheduleKey && !shouldForceReschedule()) {
       console.log('⏭️ Skipping - already scheduled with same settings for today');
       return;
     }
-    
+
     lastScheduledRef.current = scheduleKey;
     lastScheduleTimeRef.current = Date.now();
     console.log('🔄 Rescheduling alarms (new schedule key)');
@@ -301,7 +306,7 @@ export function useNotifications() {
     if (Platform.OS === 'android') {
       console.log('🤖 Android detected');
       console.log('📱 PrayerAlarmModule available?', !!PrayerAlarmModule);
-      
+
       if (PrayerAlarmModule) {
         console.log('✅ Using native PrayerAlarmModule');
         try {
@@ -342,7 +347,7 @@ export function useNotifications() {
           const result = await PrayerAlarmModule.schedulePrayerAlarms(prayerAlarms, azanEnabled);
           console.log('✅ Native alarms scheduled:', result);
           console.log('🔔 Scheduled alarms:', prayerAlarms.map(a => `${a.name} at ${new Date(a.timestamp).toLocaleString()}`));
-          
+
           // Native alarm will show notification, no need for expo notifications
         } catch (error) {
           console.error('❌ Failed to schedule native alarms:', error);
@@ -421,26 +426,26 @@ export function useNotifications() {
       console.log('🚀 Starting test notification...');
       console.log('📱 Platform:', Platform.OS);
       console.log('🔊 Azan enabled:', azanEnabled);
-      
+
       // Use native alarm module for Android (works even when app is closed)
       if (Platform.OS === 'android' && PrayerAlarmModule) {
         console.log('🤖 Android: Using native alarm module for test');
-        
+
         // Schedule alarm for 10 seconds from now
         const testTime = Date.now() + 10000;
-        
+
         const result = await PrayerAlarmModule.schedulePrayerAlarms(
           [{ name: 'Test', timestamp: testTime }],
           azanEnabled
         );
-        
+
         console.log('✅ Native test alarm scheduled:', result);
         console.log('⏰ Will trigger in 10 seconds');
-        
+
         // Native alarm will show notification, no need for expo notification
         return;
       }
-      
+
       // iOS or fallback: use expo notifications
       const notificationContent: any = {
         title: `Test Prayer - الاختبار`,
@@ -470,7 +475,7 @@ export function useNotifications() {
           seconds: 10,
         },
       });
-      
+
       console.log('✅ Test notification scheduled successfully:', {
         id: notificationId,
         platform: Platform.OS,
@@ -533,9 +538,9 @@ export function useNotifications() {
     lastIqamaScheduledRef.current = iqamaScheduleKey;
     lastIqamaScheduleTimeRef.current = Date.now();
 
-    console.log('📅 Scheduling iqama notifications...', { 
+    console.log('📅 Scheduling iqama notifications...', {
       delayMinutes: iqamaSettings.delayMinutes,
-      prayers: iqamaSettings.prayers 
+      prayers: iqamaSettings.prayers
     });
 
     if (Platform.OS === 'android' && PrayerAlarmModule) {
@@ -564,7 +569,7 @@ export function useNotifications() {
           const { hours, minutes } = parsedTime;
           const prayerDate = new Date(now);
           prayerDate.setHours(hours, minutes, 0, 0);
-          
+
           // Calculate iqama time (prayer time + delay)
           const iqamaDate = new Date(prayerDate.getTime() + delayMs);
 
@@ -580,11 +585,11 @@ export function useNotifications() {
         }
 
         const result = await PrayerAlarmModule.scheduleIqamaAlarms(
-          iqamaAlarms, 
+          iqamaAlarms,
           iqamaSettings.delayMinutes
         );
         console.log('✅ Iqama alarms scheduled:', result);
-        console.log('🔔 Scheduled iqama alarms:', iqamaAlarms.map(a => 
+        console.log('🔔 Scheduled iqama alarms:', iqamaAlarms.map(a =>
           `${a.name} at ${new Date(a.timestamp + iqamaSettings.delayMinutes * 60000).toLocaleString()}`
         ));
       } catch (error) {
@@ -620,7 +625,7 @@ export function useNotifications() {
     const missedReminderIds = scheduled
       .filter(n => n.content.data?.type === 'missed_prayer_reminder')
       .map(n => n.identifier);
-    
+
     for (const id of missedReminderIds) {
       await Notifications.cancelScheduledNotificationAsync(id);
     }
@@ -656,7 +661,7 @@ export function useNotifications() {
       }
 
       const { hours, minutes } = parsedTime;
-      
+
       // Calculate reminder time (prayer time + delay)
       const reminderDate = new Date(now);
       reminderDate.setHours(hours, minutes, 0, 0);
@@ -671,7 +676,7 @@ export function useNotifications() {
         const notificationContent: any = {
           title: `Did you pray ${prayer.key}?`,
           body: `It's been ${delayMinutes} minutes since ${prayer.key}. Tap to mark your prayer.`,
-          data: { 
+          data: {
             type: 'missed_prayer_reminder',
             prayer: prayer.key,
             date: today,
@@ -706,7 +711,7 @@ export function useNotifications() {
       const reminderToCancel = scheduled.find(
         n => n.content.data?.type === 'missed_prayer_reminder' && n.content.data?.prayer === prayer
       );
-      
+
       if (reminderToCancel) {
         await Notifications.cancelScheduledNotificationAsync(reminderToCancel.identifier);
         console.log(`✅ Cancelled missed reminder for ${prayer}`);

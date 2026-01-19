@@ -17,12 +17,13 @@ import {
 import { Feather } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '@/navigation/RootStackNavigator';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { StreakCard } from '@/components/StreakCard';
 import { WeeklyChart } from '@/components/WeeklyChart';
 import { MonthlyCalendar } from '@/components/MonthlyCalendar';
-import { QadaTrackerModal } from '@/components/QadaTrackerModal';
 import { useTheme } from '@/hooks/useTheme';
 import { usePrayerStats, ViewMode } from '@/hooks/usePrayerStats';
 import { useQadaTracker } from '@/hooks/useQadaTracker';
@@ -33,7 +34,7 @@ import { Spacing, BorderRadius } from '@/constants/theme';
 export default function PrayerStatsScreen() {
   const insets = useSafeAreaInsets();
   const { isDark, theme } = useTheme();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const {
     streak,
     weeklyStats,
@@ -49,16 +50,15 @@ export default function PrayerStatsScreen() {
     refresh: refreshStats,
   } = usePrayerStats();
   const { totalQada, refresh: refreshQada } = useQadaTracker();
-  const { 
-    trackingEnabled, 
-    toggleTracking, 
+  const {
+    trackingEnabled,
+    toggleTracking,
     missedReminderEnabled,
     missedReminderDelayMinutes,
     toggleMissedReminder,
     setMissedReminderDelay,
-    refresh: refreshPrayerLog 
+    refresh: refreshPrayerLog
   } = usePrayerLog();
-  const [qadaModalVisible, setQadaModalVisible] = useState(false);
 
   // Refresh data when screen comes into focus
   useFocusEffect(
@@ -195,14 +195,10 @@ Tracked with SakinahTime 🌙`;
             styles.legendCard,
             { backgroundColor: theme.cardBackground }
           ]}>
-            <ThemedText type="caption" secondary style={{ marginBottom: Spacing.sm }}>Tap to cycle through:</ThemedText>
+            <ThemedText type="caption" secondary style={{ marginBottom: Spacing.sm }}>Tap a button to mark prayer status:</ThemedText>
             <View style={styles.legendRow}>
               <View style={styles.legendItem}>
-                <View style={[styles.legendDot, { backgroundColor: '#6B7280' }]} />
-                <ThemedText type="caption">Not marked</ThemedText>
-              </View>
-              <View style={styles.legendItem}>
-                <View style={[styles.legendDot, { backgroundColor: theme.primary }]} />
+                <View style={[styles.legendDot, { backgroundColor: '#10B981' }]} />
                 <ThemedText type="caption">Prayed</ThemedText>
               </View>
               <View style={styles.legendItem}>
@@ -229,8 +225,8 @@ Tracked with SakinahTime 🌙`;
                 <View style={styles.reminderText}>
                   <ThemedText type="body" style={{ fontWeight: '600' }}>Missed Prayer Reminder</ThemedText>
                   <ThemedText type="caption" secondary>
-                    {missedReminderEnabled 
-                      ? `Remind after ${missedReminderDelayMinutes} min if unmarked` 
+                    {missedReminderEnabled
+                      ? `Remind after ${missedReminderDelayMinutes} min if unmarked`
                       : 'Get reminded to mark your prayers'}
                   </ThemedText>
                 </View>
@@ -245,7 +241,7 @@ Tracked with SakinahTime 🌙`;
                 thumbColor="#FFFFFF"
               />
             </View>
-            
+
             {/* Delay Options */}
             {missedReminderEnabled && (
               <View style={styles.delayOptions}>
@@ -299,7 +295,7 @@ Tracked with SakinahTime 🌙`;
               styles.quickStatCard,
               { backgroundColor: theme.cardBackground }
             ]}
-            onPress={() => setQadaModalVisible(true)}
+            onPress={() => navigation.navigate('QadaTracker')}
           >
             <Feather name="rotate-ccw" size={20} color="#EF4444" />
             <ThemedText type="h3" style={{ color: '#EF4444' }}>{totalQada}</ThemedText>
@@ -405,12 +401,6 @@ Tracked with SakinahTime 🌙`;
           </View>
         )}
       </ScrollView>
-
-      {/* Qada Modal */}
-      <QadaTrackerModal
-        visible={qadaModalVisible}
-        onClose={() => setQadaModalVisible(false)}
-      />
     </ThemedView>
   );
 }

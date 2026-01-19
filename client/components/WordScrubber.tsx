@@ -5,14 +5,16 @@
  * Position updates are handled by MushafScreen which forwards touch events
  */
 
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
 import { Image } from 'expo-image';
 import * as Haptics from 'expo-haptics';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemedText } from '@/components/ThemedText';
 import { useTheme } from '@/hooks/useTheme';
 import { findWordMeaningByIndex } from '@/services/WordMeaningService';
 import { Feather } from '@expo/vector-icons';
+import wordAudioService from '@/services/WordAudioService';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -79,6 +81,30 @@ export function WordScrubber({
   const { theme } = useTheme();
   const [currentWord, setCurrentWord] = useState<WordInfo | null>(null);
   const lastWordRef = useRef<string | null>(null);
+  const wasActiveRef = useRef(false);
+
+  // Play word audio when finger is lifted (scrubber closes)
+  useEffect(() => {
+    const playWordAudioIfEnabled = async () => {
+      if (wasActiveRef.current && !isActive && currentWord) {
+        try {
+          // Read setting directly at playback time to avoid race conditions
+          const saved = await AsyncStorage.getItem('@wbw_audio_enabled');
+          const audioEnabled = saved === null ? true : saved === 'true';
+
+          if (audioEnabled) {
+            const wordIndex = currentWord.wordIndex + 1; // API uses 1-indexed
+            wordAudioService.playWord(currentWord.surah, currentWord.ayah, wordIndex);
+          }
+        } catch (e) {
+          console.error('[WordScrubber] Failed to check audio setting:', e);
+        }
+      }
+      wasActiveRef.current = isActive;
+    };
+
+    playWordAudioIfEnabled();
+  }, [isActive, currentWord]);
 
   const allWords = React.useMemo(() => {
     const words: Array<WordCoord & { verseKey: string; wordIndex: number }> = [];
