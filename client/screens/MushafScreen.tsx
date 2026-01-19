@@ -120,6 +120,14 @@ function MushafScreenContent() {
 
   const [currentPage, setCurrentPage] = useState(1);
 
+  // Navigate to page from route params (e.g., from reading reminder notification)
+  useEffect(() => {
+    const pageFromParams = route.params?.page;
+    if (pageFromParams && pageFromParams >= 1 && pageFromParams <= 604) {
+      setCurrentPage(pageFromParams);
+    }
+  }, [route.params?.page]);
+
   // Group coords by verse key for WordScrubber
   const groupedCoordsForScrubber = React.useMemo(() => {
     const pageCoords = allCoords?.[currentPage];

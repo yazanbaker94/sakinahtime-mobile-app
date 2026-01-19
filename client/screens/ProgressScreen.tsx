@@ -19,6 +19,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import * as Notifications from 'expo-notifications';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useTheme } from '@/hooks/useTheme';
@@ -50,7 +51,7 @@ export default function ProgressScreen() {
     requestPermission,
   } = useReadingReminder();
 
-  const [showTimePicker, setShowTimePicker] = useState(false);  const [showGoalSettings, setShowGoalSettings] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false); const [showGoalSettings, setShowGoalSettings] = useState(false);
   const [goalType, setGoalType] = useState<'pages' | 'verses'>(
     progress?.dailyGoal.type || 'pages'
   );
@@ -159,7 +160,7 @@ export default function ProgressScreen() {
           <ThemedText type="h3" style={styles.cardTitle}>
             Overall Progress
           </ThemedText>
-          
+
           {/* Circular Progress */}
           <View style={styles.progressCircleContainer}>
             <View style={[styles.progressCircle, { borderColor: theme.primary }]}>
@@ -191,35 +192,35 @@ export default function ProgressScreen() {
           <ThemedText type="h3" style={styles.cardTitle}>
             Today's Progress
           </ThemedText>
-          
+
           <View style={styles.todayStats}>
             <View style={styles.todayStatItem}>
-              <Feather 
-                name={isGoalMet ? 'check-circle' : 'circle'} 
-                size={24} 
-                color={isGoalMet ? theme.primary : theme.gold} 
+              <Feather
+                name={isGoalMet ? 'check-circle' : 'circle'}
+                size={24}
+                color={isGoalMet ? theme.primary : theme.gold}
               />
               <ThemedText type="body" style={styles.todayStatText}>
-                {progress?.dailyGoal.type === 'verses' 
+                {progress?.dailyGoal.type === 'verses'
                   ? `${todayProgress?.versesRead || 0} verses read`
                   : `${todayProgress?.pagesRead || 0} pages read`}
               </ThemedText>
             </View>
-            
+
             {progress?.dailyGoal.enabled && (
               <View style={styles.goalProgressBar}>
-                <View 
+                <View
                   style={[
-                    styles.goalProgressFill, 
-                    { 
+                    styles.goalProgressFill,
+                    {
                       width: `${Math.min(100, todayProgress?.goalProgress || 0)}%`,
                       backgroundColor: isGoalMet ? theme.primary : theme.gold,
                     }
-                  ]} 
+                  ]}
                 />
               </View>
             )}
-            
+
             {progress?.dailyGoal.enabled && (
               <ThemedText type="caption">
                 {progress.dailyGoal.type === 'verses'
@@ -227,7 +228,7 @@ export default function ProgressScreen() {
                   : `${todayProgress?.pagesRead || 0}/${progress.dailyGoal.target} pages`}
               </ThemedText>
             )}
-            
+
             <ThemedText type="caption" style={{ opacity: 0.7 }}>
               {progress?.dailyGoal.enabled
                 ? `Goal: ${progress.dailyGoal.target} ${progress.dailyGoal.type}/day`
@@ -241,7 +242,7 @@ export default function ProgressScreen() {
           <ThemedText type="h3" style={styles.cardTitle}>
             Reading Streak
           </ThemedText>
-          
+
           <View style={styles.streakContainer}>
             <View style={styles.streakItem}>
               <Feather name="zap" size={32} color="#F59E0B" />
@@ -262,18 +263,18 @@ export default function ProgressScreen() {
             <ThemedText type="h3" style={styles.cardTitle}>
               This Week
             </ThemedText>
-            
+
             <View style={styles.weeklyChart}>
               {weeklyData.days.map((day, index) => (
                 <View key={day.date} style={styles.dayColumn}>
-                  <View 
+                  <View
                     style={[
                       styles.dayBar,
-                      { 
-                        height: Math.max(4, (day.pagesRead / 20) * 60),
+                      {
+                        height: Math.min(60, Math.max(4, (day.pagesRead / 20) * 60)),
                         backgroundColor: day.goalMet ? theme.primary : theme.gold,
                       }
-                    ]} 
+                    ]}
                   />
                   <ThemedText type="caption" style={styles.dayLabel}>
                     {['S', 'M', 'T', 'W', 'T', 'F', 'S'][new Date(day.date).getDay()]}
@@ -281,7 +282,7 @@ export default function ProgressScreen() {
                 </View>
               ))}
             </View>
-            
+
             <ThemedText type="caption" style={styles.weeklyAverage}>
               Average: {weeklyData.averagePerDay.toFixed(1)} pages/day
             </ThemedText>
@@ -290,20 +291,20 @@ export default function ProgressScreen() {
 
         {/* Goal Settings */}
         <View style={[styles.card, { backgroundColor: theme.backgroundSecondary }]}>
-          <Pressable 
+          <Pressable
             style={styles.cardHeader}
             onPress={() => setShowGoalSettings(!showGoalSettings)}
           >
             <ThemedText type="h3" style={styles.cardTitle}>
               Daily Goal Settings
             </ThemedText>
-            <Feather 
-              name={showGoalSettings ? 'chevron-up' : 'chevron-down'} 
-              size={20} 
-              color={theme.text} 
+            <Feather
+              name={showGoalSettings ? 'chevron-up' : 'chevron-down'}
+              size={20}
+              color={theme.text}
             />
           </Pressable>
-          
+
           {showGoalSettings && (
             <View style={styles.goalSettings}>
               <View style={styles.settingRow}>
@@ -314,7 +315,7 @@ export default function ProgressScreen() {
                   trackColor={{ false: '#767577', true: theme.primary }}
                 />
               </View>
-              
+
               <View style={styles.settingRow}>
                 <ThemedText>Goal Type</ThemedText>
                 <View style={styles.goalTypeButtons}>
@@ -342,7 +343,7 @@ export default function ProgressScreen() {
                   </Pressable>
                 </View>
               </View>
-              
+
               <View style={styles.settingRow}>
                 <ThemedText>Target ({goalType === 'pages' ? '1-20' : '1-100'})</ThemedText>
                 <TextInput
@@ -353,7 +354,7 @@ export default function ProgressScreen() {
                   maxLength={3}
                 />
               </View>
-              
+
               <Pressable style={[styles.saveButton, { backgroundColor: theme.primary }]} onPress={handleSaveGoal}>
                 <ThemedText style={styles.saveButtonText}>Save Goal</ThemedText>
               </Pressable>
@@ -366,7 +367,7 @@ export default function ProgressScreen() {
           <ThemedText type="h3" style={styles.cardTitle}>
             Reading Reminder
           </ThemedText>
-          
+
           <View style={styles.settingRow}>
             <ThemedText>Enable Reminder</ThemedText>
             <Switch
@@ -375,11 +376,11 @@ export default function ProgressScreen() {
               trackColor={{ false: '#767577', true: theme.primary }}
             />
           </View>
-          
+
           {reminderEnabled && (
             <View style={styles.settingRow}>
               <ThemedText>Reminder Time</ThemedText>
-              <Pressable 
+              <Pressable
                 style={[styles.timeButton, { borderColor: theme.border }]}
                 onPress={() => setShowTimePicker(true)}
               >
@@ -395,7 +396,7 @@ export default function ProgressScreen() {
               </Pressable>
             </View>
           )}
-          
+
           {showTimePicker && Platform.OS === 'ios' && (
             <View style={styles.timePickerContainer}>
               <View style={styles.timePickerHeader}>
@@ -426,7 +427,7 @@ export default function ProgressScreen() {
               />
             </View>
           )}
-          
+
           {showTimePicker && Platform.OS === 'android' && (
             <DateTimePicker
               value={(() => {
@@ -451,8 +452,28 @@ export default function ProgressScreen() {
           )}
         </View>
 
+        {/* TEST BUTTON - Remove after testing */}
+        <Pressable
+          style={[styles.resetButton, { backgroundColor: theme.primary, marginBottom: 12 }]}
+          onPress={async () => {
+            Alert.alert('Test Notification', 'Reading reminder will appear in 3 seconds');
+            await Notifications.scheduleNotificationAsync({
+              identifier: 'quran-reading-reminder',
+              content: {
+                title: '📖 Time to Read Quran',
+                body: 'Continue your daily reading journey',
+                sound: true,
+              },
+              trigger: { type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL, seconds: 3, repeats: false },
+            });
+          }}
+        >
+          <Feather name="bell" size={20} color="#fff" />
+          <ThemedText style={styles.resetButtonText}>Test Reading Reminder (3s)</ThemedText>
+        </Pressable>
+
         {/* Reset Button */}
-        <Pressable 
+        <Pressable
           style={[styles.resetButton, { backgroundColor: '#EF4444' }]}
           onPress={handleResetProgress}
         >

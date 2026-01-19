@@ -165,9 +165,6 @@ export function useNotifications() {
       PrayerAlarmModule.stopAzan().catch(() => {
         // Ignore errors if azan isn't playing
       });
-      PrayerAlarmModule.stopIqama().catch(() => {
-        // Ignore errors if iqama isn't playing
-      });
     }
 
     // Listen for notifications being received (foreground and background)
@@ -195,12 +192,9 @@ export function useNotifications() {
 
       // Stop azan when notification is tapped
       if (Platform.OS === 'android' && PrayerAlarmModule) {
-        console.log('🛑 Stopping azan/iqama (notification tapped)');
+        console.log('🛑 Stopping azan (notification tapped)');
         PrayerAlarmModule.stopAzan().catch((error: any) => {
           console.log('Azan was not playing or already stopped');
-        });
-        PrayerAlarmModule.stopIqama().catch((error: any) => {
-          console.log('Iqama was not playing or already stopped');
         });
       }
     });

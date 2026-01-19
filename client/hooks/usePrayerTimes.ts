@@ -2,6 +2,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState, useEffect, useCallback } from "react";
 import { prayerTimesCacheService } from "../services/PrayerTimesCacheService";
+import { prayerTimesPreloader } from "../services/PrayerTimesPreloader";
 import { widgetDataService } from "../services/WidgetDataService";
 import { useNetworkStatus } from "./useNetworkStatus";
 
@@ -80,13 +81,13 @@ async function fetchPrayerTimes(latitude: number, longitude: number, method: num
   const url = `https://api.aladhan.com/v1/timings/${day}-${month}-${year}?latitude=${latitude}&longitude=${longitude}&method=${validMethod}`;
 
   const response = await fetch(url);
-  
+
   if (!response.ok) {
     throw new Error("Failed to fetch prayer times");
   }
 
   const data = await response.json();
-  
+
   if (data.code !== 200 || !data.data) {
     throw new Error("Invalid response from prayer times API");
   }
@@ -100,6 +101,12 @@ export function usePrayerTimes(latitude: number | null, longitude: number | null
   const [isUsingCache, setIsUsingCache] = useState(false);
   const [cacheLastSync, setCacheLastSync] = useState<Date | null>(null);
 
+  // Get preloaded data from singleton (already loaded at app startup via LocationContext)
+  const preloaded = enabled ? prayerTimesPreloader.getPreloadedData() : { data: null, cachedAt: null, isLoaded: false };
+
+  // Use preloaded data as placeholder for instant display
+  const placeholderData = preloaded.data as PrayerTimesData | undefined;
+
   const query = useQuery({
     queryKey: ["prayerTimes", latitude, longitude, method],
     queryFn: async () => {
@@ -112,7 +119,7 @@ export function usePrayerTimes(latitude: number | null, longitude: number | null
         try {
           const data = await fetchPrayerTimes(latitude, longitude, method);
           setIsUsingCache(false);
-          
+
           // Cache the prayer times for offline use
           try {
             await prayerTimesCacheService.initialize();
@@ -124,23 +131,29 @@ export function usePrayerTimes(latitude: number | null, longitude: number | null
           } catch (cacheError) {
             console.warn('[usePrayerTimes] Failed to cache prayer times:', cacheError);
           }
-          
+
           // Update widget data
           try {
             await widgetDataService.updatePrayerTimes(data.timings, '');
           } catch (widgetError) {
             console.warn('[usePrayerTimes] Failed to update widget:', widgetError);
           }
-          
+
+          // Update preloader with fresh data for future instant loads
+          prayerTimesPreloader.updateData(data);
+
           return data;
         } catch (error) {
           // If online fetch fails, try cache as fallback
           console.warn('[usePrayerTimes] Online fetch failed, trying cache:', error);
           const cached = await getCachedData(latitude, longitude, method);
-          if (cached) {
-            setIsUsingCache(true);
-            setCacheLastSync(new Date(cached.cachedAt));
-            return transformCachedData(cached);
+          if (cached && cached.date && cached.timings) {
+            const transformed = transformCachedData(cached);
+            if (transformed) {
+              setIsUsingCache(true);
+              setCacheLastSync(new Date(cached.cachedAt));
+              return transformed;
+            }
           }
           throw error;
         }
@@ -148,16 +161,20 @@ export function usePrayerTimes(latitude: number | null, longitude: number | null
 
       // If offline, use cached data
       const cached = await getCachedData(latitude, longitude, method);
-      if (cached) {
-        setIsUsingCache(true);
-        setCacheLastSync(new Date(cached.cachedAt));
-        return transformCachedData(cached);
+      if (cached && cached.date && cached.timings) {
+        const transformed = transformCachedData(cached);
+        if (transformed) {
+          setIsUsingCache(true);
+          setCacheLastSync(new Date(cached.cachedAt));
+          return transformed;
+        }
       }
 
       throw new Error("No cached prayer times available while offline");
     },
     enabled,
-    staleTime: 1000 * 60 * 60,
+    placeholderData, // Show cached data instantly while fetching
+    staleTime: 1000 * 60 * 60, // 1 hour
     gcTime: 1000 * 60 * 60 * 24,
     retry: isOnline ? 2 : 0, // Don't retry when offline
   });
@@ -167,6 +184,8 @@ export function usePrayerTimes(latitude: number | null, longitude: number | null
     isUsingCache,
     cacheLastSync,
     isOffline: !isOnline,
+    // Only show loading if we have no data at all
+    isLoading: query.isLoading && !placeholderData,
   };
 }
 
@@ -191,32 +210,43 @@ async function getCachedData(latitude: number, longitude: number, method: number
 /**
  * Transform cached data to match API response format
  */
-function transformCachedData(cached: any): PrayerTimesData {
-  const [year, month, day] = cached.date.split('-');
-  const date = new Date(cached.date);
-  
-  return {
-    timings: cached.timings,
-    date: {
-      hijri: {
-        day: day,
-        weekday: { en: '', ar: '' },
-        month: { number: parseInt(month), en: '', ar: '' },
-        year: year,
-        designation: { abbreviated: 'AH', expanded: 'Anno Hegirae' },
+function transformCachedData(cached: any): PrayerTimesData | null {
+  // Validate required fields
+  if (!cached || !cached.date || !cached.timings) {
+    console.warn('[usePrayerTimes] Invalid cached data structure');
+    return null;
+  }
+
+  try {
+    const [year, month, day] = cached.date.split('-');
+    const date = new Date(cached.date);
+
+    return {
+      timings: cached.timings,
+      date: {
+        hijri: {
+          day: day || '1',
+          weekday: { en: '', ar: '' },
+          month: { number: parseInt(month) || 1, en: '', ar: '' },
+          year: year || '1446',
+          designation: { abbreviated: 'AH', expanded: 'Anno Hegirae' },
+        },
+        gregorian: {
+          date: `${day}-${month}-${year}`,
+          day: day || '1',
+          weekday: { en: date.toLocaleDateString('en-US', { weekday: 'long' }) },
+          month: { number: parseInt(month) || 1, en: date.toLocaleDateString('en-US', { month: 'long' }) },
+          year: year || '2025',
+        },
       },
-      gregorian: {
-        date: `${day}-${month}-${year}`,
-        day: day,
-        weekday: { en: date.toLocaleDateString('en-US', { weekday: 'long' }) },
-        month: { number: parseInt(month), en: date.toLocaleDateString('en-US', { month: 'long' }) },
-        year: year,
+      meta: {
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       },
-    },
-    meta: {
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    },
-  };
+    };
+  } catch (error) {
+    console.warn('[usePrayerTimes] Error transforming cached data:', error);
+    return null;
+  }
 }
 
 export function useCalculationMethod() {
@@ -254,6 +284,11 @@ export function useCalculationMethod() {
 }
 
 export function getNextPrayer(timings: PrayerTimes): { name: string; time: string; nameAr: string } | null {
+  // Return null if timings is undefined or missing required values
+  if (!timings || !timings.Fajr) {
+    return null;
+  }
+
   const prayers = [
     { name: "Fajr", nameAr: "الفجر", time: timings.Fajr },
     { name: "Dhuhr", nameAr: "الظهر", time: timings.Dhuhr },
@@ -266,6 +301,7 @@ export function getNextPrayer(timings: PrayerTimes): { name: string; time: strin
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
   for (const prayer of prayers) {
+    if (!prayer.time) continue; // Skip if time is undefined
     const [hours, minutes] = prayer.time.split(":").map(Number);
     const prayerMinutes = hours * 60 + minutes;
 
@@ -278,6 +314,10 @@ export function getNextPrayer(timings: PrayerTimes): { name: string; time: strin
 }
 
 export function getTimeUntilPrayer(prayerTime: string): { hours: number; minutes: number; seconds: number } {
+  if (!prayerTime) {
+    return { hours: 0, minutes: 0, seconds: 0 };
+  }
+
   const now = new Date();
   const [prayerHours, prayerMinutes] = prayerTime.split(":").map(Number);
 
@@ -298,6 +338,10 @@ export function getTimeUntilPrayer(prayerTime: string): { hours: number; minutes
 }
 
 export function formatTime(time: string): string {
+  if (!time) {
+    return '--:--';
+  }
+
   const [hours, minutes] = time.split(":").map(Number);
   const period = hours >= 12 ? "PM" : "AM";
   const displayHours = hours % 12 || 12;
@@ -305,6 +349,10 @@ export function formatTime(time: string): string {
 }
 
 export function isPrayerPast(prayerTime: string): boolean {
+  if (!prayerTime) {
+    return false;
+  }
+
   const now = new Date();
   const [hours, minutes] = prayerTime.split(":").map(Number);
   const currentMinutes = now.getHours() * 60 + now.getMinutes();

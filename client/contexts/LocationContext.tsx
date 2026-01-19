@@ -13,6 +13,7 @@ import {
   getLastGpsLocation,
   setLastGpsLocation,
 } from "@/utils/locationStorage";
+import { prayerTimesPreloader } from "@/services/PrayerTimesPreloader";
 
 interface LocationState {
   // Core location data (works for both GPS and manual)
@@ -117,6 +118,11 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
             city: cachedGps.city,
             country: cachedGps.country,
           });
+
+          // Pre-load prayer times cache with cached location for instant display
+          prayerTimesPreloader.preload(cachedGps.latitude, cachedGps.longitude).catch(() => {
+            // Ignore preloader errors
+          });
         }
 
         setInitialized(true);
@@ -160,6 +166,11 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
       }
 
       setGpsState({ latitude, longitude, city, country });
+
+      // Pre-load prayer times cache for instant display on prayer screen
+      prayerTimesPreloader.preload(latitude, longitude).catch(() => {
+        // Ignore preloader errors - it's just a performance optimization
+      });
 
       // Cache GPS location for when GPS is unavailable
       setLastGpsLocation({

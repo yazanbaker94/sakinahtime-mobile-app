@@ -84,7 +84,7 @@ async function syncWidgetDataOnLaunch() {
     const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
     const verseIndex = dayOfYear % DAILY_VERSES.length;
     const verse = DAILY_VERSES[verseIndex];
-    
+
     await widgetDataService.updateDailyVerse({
       surah: verse.surah,
       ayah: verse.ayah,
@@ -94,15 +94,15 @@ async function syncWidgetDataOnLaunch() {
       textEn: verse.textEn,
       verseKey: `${verse.surah}:${verse.ayah}`,
     });
-    
+
     // 2. Update Hijri Date widget
     const hijriDate = hijriDateService.getCurrentHijriDate();
     const moonPhase = moonPhaseService.getCurrentPhase();
     await widgetDataService.updateHijriDate(hijriDate, moonPhase, null, null);
-    
+
     // 3. Update Tasbeeh widget with default values
     await widgetDataService.updateTasbeehCount(0, 33, 'سبحان الله');
-    
+
     console.log('[App] All widget data synced on launch');
   } catch (error) {
     console.warn('[App] Failed to sync widget data:', error);
@@ -120,12 +120,12 @@ export default function App() {
           'AlMushafQuran': require('../assets/fonts/AlMushafQuran.ttf'),
         });
         setFontsLoaded(true);
-        
+
         // Sync widget data on app launch (Android only)
         if (Platform.OS === 'android') {
           syncWidgetDataOnLaunch();
         }
-        
+
         // Pre-fetch word timing data for default reciter in background
         // This ensures word-by-word highlighting is ready when user plays audio
         audioService.prefetchTimingData();
@@ -140,32 +140,64 @@ export default function App() {
 
   // Handle notification taps - navigate to Mushaf for reading reminders
   React.useEffect(() => {
+    // Helper to get most recently read page from progress
+    const getMostRecentPage = async (): Promise<number> => {
+      try {
+        const AsyncStorage = (await import('@react-native-async-storage/async-storage')).default;
+        const stored = await AsyncStorage.getItem('@quran_reading_progress');
+        if (stored) {
+          const progress = JSON.parse(stored);
+          const pagesRead = progress.pagesRead || {};
+          let mostRecentPage = 1;
+          let mostRecentTime = 0;
+
+          for (const [pageStr, data] of Object.entries(pagesRead)) {
+            const pageData = data as { lastReadAt?: number };
+            if (pageData.lastReadAt && pageData.lastReadAt > mostRecentTime) {
+              mostRecentTime = pageData.lastReadAt;
+              mostRecentPage = parseInt(pageStr, 10);
+            }
+          }
+          return mostRecentPage;
+        }
+      } catch (e) {
+        console.warn('[App] Failed to get most recent page:', e);
+      }
+      return 1; // Default to page 1
+    };
+
     // Handle notification tap when app is in background/closed
-    notificationResponseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+    notificationResponseListener.current = Notifications.addNotificationResponseReceivedListener(async response => {
       const notificationId = response.notification.request.identifier;
       console.log('📬 Notification tapped:', notificationId);
-      
+
       // Check if this is our reading reminder notification
       if (notificationId === READING_REMINDER_ID) {
         console.log('📖 Reading reminder tapped, navigating to Mushaf');
+        const lastPage = await getMostRecentPage();
+        console.log('📖 Navigating to page:', lastPage);
+
         // Small delay to ensure navigation is ready
         setTimeout(() => {
           if (navigationRef.isReady()) {
-            // Navigate to QuranTab within Main tabs (where MushafScreen is)
-            navigationRef.navigate('Main', { screen: 'QuranTab' } as any);
+            // Navigate to QuranTab with initialPage parameter
+            navigationRef.navigate('Main', { screen: 'QuranTab', params: { page: lastPage } } as any);
           }
         }, 100);
       }
     });
 
     // Check if app was opened from a notification (cold start)
-    Notifications.getLastNotificationResponseAsync().then(response => {
+    Notifications.getLastNotificationResponseAsync().then(async response => {
       if (response && response.notification.request.identifier === READING_REMINDER_ID) {
         console.log('📖 App opened from reading reminder notification');
+        const lastPage = await getMostRecentPage();
+        console.log('📖 Navigating to page:', lastPage);
+
         setTimeout(() => {
           if (navigationRef.isReady()) {
-            // Navigate to QuranTab within Main tabs (where MushafScreen is)
-            navigationRef.navigate('Main', { screen: 'QuranTab' } as any);
+            // Navigate to QuranTab with initialPage parameter
+            navigationRef.navigate('Main', { screen: 'QuranTab', params: { page: lastPage } } as any);
           }
         }, 500);
       }
