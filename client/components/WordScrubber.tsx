@@ -7,6 +7,7 @@
 
 import React, { useState, useCallback, useRef } from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
+import { Image } from 'expo-image';
 import * as Haptics from 'expo-haptics';
 import { ThemedText } from '@/components/ThemedText';
 import { useTheme } from '@/hooks/useTheme';
@@ -35,6 +36,10 @@ interface WordScrubberProps {
   initialTouchPosition?: { x: number; y: number };
   onClose: () => void;
   isDark: boolean;
+  // For live magnifier
+  mushafImage?: any;
+  screenWidth: number;
+  imageHeight: number;
 }
 
 interface WordInfo {
@@ -66,7 +71,10 @@ export function WordScrubber({
   tabBarHeight = 80,
   initialTouchPosition,
   onClose,
-  isDark
+  isDark,
+  mushafImage,
+  screenWidth,
+  imageHeight,
 }: WordScrubberProps) {
   const { theme } = useTheme();
   const [currentWord, setCurrentWord] = useState<WordInfo | null>(null);
@@ -190,6 +198,41 @@ export function WordScrubber({
     return `Appears ${freq} times`;
   };
 
+  // Calculate magnifier position - shows magnified view of the area under finger
+  const MAGNIFIER_WIDTH = 130; // Width of magnifier box
+  const MAGNIFIER_HEIGHT = 50; // Height of magnifier box
+  const MAGNIFIER_SCALE = 1.5; // 1.5x magnification (wider view for longer words)
+
+  // Calculate the position to show in the magnifier (following finger)
+  const getMagnifierImagePosition = () => {
+    if (!effectivePosition || !mushafImage) return { left: 0, top: 0 };
+
+    // The finger position in screen coordinates
+    const fingerX = effectivePosition.x;
+    const fingerY = effectivePosition.y;
+
+    // Convert finger position to image coordinates
+    // The image rendered position: top = contentZoneTop + imageOffsetY
+    const imageTop = contentZoneTop + imageOffsetY;
+
+    // Position within the scaled image
+    const posInImageX = fingerX;
+    const posInImageY = fingerY - imageTop;
+
+    // Apply magnification scale and center in the magnifier view
+    // We want the finger position to be at the center of the magnifier
+    const scaledX = posInImageX * MAGNIFIER_SCALE;
+    const scaledY = posInImageY * MAGNIFIER_SCALE;
+
+    // Offset to center the finger position in the magnifier box
+    const left = -(scaledX - MAGNIFIER_WIDTH / 2);
+    const top = -(scaledY - MAGNIFIER_HEIGHT / 2);
+
+    return { left, top };
+  };
+
+  const magnifierImagePos = getMagnifierImagePosition();
+
   return (
     <View style={StyleSheet.absoluteFill} pointerEvents="box-none">
 
@@ -226,25 +269,59 @@ export function WordScrubber({
         >
           {currentWord ? (
             <View style={styles.infoContent}>
+              {/* Left side: Live Magnifier */}
               <View style={[styles.magnifierBox, {
-                backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.03)',
+                backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
+                borderColor: isDark ? theme.gold : theme.primary,
+                overflow: 'hidden',
               }]}>
-                <ThemedText style={[styles.magnifiedWord, { color: isDark ? theme.gold : theme.primary }]}>
-                  {currentWord.arabicWord || '...'}
-                </ThemedText>
+                {mushafImage ? (
+                  <View style={styles.magnifierContent}>
+                    <Image
+                      source={mushafImage}
+                      style={{
+                        width: screenWidth * MAGNIFIER_SCALE,
+                        height: imageHeight * MAGNIFIER_SCALE,
+                        position: 'absolute',
+                        left: magnifierImagePos.left,
+                        top: magnifierImagePos.top,
+                        tintColor: isDark ? '#FFFFFF' : undefined,
+                      }}
+                      contentFit="contain"
+                    />
+                    {/* Crosshairs */}
+                    <View style={[styles.magnifierCrosshair, { backgroundColor: isDark ? theme.gold : theme.primary }]} />
+                    <View style={[styles.magnifierCrosshairV, { backgroundColor: isDark ? theme.gold : theme.primary }]} />
+                  </View>
+                ) : (
+                  <ThemedText style={[styles.magnifiedWord, { color: isDark ? theme.gold : theme.primary }]}>
+                    {currentWord.arabicWord || '...'}
+                  </ThemedText>
+                )}
               </View>
 
-              <View style={styles.infoText}>
+              {/* Right side: Word info stacked vertically */}
+              <View style={styles.infoTextRight}>
+                {/* Arabic word at top */}
+                <ThemedText style={[styles.arabicWordLarge, { color: theme.text }]}>
+                  {currentWord.arabicWord || '...'}
+                </ThemedText>
+
+                {/* Transliteration */}
                 {currentWord.transliteration && (
                   <ThemedText style={[styles.transliteration, { color: theme.textSecondary }]}>
                     {currentWord.transliteration}
                   </ThemedText>
                 )}
+
+                {/* Translation */}
                 {currentWord.translation && (
                   <ThemedText style={[styles.translation, { color: theme.text }]} numberOfLines={2}>
                     {currentWord.translation}
                   </ThemedText>
                 )}
+
+                {/* Frequency count */}
                 <View style={styles.frequencyRow}>
                   <Feather name="bar-chart-2" size={12} color={theme.textSecondary} />
                   <ThemedText style={[styles.frequency, { color: theme.textSecondary }]}>
@@ -269,64 +346,75 @@ export function WordScrubber({
 
 const styles = StyleSheet.create({
   magnifierBox: {
-    width: 90,
-    minHeight: 80,
-    borderRadius: 12,
+    width: 130,
+    height: 50,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 8,
+    padding: 0,
+    borderWidth: 1.5,
   },
   infoBox: {
     position: 'absolute',
     left: 16,
     right: 16,
-    borderRadius: 16,
-    borderWidth: 2,
-    padding: 16,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    padding: 12,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 10,
-    elevation: 10,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 8,
   },
   infoContent: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 16,
+    alignItems: 'center',
+    gap: 12,
   },
   infoContentEmpty: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 12,
-    paddingVertical: 8,
+    gap: 10,
+    paddingVertical: 6,
   },
-  infoText: {
+  infoTextRight: {
     flex: 1,
-    gap: 4,
+    alignItems: 'flex-end',
+    gap: 3,
+  },
+  arabicWordLarge: {
+    fontSize: 22,
+    fontWeight: '700',
+    textAlign: 'right',
+    writingDirection: 'rtl',
   },
   transliteration: {
-    fontSize: 14,
+    fontSize: 12,
     fontStyle: 'italic',
+    textAlign: 'right',
   },
   translation: {
-    fontSize: 15,
+    fontSize: 13,
     fontWeight: '500',
+    textAlign: 'right',
   },
   frequencyRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    marginTop: 6,
-    paddingTop: 6,
+    alignSelf: 'flex-end',
+    gap: 4,
+    marginTop: 4,
+    paddingTop: 4,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(128,128,128,0.2)',
+    borderTopColor: 'rgba(128,128,128,0.15)',
   },
   frequency: {
-    fontSize: 12,
+    fontSize: 11,
   },
   hint: {
-    fontSize: 15,
+    fontSize: 14,
   },
   wordHighlight: {
     position: 'absolute',
@@ -334,8 +422,44 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   magnifiedWord: {
-    fontSize: 36,
+    fontSize: 28,
     fontWeight: '700',
     textAlign: 'center',
+  },
+  magnifierLoupe: {
+    position: 'absolute',
+    borderRadius: 60, // Half of MAGNIFIER_SIZE (120)
+    borderWidth: 3,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 12,
+  },
+  magnifierContent: {
+    width: '100%',
+    height: '100%',
+    overflow: 'hidden',
+  },
+  magnifierCrosshair: {
+    position: 'absolute',
+    left: '50%',
+    top: '50%',
+    width: 12,
+    height: 2,
+    marginLeft: -6,
+    marginTop: -1,
+    opacity: 0.5,
+  },
+  magnifierCrosshairV: {
+    position: 'absolute',
+    left: '50%',
+    top: '50%',
+    width: 2,
+    height: 12,
+    marginLeft: -1,
+    marginTop: -6,
+    opacity: 0.5,
   },
 });

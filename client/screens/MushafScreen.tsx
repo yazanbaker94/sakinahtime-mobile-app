@@ -5140,6 +5140,9 @@ function MushafScreenContent() {
           setWordScrubberTouchPosition(undefined);
         }}
         isDark={isDark}
+        mushafImage={mushafImages[currentPage]}
+        screenWidth={layout.screenWidth}
+        imageHeight={layout.imageHeight}
       />
     </ThemedView>
   );
