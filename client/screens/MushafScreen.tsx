@@ -18,6 +18,7 @@ import {
   Alert,
 } from "react-native";
 import { Image } from "expo-image";
+import PagerView from "react-native-pager-view";
 import * as Haptics from "expo-haptics";
 import * as Clipboard from 'expo-clipboard';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -234,6 +235,41 @@ function MushafScreenContent() {
   const [highlightedVerse, setHighlightedVerse] = useState<string | null>(null);
   const [lastSearchTerm, setLastSearchTerm] = useState<string>('');
   const [audioState, setAudioState] = useState<any>(null);
+
+  // Compute the current word index being highlighted during audio playback
+  // Uses timing segments from Alafasy alignment data to sync word highlights with audio
+  const currentAudioWordIndex = useMemo(() => {
+    if (!audioState?.isPlaying || !audioState?.segments?.length || audioState?.positionMs === undefined) {
+      return -1; // No word highlighted
+    }
+
+    const positionMs = audioState.positionMs;
+    const segments = audioState.segments; // [[wordIdx, startMs, endMs], ...]
+
+    // Find the word where startMs <= positionMs < endMs
+    for (const segment of segments) {
+      const [wordIdx, startMs, endMs] = segment;
+      if (positionMs >= startMs && positionMs < endMs) {
+        return wordIdx;
+      }
+    }
+
+    // If position is before first word starts (initial silence), highlight first word
+    // This provides immediate visual feedback when audio starts
+    if (segments.length > 0 && positionMs < segments[0][1]) {
+      return segments[0][0]; // Return first word's index
+    }
+
+    // If position is after last word, return -1
+    return -1;
+  }, [audioState?.isPlaying, audioState?.segments, audioState?.positionMs]);
+
+  // Get the current playing verse key for word-level highlighting
+  const currentPlayingVerseKey = useMemo(() => {
+    if (!audioState?.current) return null;
+    return `${audioState.current.surah}:${audioState.current.ayah}`;
+  }, [audioState?.current?.surah, audioState?.current?.ayah]);
+
   const [showHifzStatusMenu, setShowHifzStatusMenu] = useState(false);
   const [showHifzControlPanel, setShowHifzControlPanel] = useState(false);
   const [hifzMenuVerseKey, setHifzMenuVerseKey] = useState<string | null>(null);
@@ -684,7 +720,25 @@ function MushafScreenContent() {
     ],
   }));
 
-  const flatListRef = React.useRef<FlatList>(null);
+  // Navigation fade overlay animation
+  const navigationFadeOpacity = useSharedValue(0);
+
+  // Animate fade when navigating to distant pages
+  useEffect(() => {
+    if (isNavigating) {
+      // Fade in quickly
+      navigationFadeOpacity.value = withTiming(1, { duration: 150 });
+    } else {
+      // Fade out after page loads
+      navigationFadeOpacity.value = withTiming(0, { duration: 200 });
+    }
+  }, [isNavigating]);
+
+  const navigationFadeStyle = useAnimatedStyle(() => ({
+    opacity: navigationFadeOpacity.value,
+  }));
+
+  const pagerViewRef = React.useRef<PagerView>(null);
 
   // Handle navigation params to go to specific surah/ayah/page (e.g., from Dua detail "View in Quran" or Ramadan mode)
   React.useEffect(() => {
@@ -718,8 +772,9 @@ function MushafScreenContent() {
 
         // Small delay to ensure FlatList is ready
         setTimeout(() => {
-          const index = Math.max(0, Math.min(603, 604 - targetPage!));
-          flatListRef.current?.scrollToIndex({ index, animated: true });
+          const pageIndex = Math.max(0, Math.min(603, 604 - targetPage!));
+          const offset = pageIndex * layout.screenWidth;
+          (pagerViewRef.current as any)?.scrollToOffset({ offset, animated: false });
           setCurrentPage(targetPage!);
 
           // If ayah is specified, highlight it with a flash effect
@@ -847,7 +902,8 @@ function MushafScreenContent() {
     const offset = pageIndex * layout.screenWidth;
 
     // Scroll to the page first (while overlay is still shown)
-    flatListRef.current?.scrollToOffset({ offset, animated: false });
+    (pagerViewRef.current as any)?.scrollToOffset({ offset, animated: false });
+    setCurrentPage(page);
 
     // Then close the overlay after a brief delay to ensure scroll is complete
     requestAnimationFrame(() => {
@@ -1328,7 +1384,26 @@ function MushafScreenContent() {
               lineGroups.get(c.line)!.push(c);
             });
 
-            return Array.from(lineGroups.values()).map((lineCoords, idx) => {
+            // Check if this verse is currently playing AND has word-level timing data
+            const isCurrentVersePlaying = currentPlayingVerseKey === verseKey;
+            const hasWordTiming = isCurrentVersePlaying && audioState?.segments?.length > 0;
+
+            // Prepare word coordinates for word-level highlighting (if needed)
+            let wordCoords: any[] = [];
+            if (hasWordTiming) {
+              // Filter out null ayah entries (verse markers) and deduplicate
+              const rawWordCoords = coords.filter((c: any) => c.ayah !== null);
+              const seenCoords = new Set<string>();
+              wordCoords = rawWordCoords.filter((c: any) => {
+                const key = `${c.x}-${c.y}-${c.width}-${c.height}`;
+                if (seenCoords.has(key)) return false;
+                seenCoords.add(key);
+                return true;
+              });
+            }
+
+            // Render line-based verse regions + word-level highlights
+            const lineElements = Array.from(lineGroups.values()).map((lineCoords, idx) => {
               const minX = Math.min(...lineCoords.map(c => c.x));
               const minY = Math.min(...lineCoords.map(c => c.y));
               const maxX = Math.max(...lineCoords.map(c => c.x + c.width));
@@ -1342,13 +1417,17 @@ function MushafScreenContent() {
               const isHidden = isHifzActive && !isVerseRevealed;
 
               // Determine background color with Hifz mode priority
+              // When word-level timing is available, use lighter verse highlight (words will be highlighted individually)
               let bgColor = 'transparent';
               if (isHidden) {
                 bgColor = hiddenBgColor;
               } else if (isHighlighted) {
                 bgColor = `${theme.primary}80`; // Bright highlight for navigation
               } else if (isAudioPlaying) {
-                bgColor = `${theme.primary}4D`; // 30% opacity
+                // Always use subtle verse highlight when audio is playing
+                // Word overlay provides bright highlight on the current word when timing data is available
+                // This prevents flash from full verse -> word highlight when segments load
+                bgColor = `${theme.primary}1A`; // 10% opacity - subtle verse indicator
               } else if (highlightColor) {
                 bgColor = highlightColor;
               } else if (isSelected) {
@@ -1455,6 +1534,33 @@ function MushafScreenContent() {
                 </Pressable>
               );
             });
+
+            // Add word-level highlight overlay for the currently playing word
+            const wordHighlightElements: React.ReactNode[] = [];
+            if (hasWordTiming && currentAudioWordIndex >= 0 && currentAudioWordIndex < wordCoords.length) {
+              const coord = wordCoords[currentAudioWordIndex];
+              if (coord) {
+                wordHighlightElements.push(
+                  <View
+                    key={`word-highlight-${verseKey}-${currentAudioWordIndex}`}
+                    pointerEvents="none"
+                    style={{
+                      position: 'absolute',
+                      left: coord.x * imageScale,
+                      top: (coord.y * imageScale) + imageOffsetY,
+                      width: Math.max(coord.width * imageScale, 20),
+                      height: Math.max(coord.height * imageScale, 20),
+                      backgroundColor: `${theme.primary}66`, // 40% opacity - bright word highlight
+                      borderRadius: 3,
+                      borderWidth: 2,
+                      borderColor: theme.primary,
+                    }}
+                  />
+                );
+              }
+            }
+
+            return [...lineElements, ...wordHighlightElements];
           }
         })}
       </Pressable>
@@ -1464,8 +1570,10 @@ function MushafScreenContent() {
   const goToSurah = (surahNumber: number) => {
     const page = surahPages[surahNumber];
     if (page) {
-      const index = 604 - page;
-      const offset = index * layout.screenWidth;
+      const pageIndex = 604 - page;
+
+      // Start fade animation
+      setIsNavigating(true);
 
       // Update current page immediately
       setCurrentPage(page);
@@ -1473,12 +1581,15 @@ function MushafScreenContent() {
       // Save the page to recent pages immediately
       saveRecentPage(page);
 
-      // Scroll to page FIRST (while overlay is still visible)
-      flatListRef.current?.scrollToOffset({ offset, animated: false });
+      // Navigate to page FIRST (while overlay is still visible)
+      const offset = pageIndex * layout.screenWidth;
+      (pagerViewRef.current as any)?.scrollToOffset({ offset, animated: false });
 
-      // Then close modal after scroll completes
+      // Then close modal and end fade after image likely loaded
       requestAnimationFrame(() => {
         setShowSurahList(false);
+        // Give the image a moment to load before fading out
+        setTimeout(() => setIsNavigating(false), 400);
       });
     }
   };
@@ -1616,8 +1727,8 @@ function MushafScreenContent() {
                 onPress={() => {
                   setShowNotes(false);
                   requestAnimationFrame(() => {
-                    const index = 604 - currentPage;
-                    flatListRef.current?.scrollToOffset({ offset: index * layout.screenWidth, animated: false });
+                    const pageIndex = 604 - currentPage;
+                    (pagerViewRef.current as any)?.scrollToOffset({ offset: pageIndex * layout.screenWidth, animated: false });
                   });
                 }}
                 style={({ pressed }) => [{ width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center', backgroundColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)', opacity: pressed ? 0.6 : 1 }]}
@@ -1714,12 +1825,12 @@ function MushafScreenContent() {
                       <Pressable
                         onPress={() => {
                           const page = ayahData?.page || 1;
-                          const index = 604 - page;
-                          const offset = index * layout.screenWidth;
+                          const pageIndex = 604 - page;
                           setShowNotes(false);
                           setIsNavigating(true);
+                          setCurrentPage(page);
                           requestAnimationFrame(() => {
-                            flatListRef.current?.scrollToOffset({ offset, animated: false });
+                            (pagerViewRef.current as any)?.scrollToOffset({ offset: pageIndex * layout.screenWidth, animated: false });
                             setTimeout(() => setIsNavigating(false), 300);
                           });
                         }}
@@ -1830,12 +1941,12 @@ function MushafScreenContent() {
                       <Pressable
                         onPress={() => {
                           const page = ayahData?.page || 1;
-                          const index = 604 - page;
-                          const offset = index * layout.screenWidth;
+                          const pageIndex = 604 - page;
                           setShowNotes(false);
                           setIsNavigating(true);
+                          setCurrentPage(page);
                           requestAnimationFrame(() => {
-                            flatListRef.current?.scrollToOffset({ offset, animated: false });
+                            (pagerViewRef.current as any)?.scrollToOffset({ offset: pageIndex * layout.screenWidth, animated: false });
                             setTimeout(() => setIsNavigating(false), 300);
                           });
                         }}
@@ -1885,8 +1996,8 @@ function MushafScreenContent() {
                 onPress={() => {
                   setShowBookmarks(false);
                   requestAnimationFrame(() => {
-                    const index = 604 - currentPage;
-                    flatListRef.current?.scrollToOffset({ offset: index * layout.screenWidth, animated: false });
+                    const pageIndex = 604 - currentPage;
+                    (pagerViewRef.current as any)?.scrollToOffset({ offset: pageIndex * layout.screenWidth, animated: false });
                   });
                 }}
                 style={({ pressed }) => [{
@@ -1956,13 +2067,12 @@ function MushafScreenContent() {
                       console.log('Bookmark clicked:', { item, surah, ayah });
                       const page = ayahData?.page || 1;
                       console.log('Page number:', page);
-                      const index = 604 - page;
-                      const offset = index * layout.screenWidth;
-                      console.log('Scroll to:', { index, offset, SCREEN_WIDTH });
+                      const pageIndex = 604 - page;
                       setShowBookmarks(false);
                       setIsNavigating(true);
+                      setCurrentPage(page);
                       requestAnimationFrame(() => {
-                        flatListRef.current?.scrollToOffset({ offset, animated: false });
+                        (pagerViewRef.current as any)?.scrollToOffset({ offset: pageIndex * layout.screenWidth, animated: false });
                         setTimeout(() => setIsNavigating(false), 300);
                       });
                     }}
@@ -2035,8 +2145,8 @@ function MushafScreenContent() {
                 onPress={() => {
                   setShowSurahList(false);
                   requestAnimationFrame(() => {
-                    const index = 604 - currentPage;
-                    flatListRef.current?.scrollToOffset({ offset: index * layout.screenWidth, animated: false });
+                    const pageIndex = 604 - currentPage;
+                    (pagerViewRef.current as any)?.scrollToOffset({ offset: pageIndex * layout.screenWidth, animated: false });
                   });
                 }}
                 style={({ pressed }) => [{
@@ -2220,11 +2330,11 @@ function MushafScreenContent() {
                       key={`${result.verseKey}-${index}`}
                       onPress={async () => {
                         const page = result.page;
-                        const index = 604 - page;
-                        const offset = index * layout.screenWidth;
+                        const pageIndex = 604 - page;
                         setShowSurahList(false);
                         setSearchQuery('');
                         setIsNavigating(true);
+                        setCurrentPage(page);
 
                         // If match is from tafsir, load that tafsir and skip selection menu
                         if (result.matchType === 'tafsir' && result.tafsirSource) {
@@ -2264,7 +2374,7 @@ function MushafScreenContent() {
                         }
 
                         requestAnimationFrame(() => {
-                          flatListRef.current?.scrollToOffset({ offset, animated: false });
+                          (pagerViewRef.current as any)?.scrollToOffset({ offset: pageIndex * layout.screenWidth, animated: false });
                           setTimeout(() => {
                             setIsNavigating(false);
                             // Set highlighted verse and search term
@@ -2741,7 +2851,7 @@ function MushafScreenContent() {
       {/* Content Zone - FlatList with Mushaf pages */}
       <View style={[styles.contentZone, { height: layout.contentZoneHeight }]}>
         <FlatList
-          ref={flatListRef}
+          ref={pagerViewRef as any}
           data={Array.from({ length: 604 }, (_, i) => 604 - i)}
           renderItem={renderPage}
           keyExtractor={(item) => String(item)}
@@ -2762,7 +2872,7 @@ function MushafScreenContent() {
             setCurrentPage(page);
           }}
           onScrollToIndexFailed={(info) => {
-            flatListRef.current?.scrollToOffset({ offset: info.averageItemLength * info.index, animated: false });
+            (pagerViewRef.current as any)?.scrollToOffset({ offset: info.averageItemLength * info.index, animated: false });
           }}
           getItemLayout={(_, index) => ({
             length: layout.screenWidth,
@@ -2786,6 +2896,23 @@ function MushafScreenContent() {
 
       {/* Tab Bar Spacer */}
       <View style={{ height: layout.tabBarHeight }} />
+
+      {/* Navigation fade overlay - smooth transition when jumping to distant pages */}
+      <Animated.View
+        style={[
+          {
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: isDark ? '#0C0C0C' : '#F8F4EF',
+            zIndex: 40,
+            pointerEvents: 'none',
+          },
+          navigationFadeStyle,
+        ]}
+      />
 
       {/* Loading overlay while coordinates load */}
       {coordsLoading && (

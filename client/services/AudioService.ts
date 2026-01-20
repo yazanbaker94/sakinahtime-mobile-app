@@ -6,6 +6,10 @@ import { offlineStorageService } from './OfflineStorageService';
 import { SURAH_INFO } from '../constants/offline';
 import wordAudioService from './WordAudioService';
 
+// Bundled timing data for Alafasy (loaded from local assets for instant availability)
+// @ts-ignore - JSON import
+import AlafasyTimingData from '../../assets/quran-align-data/Alafasy_128kbps.json';
+
 // Word timing data cache - loaded from GitHub or local cache
 interface WordTimingEntry {
   ayah: number;
@@ -60,26 +64,26 @@ class AudioService {
   private listeners: Set<(state: any) => void> = new Set();
   private playbackRate = 1.0;
   private lastPlayed: AudioMetadata | null = null;
-  
+
   // Position tracking for word-by-word highlighting
   private positionMs = 0;
   private durationMs = 0;
   private segments: number[][] = []; // Word timing segments [[wordIdx, startMs, endMs], ...]
-  
+
   // Hifz mode repeat/loop properties
   private repeatCount = 0;
   private currentRepeat = 0;
   private pauseBetweenRepeats = 0;
   private isRepeating = false;
   private onRepeatComplete: (() => void) | null = null;
-  
+
   // Loop properties
   private loopStart: AudioMetadata | null = null;
   private loopEnd: AudioMetadata | null = null;
   private isLooping = false;
   private loopRepeatCount = 0;
   private currentLoopRepeat = 0;
-  
+
   // Lock to prevent concurrent operations
   private isTransitioning = false;
 
@@ -134,10 +138,10 @@ class AudioService {
       // Ensure services are initialized
       await audioDownloadService.initialize();
       await networkService.initialize();
-      
+
       const isOnline = networkService.isOnline();
       console.log(`[AudioService] downloadAudio called for ${surah}:${ayah}, reciter: ${this.reciter}, online: ${isOnline}`);
-      
+
       // First check if audio is downloaded via AudioDownloadService for CURRENT reciter
       const cachedPath = await audioDownloadService.getLocalAudioPath(surah, ayah, this.reciter);
       if (cachedPath) {
@@ -148,7 +152,7 @@ class AudioService {
       // Check existing local cache for CURRENT reciter
       const dirPath = `${FileSystem.documentDirectory}quran_audio/${this.reciter}/`;
       const localPath = `${dirPath}${surah}_${ayah}.mp3`;
-      
+
       const fileInfo = await FileSystem.getInfoAsync(localPath);
       if (fileInfo.exists) {
         console.log(`[AudioService] Found local cache: ${localPath}`);
@@ -205,9 +209,9 @@ class AudioService {
    */
   private async findOfflineFallback(surah: number, ayah: number): Promise<string | null> {
     const { RECITERS } = await import('../constants/offline');
-    
+
     console.log(`[AudioService] Searching for offline fallback for ${surah}:${ayah} among ${RECITERS.length} reciters`);
-    
+
     for (const reciter of RECITERS) {
       // Check AudioDownloadService first
       const cachedPath = await audioDownloadService.getLocalAudioPath(surah, ayah, reciter.id);
@@ -215,7 +219,7 @@ class AudioService {
         console.log(`[AudioService] Found fallback in AudioDownloadService: ${reciter.id}`);
         return cachedPath;
       }
-      
+
       // Check local cache directory
       const localPath = `${FileSystem.documentDirectory}quran_audio/${reciter.id}/${surah}_${ayah}.mp3`;
       const fileInfo = await FileSystem.getInfoAsync(localPath);
@@ -224,7 +228,7 @@ class AudioService {
         return localPath;
       }
     }
-    
+
     console.log(`[AudioService] No offline fallback found for ${surah}:${ayah}`);
     return null;
   }
@@ -271,13 +275,13 @@ class AudioService {
       console.log('[AudioService] play blocked - already transitioning');
       return;
     }
-    
+
     this.isTransitioning = true;
-    
+
     try {
       // Stop any playing word audio first to avoid overlap
       wordAudioService.stop();
-      
+
       if (this.sound) {
         await this.sound.stopAsync();
         await this.sound.unloadAsync();
@@ -325,7 +329,7 @@ class AudioService {
     try {
       const reciter = this.reciter;
       const cacheKey = `${surah}:${ayah}`;
-      
+
       // Check if we have cached data for this reciter
       if (wordTimingCache.has(reciter)) {
         const reciterCache = wordTimingCache.get(reciter)!;
@@ -335,10 +339,10 @@ class AudioService {
         // Reciter loaded but no data for this ayah
         return [];
       }
-      
+
       // Load the JSON file for this reciter
       await this.loadReciterTimingData(reciter);
-      
+
       // Check cache again after loading
       if (wordTimingCache.has(reciter)) {
         const reciterCache = wordTimingCache.get(reciter)!;
@@ -346,7 +350,7 @@ class AudioService {
           return reciterCache.get(cacheKey)!;
         }
       }
-      
+
       return [];
     } catch (error) {
       console.log('[AudioService] Error loading local segments:', error);
@@ -360,10 +364,10 @@ class AudioService {
     if (wordTimingCache.has(reciter)) {
       return;
     }
-    
+
     // Get the timing file name (might be different from reciter ID for different bitrates)
     const timingFileName = RECITER_TIMING_MAP[reciter] || reciter;
-    
+
     // Check if this reciter has timing data
     if (!SUPPORTED_TIMING_RECITERS.includes(timingFileName)) {
       // No timing data for this reciter - mark as empty so we don't try again
@@ -371,51 +375,57 @@ class AudioService {
       console.log('[AudioService] No word timing data available for:', reciter);
       return;
     }
-    
+
     try {
-      // Check if we have cached the file locally
-      const localPath = `${FileSystem.documentDirectory}timing-data/${timingFileName}.json`;
-      const fileInfo = await FileSystem.getInfoAsync(localPath);
-      
       let entries: WordTimingEntry[];
-      
-      if (fileInfo.exists) {
-        // Load from local cache
-        console.log('[AudioService] Loading timing data from local cache:', timingFileName);
-        const content = await FileSystem.readAsStringAsync(localPath);
-        entries = JSON.parse(content);
+
+      // Use bundled data for Alafasy (instant, no network required)
+      if (timingFileName === 'Alafasy_128kbps') {
+        console.log('[AudioService] Using bundled timing data for Alafasy_128kbps');
+        entries = AlafasyTimingData as WordTimingEntry[];
       } else {
-        // Download from GitHub
-        const url = `${TIMING_DATA_BASE_URL}/${timingFileName}.json`;
-        console.log('[AudioService] Downloading timing data from:', url);
-        
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch: ${response.status}`);
+        // For other reciters, check local cache or download from GitHub
+        const localPath = `${FileSystem.documentDirectory}timing-data/${timingFileName}.json`;
+        const fileInfo = await FileSystem.getInfoAsync(localPath);
+
+        if (fileInfo.exists) {
+          // Load from local cache
+          console.log('[AudioService] Loading timing data from local cache:', timingFileName);
+          const content = await FileSystem.readAsStringAsync(localPath);
+          entries = JSON.parse(content);
+        } else {
+          // Download from GitHub
+          const url = `${TIMING_DATA_BASE_URL}/${timingFileName}.json`;
+          console.log('[AudioService] Downloading timing data from:', url);
+
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error(`Failed to fetch: ${response.status}`);
+          }
+
+          entries = await response.json();
+
+          // Cache locally for offline use
+          const dirPath = `${FileSystem.documentDirectory}timing-data/`;
+          const dirInfo = await FileSystem.getInfoAsync(dirPath);
+          if (!dirInfo.exists) {
+            await FileSystem.makeDirectoryAsync(dirPath, { intermediates: true });
+          }
+          await FileSystem.writeAsStringAsync(localPath, JSON.stringify(entries));
+          console.log('[AudioService] Cached timing data to:', localPath);
         }
-        
-        entries = await response.json();
-        
-        // Cache locally for offline use
-        const dirPath = `${FileSystem.documentDirectory}timing-data/`;
-        const dirInfo = await FileSystem.getInfoAsync(dirPath);
-        if (!dirInfo.exists) {
-          await FileSystem.makeDirectoryAsync(dirPath, { intermediates: true });
-        }
-        await FileSystem.writeAsStringAsync(localPath, JSON.stringify(entries));
-        console.log('[AudioService] Cached timing data to:', localPath);
       }
-      
+
       // Parse and cache the data in memory
       const reciterCache = new Map<string, number[][]>();
-      
+
       for (const entry of entries) {
         const key = `${entry.surah}:${entry.ayah}`;
         // Convert segments from [wordIdx, unknownField, startMs, endMs] to [wordIdx, startMs, endMs]
         const normalizedSegments = entry.segments.map(seg => [seg[0], seg[2], seg[3]]);
         reciterCache.set(key, normalizedSegments);
       }
-      
+
       wordTimingCache.set(reciter, reciterCache);
       console.log('[AudioService] Loaded timing data for', reciter, '- entries:', entries.length);
     } catch (error) {
@@ -446,9 +456,9 @@ class AudioService {
         this.downloadAudio(next.surah, next.ayah),
         this.fetchWordSegments(next.surah, next.ayah)
       ]);
-      
+
       this.segments = segments;
-      
+
       const { sound } = await Audio.Sound.createAsync(
         { uri },
         { shouldPlay: true },
@@ -471,14 +481,14 @@ class AudioService {
       // Update position for word-by-word highlighting
       this.positionMs = status.positionMillis || 0;
       this.durationMs = status.durationMillis || 0;
-      
+
       // Only notify on significant position changes (every ~100ms worth of change)
       // to avoid excessive re-renders
       if (this.isPlaying) {
         this.notifyListeners();
       }
     }
-    
+
     if (status.didJustFinish) {
       this.isPlaying = false;
       this.positionMs = 0;
@@ -498,20 +508,20 @@ class AudioService {
 
   async resume() {
     console.log('[AudioService] resume() called, sound:', !!this.sound, 'lastPlayed:', this.lastPlayed);
-    
+
     // If sound exists, check its status
     if (this.sound) {
       try {
         const status = await this.sound.getStatusAsync();
-        
+
         if (status.isLoaded) {
           const loadedStatus = status as any;
           const positionMs = loadedStatus.positionMillis || 0;
           const durationMs = loadedStatus.durationMillis || 0;
           const isAtEnd = durationMs > 0 && positionMs >= durationMs - 100; // Within 100ms of end
-          
+
           console.log('[AudioService] Sound status - isPlaying:', loadedStatus.isPlaying, 'position:', positionMs, 'duration:', durationMs, 'isAtEnd:', isAtEnd);
-          
+
           // If not at end and not playing, resume from current position
           if (!isAtEnd && !loadedStatus.isPlaying) {
             await this.sound.playAsync();
@@ -524,7 +534,7 @@ class AudioService {
         console.log('[AudioService] Error getting sound status:', error);
       }
     }
-    
+
     // If sound finished (at end) or doesn't exist, replay the last verse
     await this.replay();
   }
@@ -560,28 +570,28 @@ class AudioService {
       console.log('[AudioService] skipToNext blocked - already transitioning');
       return;
     }
-    
+
     this.isTransitioning = true;
-    
+
     try {
       if (this.sound) {
         await this.sound.stopAsync();
         await this.sound.unloadAsync();
         this.sound = null;
       }
-      
+
       // If there's a queue, play the next item from it
       if (this.playbackQueue.length > 0) {
         await this.playNext();
         return;
       }
-      
+
       // No queue - check if we can go to next verse
       const current = this.currentMetadata || this.lastPlayed;
       if (current) {
         const surahInfo = SURAH_INFO.find(s => s.number === current.surah);
         const totalAyahs = surahInfo?.ayahs || 0;
-        
+
         if (current.ayah < totalAyahs) {
           // Can go to next verse in same surah
           await this.playSingleVerse(current.surah, current.ayah + 1);
@@ -606,27 +616,27 @@ class AudioService {
       console.log('[AudioService] skipToPrevious blocked - already transitioning');
       return;
     }
-    
+
     this.isTransitioning = true;
-    
+
     try {
       const current = this.currentMetadata || this.lastPlayed;
-      
+
       // Can't go before verse 1 of surah 1
       if (!current || (current.surah === 1 && current.ayah === 1)) {
         console.log('[AudioService] Already at beginning');
         return;
       }
-      
+
       if (this.sound) {
         await this.sound.stopAsync();
         await this.sound.unloadAsync();
         this.sound = null;
       }
-      
+
       let prevSurah = current.surah;
       let prevAyah = current.ayah - 1;
-      
+
       // If at first verse, go to last verse of previous surah
       if (current.ayah === 1 && current.surah > 1) {
         prevSurah = current.surah - 1;
@@ -640,20 +650,20 @@ class AudioService {
           this.playbackQueue.unshift(this.currentMetadata);
         }
       }
-      
+
       // Create the previous verse metadata and play it
       const prevVerse: AudioMetadata = {
         surah: prevSurah,
         ayah: prevAyah,
         reciter: this.reciter
       };
-      
+
       this.currentMetadata = prevVerse;
       this.lastPlayed = prevVerse;
-      
+
       try {
         const uri = await this.downloadAudio(prevVerse.surah, prevVerse.ayah);
-        
+
         const { sound } = await Audio.Sound.createAsync(
           { uri },
           { shouldPlay: true },
@@ -682,7 +692,7 @@ class AudioService {
     const verse: AudioMetadata = { surah, ayah, reciter: this.reciter };
     this.currentMetadata = verse;
     this.lastPlayed = verse;
-    
+
     try {
       // Stop existing sound if any
       if (this.sound) {
@@ -690,9 +700,15 @@ class AudioService {
         await this.sound.unloadAsync();
         this.sound = null;
       }
-      
-      const uri = await this.downloadAudio(surah, ayah);
-      
+
+      // Fetch word segments in parallel with audio download (for word-by-word highlighting)
+      const [uri, segments] = await Promise.all([
+        this.downloadAudio(surah, ayah),
+        this.fetchWordSegments(surah, ayah)
+      ]);
+
+      this.segments = segments;
+
       const { sound } = await Audio.Sound.createAsync(
         { uri },
         { shouldPlay: true },
@@ -702,7 +718,7 @@ class AudioService {
       this.sound = sound;
       await sound.setRateAsync(this.playbackRate, true);
       this.isPlaying = true;
-      console.log('[AudioService] Now playing (single):', surah, ':', ayah);
+      console.log('[AudioService] Now playing (single):', surah, ':', ayah, 'with', segments.length, 'segments');
       this.notifyListeners();
     } catch (error) {
       console.error('Playback error:', error);
@@ -741,20 +757,20 @@ class AudioService {
     onComplete?: () => void
   ) {
     console.log(`[AudioService] playWithRepeat: ${surah}:${ayah}, repeats: ${repeatCount}, pause: ${pauseDuration}ms`);
-    
+
     // Stop any existing playback first
     if (this.sound) {
       await this.sound.stopAsync();
       await this.sound.unloadAsync();
       this.sound = null;
     }
-    
+
     this.repeatCount = repeatCount;
     this.currentRepeat = 0;
     this.pauseBetweenRepeats = pauseDuration;
     this.isRepeating = true;
     this.onRepeatComplete = onComplete || null;
-    
+
     await this.playSingleVerseWithRepeat(surah, ayah);
   }
 
@@ -762,7 +778,7 @@ class AudioService {
     const verse: AudioMetadata = { surah, ayah, reciter: this.reciter };
     this.currentMetadata = verse;
     this.lastPlayed = verse;
-    
+
     try {
       // Stop existing sound if any (for subsequent repeats)
       if (this.sound) {
@@ -770,9 +786,15 @@ class AudioService {
         await this.sound.unloadAsync();
         this.sound = null;
       }
-      
-      const uri = await this.downloadAudio(surah, ayah);
-      
+
+      // Fetch word segments in parallel with audio download (for word-by-word highlighting)
+      const [uri, segments] = await Promise.all([
+        this.downloadAudio(surah, ayah),
+        this.fetchWordSegments(surah, ayah)
+      ]);
+
+      this.segments = segments;
+
       const { sound } = await Audio.Sound.createAsync(
         { uri },
         { shouldPlay: true },
@@ -783,7 +805,7 @@ class AudioService {
       await sound.setRateAsync(this.playbackRate, true);
       this.isPlaying = true;
       this.currentRepeat++;
-      console.log(`[AudioService] Playing repeat ${this.currentRepeat}/${this.repeatCount || '∞'}`);
+      console.log(`[AudioService] Playing repeat ${this.currentRepeat}/${this.repeatCount || '∞'} with ${segments.length} segments`);
       this.notifyListeners();
     } catch (error) {
       console.error('Repeat playback error:', error);
@@ -794,7 +816,7 @@ class AudioService {
   private async onRepeatPlaybackStatusUpdate(status: any) {
     if (status.didJustFinish && this.isRepeating) {
       const shouldContinue = this.repeatCount === 0 || this.currentRepeat < this.repeatCount;
-      
+
       if (shouldContinue) {
         // Pause between repeats if configured
         if (this.pauseBetweenRepeats > 0) {
@@ -802,7 +824,7 @@ class AudioService {
           this.notifyListeners();
           await new Promise(resolve => setTimeout(resolve, this.pauseBetweenRepeats));
         }
-        
+
         // Check if still repeating (might have been stopped during pause)
         if (this.isRepeating && this.currentMetadata) {
           await this.playSingleVerseWithRepeat(this.currentMetadata.surah, this.currentMetadata.ayah);
@@ -813,7 +835,7 @@ class AudioService {
         this.isRepeating = false;
         this.isPlaying = false;
         this.notifyListeners();
-        
+
         if (this.onRepeatComplete) {
           this.onRepeatComplete();
           this.onRepeatComplete = null;
@@ -836,13 +858,13 @@ class AudioService {
     this.repeatCount = 0;
     this.currentRepeat = 0;
     this.onRepeatComplete = null;
-    
+
     if (this.sound) {
       await this.sound.stopAsync();
       await this.sound.unloadAsync();
       this.sound = null;
     }
-    
+
     this.isPlaying = false;
     this.notifyListeners();
   }
@@ -877,24 +899,24 @@ class AudioService {
     repeatCount: number = 0
   ) {
     console.log(`[AudioService] playLoop: ${startSurah}:${startAyah} -> ${endSurah}:${endAyah}, repeats: ${repeatCount}`);
-    
+
     // Stop any existing playback first
     if (this.sound) {
       await this.sound.stopAsync();
       await this.sound.unloadAsync();
       this.sound = null;
     }
-    
+
     // Also stop any existing loop or repeat
     this.isLooping = false;
     this.isRepeating = false;
-    
+
     this.loopStart = { surah: startSurah, ayah: startAyah, reciter: this.reciter };
     this.loopEnd = { surah: endSurah, ayah: endAyah, reciter: this.reciter };
     this.isLooping = true;
     this.loopRepeatCount = repeatCount;
     this.currentLoopRepeat = 0;
-    
+
     // Build the queue for the loop
     await this.buildLoopQueue();
     await this.playNextInLoop();
@@ -902,28 +924,28 @@ class AudioService {
 
   private async buildLoopQueue() {
     if (!this.loopStart || !this.loopEnd) return;
-    
+
     this.playbackQueue = [];
-    
+
     let currentSurah = this.loopStart.surah;
     let currentAyah = this.loopStart.ayah;
-    
+
     while (true) {
       this.playbackQueue.push({
         surah: currentSurah,
         ayah: currentAyah,
         reciter: this.reciter,
       });
-      
+
       // Check if we've reached the end
       if (currentSurah === this.loopEnd.surah && currentAyah === this.loopEnd.ayah) {
         break;
       }
-      
+
       // Move to next verse
       const surahInfo = SURAH_INFO.find(s => s.number === currentSurah);
       const totalAyahs = surahInfo?.ayahs || 0;
-      
+
       if (currentAyah < totalAyahs) {
         currentAyah++;
       } else if (currentSurah < 114) {
@@ -932,26 +954,26 @@ class AudioService {
       } else {
         break; // End of Quran
       }
-      
+
       // Safety check to prevent infinite loops
       if (this.playbackQueue.length > 1000) {
         console.warn('[AudioService] Loop queue too large, truncating');
         break;
       }
     }
-    
+
     console.log(`[AudioService] Built loop queue with ${this.playbackQueue.length} verses`);
   }
 
   private async playNextInLoop() {
     if (!this.isLooping) return;
-    
+
     if (this.playbackQueue.length === 0) {
       // Loop completed once
       this.currentLoopRepeat++;
-      
+
       const shouldContinue = this.loopRepeatCount === 0 || this.currentLoopRepeat < this.loopRepeatCount;
-      
+
       if (shouldContinue) {
         console.log(`[AudioService] Loop iteration ${this.currentLoopRepeat}/${this.loopRepeatCount || '∞'} completed, restarting`);
         await this.buildLoopQueue();
@@ -962,14 +984,14 @@ class AudioService {
       }
       return;
     }
-    
+
     const next = this.playbackQueue.shift()!;
     this.currentMetadata = next;
     this.lastPlayed = next;
-    
+
     try {
       const uri = await this.downloadAudio(next.surah, next.ayah);
-      
+
       const { sound } = await Audio.Sound.createAsync(
         { uri },
         { shouldPlay: true },
@@ -1006,13 +1028,13 @@ class AudioService {
     this.loopRepeatCount = 0;
     this.currentLoopRepeat = 0;
     this.playbackQueue = [];
-    
+
     if (this.sound) {
       await this.sound.stopAsync();
       await this.sound.unloadAsync();
       this.sound = null;
     }
-    
+
     this.isPlaying = false;
     this.notifyListeners();
   }
