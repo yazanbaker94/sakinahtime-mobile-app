@@ -49,6 +49,7 @@ import { useLayoutDimensions } from "@/hooks/useLayoutDimensions";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { OfflineIndicator } from "@/components/OfflineIndicator";
 import { WordScrubber } from "@/components/WordScrubber";
+import { AnimatedAudioWordHighlight } from "@/components/AnimatedAudioWordHighlight";
 // Hifz Mode imports
 import { HifzModeProvider, useHifzMode } from "@/contexts/HifzModeContext";
 import { MushafHifzOverlay } from "@/components/hifz/MushafHifzOverlay";
@@ -1535,29 +1536,20 @@ function MushafScreenContent() {
               );
             });
 
-            // Add word-level highlight overlay for the currently playing word
+            // Add word-level highlight overlay for the currently playing word (animated)
             const wordHighlightElements: React.ReactNode[] = [];
-            if (hasWordTiming && currentAudioWordIndex >= 0 && currentAudioWordIndex < wordCoords.length) {
-              const coord = wordCoords[currentAudioWordIndex];
-              if (coord) {
-                wordHighlightElements.push(
-                  <View
-                    key={`word-highlight-${verseKey}-${currentAudioWordIndex}`}
-                    pointerEvents="none"
-                    style={{
-                      position: 'absolute',
-                      left: coord.x * imageScale,
-                      top: (coord.y * imageScale) + imageOffsetY,
-                      width: Math.max(coord.width * imageScale, 20),
-                      height: Math.max(coord.height * imageScale, 20),
-                      backgroundColor: `${theme.primary}66`, // 40% opacity - bright word highlight
-                      borderRadius: 3,
-                      borderWidth: 2,
-                      borderColor: theme.primary,
-                    }}
-                  />
-                );
-              }
+            if (hasWordTiming && wordCoords.length > 0) {
+              wordHighlightElements.push(
+                <AnimatedAudioWordHighlight
+                  key={`word-highlight-${verseKey}`}
+                  wordCoords={wordCoords}
+                  currentWordIndex={currentAudioWordIndex}
+                  imageScale={imageScale}
+                  imageOffsetY={imageOffsetY}
+                  primaryColor={theme.primary}
+                  verseKey={verseKey}
+                />
+              );
             }
 
             return [...lineElements, ...wordHighlightElements];

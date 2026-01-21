@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   View,
   Modal,
@@ -14,8 +14,31 @@ import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { useTheme } from '@/hooks/useTheme';
 import { Spacing, BorderRadius } from '@/constants/theme';
-import { searchCities } from '@/utils/citySearch';
+import { searchCitiesAsync, searchCities } from '@/utils/citySearch';
 import type { City, ManualLocation } from '@/types/location';
+
+/**
+ * Merge local and online search results, avoiding duplicates
+ * Prioritizes online results but includes local cities not found online
+ */
+function mergeSearchResults(localResults: City[], onlineResults: City[]): City[] {
+  if (onlineResults.length === 0) return localResults;
+  if (localResults.length === 0) return onlineResults;
+
+  // Create a set of online city keys for fast lookup
+  const onlineKeys = new Set(
+    onlineResults.map(c => `${c.name.toLowerCase()}-${c.country.toLowerCase()}`)
+  );
+
+  // Add local results that aren't in online results
+  const uniqueLocalResults = localResults.filter(local => {
+    const key = `${local.name.toLowerCase()}-${local.country.toLowerCase()}`;
+    return !onlineKeys.has(key);
+  });
+
+  // Return online results first, then unique local results
+  return [...onlineResults, ...uniqueLocalResults].slice(0, 50);
+}
 
 interface CitySearchModalProps {
   visible: boolean;
@@ -35,27 +58,68 @@ export function CitySearchModal({
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<City[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const searchAbortRef = useRef<AbortController | null>(null);
 
-  // Debounced search
+  // Debounced async search
   useEffect(() => {
-    if (searchQuery.trim().length > 0) {
-      setIsSearching(true);
-    }
-
-    const timer = setTimeout(() => {
-      const results = searchCities(searchQuery, 50);
+    if (searchQuery.trim().length === 0) {
+      // Load initial top cities
+      const results = searchCities('', 50);
       setSearchResults(results);
       setIsSearching(false);
-    }, 300);
+      setError(null);
+      return;
+    }
+
+    // Show local results immediately for responsiveness
+    const localResults = searchCities(searchQuery, 50);
+    setSearchResults(localResults);
+
+    // For short queries, just use local results
+    if (searchQuery.trim().length < 3) {
+      setIsSearching(false);
+      return;
+    }
+
+    // For longer queries, also search online
+    setIsSearching(true);
+    setError(null);
+
+    // Debounce with 600ms delay for API calls
+    const timer = setTimeout(async () => {
+      try {
+        const onlineResults = await searchCitiesAsync(searchQuery, 50);
+
+        // Merge online results with local, avoiding duplicates
+        const mergedResults = mergeSearchResults(localResults, onlineResults);
+        setSearchResults(mergedResults);
+        setError(null);
+      } catch (err) {
+        console.error('Search error:', err);
+        setError('Network error. Showing local results.');
+        // Keep local results that are already shown
+      } finally {
+        setIsSearching(false);
+      }
+    }, 600);
 
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Load initial results
+  // Load initial results when modal opens
   useEffect(() => {
     if (visible && searchQuery.trim().length === 0) {
       const results = searchCities('', 50);
       setSearchResults(results);
+    }
+  }, [visible]);
+
+  // Reset when modal closes
+  useEffect(() => {
+    if (!visible) {
+      setSearchQuery('');
+      setError(null);
     }
   }, [visible]);
 
@@ -151,7 +215,7 @@ export function CitySearchModal({
           </View>
         ))}
         <ThemedText type="caption" style={[styles.sectionHeader, { marginTop: Spacing.lg }]}>
-          ALL CITIES
+          POPULAR CITIES
         </ThemedText>
       </View>
     );
@@ -183,7 +247,7 @@ export function CitySearchModal({
           <Feather name="search" size={18} color={theme.textSecondary} />
           <TextInput
             style={[styles.searchInput, { color: theme.text }]}
-            placeholder="Search cities..."
+            placeholder="Search any city worldwide..."
             placeholderTextColor={theme.textSecondary}
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -191,41 +255,46 @@ export function CitySearchModal({
             autoCapitalize="none"
             autoCorrect={false}
           />
-          {searchQuery.length > 0 && (
+          {isSearching ? (
+            <ActivityIndicator size="small" color={theme.primary} />
+          ) : searchQuery.length > 0 ? (
             <Pressable onPress={() => setSearchQuery('')}>
               <Feather name="x" size={18} color={theme.textSecondary} />
             </Pressable>
-          )}
+          ) : null}
         </View>
 
-        {/* Results */}
-        {isSearching ? (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="small" color={theme.primary} />
-            <ThemedText type="caption" style={{ marginTop: 8, opacity: 0.6 }}>
-              Searching...
+        {/* Error message */}
+        {error && (
+          <View style={[styles.errorBanner, { backgroundColor: isDark ? 'rgba(251, 191, 36, 0.1)' : 'rgba(251, 191, 36, 0.15)' }]}>
+            <Feather name="wifi-off" size={14} color="#D97706" />
+            <ThemedText type="caption" style={{ color: '#D97706', marginLeft: 6 }}>
+              {error}
             </ThemedText>
           </View>
-        ) : (
-          <FlatList
-            data={searchResults}
-            keyExtractor={(item) => item.id}
-            renderItem={renderCityItem}
-            ListHeaderComponent={ListHeader}
-            ListEmptyComponent={
+        )}
+
+        {/* Results */}
+        <FlatList
+          data={searchResults}
+          keyExtractor={(item) => item.id}
+          renderItem={renderCityItem}
+          ListHeaderComponent={ListHeader}
+          ListEmptyComponent={
+            isSearching ? null : (
               <View style={styles.emptyContainer}>
                 <Feather name="map-pin" size={48} color={theme.textSecondary} style={{ opacity: 0.3 }} />
                 <ThemedText type="body" style={{ opacity: 0.5, marginTop: 16 }}>
                   No cities found
                 </ThemedText>
-                <ThemedText type="caption" style={{ opacity: 0.4, marginTop: 4 }}>
-                  Try a different search term
+                <ThemedText type="caption" style={{ opacity: 0.4, marginTop: 4, textAlign: 'center', paddingHorizontal: 40 }}>
+                  Try a different spelling or search for a nearby larger city
                 </ThemedText>
               </View>
-            }
-            contentContainerStyle={{ paddingBottom: insets.bottom + Spacing.xl }}
-          />
-        )}
+            )
+          }
+          contentContainerStyle={{ paddingBottom: insets.bottom + Spacing.xl }}
+        />
       </ThemedView>
     </Modal>
   );
@@ -279,10 +348,13 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     marginBottom: 2,
   },
-  loadingContainer: {
-    flex: 1,
+  errorBanner: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    marginHorizontal: Spacing.lg,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.sm,
   },
   emptyContainer: {
     alignItems: 'center',

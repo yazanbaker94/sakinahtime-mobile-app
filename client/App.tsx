@@ -46,6 +46,7 @@ const linking: LinkingOptions<RootStackParamList> = {
       AzkarDetail: 'azkar-detail',
       IslamicGuideDetail: 'islamic-guide',
       Mushaf: 'mushaf',
+      Progress: 'progress',
     },
   },
 };

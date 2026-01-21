@@ -1,19 +1,55 @@
 import citiesData from '@/data/cities.json';
 import type { City } from '@/types/location';
+import { searchCitiesOnline } from './nominatimSearch';
 
 const cities = citiesData.cities as City[];
 
 /**
- * Search cities by name or country
+ * Search cities - uses online Nominatim API with fallback to local data
  * Case-insensitive matching
- * Returns sorted by population (larger cities first)
+ */
+export async function searchCitiesAsync(query: string, limit: number = 50): Promise<City[]> {
+  // For empty query, return top local cities
+  if (!query || query.trim().length === 0) {
+    return getTopCities(limit);
+  }
+
+  // For very short queries (1 char), use local only to reduce API calls
+  if (query.trim().length < 2) {
+    return searchCitiesLocal(query, limit);
+  }
+
+  // Try online search first
+  try {
+    const onlineResults = await searchCitiesOnline(query, limit);
+
+    // If online returns results, use them
+    if (onlineResults.length > 0) {
+      return onlineResults;
+    }
+
+    // Fallback to local if online returns nothing
+    return searchCitiesLocal(query, limit);
+  } catch (error) {
+    console.warn('Online search failed, falling back to local:', error);
+    return searchCitiesLocal(query, limit);
+  }
+}
+
+/**
+ * Search cities locally (original implementation)
+ * For backwards compatibility and offline fallback
  */
 export function searchCities(query: string, limit: number = 50): City[] {
+  return searchCitiesLocal(query, limit);
+}
+
+/**
+ * Local search implementation
+ */
+function searchCitiesLocal(query: string, limit: number = 50): City[] {
   if (!query || query.trim().length === 0) {
-    // Return top cities by population when no query
-    return [...cities]
-      .sort((a, b) => (b.population || 0) - (a.population || 0))
-      .slice(0, limit);
+    return getTopCities(limit);
   }
 
   const normalizedQuery = query.toLowerCase().trim();
@@ -25,11 +61,7 @@ export function searchCities(query: string, limit: number = 50): City[] {
     return cityName.includes(normalizedQuery) || countryName.includes(normalizedQuery);
   });
 
-  // Sort by relevance:
-  // 1. Exact name match first
-  // 2. Name starts with query
-  // 3. Country starts with query
-  // 4. Then by population
+  // Sort by relevance
   return matches
     .sort((a, b) => {
       const aName = a.name.toLowerCase();
@@ -56,6 +88,15 @@ export function searchCities(query: string, limit: number = 50): City[] {
       // By population
       return (b.population || 0) - (a.population || 0);
     })
+    .slice(0, limit);
+}
+
+/**
+ * Get top cities by population
+ */
+function getTopCities(limit: number): City[] {
+  return [...cities]
+    .sort((a, b) => (b.population || 0) - (a.population || 0))
     .slice(0, limit);
 }
 

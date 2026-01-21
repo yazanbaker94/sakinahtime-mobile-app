@@ -10,6 +10,12 @@ import { View, StyleSheet, Dimensions } from 'react-native';
 import { Image } from 'expo-image';
 import * as Haptics from 'expo-haptics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  Easing
+} from 'react-native-reanimated';
 import { ThemedText } from '@/components/ThemedText';
 import { useTheme } from '@/hooks/useTheme';
 import { findWordMeaningByIndex } from '@/services/WordMeaningService';
@@ -82,6 +88,37 @@ export function WordScrubber({
   const [currentWord, setCurrentWord] = useState<WordInfo | null>(null);
   const lastWordRef = useRef<string | null>(null);
   const wasActiveRef = useRef(false);
+
+  // Animated values for smooth word highlight transitions
+  const highlightLeft = useSharedValue(0);
+  const highlightTop = useSharedValue(0);
+  const highlightWidth = useSharedValue(0);
+  const highlightHeight = useSharedValue(0);
+  const highlightOpacity = useSharedValue(0);
+
+  // Animate the highlight when word bounds change
+  useEffect(() => {
+    if (currentWord?.wordBounds) {
+      const timing = { duration: 150, easing: Easing.out(Easing.cubic) };
+      highlightLeft.value = withTiming(currentWord.wordBounds.left, timing);
+      highlightTop.value = withTiming(currentWord.wordBounds.top, timing);
+      highlightWidth.value = withTiming(currentWord.wordBounds.width, timing);
+      highlightHeight.value = withTiming(currentWord.wordBounds.height, timing);
+      highlightOpacity.value = withTiming(1, { duration: 100 });
+    } else {
+      highlightOpacity.value = withTiming(0, { duration: 100 });
+    }
+  }, [currentWord?.wordBounds]);
+
+  // Animated style for smooth highlight transitions
+  const animatedHighlightStyle = useAnimatedStyle(() => ({
+    position: 'absolute' as const,
+    left: highlightLeft.value,
+    top: highlightTop.value,
+    width: highlightWidth.value,
+    height: highlightHeight.value,
+    opacity: highlightOpacity.value,
+  }));
 
   // Play word audio when finger is lifted (scrubber closes)
   useEffect(() => {
@@ -262,16 +299,13 @@ export function WordScrubber({
   return (
     <View style={StyleSheet.absoluteFill} pointerEvents="box-none">
 
-      {/* Word highlight - highlights the actual word using coordinates */}
-      {currentWord?.wordBounds && (
-        <View
+      {/* Word highlight - highlights the actual word using coordinates with smooth animation */}
+      {isActive && (
+        <Animated.View
           style={[
             styles.wordHighlight,
+            animatedHighlightStyle,
             {
-              left: currentWord.wordBounds.left,
-              top: currentWord.wordBounds.top,
-              width: currentWord.wordBounds.width,
-              height: currentWord.wordBounds.height,
               borderColor: isDark ? theme.gold : theme.primary,
               backgroundColor: isDark ? 'rgba(218, 165, 32, 0.25)' : 'rgba(59, 130, 246, 0.25)',
             }
@@ -443,9 +477,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   wordHighlight: {
-    position: 'absolute',
     borderWidth: 2,
-    borderRadius: 4,
+    borderRadius: 8, // More rounded for smoother look
   },
   magnifiedWord: {
     fontSize: 28,

@@ -363,13 +363,15 @@ export function useCalculationMethod() {
   const saveMethod = async (newMethod: number, isManualSelection: boolean = true) => {
     try {
       await AsyncStorage.setItem(CALCULATION_METHOD_KEY, newMethod.toString());
-      if (isManualSelection) {
-        await AsyncStorage.setItem(METHOD_MANUALLY_SET_KEY, 'true');
-      }
-      // Update the cached calculation method
+      // Always save the manually set flag - this allows auto-detection to reset it
+      await AsyncStorage.setItem(METHOD_MANUALLY_SET_KEY, isManualSelection ? 'true' : 'false');
+      // Update the cached calculation method immediately
       queryClient.setQueryData(["calculationMethod"], { method: newMethod, isManuallySet: isManualSelection });
-      // Invalidate prayer times queries to force refetch with new method
-      queryClient.invalidateQueries({ queryKey: ["prayerTimes"] });
+      // Also invalidate to trigger re-render in all components
+      await queryClient.invalidateQueries({ queryKey: ["calculationMethod"] });
+      // Invalidate AND refetch prayer times queries to force immediate update
+      await queryClient.invalidateQueries({ queryKey: ["prayerTimes"] });
+      await queryClient.refetchQueries({ queryKey: ["prayerTimes"], type: 'active' });
     } catch (e) {
       console.error("Failed to save calculation method:", e);
     }
@@ -406,15 +408,21 @@ export function useCalculationMethod() {
 /**
  * Hook to auto-detect calculation method based on country
  * Call this in PrayerTimesScreen or App.tsx to trigger auto-detection
+ * Re-detects when country changes (unless user manually set their method)
  */
 export function useAutoDetectCalculationMethod(country: string | null) {
   const { autoDetectMethod, isManuallySet, isLoading } = useCalculationMethod();
-  const hasAutoDetected = useRef(false);
+  const lastCountry = useRef<string | null>(null);
 
   useEffect(() => {
-    // Only auto-detect once, when country first becomes available
-    if (country && !hasAutoDetected.current && !isLoading && !isManuallySet) {
-      hasAutoDetected.current = true;
+    // Skip if still loading or user manually set their method
+    if (isLoading || isManuallySet) {
+      return;
+    }
+
+    // Auto-detect when country becomes available or changes
+    if (country && country !== lastCountry.current) {
+      lastCountry.current = country;
       autoDetectMethod(country);
     }
   }, [country, isLoading, isManuallySet, autoDetectMethod]);
