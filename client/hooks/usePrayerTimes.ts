@@ -1,28 +1,28 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { prayerTimesCacheService } from "../services/PrayerTimesCacheService";
 import { prayerTimesPreloader } from "../services/PrayerTimesPreloader";
 import { widgetDataService } from "../services/WidgetDataService";
 import { useNetworkStatus } from "./useNetworkStatus";
 
 export const CALCULATION_METHODS = [
-  { id: 0, name: "Shia Ithna-Ansari" },
-  { id: 1, name: "University of Islamic Sciences, Karachi" },
-  { id: 2, name: "Islamic Society of North America" },
-  { id: 3, name: "Muslim World League" },
-  { id: 4, name: "Umm Al-Qura University, Makkah" },
-  { id: 5, name: "Egyptian General Authority of Survey" },
-  { id: 7, name: "Institute of Geophysics, University of Tehran" },
-  { id: 8, name: "Gulf Region" },
-  { id: 9, name: "Kuwait" },
-  { id: 10, name: "Qatar" },
-  { id: 11, name: "Majlis Ugama Islam Singapura, Singapore" },
-  { id: 12, name: "Union Organization Islamic de France" },
-  { id: 13, name: "Diyanet İşleri Başkanlığı, Turkey" },
-  { id: 14, name: "Spiritual Administration of Muslims of Russia" },
-  { id: 15, name: "Moonsighting Committee Worldwide" },
-  { id: 16, name: "Ministry of Awqaf, Islamic Affairs, Jordan" },
+  { id: 0, name: "Shia Ithna-Ansari", shortName: "Shia" },
+  { id: 1, name: "University of Islamic Sciences, Karachi", shortName: "Karachi" },
+  { id: 2, name: "Islamic Society of North America", shortName: "ISNA" },
+  { id: 3, name: "Muslim World League", shortName: "MWL" },
+  { id: 4, name: "Umm Al-Qura University, Makkah", shortName: "Umm Al-Qura" },
+  { id: 5, name: "Egyptian General Authority of Survey", shortName: "Egypt" },
+  { id: 7, name: "Institute of Geophysics, University of Tehran", shortName: "Tehran" },
+  { id: 8, name: "Gulf Region", shortName: "Gulf" },
+  { id: 9, name: "Kuwait", shortName: "Kuwait" },
+  { id: 10, name: "Qatar", shortName: "Qatar" },
+  { id: 11, name: "Majlis Ugama Islam Singapura, Singapore", shortName: "MUIS" },
+  { id: 12, name: "Union Organization Islamic de France", shortName: "UOIF" },
+  { id: 13, name: "Diyanet İşleri Başkanlığı, Turkey", shortName: "Diyanet" },
+  { id: 14, name: "Spiritual Administration of Muslims of Russia", shortName: "Russia" },
+  { id: 15, name: "Moonsighting Committee Worldwide", shortName: "Moonsighting" },
+  { id: 16, name: "Ministry of Awqaf, Islamic Affairs, Jordan", shortName: "Jordan" },
 ];
 
 const CALCULATION_METHOD_KEY = "@prayer_calculation_method";
@@ -95,7 +95,7 @@ async function fetchPrayerTimes(latitude: number, longitude: number, method: num
   return data.data;
 }
 
-export function usePrayerTimes(latitude: number | null, longitude: number | null, method: number = 2) {
+export function usePrayerTimes(latitude: number | null, longitude: number | null, method: number = 2, locationName: string = '') {
   const enabled = latitude !== null && longitude !== null;
   const { isOnline, lastOnline } = useNetworkStatus();
   const [isUsingCache, setIsUsingCache] = useState(false);
@@ -134,7 +134,7 @@ export function usePrayerTimes(latitude: number | null, longitude: number | null
 
           // Update widget data
           try {
-            await widgetDataService.updatePrayerTimes(data.timings, '');
+            await widgetDataService.updatePrayerTimes(data.timings, locationName);
           } catch (widgetError) {
             console.warn('[usePrayerTimes] Failed to update widget:', widgetError);
           }
@@ -249,30 +249,125 @@ function transformCachedData(cached: any): PrayerTimesData | null {
   }
 }
 
+const METHOD_MANUALLY_SET_KEY = "@prayer_method_manually_set";
+
+/**
+ * Country-to-calculation-method mapping
+ * Maps country names to their regional calculation method IDs
+ */
+const COUNTRY_TO_METHOD: Record<string, number> = {
+  // North America - ISNA (method 2)
+  'United States': 2,
+  'Canada': 2,
+  'Mexico': 2,
+
+  // Saudi Arabia & nearby - Umm Al-Qura (method 4)
+  'Saudi Arabia': 4,
+  'Yemen': 4,
+
+  // Egypt - Egyptian General Authority (method 5)
+  'Egypt': 5,
+  'Libya': 5,
+  'Sudan': 5,
+
+  // Gulf Region (method 8)
+  'United Arab Emirates': 8,
+  'Bahrain': 8,
+  'Oman': 8,
+
+  // Kuwait (method 9)
+  'Kuwait': 9,
+
+  // Qatar (method 10)
+  'Qatar': 10,
+
+  // Southeast Asia - MUIS Singapore (method 11)
+  'Singapore': 11,
+  'Malaysia': 11,
+  'Indonesia': 11,
+  'Brunei': 11,
+  'Thailand': 11,
+
+  // France - UOIF (method 12)
+  'France': 12,
+
+  // Turkey - Diyanet (method 13)
+  'Turkey': 13,
+  'Azerbaijan': 13,
+  'Turkmenistan': 13,
+
+  // Russia - Spiritual Administration (method 14)
+  'Russia': 14,
+  'Kazakhstan': 14,
+  'Uzbekistan': 14,
+  'Tajikistan': 14,
+  'Kyrgyzstan': 14,
+
+  // Jordan - Ministry of Awqaf (method 16)
+  'Jordan': 16,
+  'Palestine': 16,
+  'Syria': 16,
+  'Lebanon': 16,
+  'Iraq': 16,
+
+  // Pakistan/India - University of Islamic Sciences Karachi (method 1)
+  'Pakistan': 1,
+  'India': 1,
+  'Bangladesh': 1,
+  'Afghanistan': 1,
+
+  // Iran - Institute of Geophysics Tehran (method 7)
+  'Iran': 7,
+
+  // Shia communities (method 0) - can be selected manually
+};
+
+/**
+ * Get the recommended calculation method for a country
+ * Returns Muslim World League (3) as default for unmapped countries
+ */
+export function getMethodForCountry(country: string | null): number {
+  if (!country) return 3; // Muslim World League as default
+  return COUNTRY_TO_METHOD[country] ?? 3;
+}
+
+/**
+ * Get the method name by ID
+ */
+export function getMethodName(methodId: number): string {
+  const method = CALCULATION_METHODS.find(m => m.id === methodId);
+  return method?.name ?? 'Unknown';
+}
+
 export function useCalculationMethod() {
   const queryClient = useQueryClient();
 
   // Use React Query to share calculation method state across components
-  const { data: method = 2, isLoading } = useQuery({
+  const { data: methodData = { method: 2, isManuallySet: false }, isLoading } = useQuery({
     queryKey: ["calculationMethod"],
     queryFn: async () => {
       const stored = await AsyncStorage.getItem(CALCULATION_METHOD_KEY);
+      const manuallySet = await AsyncStorage.getItem(METHOD_MANUALLY_SET_KEY);
+
       if (stored !== null) {
         const parsed = parseInt(stored, 10);
         if (!isNaN(parsed)) {
-          return parsed;
+          return { method: parsed, isManuallySet: manuallySet === 'true' };
         }
       }
-      return 2; // Default method
+      return { method: 2, isManuallySet: false }; // Default method
     },
     staleTime: Infinity, // Never consider stale - only update when we explicitly set it
   });
 
-  const saveMethod = async (newMethod: number) => {
+  const saveMethod = async (newMethod: number, isManualSelection: boolean = true) => {
     try {
       await AsyncStorage.setItem(CALCULATION_METHOD_KEY, newMethod.toString());
+      if (isManualSelection) {
+        await AsyncStorage.setItem(METHOD_MANUALLY_SET_KEY, 'true');
+      }
       // Update the cached calculation method
-      queryClient.setQueryData(["calculationMethod"], newMethod);
+      queryClient.setQueryData(["calculationMethod"], { method: newMethod, isManuallySet: isManualSelection });
       // Invalidate prayer times queries to force refetch with new method
       queryClient.invalidateQueries({ queryKey: ["prayerTimes"] });
     } catch (e) {
@@ -280,7 +375,49 @@ export function useCalculationMethod() {
     }
   };
 
-  return { method, setMethod: saveMethod, isLoading };
+  /**
+   * Auto-detect and set the calculation method based on country
+   * Only sets if user hasn't manually selected a method before
+   */
+  const autoDetectMethod = async (country: string | null) => {
+    // Don't override if user manually set their method
+    if (methodData.isManuallySet) {
+      console.log('[useCalculationMethod] Skipping auto-detect - user has manually set method');
+      return;
+    }
+
+    const detectedMethod = getMethodForCountry(country);
+    console.log(`[useCalculationMethod] Auto-detected method for ${country}: ${getMethodName(detectedMethod)}`);
+
+    // Save with isManualSelection = false to allow future auto-detection
+    await saveMethod(detectedMethod, false);
+  };
+
+  return {
+    method: methodData.method,
+    setMethod: saveMethod,
+    isLoading,
+    isManuallySet: methodData.isManuallySet,
+    autoDetectMethod,
+    getRecommendedMethod: getMethodForCountry,
+  };
+}
+
+/**
+ * Hook to auto-detect calculation method based on country
+ * Call this in PrayerTimesScreen or App.tsx to trigger auto-detection
+ */
+export function useAutoDetectCalculationMethod(country: string | null) {
+  const { autoDetectMethod, isManuallySet, isLoading } = useCalculationMethod();
+  const hasAutoDetected = useRef(false);
+
+  useEffect(() => {
+    // Only auto-detect once, when country first becomes available
+    if (country && !hasAutoDetected.current && !isLoading && !isManuallySet) {
+      hasAutoDetected.current = true;
+      autoDetectMethod(country);
+    }
+  }, [country, isLoading, isManuallySet, autoDetectMethod]);
 }
 
 export function getNextPrayer(timings: PrayerTimes): { name: string; time: string; nameAr: string } | null {

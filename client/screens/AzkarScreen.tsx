@@ -57,6 +57,34 @@ const DUA_ICON_MAP: Record<string, keyof typeof Feather.glyphMap> = {
   star: 'star',
 };
 
+// Daily tips - rotate based on day of year
+const DAILY_TIPS = [
+  { text: 'The Prophet (peace be upon him) said: "The best remembrance is La ilaha illallah (There is no god but Allah)."', source: 'Tirmidhi' },
+  { text: 'The Prophet (peace be upon him) said: "Whoever says SubhanAllah wa bihamdihi 100 times, his sins will be forgiven even if they were like foam of the sea."', source: 'Bukhari & Muslim' },
+  { text: 'The Prophet (peace be upon him) said: "Two words are light on the tongue, heavy on the scales, beloved to the Most Merciful: SubhanAllahi wa bihamdihi, SubhanAllahil Adheem."', source: 'Bukhari & Muslim' },
+  { text: 'The Prophet (peace be upon him) said: "Whoever reads Ayat al-Kursi after every obligatory prayer, nothing prevents him from entering Paradise except death."', source: 'An-Nasa\'i' },
+  { text: 'The Prophet (peace be upon him) said: "The closest a servant is to his Lord is when he is in prostration, so increase your supplication."', source: 'Muslim' },
+  { text: 'The Prophet (peace be upon him) said: "Make things easy and do not make them difficult. Give glad tidings and do not repel people."', source: 'Bukhari & Muslim' },
+  { text: 'The Prophet (peace be upon him) said: "None of you truly believes until he loves for his brother what he loves for himself."', source: 'Bukhari & Muslim' },
+  { text: 'The Prophet (peace be upon him) said: "The strong person is not the one who can wrestle, but the strong person is the one who controls himself at the time of anger."', source: 'Bukhari & Muslim' },
+  { text: 'The Prophet (peace be upon him) said: "Cleanliness is half of faith."', source: 'Muslim' },
+  { text: 'The Prophet (peace be upon him) said: "Whoever believes in Allah and the Last Day, let him speak good or remain silent."', source: 'Bukhari & Muslim' },
+  { text: 'The Prophet (peace be upon him) said: "The best of you are those who learn the Quran and teach it."', source: 'Bukhari' },
+  { text: 'The Prophet (peace be upon him) said: "Allah does not look at your appearance or wealth, but He looks at your hearts and actions."', source: 'Muslim' },
+  { text: 'The Prophet (peace be upon him) said: "A smile in the face of your brother is charity."', source: 'Tirmidhi' },
+  { text: 'The Prophet (peace be upon him) said: "Whoever treads a path seeking knowledge, Allah will make easy for him the path to Paradise."', source: 'Muslim' },
+  { text: 'The Prophet (peace be upon him) said: "The supplication between the Adhan and Iqamah is not rejected."', source: 'Abu Dawud & Tirmidhi' },
+];
+
+// Get daily tip based on day of year
+function getDailyTip() {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), 0, 0);
+  const diff = now.getTime() - start.getTime();
+  const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
+  return DAILY_TIPS[dayOfYear % DAILY_TIPS.length];
+}
+
 const GUIDE_CATEGORIES = [
   { id: 'worship', titleEn: 'Worship & Prayer', titleAr: 'العبادة والصلاة', icon: 'heart' as const, guides: islamicGuides.filter(g => g.category === 'worship') },
   { id: 'purification', titleEn: 'Purification', titleAr: 'الطهارة', icon: 'droplet' as const, guides: islamicGuides.filter(g => g.category === 'purification') },
@@ -77,7 +105,7 @@ export default function AzkarScreen() {
 
   const [activeTab, setActiveTab] = useState<TabType>('azkar');
   const [searchQuery, setSearchQuery] = useState('');
-  
+
   // Dua state
   const [duaSubTab, setDuaSubTab] = useState<DuaSubTab>('categories');
   const [selectedDuaCategory, setSelectedDuaCategory] = useState<string | null>(null);
@@ -255,8 +283,8 @@ export default function AzkarScreen() {
                 <Feather name="info" size={20} color={theme.primary} />
                 <ThemedText type="body" style={{ marginLeft: Spacing.sm, fontWeight: '600' }}>Daily Tip</ThemedText>
               </View>
-              <ThemedText type="small" secondary style={styles.tipText}>The Prophet (peace be upon him) said: &quot;The best remembrance is La ilaha illallah (There is no god but Allah).&quot;</ThemedText>
-              <ThemedText type="caption" style={{ color: theme.primary }}>- Tirmidhi</ThemedText>
+              <ThemedText type="small" secondary style={styles.tipText}>{getDailyTip().text}</ThemedText>
+              <ThemedText type="caption" style={{ color: theme.primary }}>- {getDailyTip().source}</ThemedText>
             </View>
           </>
         )}

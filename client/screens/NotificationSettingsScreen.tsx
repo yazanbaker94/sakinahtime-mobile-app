@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { View, StyleSheet, ScrollView, Pressable, Switch, Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { ThemedText } from "@/components/ThemedText";
@@ -11,7 +11,8 @@ import { useTheme } from "@/hooks/useTheme";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useAzan } from "@/hooks/useAzan";
 import { useIqamaSettings, IqamaSettings, IQAMA_DELAY_OPTIONS } from "@/hooks/useIqamaSettings";
-import { useCalculationMethod, CALCULATION_METHODS } from "@/hooks/usePrayerTimes";
+import { useLocation } from "@/contexts/LocationContext";
+import { useCalculationMethod, CALCULATION_METHODS, getMethodForCountry } from "@/hooks/usePrayerTimes";
 import { usePrayerAdjustments, PrayerAdjustments } from "@/hooks/usePrayerAdjustments";
 import { FastingNotificationSettings } from "@/components/FastingNotificationSettings";
 import { Feather } from "@expo/vector-icons";
@@ -31,8 +32,11 @@ export default function NotificationSettingsScreen() {
   const { isDark, theme } = useTheme();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp>();
+  const route = useRoute<RouteProp<RootStackParamList, 'NotificationSettings'>>();
 
-  const { method: calculationMethod, setMethod: setCalculationMethod } = useCalculationMethod();
+  const { method: calculationMethod, setMethod: setCalculationMethod, isManuallySet } = useCalculationMethod();
+  const { country } = useLocation();
+  const recommendedMethod = getMethodForCountry(country);
   const { adjustments: prayerAdjustments, setAdjustment } = usePrayerAdjustments();
   const {
     settings: notificationSettings,
@@ -47,10 +51,24 @@ export default function NotificationSettingsScreen() {
     togglePrayerIqama,
   } = useIqamaSettings();
 
-  const [showMethodPicker, setShowMethodPicker] = useState(false);
+  // Auto-expand calculation method picker if coming from prayer card
+  const [showMethodPicker, setShowMethodPicker] = useState(route.params?.openSection === 'calculationMethod');
   const [showAdjustments, setShowAdjustments] = useState(false);
   const [showIqamaDelayPicker, setShowIqamaDelayPicker] = useState(false);
   const [showIqamaPrayers, setShowIqamaPrayers] = useState(false);
+
+  // Scroll ref for auto-scrolling to sections
+  const scrollViewRef = useRef<ScrollView>(null);
+  const [calcMethodY, setCalcMethodY] = useState(0);
+
+  // Auto-scroll to calculation method section when opening from prayer card
+  useEffect(() => {
+    if (route.params?.openSection === 'calculationMethod' && calcMethodY > 0) {
+      setTimeout(() => {
+        scrollViewRef.current?.scrollTo({ y: calcMethodY - 100, animated: true });
+      }, 100);
+    }
+  }, [calcMethodY, route.params?.openSection]);
 
   const handleToggleNotifications = async (value: boolean) => {
     if (Platform.OS !== "web") {
@@ -98,6 +116,7 @@ export default function NotificationSettingsScreen() {
       </View>
 
       <ScrollView
+        ref={scrollViewRef}
         style={styles.scroll}
         contentContainerStyle={{ paddingBottom: insets.bottom + Spacing.xl }}
         showsVerticalScrollIndicator={false}
@@ -330,13 +349,16 @@ export default function NotificationSettingsScreen() {
         </View>
 
         {/* Calculation Method */}
-        <View style={[styles.card, {
-          backgroundColor: isDark ? theme.cardBackground : theme.cardBackground,
-          borderColor: isDark ? theme.border : 'transparent',
-          borderWidth: isDark ? 1 : 0,
-          elevation: isDark ? 0 : 3,
-          shadowOpacity: isDark ? 0 : 0.08,
-        }]}>
+        <View
+          style={[styles.card, {
+            backgroundColor: isDark ? theme.cardBackground : theme.cardBackground,
+            borderColor: isDark ? theme.border : 'transparent',
+            borderWidth: isDark ? 1 : 0,
+            elevation: isDark ? 0 : 3,
+            shadowOpacity: isDark ? 0 : 0.08,
+          }]}
+          onLayout={(event) => setCalcMethodY(event.nativeEvent.layout.y)}
+        >
           <Pressable onPress={() => setShowMethodPicker(!showMethodPicker)} style={styles.settingRow}>
             <View style={styles.settingInfo}>
               <View style={[styles.iconCircle, { backgroundColor: isDark ? 'rgba(96, 165, 250, 0.15)' : 'rgba(59, 130, 246, 0.1)' }]}>
@@ -347,6 +369,11 @@ export default function NotificationSettingsScreen() {
                 <ThemedText type="small" secondary>
                   {CALCULATION_METHODS.find(m => m.id === calculationMethod)?.name || "ISNA"}
                 </ThemedText>
+                {!isManuallySet && (
+                  <ThemedText type="caption" style={{ color: theme.primary, marginTop: 2 }}>
+                    ✓ Auto-detected for {country || 'your region'}
+                  </ThemedText>
+                )}
               </View>
             </View>
             <Feather name={showMethodPicker ? "chevron-up" : "chevron-down"} size={20} color={theme.textSecondary} />
@@ -354,12 +381,35 @@ export default function NotificationSettingsScreen() {
 
           {showMethodPicker && (
             <View style={styles.methodPicker}>
+              {/* Auto-detect toggle */}
+              <View style={[styles.autoDetectRow, { borderBottomWidth: 1, borderBottomColor: 'rgba(0,0,0,0.06)', paddingBottom: Spacing.md, marginBottom: Spacing.sm }]}>
+                <View style={{ flex: 1 }}>
+                  <ThemedText type="body" style={{ fontWeight: '500' }}>Auto-detect by location</ThemedText>
+                  <ThemedText type="caption" secondary>
+                    Recommended: {CALCULATION_METHODS.find(m => m.id === recommendedMethod)?.name || 'Muslim World League'}
+                  </ThemedText>
+                </View>
+                <Pressable
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    // Reset to auto-detected method
+                    setCalculationMethod(recommendedMethod, false);
+                    setShowMethodPicker(false);
+                  }}
+                  style={[styles.autoDetectButton, { backgroundColor: !isManuallySet ? `${theme.primary}20` : theme.backgroundSecondary }]}
+                >
+                  <ThemedText type="small" style={{ color: !isManuallySet ? theme.primary : theme.textSecondary, fontWeight: '600' }}>
+                    {!isManuallySet ? 'Active' : 'Use Auto'}
+                  </ThemedText>
+                </Pressable>
+              </View>
+
               {CALCULATION_METHODS.map((method) => (
                 <Pressable
                   key={method.id}
                   onPress={() => {
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                    setCalculationMethod(method.id);
+                    setCalculationMethod(method.id, true); // true = manual selection
                     setShowMethodPicker(false);
                   }}
                   style={[styles.methodItem, calculationMethod === method.id && { backgroundColor: `${theme.primary}15` }]}
@@ -499,5 +549,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     borderRadius: BorderRadius.md,
     marginBottom: Spacing.xs,
+  },
+  autoDetectRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: Spacing.sm,
+  },
+  autoDetectButton: {
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.md,
   },
 });

@@ -452,26 +452,6 @@ export default function ProgressScreen() {
           )}
         </View>
 
-        {/* TEST BUTTON - Remove after testing */}
-        <Pressable
-          style={[styles.resetButton, { backgroundColor: theme.primary, marginBottom: 12 }]}
-          onPress={async () => {
-            Alert.alert('Test Notification', 'Reading reminder will appear in 3 seconds');
-            await Notifications.scheduleNotificationAsync({
-              identifier: 'quran-reading-reminder',
-              content: {
-                title: '📖 Time to Read Quran',
-                body: 'Continue your daily reading journey',
-                sound: true,
-              },
-              trigger: { type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL, seconds: 3, repeats: false },
-            });
-          }}
-        >
-          <Feather name="bell" size={20} color="#fff" />
-          <ThemedText style={styles.resetButtonText}>Test Reading Reminder (3s)</ThemedText>
-        </Pressable>
-
         {/* Reset Button */}
         <Pressable
           style={[styles.resetButton, { backgroundColor: '#EF4444' }]}

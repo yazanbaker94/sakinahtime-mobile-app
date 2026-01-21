@@ -151,6 +151,20 @@ class WidgetDataService {
   }
 
   /**
+   * Update prayer streak widget data
+   */
+  async updateStreakWidget(currentStreak: number, longestStreak: number, lastPerfectDate: string): Promise<void> {
+    if (!this.isAvailable) return;
+
+    try {
+      await WidgetBridge.updateStreakWidget(currentStreak, longestStreak, lastPerfectDate);
+      console.log('[WidgetDataService] Streak widget updated:', currentStreak, longestStreak);
+    } catch (error) {
+      console.error('[WidgetDataService] Failed to update streak widget:', error);
+    }
+  }
+
+  /**
    * Refresh all widgets
    */
   async refreshAllWidgets(): Promise<void> {

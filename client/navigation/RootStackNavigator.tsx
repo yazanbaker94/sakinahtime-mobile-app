@@ -61,7 +61,7 @@ export type RootStackParamList = {
   MosqueFinder: undefined;
   MosqueDetail: { mosqueId: string; mosque?: Mosque };
   DhikrOverlaySettings: undefined;
-  NotificationSettings: undefined;
+  NotificationSettings: { openSection?: 'calculationMethod' } | undefined;
   WordByWordSettings: undefined;
   ReciterSelection: { currentReciter: string; onSelect: (reciterId: string) => void };
   LocationSettings: undefined;

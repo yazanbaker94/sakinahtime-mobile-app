@@ -283,6 +283,7 @@ class PrayerLogService {
 
   /**
    * Update streak based on current data
+   * Recalculates streak from scratch when today becomes imperfect
    */
   updateStreak(data: PrayerLogData): PrayerStreakData {
     const today = getTodayDateString();
@@ -294,7 +295,7 @@ class PrayerLogService {
         // First perfect day
         data.streak.currentStreak = 1;
       } else if (isToday(data.streak.lastPerfectDate)) {
-        // Already counted today
+        // Already counted today - don't change
       } else if (isYesterday(data.streak.lastPerfectDate)) {
         // Continuing streak
         data.streak.currentStreak += 1;
@@ -310,13 +311,64 @@ class PrayerLogService {
         data.streak.longestStreak = data.streak.currentStreak;
       }
     } else {
-      // Check if streak should be reset
-      if (data.streak.lastPerfectDate && !isToday(data.streak.lastPerfectDate) && !isYesterday(data.streak.lastPerfectDate)) {
+      // Today is NOT perfect - recalculate streak
+      if (isToday(data.streak.lastPerfectDate)) {
+        // Today WAS perfect but user unmarked a prayer - recalculate from yesterday
+        data.streak.currentStreak = this.calculateStreakFromYesterday(data);
+        data.streak.lastPerfectDate = data.streak.currentStreak > 0
+          ? this.getLastPerfectDateBeforeToday(data)
+          : '';
+      } else if (data.streak.lastPerfectDate && !isYesterday(data.streak.lastPerfectDate)) {
+        // Last perfect day wasn't yesterday, streak is broken
         data.streak.currentStreak = 0;
       }
+      // If lastPerfectDate is yesterday, keep streak (today isn't over yet)
     }
 
     return data.streak;
+  }
+
+  /**
+   * Calculate streak by walking backwards from yesterday
+   */
+  private calculateStreakFromYesterday(data: PrayerLogData): number {
+    let streak = 0;
+    const today = new Date();
+
+    for (let i = 1; i <= 365; i++) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      const dateStr = getDateString(date);
+      const record = data.dailyRecords[dateStr];
+
+      if (record?.isPerfectDay) {
+        streak++;
+      } else {
+        break;
+      }
+    }
+
+    return streak;
+  }
+
+  /**
+   * Get the last perfect date before today
+   */
+  private getLastPerfectDateBeforeToday(data: PrayerLogData): string {
+    const today = new Date();
+
+    for (let i = 1; i <= 365; i++) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      const dateStr = getDateString(date);
+      const record = data.dailyRecords[dateStr];
+
+      if (record?.isPerfectDay) {
+        return dateStr;
+      }
+    }
+
+    return '';
   }
 
   /**

@@ -14,6 +14,7 @@ import {
   PRAYER_NAMES,
 } from '../types/prayerLog';
 import { prayerLogService, getTodayDateString } from '../services/PrayerLogService';
+import { widgetDataService } from '../services/WidgetDataService';
 
 export interface UsePrayerLogReturn {
   data: PrayerLogData | null;
@@ -65,6 +66,15 @@ export function usePrayerLog(): UsePrayerLogReturn {
       const today = getTodayDateString();
       const updatedData = await prayerLogService.markPrayer(today, prayer, status, prayerTime);
       setData(updatedData);
+
+      // Sync streak to widget
+      if (updatedData.streak) {
+        widgetDataService.updateStreakWidget(
+          updatedData.streak.currentStreak,
+          updatedData.streak.longestStreak,
+          updatedData.streak.lastPerfectDate
+        );
+      }
     } catch (err) {
       console.error('Failed to mark prayer:', err);
       setError('Failed to save prayer status');

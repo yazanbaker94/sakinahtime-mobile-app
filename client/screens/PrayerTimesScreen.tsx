@@ -14,6 +14,8 @@ import { useLocation } from "@/contexts/LocationContext";
 import {
   usePrayerTimes,
   useCalculationMethod,
+  useAutoDetectCalculationMethod,
+  CALCULATION_METHODS,
   getNextPrayer,
   getTimeUntilPrayer,
   formatTime,
@@ -74,12 +76,16 @@ export default function PrayerTimesScreen() {
     latitude,
     longitude,
     city,
+    country,
     loading: locationLoading,
     permission,
     requestPermission,
     openSettings,
     canAskAgain,
   } = useLocation();
+
+  // Auto-detect calculation method based on country (only on first launch)
+  useAutoDetectCalculationMethod(country);
 
   const hasValidLocation = latitude !== null && latitude !== undefined && longitude !== null && longitude !== undefined;
 
@@ -94,7 +100,8 @@ export default function PrayerTimesScreen() {
   } = usePrayerTimes(
     hasValidLocation && !methodLoading ? latitude : null,
     hasValidLocation && !methodLoading ? longitude : null,
-    calculationMethod
+    calculationMethod,
+    city && country ? `${city}, ${country}` : city || country || ''
   );
 
   const {
@@ -451,7 +458,7 @@ export default function PrayerTimesScreen() {
                 </View>
               </View>
 
-              {/* Metadata - compact row with calendar and location */}
+              {/* Metadata - compact row with calendar, location, and calculation method */}
               <View style={styles.metadataRow}>
                 {prayerData?.date?.hijri && (
                   <Pressable
@@ -464,6 +471,16 @@ export default function PrayerTimesScreen() {
                     </ThemedText>
                   </Pressable>
                 )}
+                {/* Calculation method badge */}
+                <Pressable
+                  style={styles.compactButton}
+                  onPress={() => navigation.navigate('NotificationSettings', { openSection: 'calculationMethod' })}
+                >
+                  <Feather name="book" size={14} color="#FFFFFF" />
+                  <ThemedText type="caption" style={styles.compactButtonText} numberOfLines={1}>
+                    {CALCULATION_METHODS.find(m => m.id === calculationMethod)?.shortName || 'ISNA'}
+                  </ThemedText>
+                </Pressable>
                 {/* Location button */}
                 <LocationIndicator variant="card" />
               </View>
