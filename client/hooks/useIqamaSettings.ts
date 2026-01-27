@@ -52,9 +52,10 @@ export function useIqamaSettings() {
   };
 
   const saveSettings = async (newSettings: IqamaSettings) => {
+    // Update state immediately for responsive UI
+    setSettings(newSettings);
     try {
       await AsyncStorage.setItem(IQAMA_SETTINGS_KEY, JSON.stringify(newSettings));
-      setSettings(newSettings);
     } catch (error) {
       console.error("Failed to save iqama settings:", error);
     }

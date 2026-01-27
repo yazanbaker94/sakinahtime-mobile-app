@@ -21,29 +21,50 @@ interface WordTimingEntry {
 // Cache for loaded word timing data per reciter (in memory)
 const wordTimingCache: Map<string, Map<string, number[][]>> = new Map();
 
-// GitHub raw URL for timing data
-const TIMING_DATA_BASE_URL = 'https://raw.githubusercontent.com/yazanbaker94/reciters-timing-data/main';
+// Sakinah Time server URL for timing data
+const TIMING_DATA_BASE_URL = 'https://sakinahtime.com/timingdata';
 
 // Reciters that have timing data available
 const SUPPORTED_TIMING_RECITERS = [
-  'Alafasy_128kbps',
   'Abdul_Basit_Mujawwad_128kbps',
   'Abdul_Basit_Murattal_64kbps',
+  'Abdullah_Basfar_192kbps',
   'Abdurrahmaan_As-Sudais_192kbps',
   'Abu_Bakr_Ash-Shaatree_128kbps',
+  'Ahmed_Neana_128kbps',
+  'Ahmed_ibn_Ali_al-Ajamy_128kbps_ketaballah.net',
+  'Akram_AlAlaqimy_128kbps',
+  'Alafasy_128kbps',
+  'Ali_Jaber_64kbps',
+  'Ayman_Sowaid_64kbps',
+  'Fares_Abbad_64kbps',
+  'Ghamadi_40kbps',
   'Hani_Rifai_192kbps',
+  'Hudhaify_128kbps',
   'Husary_64kbps',
   'Husary_Muallim_128kbps',
+  'Ibrahim_Akhdar_32kbps',
+  'Khaalid_Abdullaah_al-Qahtaanee_192kbps',
+  'MaherAlMuaiqly128kbps',
   'Minshawy_Mujawwad_192kbps',
   'Minshawy_Murattal_128kbps',
   'Mohammad_al_Tablaway_128kbps',
+  'Muhammad_Ayyoub_128kbps',
+  'Muhammad_Jibreel_128kbps',
+  'Muhsin_Al_Qasim_192kbps',
+  'Nasser_Alqatami_128kbps',
+  'Salaah_AbdulRahman_Bukhatir_128kbps',
+  'Salah_Al_Budair_128kbps',
   'Saood_ash-Shuraym_128kbps',
+  'warsh_yassin_al_jazaery_64kbps',
 ];
 
-// Map app reciter IDs to timing file names (for different bitrates)
+// Map app reciter IDs to timing file names (for different bitrates or naming differences)
 const RECITER_TIMING_MAP: Record<string, string> = {
   'Abdul_Basit_Murattal_192kbps': 'Abdul_Basit_Murattal_64kbps',
   'Husary_128kbps': 'Husary_64kbps',
+  'Maher_Al_Muaiqly_128kbps': 'MaherAlMuaiqly128kbps',
+  'warsh/warsh_yassin_al_jazaery_64kbps': 'warsh_yassin_al_jazaery_64kbps',
 };
 
 export type PlaybackMode = 'single' | 'fromVerse' | 'fullSurah';
@@ -86,6 +107,9 @@ class AudioService {
 
   // Lock to prevent concurrent operations
   private isTransitioning = false;
+
+  // Sound instance tracking to prevent stale callbacks from old sounds
+  private soundInstanceId = 0;
 
   private constructor() {
     Audio.setAudioModeAsync({
@@ -360,21 +384,28 @@ class AudioService {
 
   // Load and cache all timing data for a reciter
   private async loadReciterTimingData(reciter: string): Promise<void> {
+    console.log('[AudioService] loadReciterTimingData called for:', reciter);
+
     // Skip if already loaded or marked as unavailable
     if (wordTimingCache.has(reciter)) {
+      const cachedData = wordTimingCache.get(reciter);
+      console.log('[AudioService] Reciter already cached, entries:', cachedData?.size || 0);
       return;
     }
 
     // Get the timing file name (might be different from reciter ID for different bitrates)
     const timingFileName = RECITER_TIMING_MAP[reciter] || reciter;
+    console.log('[AudioService] Timing file name resolved to:', timingFileName);
 
     // Check if this reciter has timing data
     if (!SUPPORTED_TIMING_RECITERS.includes(timingFileName)) {
       // No timing data for this reciter - mark as empty so we don't try again
       wordTimingCache.set(reciter, new Map());
-      console.log('[AudioService] No word timing data available for:', reciter);
+      console.log('[AudioService] No word timing data available for:', reciter, '- not in SUPPORTED_TIMING_RECITERS');
       return;
     }
+
+    console.log('[AudioService] Reciter is supported, proceeding to load timing data...');
 
     try {
       let entries: WordTimingEntry[];
@@ -420,6 +451,11 @@ class AudioService {
       const reciterCache = new Map<string, number[][]>();
 
       for (const entry of entries) {
+        // Skip entries without segments (corrupted data)
+        if (!entry.segments || !Array.isArray(entry.segments)) {
+          console.log('[AudioService] Skipping entry without segments:', entry.surah, ':', entry.ayah);
+          continue;
+        }
         const key = `${entry.surah}:${entry.ayah}`;
         // Convert segments from [wordIdx, unknownField, startMs, endMs] to [wordIdx, startMs, endMs]
         const normalizedSegments = entry.segments.map(seg => [seg[0], seg[2], seg[3]]);
@@ -427,11 +463,28 @@ class AudioService {
       }
 
       wordTimingCache.set(reciter, reciterCache);
-      console.log('[AudioService] Loaded timing data for', reciter, '- entries:', entries.length);
+      console.log('[AudioService] Loaded timing data for', reciter, '- entries:', reciterCache.size);
     } catch (error) {
-      // Mark as empty so we don't try again this session
-      wordTimingCache.set(reciter, new Map());
       console.log('[AudioService] Error loading timing data for', reciter, ':', error);
+
+      // If local cache is corrupted, delete it and try to re-download
+      const timingFileName = RECITER_TIMING_MAP[reciter] || reciter;
+      const localPath = `${FileSystem.documentDirectory}timing-data/${timingFileName}.json`;
+      try {
+        const fileInfo = await FileSystem.getInfoAsync(localPath);
+        if (fileInfo.exists) {
+          console.log('[AudioService] Deleting corrupted cache file:', localPath);
+          await FileSystem.deleteAsync(localPath, { idempotent: true });
+          // Clear from memory cache so it can retry
+          wordTimingCache.delete(reciter);
+          console.log('[AudioService] Cleared cache, will retry on next play');
+        }
+      } catch (deleteError) {
+        console.log('[AudioService] Failed to delete corrupted cache:', deleteError);
+      }
+
+      // Mark as empty so we don't try again this session (will retry on next app launch)
+      wordTimingCache.set(reciter, new Map());
     }
   }
 
@@ -450,29 +503,76 @@ class AudioService {
     this.currentMetadata = next;
     this.lastPlayed = next; // Set lastPlayed immediately when we know what we're playing
 
+    // Increment instance ID to invalidate callbacks from previous sounds
+    this.soundInstanceId++;
+    const currentInstanceId = this.soundInstanceId;
+    console.log(`[AudioService] playNext() - new instance ID: ${currentInstanceId} for ${next.surah}:${next.ayah}`);
+
     try {
+      // Stop and unload any existing sound to prevent overlap
+      if (this.sound) {
+        console.log(`[AudioService] playNext() - stopping previous sound`);
+        try {
+          await this.sound.stopAsync();
+          await this.sound.unloadAsync();
+        } catch (e) {
+          // Sound may already be unloaded, ignore
+          console.log(`[AudioService] playNext() - previous sound already unloaded`);
+        }
+        this.sound = null;
+      }
+
       // Fetch word segments in parallel with audio download
       const [uri, segments] = await Promise.all([
         this.downloadAudio(next.surah, next.ayah),
         this.fetchWordSegments(next.surah, next.ayah)
       ]);
 
+      // Check if we've been superseded by another playNext call
+      if (currentInstanceId !== this.soundInstanceId) {
+        console.log(`[AudioService] playNext() - instance ${currentInstanceId} superseded by ${this.soundInstanceId}, aborting`);
+        return;
+      }
+
       this.segments = segments;
+
+      // Create callback closure that captures the instance ID
+      const statusCallback = (status: any) => {
+        // Only process callbacks for the current sound instance
+        if (currentInstanceId !== this.soundInstanceId) {
+          console.log(`[AudioService] Ignoring callback from stale sound instance ${currentInstanceId} (current: ${this.soundInstanceId})`);
+          return;
+        }
+        this.onPlaybackStatusUpdate(status);
+      };
 
       const { sound } = await Audio.Sound.createAsync(
         { uri },
         { shouldPlay: true },
-        this.onPlaybackStatusUpdate.bind(this)
+        statusCallback
       );
+
+      // Check again if we've been superseded
+      if (currentInstanceId !== this.soundInstanceId) {
+        console.log(`[AudioService] playNext() - instance ${currentInstanceId} superseded after sound creation, cleaning up`);
+        try {
+          await sound.stopAsync();
+          await sound.unloadAsync();
+        } catch (e) { }
+        return;
+      }
 
       this.sound = sound;
       await sound.setRateAsync(this.playbackRate, true);
       this.isPlaying = true;
-      console.log('[AudioService] Now playing:', next.surah, ':', next.ayah, 'with', segments.length, 'segments');
+      console.log('[AudioService] Now playing:', next.surah, ':', next.ayah, 'with', segments.length, 'segments', 'instance:', currentInstanceId);
       this.notifyListeners();
     } catch (error) {
       console.error('Playback error:', error);
-      await this.playNext();
+      // Only retry if we're still the current instance
+      if (currentInstanceId === this.soundInstanceId) {
+        await this.playNext();
+      }
     }
   }
 
@@ -550,6 +650,35 @@ class AudioService {
     this.playbackQueue = [];
     this.lastPlayed = null;
     this.notifyListeners();
+  }
+
+  /**
+   * Clear all cached timing data (both local files and memory)
+   * Forces re-download on next play
+   */
+  async clearTimingCache(): Promise<{ deleted: number; error?: string }> {
+    console.log('[AudioService] Clearing timing cache...');
+
+    try {
+      // Clear in-memory cache
+      const memoryCacheSize = wordTimingCache.size;
+      wordTimingCache.clear();
+      console.log('[AudioService] Cleared in-memory cache:', memoryCacheSize, 'reciters');
+
+      // Delete timing-data folder
+      const dirPath = `${FileSystem.documentDirectory}timing-data/`;
+      const dirInfo = await FileSystem.getInfoAsync(dirPath);
+
+      if (dirInfo.exists) {
+        await FileSystem.deleteAsync(dirPath, { idempotent: true });
+        console.log('[AudioService] Deleted timing-data folder');
+      }
+
+      return { deleted: memoryCacheSize };
+    } catch (error: any) {
+      console.log('[AudioService] Error clearing timing cache:', error);
+      return { deleted: 0, error: error.message };
+    }
   }
 
   async setPlaybackRate(rate: number) {
@@ -693,11 +822,21 @@ class AudioService {
     this.currentMetadata = verse;
     this.lastPlayed = verse;
 
+    // Increment instance ID to invalidate callbacks from previous sounds
+    this.soundInstanceId++;
+    const currentInstanceId = this.soundInstanceId;
+    console.log(`[AudioService] playSingleVerse() - new instance ID: ${currentInstanceId} for ${surah}:${ayah}`);
+
     try {
       // Stop existing sound if any
       if (this.sound) {
-        await this.sound.stopAsync();
-        await this.sound.unloadAsync();
+        console.log(`[AudioService] playSingleVerse() - stopping previous sound`);
+        try {
+          await this.sound.stopAsync();
+          await this.sound.unloadAsync();
+        } catch (e) {
+          // Sound may already be unloaded, ignore
+        }
         this.sound = null;
       }
 
@@ -707,18 +846,40 @@ class AudioService {
         this.fetchWordSegments(surah, ayah)
       ]);
 
+      // Check if we've been superseded
+      if (currentInstanceId !== this.soundInstanceId) {
+        console.log(`[AudioService] playSingleVerse() - instance ${currentInstanceId} superseded, aborting`);
+        return;
+      }
+
       this.segments = segments;
+
+      // Create callback closure that captures the instance ID
+      const statusCallback = (status: any) => {
+        if (currentInstanceId !== this.soundInstanceId) {
+          console.log(`[AudioService] Ignoring callback from stale single verse instance ${currentInstanceId}`);
+          return;
+        }
+        this.onPlaybackStatusUpdate(status);
+      };
 
       const { sound } = await Audio.Sound.createAsync(
         { uri },
         { shouldPlay: true },
-        this.onPlaybackStatusUpdate.bind(this)
+        statusCallback
       );
+
+      // Check again if we've been superseded
+      if (currentInstanceId !== this.soundInstanceId) {
+        console.log(`[AudioService] playSingleVerse() - instance ${currentInstanceId} superseded after creation`);
+        try { await sound.stopAsync(); await sound.unloadAsync(); } catch (e) { }
+        return;
+      }
 
       this.sound = sound;
       await sound.setRateAsync(this.playbackRate, true);
       this.isPlaying = true;
-      console.log('[AudioService] Now playing (single):', surah, ':', ayah, 'with', segments.length, 'segments');
+      console.log('[AudioService] Now playing (single):', surah, ':', ayah, 'with', segments.length, 'segments', 'instance:', currentInstanceId);
       this.notifyListeners();
     } catch (error) {
       console.error('Playback error:', error);
@@ -779,11 +940,18 @@ class AudioService {
     this.currentMetadata = verse;
     this.lastPlayed = verse;
 
+    // Increment instance ID to invalidate callbacks from previous sounds
+    this.soundInstanceId++;
+    const currentInstanceId = this.soundInstanceId;
+    console.log(`[AudioService] playSingleVerseWithRepeat() - new instance ID: ${currentInstanceId}`);
+
     try {
       // Stop existing sound if any (for subsequent repeats)
       if (this.sound) {
-        await this.sound.stopAsync();
-        await this.sound.unloadAsync();
+        try {
+          await this.sound.stopAsync();
+          await this.sound.unloadAsync();
+        } catch (e) { }
         this.sound = null;
       }
 
@@ -793,19 +961,41 @@ class AudioService {
         this.fetchWordSegments(surah, ayah)
       ]);
 
+      // Check if superseded
+      if (currentInstanceId !== this.soundInstanceId) {
+        console.log(`[AudioService] playSingleVerseWithRepeat() - instance ${currentInstanceId} superseded`);
+        return;
+      }
+
       this.segments = segments;
+
+      // Create callback closure that captures the instance ID
+      const statusCallback = (status: any) => {
+        if (currentInstanceId !== this.soundInstanceId) {
+          console.log(`[AudioService] Ignoring repeat callback from stale instance ${currentInstanceId}`);
+          return;
+        }
+        this.onRepeatPlaybackStatusUpdate(status);
+      };
 
       const { sound } = await Audio.Sound.createAsync(
         { uri },
         { shouldPlay: true },
-        this.onRepeatPlaybackStatusUpdate.bind(this)
+        statusCallback
       );
+
+      // Check again if superseded
+      if (currentInstanceId !== this.soundInstanceId) {
+        console.log(`[AudioService] playSingleVerseWithRepeat() - instance ${currentInstanceId} superseded after creation`);
+        try { await sound.stopAsync(); await sound.unloadAsync(); } catch (e) { }
+        return;
+      }
 
       this.sound = sound;
       await sound.setRateAsync(this.playbackRate, true);
       this.isPlaying = true;
       this.currentRepeat++;
-      console.log(`[AudioService] Playing repeat ${this.currentRepeat}/${this.repeatCount || '∞'} with ${segments.length} segments`);
+      console.log(`[AudioService] Playing repeat ${this.currentRepeat}/${this.repeatCount || '∞'} with ${segments.length} segments instance: ${currentInstanceId}`);
       this.notifyListeners();
     } catch (error) {
       console.error('Repeat playback error:', error);
@@ -989,23 +1179,64 @@ class AudioService {
     this.currentMetadata = next;
     this.lastPlayed = next;
 
+    // Increment instance ID to invalidate callbacks from previous sounds
+    this.soundInstanceId++;
+    const currentInstanceId = this.soundInstanceId;
+    console.log(`[AudioService] playNextInLoop() - new instance ID: ${currentInstanceId} for ${next.surah}:${next.ayah}`);
+
     try {
+      // Stop and unload any existing sound to prevent overlap
+      if (this.sound) {
+        try {
+          await this.sound.stopAsync();
+          await this.sound.unloadAsync();
+        } catch (e) {
+          // Sound may already be unloaded, ignore
+        }
+        this.sound = null;
+      }
+
       const uri = await this.downloadAudio(next.surah, next.ayah);
+
+      // Check if superseded
+      if (currentInstanceId !== this.soundInstanceId) {
+        console.log(`[AudioService] playNextInLoop() - instance ${currentInstanceId} superseded, aborting`);
+        return;
+      }
+
+      // Create callback closure that captures the instance ID
+      const statusCallback = (status: any) => {
+        if (currentInstanceId !== this.soundInstanceId) {
+          console.log(`[AudioService] Ignoring loop callback from stale instance ${currentInstanceId}`);
+          return;
+        }
+        this.onLoopPlaybackStatusUpdate(status);
+      };
 
       const { sound } = await Audio.Sound.createAsync(
         { uri },
         { shouldPlay: true },
-        this.onLoopPlaybackStatusUpdate.bind(this)
+        statusCallback
       );
+
+      // Check again if superseded
+      if (currentInstanceId !== this.soundInstanceId) {
+        console.log(`[AudioService] playNextInLoop() - instance ${currentInstanceId} superseded after creation`);
+        try { await sound.stopAsync(); await sound.unloadAsync(); } catch (e) { }
+        return;
+      }
 
       this.sound = sound;
       await sound.setRateAsync(this.playbackRate, true);
       this.isPlaying = true;
-      console.log(`[AudioService] Loop playing: ${next.surah}:${next.ayah}`);
+      console.log(`[AudioService] Loop playing: ${next.surah}:${next.ayah} instance: ${currentInstanceId}`);
       this.notifyListeners();
     } catch (error) {
       console.error('Loop playback error:', error);
-      await this.playNextInLoop();
+      // Only retry if still current instance
+      if (currentInstanceId === this.soundInstanceId) {
+        await this.playNextInLoop();
+      }
     }
   }
 

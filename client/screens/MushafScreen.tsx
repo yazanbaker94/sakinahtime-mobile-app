@@ -238,7 +238,7 @@ function MushafScreenContent() {
   const [audioState, setAudioState] = useState<any>(null);
 
   // Compute the current word index being highlighted during audio playback
-  // Uses timing segments from Alafasy alignment data to sync word highlights with audio
+  // Uses timing segments from alignment data to sync word highlights with audio
   const currentAudioWordIndex = useMemo(() => {
     if (!audioState?.isPlaying || !audioState?.segments?.length || audioState?.positionMs === undefined) {
       return -1; // No word highlighted
@@ -246,6 +246,17 @@ function MushafScreenContent() {
 
     const positionMs = audioState.positionMs;
     const segments = audioState.segments; // [[wordIdx, startMs, endMs], ...]
+
+    // Debug: Log segment info on first render for this verse
+    if (positionMs < 100 && segments.length > 0) {
+      console.log('[MushafScreen] Word timing debug:', {
+        verseKey: audioState?.current ? `${audioState.current.surah}:${audioState.current.ayah}` : 'unknown',
+        positionMs,
+        segmentCount: segments.length,
+        firstSegment: segments[0],
+        lastSegment: segments[segments.length - 1],
+      });
+    }
 
     // Find the word where startMs <= positionMs < endMs
     for (const segment of segments) {
@@ -521,6 +532,10 @@ function MushafScreenContent() {
   const [expandedAvailable, setExpandedAvailable] = useState(true);
   const [expandedAvailableTranslations, setExpandedAvailableTranslations] = useState(true);
   const [expandedAvailableTafsirs, setExpandedAvailableTafsirs] = useState(true);
+  const [translationLanguageFilter, setTranslationLanguageFilter] = useState<string | null>(null);
+  const [tafsirLanguageFilter, setTafsirLanguageFilter] = useState<string | null>(null);
+  const translationLangScrollRef = useRef<ScrollView>(null);
+  const tafsirLangScrollRef = useRef<ScrollView>(null);
   const [isPlayerMinimized, setIsPlayerMinimized] = useState(false);
   const playerPositionX = useSharedValue(20);
   const playerPositionY = useSharedValue(0);
@@ -642,7 +657,6 @@ function MushafScreenContent() {
     { value: 'Muhammad_Ayyoub_128kbps', label: 'Muhammad Ayyub' },
     { value: 'Muhammad_Jibreel_128kbps', label: 'Muhammad Jibreel' },
     { value: 'Muhsin_Al_Qasim_192kbps', label: 'Muhsin Al-Qasim' },
-    { value: 'Mustafa_Ismail_48kbps', label: 'Mustafa Ismail' },
     { value: 'Nasser_Alqatami_128kbps', label: 'Nasser Al-Qatami' },
     { value: 'Salaah_AbdulRahman_Bukhatir_128kbps', label: 'Salah Bukhatir' },
     { value: 'Salah_Al_Budair_128kbps', label: 'Salah Al-Budair' },
@@ -1401,6 +1415,17 @@ function MushafScreenContent() {
                 seenCoords.add(key);
                 return true;
               });
+
+              // Debug: Log word count mismatch
+              const segmentCount = audioState?.segments?.length || 0;
+              if (wordCoords.length !== segmentCount) {
+                console.log('[MushafScreen] Word count mismatch:', {
+                  verseKey,
+                  wordCoordsCount: wordCoords.length,
+                  segmentCount,
+                  currentWordIndex: currentAudioWordIndex,
+                });
+              }
             }
 
             // Render line-based verse regions + word-level highlights
@@ -2114,10 +2139,30 @@ function MushafScreenContent() {
       }]}>
         <View style={styles.headerContent}>
           <View style={styles.headerTop}>
-            <View>
+            <Pressable
+              onPress={() => {
+                // Triple-tap to clear timing cache (dev feature)
+                const now = Date.now();
+                if (!global.lastTitleTap) global.lastTitleTap = [];
+                global.lastTitleTap.push(now);
+                // Keep only last 3 taps within 1 second
+                global.lastTitleTap = global.lastTitleTap.filter((t: number) => now - t < 1000);
+                if (global.lastTitleTap.length >= 3) {
+                  global.lastTitleTap = [];
+                  AudioService.clearTimingCache().then((result) => {
+                    Alert.alert('Timing Cache Cleared',
+                      result.error
+                        ? `Error: ${result.error}`
+                        : `Cleared ${result.deleted} reciter(s) from cache. Timing data will re-download on next play.`
+                    );
+                  });
+                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                }
+              }}
+            >
               <ThemedText type="h3" style={{ fontWeight: '700', letterSpacing: -1, fontSize: 28 }}>Quran</ThemedText>
               <ThemedText type="caption" style={{ opacity: 0.5, marginTop: 2, fontSize: 13 }}>{navigationMode === 'surah' ? '114 Surahs' : navigationMode === 'juz' ? '30 Juz' : `${recentPages.length} Recent`}</ThemedText>
-            </View>
+            </Pressable>
             <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
               <Pressable
                 onPress={() => setShowSearchBar(!showSearchBar)}
@@ -2294,7 +2339,7 @@ function MushafScreenContent() {
       </View>
       {/* ScrollView - only for Search results and Recent tab */}
       {(searchQuery.trim().length >= 2 || navigationMode === 'recent') && (
-        <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
+        <ScrollView contentContainerStyle={{ paddingBottom: tabBarHeight + 60 }}>
           {/* Search Results */}
           {searchQuery.trim().length >= 2 && (
             <View style={{ padding: Spacing.lg }}>
@@ -2561,7 +2606,7 @@ function MushafScreenContent() {
           data={surahs}
           keyExtractor={(item) => `surah-${item.number}`}
           renderItem={renderSurahItem}
-          contentContainerStyle={{ paddingHorizontal: Spacing.lg, paddingBottom: 40 }}
+          contentContainerStyle={{ paddingHorizontal: Spacing.lg, paddingBottom: tabBarHeight + 60 }}
           showsVerticalScrollIndicator={false}
           ListHeaderComponent={
             <ThemedText type="body" style={{ fontWeight: '600', opacity: 0.6, fontSize: 13, marginTop: Spacing.sm, marginBottom: Spacing.md }}>ALL SURAHS</ThemedText>
@@ -2578,7 +2623,7 @@ function MushafScreenContent() {
           data={juzData}
           keyExtractor={(item, index) => `juz-${item.juz}-${item.hizb}-${item.quarter}-${index}`}
           renderItem={renderJuzItem}
-          contentContainerStyle={{ paddingHorizontal: Spacing.lg, paddingBottom: 40 }}
+          contentContainerStyle={{ paddingHorizontal: Spacing.lg, paddingBottom: tabBarHeight + 60 }}
           showsVerticalScrollIndicator={false}
           ListHeaderComponent={
             <View style={{ marginTop: Spacing.sm, marginBottom: Spacing.md }}>
@@ -3365,10 +3410,8 @@ function MushafScreenContent() {
               <TouchableOpacity
                 onPress={() => {
                   console.log('🟢 Tafsir source selector pressed');
-                  requestAnimationFrame(() => {
-                    setTafsirData(null);
-                    setTimeout(() => setShowTafsirSources(true), 100);
-                  });
+                  setTafsirData(null);
+                  setShowTafsirSources(true);
                 }}
                 activeOpacity={0.7}
                 style={{
@@ -3652,7 +3695,7 @@ function MushafScreenContent() {
       {/* Tafsir Sources Modal */}
       <Modal
         visible={showTafsirSources}
-        animationType="slide"
+        animationType="fade"
         presentationStyle={Platform.OS === 'ios' ? 'fullScreen' : undefined}
         onRequestClose={() => {
           console.log('📱 Tafsir modal closing');
@@ -4350,13 +4393,13 @@ function MushafScreenContent() {
                           style={({ pressed }) => [{
                             flexDirection: 'row',
                             alignItems: 'center',
-                            marginBottom: expandedAvailableTranslations ? 12 : 8,
+                            marginBottom: expandedAvailableTranslations ? 8 : 8,
                             marginTop: 8,
                             opacity: pressed ? 0.7 : 1
                           }]}
                         >
                           <ThemedText type="body" style={{ fontWeight: '600', fontSize: 13, letterSpacing: 0.5, opacity: 0.6, flex: 1 }}>
-                            Translations ({availableTafsirs.filter(t => !t.downloaded && !isTafsir(t.id)).length})
+                            Translations ({availableTafsirs.filter(t => !t.downloaded && !isTafsir(t.id) && (!translationLanguageFilter || t.language === translationLanguageFilter)).length})
                           </ThemedText>
                           <Feather
                             name={expandedAvailableTranslations ? "chevron-up" : "chevron-down"}
@@ -4365,7 +4408,54 @@ function MushafScreenContent() {
                             style={{ opacity: 0.6 }}
                           />
                         </Pressable>
-                        {expandedAvailableTranslations && availableTafsirs.filter(t => !t.downloaded && !isTafsir(t.id)).map((tafsir) => {
+                        {expandedAvailableTranslations && (
+                          <ScrollView
+                            ref={translationLangScrollRef}
+                            horizontal
+                            showsHorizontalScrollIndicator={false}
+                            style={{ marginBottom: 12 }}
+                            onContentSizeChange={() => {
+                              if (translationLanguageFilter && translationLangScrollRef.current) {
+                                const langs = [...new Set(availableTafsirs.filter(t => !t.downloaded && !isTafsir(t.id)).map(t => t.language))].sort();
+                                const idx = langs.indexOf(translationLanguageFilter);
+                                if (idx >= 0) {
+                                  // "All" button is ~50px, each language chip is ~70px average
+                                  const scrollX = 50 + (idx * 70) - 40;
+                                  translationLangScrollRef.current.scrollTo({ x: Math.max(0, scrollX), animated: false });
+                                }
+                              }
+                            }}
+                          >
+                            <Pressable
+                              onPress={() => setTranslationLanguageFilter(null)}
+                              style={{
+                                paddingHorizontal: 12,
+                                paddingVertical: 6,
+                                borderRadius: 16,
+                                marginRight: 8,
+                                backgroundColor: translationLanguageFilter === null ? theme.primary : (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'),
+                              }}
+                            >
+                              <ThemedText type="caption" style={{ color: translationLanguageFilter === null ? '#fff' : theme.textSecondary, fontWeight: '600' }}>All</ThemedText>
+                            </Pressable>
+                            {[...new Set(availableTafsirs.filter(t => !t.downloaded && !isTafsir(t.id)).map(t => t.language))].sort().map(lang => (
+                              <Pressable
+                                key={lang}
+                                onPress={() => setTranslationLanguageFilter(translationLanguageFilter === lang ? null : lang)}
+                                style={{
+                                  paddingHorizontal: 12,
+                                  paddingVertical: 6,
+                                  borderRadius: 16,
+                                  marginRight: 8,
+                                  backgroundColor: translationLanguageFilter === lang ? theme.primary : (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'),
+                                }}
+                              >
+                                <ThemedText type="caption" style={{ color: translationLanguageFilter === lang ? '#fff' : theme.textSecondary, fontWeight: '600' }}>{getLanguageName(lang)}</ThemedText>
+                              </Pressable>
+                            ))}
+                          </ScrollView>
+                        )}
+                        {expandedAvailableTranslations && availableTafsirs.filter(t => !t.downloaded && !isTafsir(t.id) && (!translationLanguageFilter || t.language === translationLanguageFilter)).map((tafsir) => {
                           const handleTafsirAction = async () => {
                             if (tafsir.url) {
                               setDownloadingTafsir(tafsir.id);
@@ -4529,13 +4619,13 @@ function MushafScreenContent() {
                           style={({ pressed }) => [{
                             flexDirection: 'row',
                             alignItems: 'center',
-                            marginBottom: expandedAvailableTafsirs ? 12 : 8,
+                            marginBottom: expandedAvailableTafsirs ? 8 : 8,
                             marginTop: 20,
                             opacity: pressed ? 0.7 : 1
                           }]}
                         >
                           <ThemedText type="body" style={{ fontWeight: '600', fontSize: 13, letterSpacing: 0.5, opacity: 0.6, flex: 1 }}>
-                            Tafsirs ({availableTafsirs.filter(t => !t.downloaded && isTafsir(t.id)).length})
+                            Tafsirs ({availableTafsirs.filter(t => !t.downloaded && isTafsir(t.id) && (!tafsirLanguageFilter || t.language === tafsirLanguageFilter)).length})
                           </ThemedText>
                           <Feather
                             name={expandedAvailableTafsirs ? "chevron-up" : "chevron-down"}
@@ -4544,7 +4634,54 @@ function MushafScreenContent() {
                             style={{ opacity: 0.6 }}
                           />
                         </Pressable>
-                        {expandedAvailableTafsirs && availableTafsirs.filter(t => !t.downloaded && isTafsir(t.id)).map((tafsir) => {
+                        {expandedAvailableTafsirs && (
+                          <ScrollView
+                            ref={tafsirLangScrollRef}
+                            horizontal
+                            showsHorizontalScrollIndicator={false}
+                            style={{ marginBottom: 12 }}
+                            onContentSizeChange={() => {
+                              if (tafsirLanguageFilter && tafsirLangScrollRef.current) {
+                                const langs = [...new Set(availableTafsirs.filter(t => !t.downloaded && isTafsir(t.id)).map(t => t.language))].sort();
+                                const idx = langs.indexOf(tafsirLanguageFilter);
+                                if (idx >= 0) {
+                                  // "All" button is ~50px, each language chip is ~70px average
+                                  const scrollX = 50 + (idx * 70) - 40;
+                                  tafsirLangScrollRef.current.scrollTo({ x: Math.max(0, scrollX), animated: false });
+                                }
+                              }
+                            }}
+                          >
+                            <Pressable
+                              onPress={() => setTafsirLanguageFilter(null)}
+                              style={{
+                                paddingHorizontal: 12,
+                                paddingVertical: 6,
+                                borderRadius: 16,
+                                marginRight: 8,
+                                backgroundColor: tafsirLanguageFilter === null ? theme.primary : (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'),
+                              }}
+                            >
+                              <ThemedText type="caption" style={{ color: tafsirLanguageFilter === null ? '#fff' : theme.textSecondary, fontWeight: '600' }}>All</ThemedText>
+                            </Pressable>
+                            {[...new Set(availableTafsirs.filter(t => !t.downloaded && isTafsir(t.id)).map(t => t.language))].sort().map(lang => (
+                              <Pressable
+                                key={lang}
+                                onPress={() => setTafsirLanguageFilter(tafsirLanguageFilter === lang ? null : lang)}
+                                style={{
+                                  paddingHorizontal: 12,
+                                  paddingVertical: 6,
+                                  borderRadius: 16,
+                                  marginRight: 8,
+                                  backgroundColor: tafsirLanguageFilter === lang ? theme.primary : (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'),
+                                }}
+                              >
+                                <ThemedText type="caption" style={{ color: tafsirLanguageFilter === lang ? '#fff' : theme.textSecondary, fontWeight: '600' }}>{getLanguageName(lang)}</ThemedText>
+                              </Pressable>
+                            ))}
+                          </ScrollView>
+                        )}
+                        {expandedAvailableTafsirs && availableTafsirs.filter(t => !t.downloaded && isTafsir(t.id) && (!tafsirLanguageFilter || t.language === tafsirLanguageFilter)).map((tafsir) => {
                           const handleTafsirAction = async () => {
                             if (tafsir.url) {
                               setDownloadingTafsir(tafsir.id);

@@ -66,17 +66,16 @@ export interface PrayerTimesData {
   };
 }
 
-async function fetchPrayerTimes(latitude: number, longitude: number, method: number = 2): Promise<PrayerTimesData> {
+async function fetchPrayerTimes(latitude: number, longitude: number, method: number = 2, date: Date = new Date()): Promise<PrayerTimesData> {
   if (latitude === null || latitude === undefined || longitude === null || longitude === undefined) {
     throw new Error("Invalid location coordinates");
   }
 
   const validMethod = method ?? 2;
 
-  const today = new Date();
-  const day = today.getDate();
-  const month = today.getMonth() + 1;
-  const year = today.getFullYear();
+  const day = date.getDate();
+  const month = date.getMonth() + 1;
+  const year = date.getFullYear();
 
   const url = `https://api.aladhan.com/v1/timings/${day}-${month}-${year}?latitude=${latitude}&longitude=${longitude}&method=${validMethod}`;
 
@@ -95,20 +94,27 @@ async function fetchPrayerTimes(latitude: number, longitude: number, method: num
   return data.data;
 }
 
-export function usePrayerTimes(latitude: number | null, longitude: number | null, method: number = 2, locationName: string = '') {
+export function usePrayerTimes(latitude: number | null, longitude: number | null, method: number = 2, locationName: string = '', date: Date = new Date()) {
   const enabled = latitude !== null && longitude !== null;
   const { isOnline, lastOnline } = useNetworkStatus();
   const [isUsingCache, setIsUsingCache] = useState(false);
   const [cacheLastSync, setCacheLastSync] = useState<Date | null>(null);
 
-  // Get preloaded data from singleton (already loaded at app startup via LocationContext)
-  const preloaded = enabled ? prayerTimesPreloader.getPreloadedData() : { data: null, cachedAt: null, isLoaded: false };
+  // Format date for query key (YYYY-MM-DD)
+  const dateKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 
-  // Use preloaded data as placeholder for instant display
-  const placeholderData = preloaded.data as PrayerTimesData | undefined;
+  // Check if viewing today
+  const today = new Date();
+  const isToday = date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear();
+
+  // Get preloaded data from singleton (only use for today)
+  const preloaded = enabled && isToday ? prayerTimesPreloader.getPreloadedData() : { data: null, cachedAt: null, isLoaded: false };
+
+  // Use preloaded data as placeholder for instant display (only for today)
+  const placeholderData = isToday ? preloaded.data as PrayerTimesData | undefined : undefined;
 
   const query = useQuery({
-    queryKey: ["prayerTimes", latitude, longitude, method],
+    queryKey: ["prayerTimes", latitude, longitude, method, dateKey],
     queryFn: async () => {
       if (latitude === null || longitude === null) {
         throw new Error("Location not available");
@@ -117,7 +123,7 @@ export function usePrayerTimes(latitude: number | null, longitude: number | null
       // If online, fetch from API and cache the result
       if (isOnline) {
         try {
-          const data = await fetchPrayerTimes(latitude, longitude, method);
+          const data = await fetchPrayerTimes(latitude, longitude, method, date);
           setIsUsingCache(false);
 
           // Cache the prayer times for offline use
@@ -428,18 +434,27 @@ export function useAutoDetectCalculationMethod(country: string | null) {
   }, [country, isLoading, isManuallySet, autoDetectMethod]);
 }
 
-export function getNextPrayer(timings: PrayerTimes): { name: string; time: string; nameAr: string } | null {
+export function getNextPrayer(timings: PrayerTimes, adjustments?: { Fajr?: number; Dhuhr?: number; Asr?: number; Maghrib?: number; Isha?: number }): { name: string; time: string; nameAr: string } | null {
   // Return null if timings is undefined or missing required values
   if (!timings || !timings.Fajr) {
     return null;
   }
 
+  // Helper to apply adjustment to time string
+  const applyAdj = (timeStr: string, adjMinutes: number = 0): string => {
+    if (!adjMinutes) return timeStr;
+    const [hours, minutes] = timeStr.split(":").map(Number);
+    const date = new Date();
+    date.setHours(hours, minutes + adjMinutes, 0, 0);
+    return `${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
+  };
+
   const prayers = [
-    { name: "Fajr", nameAr: "الفجر", time: timings.Fajr },
-    { name: "Dhuhr", nameAr: "الظهر", time: timings.Dhuhr },
-    { name: "Asr", nameAr: "العصر", time: timings.Asr },
-    { name: "Maghrib", nameAr: "المغرب", time: timings.Maghrib },
-    { name: "Isha", nameAr: "العشاء", time: timings.Isha },
+    { name: "Fajr", nameAr: "الفجر", time: applyAdj(timings.Fajr, adjustments?.Fajr) },
+    { name: "Dhuhr", nameAr: "الظهر", time: applyAdj(timings.Dhuhr, adjustments?.Dhuhr) },
+    { name: "Asr", nameAr: "العصر", time: applyAdj(timings.Asr, adjustments?.Asr) },
+    { name: "Maghrib", nameAr: "المغرب", time: applyAdj(timings.Maghrib, adjustments?.Maghrib) },
+    { name: "Isha", nameAr: "العشاء", time: applyAdj(timings.Isha, adjustments?.Isha) },
   ];
 
   const now = new Date();

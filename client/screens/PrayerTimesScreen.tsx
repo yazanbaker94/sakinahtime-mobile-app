@@ -87,6 +87,9 @@ export default function PrayerTimesScreen() {
   // Auto-detect calculation method based on country (only on first launch)
   useAutoDetectCalculationMethod(country);
 
+  // Get prayer time adjustments
+  const { adjustments } = usePrayerAdjustments();
+
   const hasValidLocation = latitude !== null && latitude !== undefined && longitude !== null && longitude !== undefined;
 
   const {
@@ -154,7 +157,7 @@ export default function PrayerTimesScreen() {
     if (!prayerData?.timings) return;
 
     const updateCountdown = () => {
-      const next = getNextPrayer(prayerData.timings);
+      const next = getNextPrayer(prayerData.timings, adjustments);
       setNextPrayer(next);
       if (next) {
         setCountdown(getTimeUntilPrayer(next.time));
@@ -165,7 +168,7 @@ export default function PrayerTimesScreen() {
     const interval = setInterval(updateCountdown, 1000);
 
     return () => clearInterval(interval);
-  }, [prayerData?.timings]);
+  }, [prayerData?.timings, adjustments]);
 
   // Schedule prayer alarms when notifications OR azan is enabled
   // This fixes the first-install azan issue: azan defaults to true, notifications to false
@@ -421,13 +424,23 @@ export default function PrayerTimesScreen() {
               },
             ]}
           >
-            {/* Stats button in top right */}
-            <Pressable
-              style={styles.statsButton}
-              onPress={() => navigation.navigate('PrayerStats')}
-            >
-              <Feather name="bar-chart-2" size={18} color="#FFFFFF" />
-            </Pressable>
+            {/* Header buttons row */}
+            <View style={styles.headerButtons}>
+              {/* Calendar button */}
+              <Pressable
+                style={styles.statsButton}
+                onPress={() => navigation.navigate('PrayerCalendar')}
+              >
+                <Feather name="calendar" size={18} color="#FFFFFF" />
+              </Pressable>
+              {/* Stats button */}
+              <Pressable
+                style={styles.statsButton}
+                onPress={() => navigation.navigate('PrayerStats')}
+              >
+                <Feather name="bar-chart-2" size={18} color="#FFFFFF" />
+              </Pressable>
+            </View>
 
             {/* Compact Header with Info */}
             <View style={styles.compactHeader}>
@@ -714,17 +727,21 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     position: 'relative',
   },
-  statsButton: {
+  headerButtons: {
     position: 'absolute',
     top: Spacing.md,
     right: Spacing.md,
+    flexDirection: 'row',
+    gap: 8,
+    zIndex: 10,
+  },
+  statsButton: {
     width: 36,
     height: 36,
     borderRadius: 18,
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 10,
   },
   compactHeader: {
     marginBottom: Spacing.md,
@@ -855,5 +872,14 @@ const styles = StyleSheet.create({
   },
   statusIndicatorContainer: {
     marginTop: Spacing.sm,
+  },
+  viewingDateIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    borderRadius: 12,
+    marginBottom: Spacing.md,
   },
 });

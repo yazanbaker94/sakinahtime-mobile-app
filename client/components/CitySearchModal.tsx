@@ -7,6 +7,7 @@ import {
   Pressable,
   ActivityIndicator,
   StyleSheet,
+  Platform,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
@@ -228,7 +229,13 @@ export function CitySearchModal({
       presentationStyle="fullScreen"
       onRequestClose={onClose}
     >
-      <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
+      <ThemedView style={[styles.container, {
+        // On Android fullScreen modals, some devices report 0 safe area insets
+        // We use a fallback of 24 only when insets.top is 0, otherwise trust the device
+        paddingTop: Platform.OS === 'android'
+          ? (insets.top === 0 ? 24 : insets.top)
+          : insets.top
+      }]}>
         {/* Header */}
         <View style={[styles.header, { borderBottomColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }]}>
           <Pressable

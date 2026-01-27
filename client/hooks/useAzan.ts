@@ -70,9 +70,10 @@ export function useAzan() {
   };
 
   const saveSettings = async (newSettings: AzanSettings) => {
+    // Update state immediately for responsive UI
+    setSettings(newSettings);
     try {
       await AsyncStorage.setItem(AZAN_SETTINGS_KEY, JSON.stringify(newSettings));
-      setSettings(newSettings);
     } catch (error) {
       console.error("Failed to save azan settings:", error);
     }

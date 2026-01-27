@@ -42,6 +42,7 @@ export default function NotificationSettingsScreen() {
     settings: notificationSettings,
     toggleNotifications,
     togglePrayerNotification,
+    testIqamaNotification,
   } = useNotifications();
   const { settings: azanSettings, toggleAzan } = useAzan();
   const {
@@ -59,16 +60,21 @@ export default function NotificationSettingsScreen() {
 
   // Scroll ref for auto-scrolling to sections
   const scrollViewRef = useRef<ScrollView>(null);
-  const [calcMethodY, setCalcMethodY] = useState(0);
+  const calcMethodYRef = useRef(0);
 
-  // Auto-scroll to calculation method section when opening from prayer card
+  // Auto-scroll to calculation method section when opening from prayer card (only once on mount)
   useEffect(() => {
-    if (route.params?.openSection === 'calculationMethod' && calcMethodY > 0) {
-      setTimeout(() => {
-        scrollViewRef.current?.scrollTo({ y: calcMethodY - 100, animated: true });
-      }, 100);
+    if (route.params?.openSection === 'calculationMethod') {
+      // Wait for layout to settle, then scroll once
+      const timer = setTimeout(() => {
+        if (calcMethodYRef.current > 0) {
+          scrollViewRef.current?.scrollTo({ y: calcMethodYRef.current - 100, animated: true });
+        }
+      }, 300);
+      return () => clearTimeout(timer);
     }
-  }, [calcMethodY, route.params?.openSection]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty deps - only run on mount
 
   const handleToggleNotifications = async (value: boolean) => {
     if (Platform.OS !== "web") {
@@ -163,62 +169,6 @@ export default function NotificationSettingsScreen() {
                   />
                 </View>
               ))}
-            </View>
-          )}
-        </View>
-
-        {/* Time Adjustments */}
-        <View style={[styles.card, {
-          backgroundColor: isDark ? theme.cardBackground : theme.cardBackground,
-          borderColor: isDark ? theme.border : 'transparent',
-          borderWidth: isDark ? 1 : 0,
-          elevation: isDark ? 0 : 3,
-          shadowOpacity: isDark ? 0 : 0.08,
-        }]}>
-          <Pressable onPress={() => setShowAdjustments(!showAdjustments)} style={styles.settingRow}>
-            <View style={styles.settingInfo}>
-              <View style={[styles.iconCircle, { backgroundColor: `${theme.gold}15` }]}>
-                <Feather name="clock" size={20} color={theme.gold} />
-              </View>
-              <View style={styles.settingText}>
-                <ThemedText type="body" style={{ fontWeight: '600' }}>Time Adjustments</ThemedText>
-                <ThemedText type="small" secondary>
-                  Fine-tune prayer times (±30 min)
-                </ThemedText>
-              </View>
-            </View>
-            <Feather name={showAdjustments ? "chevron-up" : "chevron-down"} size={20} color={theme.textSecondary} />
-          </Pressable>
-
-          {showAdjustments && (
-            <View style={styles.adjustmentsPicker}>
-              {PRAYERS.map((prayer) => {
-                const adjustment = prayerAdjustments[prayer.key as keyof PrayerAdjustments];
-                return (
-                  <View key={prayer.key} style={styles.adjustmentRow}>
-                    <ThemedText type="body" style={{ flex: 1 }}>{prayer.nameEn}</ThemedText>
-                    <View style={styles.adjustmentControls}>
-                      <Pressable
-                        onPress={() => handleAdjustPrayerTime(prayer.key as keyof PrayerAdjustments, adjustment - 1)}
-                        style={[styles.adjustmentButton, { backgroundColor: isDark ? 'rgba(239, 68, 68, 0.15)' : 'rgba(220, 38, 38, 0.1)' }]}
-                      >
-                        <Feather name="minus" size={16} color={isDark ? '#EF4444' : '#DC2626'} />
-                      </Pressable>
-                      <View style={[styles.adjustmentValue, { backgroundColor: theme.backgroundSecondary }]}>
-                        <ThemedText type="body" style={{ fontWeight: '700', minWidth: 50, textAlign: 'center' }}>
-                          {adjustment > 0 ? '+' : ''}{adjustment} min
-                        </ThemedText>
-                      </View>
-                      <Pressable
-                        onPress={() => handleAdjustPrayerTime(prayer.key as keyof PrayerAdjustments, adjustment + 1)}
-                        style={[styles.adjustmentButton, { backgroundColor: `${theme.primary}15` }]}
-                      >
-                        <Feather name="plus" size={16} color={theme.primary} />
-                      </Pressable>
-                    </View>
-                  </View>
-                );
-              })}
             </View>
           )}
         </View>
@@ -348,6 +298,62 @@ export default function NotificationSettingsScreen() {
           )}
         </View>
 
+        {/* Time Adjustments */}
+        <View style={[styles.card, {
+          backgroundColor: isDark ? theme.cardBackground : theme.cardBackground,
+          borderColor: isDark ? theme.border : 'transparent',
+          borderWidth: isDark ? 1 : 0,
+          elevation: isDark ? 0 : 3,
+          shadowOpacity: isDark ? 0 : 0.08,
+        }]}>
+          <Pressable onPress={() => setShowAdjustments(!showAdjustments)} style={styles.settingRow}>
+            <View style={styles.settingInfo}>
+              <View style={[styles.iconCircle, { backgroundColor: `${theme.gold}15` }]}>
+                <Feather name="clock" size={20} color={theme.gold} />
+              </View>
+              <View style={styles.settingText}>
+                <ThemedText type="body" style={{ fontWeight: '600' }}>Time Adjustments</ThemedText>
+                <ThemedText type="small" secondary>
+                  Fine-tune prayer times (±30 min)
+                </ThemedText>
+              </View>
+            </View>
+            <Feather name={showAdjustments ? "chevron-up" : "chevron-down"} size={20} color={theme.textSecondary} />
+          </Pressable>
+
+          {showAdjustments && (
+            <View style={styles.adjustmentsPicker}>
+              {PRAYERS.map((prayer) => {
+                const adjustment = prayerAdjustments[prayer.key as keyof PrayerAdjustments];
+                return (
+                  <View key={prayer.key} style={styles.adjustmentRow}>
+                    <ThemedText type="body" style={{ flex: 1 }}>{prayer.nameEn}</ThemedText>
+                    <View style={styles.adjustmentControls}>
+                      <Pressable
+                        onPress={() => handleAdjustPrayerTime(prayer.key as keyof PrayerAdjustments, adjustment - 1)}
+                        style={[styles.adjustmentButton, { backgroundColor: isDark ? 'rgba(239, 68, 68, 0.15)' : 'rgba(220, 38, 38, 0.1)' }]}
+                      >
+                        <Feather name="minus" size={16} color={isDark ? '#EF4444' : '#DC2626'} />
+                      </Pressable>
+                      <View style={[styles.adjustmentValue, { backgroundColor: theme.backgroundSecondary }]}>
+                        <ThemedText type="body" style={{ fontWeight: '700', minWidth: 50, textAlign: 'center' }}>
+                          {adjustment > 0 ? '+' : ''}{adjustment} min
+                        </ThemedText>
+                      </View>
+                      <Pressable
+                        onPress={() => handleAdjustPrayerTime(prayer.key as keyof PrayerAdjustments, adjustment + 1)}
+                        style={[styles.adjustmentButton, { backgroundColor: `${theme.primary}15` }]}
+                      >
+                        <Feather name="plus" size={16} color={theme.primary} />
+                      </Pressable>
+                    </View>
+                  </View>
+                );
+              })}
+            </View>
+          )}
+        </View>
+
         {/* Calculation Method */}
         <View
           style={[styles.card, {
@@ -357,7 +363,7 @@ export default function NotificationSettingsScreen() {
             elevation: isDark ? 0 : 3,
             shadowOpacity: isDark ? 0 : 0.08,
           }]}
-          onLayout={(event) => setCalcMethodY(event.nativeEvent.layout.y)}
+          onLayout={(event) => { calcMethodYRef.current = event.nativeEvent.layout.y; }}
         >
           <Pressable onPress={() => setShowMethodPicker(!showMethodPicker)} style={styles.settingRow}>
             <View style={styles.settingInfo}>
@@ -425,7 +431,7 @@ export default function NotificationSettingsScreen() {
         {/* Fasting Reminders */}
         <FastingNotificationSettings />
       </ScrollView>
-    </ThemedView>
+    </ThemedView >
   );
 }
 
@@ -559,6 +565,13 @@ const styles = StyleSheet.create({
   autoDetectButton: {
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.md,
+  },
+  testButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,
   },
 });

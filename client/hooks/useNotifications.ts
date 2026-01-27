@@ -230,9 +230,10 @@ export function useNotifications() {
   };
 
   const saveSettings = async (newSettings: NotificationSettings) => {
+    // Update state immediately for responsive UI
+    setSettings(newSettings);
     try {
       await AsyncStorage.setItem(NOTIFICATION_SETTINGS_KEY, JSON.stringify(newSettings));
-      setSettings(newSettings);
     } catch (error) {
       console.error("Failed to save notification settings:", error);
     }
@@ -532,9 +533,10 @@ export function useNotifications() {
     lastIqamaScheduledRef.current = iqamaScheduleKey;
     lastIqamaScheduleTimeRef.current = Date.now();
 
-    console.log('📅 Scheduling iqama notifications...', {
+    console.log('📅 [IQAMA SCHEDULE] Starting iqama scheduling...', {
+      currentTime: new Date().toLocaleString(),
       delayMinutes: iqamaSettings.delayMinutes,
-      prayers: iqamaSettings.prayers
+      enabledPrayers: Object.entries(iqamaSettings.prayers).filter(([_, v]) => v).map(([k]) => k)
     });
 
     if (Platform.OS === 'android' && PrayerAlarmModule) {
@@ -551,8 +553,13 @@ export function useNotifications() {
         const iqamaAlarms: Array<{ name: string; timestamp: number }> = [];
         const delayMs = iqamaSettings.delayMinutes * 60 * 1000;
 
+        console.log('📅 [IQAMA SCHEDULE] Processing prayers, current time:', now.toLocaleString());
+
         for (const prayer of prayers) {
-          if (!iqamaSettings.prayers[prayer.key]) continue;
+          if (!iqamaSettings.prayers[prayer.key]) {
+            console.log(`⏭️ [IQAMA SCHEDULE] Skipping ${prayer.key} - disabled`);
+            continue;
+          }
 
           const parsedTime = parseTimeString(prayer.time);
           if (!parsedTime) {
@@ -567,10 +574,23 @@ export function useNotifications() {
           // Calculate iqama time (prayer time + delay)
           const iqamaDate = new Date(prayerDate.getTime() + delayMs);
 
+          console.log(`🕐 [IQAMA SCHEDULE] ${prayer.key}:`, {
+            azanTime: prayer.time,
+            prayerTimestamp: prayerDate.toLocaleString(),
+            iqamaTime: iqamaDate.toLocaleString(),
+            isPast: iqamaDate <= now
+          });
+
           // Check if IQAMA time is in the past, not prayer time
           if (iqamaDate <= now) {
+            console.log(`⏭️ [IQAMA SCHEDULE] ${prayer.key} iqama already passed, scheduling for tomorrow`);
             prayerDate.setDate(prayerDate.getDate() + 1);
           }
+
+          const finalIqamaTime = new Date(prayerDate.getTime() + delayMs);
+          const minutesUntilIqama = Math.round((finalIqamaTime.getTime() - now.getTime()) / 60000);
+
+          console.log(`✅ [IQAMA SCHEDULE] ${prayer.key} iqama will fire at ${finalIqamaTime.toLocaleString()} (in ${minutesUntilIqama} minutes)`);
 
           iqamaAlarms.push({
             name: prayer.key,
@@ -578,19 +598,28 @@ export function useNotifications() {
           });
         }
 
+        console.log('📤 [IQAMA SCHEDULE] Sending to native module:', {
+          alarmCount: iqamaAlarms.length,
+          delayMinutes: iqamaSettings.delayMinutes
+        });
+
         const result = await PrayerAlarmModule.scheduleIqamaAlarms(
           iqamaAlarms,
           iqamaSettings.delayMinutes
         );
-        console.log('✅ Iqama alarms scheduled:', result);
-        console.log('🔔 Scheduled iqama alarms:', iqamaAlarms.map(a =>
-          `${a.name} at ${new Date(a.timestamp + iqamaSettings.delayMinutes * 60000).toLocaleString()}`
-        ));
+
+        console.log('✅ [IQAMA SCHEDULE] Native module result:', result);
+        console.log('🔔 [IQAMA SCHEDULE] Summary - Iqama sounds will play at:');
+        iqamaAlarms.forEach(a => {
+          const iqamaTime = new Date(a.timestamp + iqamaSettings.delayMinutes * 60000);
+          const minutesUntil = Math.round((iqamaTime.getTime() - Date.now()) / 60000);
+          console.log(`   - ${a.name}: ${iqamaTime.toLocaleTimeString()} (in ${minutesUntil} min)`);
+        });
       } catch (error) {
-        console.error('❌ Failed to schedule iqama alarms:', error);
+        console.error('❌ [IQAMA SCHEDULE] Failed to schedule iqama alarms:', error);
       }
     } else {
-      console.log('⚠️ Iqama scheduling only supported on Android with native module');
+      console.log('⚠️ [IQAMA SCHEDULE] Only supported on Android with native module');
     }
   }, [permission, scheduleVersion]);
 
@@ -715,6 +744,31 @@ export function useNotifications() {
     }
   }, []);
 
+  // Test iqama notification - plays immediately for debugging
+  const testIqamaNotification = useCallback(async () => {
+    console.log('🧪 [TEST IQAMA] Starting test iqama notification...');
+
+    if (Platform.OS !== 'android') {
+      console.log('⚠️ [TEST IQAMA] Only supported on Android');
+      return { success: false, message: 'Only supported on Android' };
+    }
+
+    if (!PrayerAlarmModule) {
+      console.log('❌ [TEST IQAMA] PrayerAlarmModule not available');
+      return { success: false, message: 'PrayerAlarmModule not available' };
+    }
+
+    try {
+      // Use the native testIqamaSound method which handles silent mode gracefully
+      const result = await PrayerAlarmModule.testIqamaSound();
+      console.log('✅ [TEST IQAMA] Result:', result);
+      return { success: true, message: result };
+    } catch (error) {
+      console.error('❌ [TEST IQAMA] Failed:', error);
+      return { success: false, message: String(error) };
+    }
+  }, []);
+
   // Force clear the schedule cache to trigger rescheduling
   const clearScheduleCache = useCallback(() => {
     lastScheduledRef.current = null;
@@ -736,6 +790,7 @@ export function useNotifications() {
     sendTestNotification,
     scheduleIqamaNotifications,
     cancelIqamaNotifications,
+    testIqamaNotification,
     scheduleMissedPrayerReminders,
     cancelMissedPrayerReminder,
     clearScheduleCache,

@@ -37,7 +37,7 @@ export function useFastingNotifications(): UseFastingNotificationsResult {
       try {
         const loadedSettings = await fastingNotificationService.loadSettings();
         setSettings(loadedSettings);
-        
+
         const { status } = await Notifications.getPermissionsAsync();
         setPermission(status);
       } catch (error) {
@@ -61,34 +61,46 @@ export function useFastingNotifications(): UseFastingNotificationsResult {
       if (!granted) return;
     }
 
+    // Update state optimistically before async operations
+    const newSettings = { ...settings, enabled };
+    setSettings(newSettings);
+
     await fastingNotificationService.toggleEnabled(enabled);
-    setSettings(fastingNotificationService.getSettings());
 
     if (enabled) {
       await fastingNotificationService.scheduleFastingNotifications();
     }
-  }, [permission, requestPermission]);
+  }, [permission, requestPermission, settings]);
 
   const toggleFastingType = useCallback(async (
     type: keyof FastingNotificationSettings['types'],
     enabled: boolean
   ) => {
+    // Update state optimistically before async operations
+    const newSettings = {
+      ...settings,
+      types: { ...settings.types, [type]: enabled },
+    };
+    setSettings(newSettings);
+
     await fastingNotificationService.toggleFastingType(type, enabled);
-    setSettings(fastingNotificationService.getSettings());
 
     if (settings.enabled) {
       await fastingNotificationService.scheduleFastingNotifications();
     }
-  }, [settings.enabled]);
+  }, [settings]);
 
   const setReminderTime = useCallback(async (time: 'evening' | 'morning') => {
+    // Update state optimistically before async operations
+    const newSettings = { ...settings, reminderTime: time };
+    setSettings(newSettings);
+
     await fastingNotificationService.setReminderTime(time);
-    setSettings(fastingNotificationService.getSettings());
 
     if (settings.enabled) {
       await fastingNotificationService.scheduleFastingNotifications();
     }
-  }, [settings.enabled]);
+  }, [settings]);
 
   const scheduleNotifications = useCallback(async (): Promise<number> => {
     return fastingNotificationService.scheduleFastingNotifications();

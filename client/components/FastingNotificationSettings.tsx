@@ -7,15 +7,17 @@
 import React from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   Switch,
-  TouchableOpacity,
+  Pressable,
   ActivityIndicator,
 } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 import { useFastingNotifications } from '../hooks/useFastingNotifications';
 import { FastingNotificationSettings as SettingsType } from '../services/FastingNotificationService';
+import { ThemedText } from './ThemedText';
+import { Feather } from '@expo/vector-icons';
+import { Spacing, BorderRadius } from '../constants/theme';
 
 interface FastingNotificationSettingsProps {
   compact?: boolean;
@@ -31,7 +33,7 @@ const FASTING_TYPE_LABELS: Record<keyof SettingsType['types'], { label: string; 
 };
 
 export function FastingNotificationSettings({ compact = false }: FastingNotificationSettingsProps) {
-  const { theme } = useTheme();
+  const { theme, isDark } = useTheme();
   const {
     settings,
     loading,
@@ -43,7 +45,7 @@ export function FastingNotificationSettings({ compact = false }: FastingNotifica
 
   if (loading) {
     return (
-      <View style={[styles.loadingContainer, { backgroundColor: theme.cardBackground }]}>
+      <View style={[styles.card, { backgroundColor: theme.cardBackground }]}>
         <ActivityIndicator size="small" color={theme.primary} />
       </View>
     );
@@ -51,19 +53,30 @@ export function FastingNotificationSettings({ compact = false }: FastingNotifica
 
   if (compact) {
     return (
-      <View style={[styles.compactContainer, { backgroundColor: theme.cardBackground }]}>
-        <View style={styles.compactRow}>
-          <View style={styles.compactInfo}>
-            <Text style={[styles.compactTitle, { color: theme.text }]}>Fasting Reminders</Text>
-            <Text style={[styles.compactDescription, { color: theme.textSecondary }]}>
-              Get notified about upcoming fasting days
-            </Text>
+      <View style={[styles.card, {
+        backgroundColor: theme.cardBackground,
+        borderColor: isDark ? theme.border : 'transparent',
+        borderWidth: isDark ? 1 : 0,
+        elevation: isDark ? 0 : 3,
+        shadowOpacity: isDark ? 0 : 0.08,
+      }]}>
+        <View style={styles.settingRow}>
+          <View style={styles.settingInfo}>
+            <View style={[styles.iconCircle, { backgroundColor: `${theme.gold}15` }]}>
+              <Feather name="moon" size={20} color={theme.gold} />
+            </View>
+            <View style={styles.settingText}>
+              <ThemedText type="body" style={{ fontWeight: '600' }}>Fasting Reminders</ThemedText>
+              <ThemedText type="small" secondary>
+                Get notified about upcoming fasting days
+              </ThemedText>
+            </View>
           </View>
           <Switch
             value={settings.enabled}
             onValueChange={toggleEnabled}
-            trackColor={{ false: theme.border, true: `${theme.primary}4D` }}
-            thumbColor={settings.enabled ? theme.primary : theme.muted}
+            trackColor={{ false: theme.backgroundSecondary, true: theme.primary }}
+            thumbColor="#FFFFFF"
           />
         </View>
       </View>
@@ -71,22 +84,31 @@ export function FastingNotificationSettings({ compact = false }: FastingNotifica
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.cardBackground }]}>
-      <Text style={[styles.sectionTitle, { color: theme.text }]}>Fasting Reminders</Text>
-
+    <View style={[styles.card, {
+      backgroundColor: theme.cardBackground,
+      borderColor: isDark ? theme.border : 'transparent',
+      borderWidth: isDark ? 1 : 0,
+      elevation: isDark ? 0 : 3,
+      shadowOpacity: isDark ? 0 : 0.08,
+    }]}>
       {/* Main Toggle */}
-      <View style={[styles.settingRow, { borderBottomColor: theme.border }]}>
+      <View style={styles.settingRow}>
         <View style={styles.settingInfo}>
-          <Text style={[styles.settingLabel, { color: theme.text }]}>Enable Notifications</Text>
-          <Text style={[styles.settingDescription, { color: theme.textSecondary }]}>
-            Receive reminders for recommended fasting days
-          </Text>
+          <View style={[styles.iconCircle, { backgroundColor: `${theme.gold}15` }]}>
+            <Feather name="moon" size={20} color={theme.gold} />
+          </View>
+          <View style={styles.settingText}>
+            <ThemedText type="body" style={{ fontWeight: '600' }}>Fasting Reminders</ThemedText>
+            <ThemedText type="small" secondary>
+              Receive reminders for recommended fasting days
+            </ThemedText>
+          </View>
         </View>
         <Switch
           value={settings.enabled}
           onValueChange={toggleEnabled}
-          trackColor={{ false: theme.border, true: `${theme.primary}4D` }}
-          thumbColor={settings.enabled ? theme.primary : theme.muted}
+          trackColor={{ false: theme.backgroundSecondary, true: theme.primary }}
+          thumbColor="#FFFFFF"
         />
       </View>
 
@@ -94,9 +116,11 @@ export function FastingNotificationSettings({ compact = false }: FastingNotifica
         <>
           {/* Reminder Time */}
           <View style={styles.reminderTimeSection}>
-            <Text style={[styles.subsectionTitle, { color: theme.textSecondary }]}>Reminder Time</Text>
+            <ThemedText type="small" secondary style={{ fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: Spacing.sm }}>
+              Reminder Time
+            </ThemedText>
             <View style={styles.reminderTimeOptions}>
-              <TouchableOpacity
+              <Pressable
                 style={[
                   styles.reminderTimeOption,
                   { backgroundColor: theme.backgroundSecondary },
@@ -108,16 +132,15 @@ export function FastingNotificationSettings({ compact = false }: FastingNotifica
                 ]}
                 onPress={() => setReminderTime('evening')}
               >
-                <Text style={[
-                  styles.reminderTimeText,
-                  { color: theme.textSecondary },
+                <ThemedText type="body" style={[
+                  { fontWeight: '600' },
                   settings.reminderTime === 'evening' && { color: theme.primary },
                 ]}>
                   Evening Before
-                </Text>
-                <Text style={[styles.reminderTimeSubtext, { color: theme.muted }]}>8:00 PM</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
+                </ThemedText>
+                <ThemedText type="caption" secondary>8:00 PM</ThemedText>
+              </Pressable>
+              <Pressable
                 style={[
                   styles.reminderTimeOption,
                   { backgroundColor: theme.backgroundSecondary },
@@ -129,36 +152,35 @@ export function FastingNotificationSettings({ compact = false }: FastingNotifica
                 ]}
                 onPress={() => setReminderTime('morning')}
               >
-                <Text style={[
-                  styles.reminderTimeText,
-                  { color: theme.textSecondary },
+                <ThemedText type="body" style={[
+                  { fontWeight: '600' },
                   settings.reminderTime === 'morning' && { color: theme.primary },
                 ]}>
                   Before Fajr
-                </Text>
-                <Text style={[styles.reminderTimeSubtext, { color: theme.muted }]}>30 min before</Text>
-              </TouchableOpacity>
+                </ThemedText>
+                <ThemedText type="caption" secondary>30 min before</ThemedText>
+              </Pressable>
             </View>
           </View>
 
           {/* Fasting Types */}
           <View style={styles.fastingTypesSection}>
-            <Text style={[styles.subsectionTitle, { color: theme.textSecondary }]}>Fasting Days</Text>
+            <ThemedText type="small" secondary style={{ fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: Spacing.sm }}>
+              Fasting Days
+            </ThemedText>
             {(Object.keys(FASTING_TYPE_LABELS) as Array<keyof SettingsType['types']>).map((type) => (
               <View key={type} style={styles.fastingTypeRow}>
                 <View style={styles.fastingTypeInfo}>
-                  <Text style={[styles.fastingTypeLabel, { color: theme.text }]}>
-                    {FASTING_TYPE_LABELS[type].label}
-                  </Text>
-                  <Text style={[styles.fastingTypeDescription, { color: theme.muted }]}>
+                  <ThemedText type="body">{FASTING_TYPE_LABELS[type].label}</ThemedText>
+                  <ThemedText type="caption" secondary>
                     {FASTING_TYPE_LABELS[type].description}
-                  </Text>
+                  </ThemedText>
                 </View>
                 <Switch
                   value={settings.types[type]}
                   onValueChange={(value) => toggleFastingType(type, value)}
-                  trackColor={{ false: theme.border, true: `${theme.primary}4D` }}
-                  thumbColor={settings.types[type] ? theme.primary : theme.muted}
+                  trackColor={{ false: theme.backgroundSecondary, true: theme.primary }}
+                  thumbColor="#FFFFFF"
                 />
               </View>
             ))}
@@ -168,9 +190,9 @@ export function FastingNotificationSettings({ compact = false }: FastingNotifica
 
       {permission !== 'granted' && settings.enabled && (
         <View style={[styles.permissionWarning, { backgroundColor: `${theme.gold}20` }]}>
-          <Text style={[styles.permissionWarningText, { color: theme.gold }]}>
+          <ThemedText type="small" style={{ color: theme.gold, textAlign: 'center' }}>
             ⚠️ Notification permission required
-          </Text>
+          </ThemedText>
         </View>
       )}
     </View>
@@ -178,115 +200,71 @@ export function FastingNotificationSettings({ compact = false }: FastingNotifica
 }
 
 const styles = StyleSheet.create({
-  container: {
-    borderRadius: 12,
-    padding: 16,
-  },
-  loadingContainer: {
-    padding: 20,
-    alignItems: 'center',
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 16,
+  card: {
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.lg,
+    marginBottom: Spacing.md,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 8,
   },
   settingRow: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
+    alignItems: 'center',
   },
   settingInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
     flex: 1,
-    marginRight: 12,
   },
-  settingLabel: {
-    fontSize: 16,
-    fontWeight: '500',
+  iconCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: Spacing.md,
   },
-  settingDescription: {
-    fontSize: 13,
-    marginTop: 2,
+  settingText: {
+    flex: 1,
   },
   reminderTimeSection: {
-    marginTop: 16,
-  },
-  subsectionTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 12,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    marginTop: Spacing.md,
+    paddingTop: Spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(0,0,0,0.06)',
   },
   reminderTimeOptions: {
     flexDirection: 'row',
-    gap: 12,
+    gap: Spacing.sm,
   },
   reminderTimeOption: {
     flex: 1,
-    padding: 12,
-    borderRadius: 10,
+    padding: Spacing.md,
+    borderRadius: BorderRadius.md,
     alignItems: 'center',
   },
-  reminderTimeText: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  reminderTimeSubtext: {
-    fontSize: 12,
-    marginTop: 4,
-  },
   fastingTypesSection: {
-    marginTop: 20,
+    marginTop: Spacing.md,
+    paddingTop: Spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(0,0,0,0.06)',
   },
   fastingTypeRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 10,
+    paddingVertical: Spacing.sm,
   },
   fastingTypeInfo: {
     flex: 1,
-    marginRight: 12,
-  },
-  fastingTypeLabel: {
-    fontSize: 15,
-    fontWeight: '500',
-  },
-  fastingTypeDescription: {
-    fontSize: 12,
-    marginTop: 2,
+    marginRight: Spacing.md,
   },
   permissionWarning: {
-    marginTop: 12,
-    padding: 12,
-    borderRadius: 8,
-  },
-  permissionWarningText: {
-    fontSize: 13,
-    textAlign: 'center',
-  },
-  compactContainer: {
-    borderRadius: 12,
-    padding: 16,
-  },
-  compactRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  compactInfo: {
-    flex: 1,
-    marginRight: 12,
-  },
-  compactTitle: {
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  compactDescription: {
-    fontSize: 13,
-    marginTop: 2,
+    marginTop: Spacing.md,
+    padding: Spacing.md,
+    borderRadius: BorderRadius.md,
   },
 });
+
