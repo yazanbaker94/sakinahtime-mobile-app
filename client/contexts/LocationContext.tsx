@@ -119,10 +119,19 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
             country: cachedGps.country,
           });
 
+          // We have cached location - don't show loading state
+          // Fresh GPS will update in background
+          setLoading(false);
+
           // Pre-load prayer times cache with cached location for instant display
           prayerTimesPreloader.preload(cachedGps.latitude, cachedGps.longitude).catch(() => {
             // Ignore preloader errors
           });
+        }
+
+        // If manual location is set, also stop loading
+        if (savedMode === 'manual' && savedManual) {
+          setLoading(false);
         }
 
         setInitialized(true);

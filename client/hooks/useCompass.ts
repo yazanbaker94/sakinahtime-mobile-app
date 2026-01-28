@@ -17,7 +17,7 @@ interface SensorData {
   z: number;
 }
 
-const LOW_PASS_ALPHA = 0.15;
+const LOW_PASS_ALPHA = 0.4;
 
 function applyLowPassFilter(
   current: SensorData,
@@ -99,7 +99,7 @@ export function useCompass() {
                 accuracy: Location.Accuracy.Lowest, // Use lowest accuracy for declination
               });
               const { latitude, longitude } = location.coords;
-              
+
               // Calculate magnetic declination using World Magnetic Model
               // This is an approximation - for production, use a proper WMM library
               const declination = await getMagneticDeclination(latitude, longitude);
@@ -132,9 +132,9 @@ export function useCompass() {
 
         setState((prev) => ({ ...prev, available: true, error: null }));
 
-        Magnetometer.setUpdateInterval(50);
+        Magnetometer.setUpdateInterval(16);
         if (accelAvailable) {
-          Accelerometer.setUpdateInterval(50);
+          Accelerometer.setUpdateInterval(16);
         }
 
         magSubscription = Magnetometer.addListener((data) => {
@@ -181,7 +181,7 @@ export function useCompass() {
           }
 
           headingHistoryRef.current.push(heading);
-          if (headingHistoryRef.current.length > 10) {
+          if (headingHistoryRef.current.length > 5) {
             headingHistoryRef.current.shift();
           }
 
@@ -199,10 +199,10 @@ export function useCompass() {
 
           const variance = history.length >= 3
             ? history.reduce((sum, h) => {
-                let diff = Math.abs(h - smoothedHeading);
-                if (diff > 180) diff = 360 - diff;
-                return sum + diff * diff;
-              }, 0) / history.length
+              let diff = Math.abs(h - smoothedHeading);
+              if (diff > 180) diff = 360 - diff;
+              return sum + diff * diff;
+            }, 0) / history.length
             : 100;
 
           let accuracy: "low" | "medium" | "high" = "low";
@@ -222,7 +222,7 @@ export function useCompass() {
             accuracy,
             declination: magneticDeclination,
           }));
-        }, 100);
+        }, 32);
       } catch (error) {
         setState((prev) => ({
           ...prev,
@@ -292,7 +292,7 @@ export function getRelativeDirection(
   qiblaDirection: number
 ): { angle: number; direction: "left" | "right" | "aligned" } {
   let diff = qiblaDirection - heading;
-  
+
   if (diff > 180) diff -= 360;
   if (diff < -180) diff += 360;
 

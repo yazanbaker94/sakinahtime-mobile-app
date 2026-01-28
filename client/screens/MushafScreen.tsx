@@ -38,6 +38,7 @@ import { Feather } from "@expo/vector-icons";
 import Animated, { SlideInUp, SlideOutDown, SlideInDown, useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as FileSystem from "expo-file-system/legacy";
+import { useKeepAwake } from "expo-keep-awake";
 import { mushafImages } from "@/data/mushaf-images";
 import { surahPages } from "@/data/surah-pages";
 import quranData from "@/data/quran-uthmani.json";
@@ -87,6 +88,7 @@ export default function MushafScreen() {
 // Inner component that can use Hifz hooks
 function MushafScreenContent() {
   const { theme, isDark } = useTheme();
+  useKeepAwake(); // Keep screen on while reading Quran
   const insets = useSafeAreaInsets();
   const route = useRoute<RouteProp<MainTabParamList, 'QuranTab'>>();
 
@@ -113,6 +115,24 @@ function MushafScreenContent() {
   // Load coordinates when screen mounts
   React.useEffect(() => {
     loadCoordinates();
+  }, []);
+
+  // Preload tafsir data in background after 2 seconds (doesn't block startup)
+  React.useEffect(() => {
+    const preloadTimer = setTimeout(() => {
+      // Preload bundled tafsir files in background - they'll be cached by the bundler
+      Promise.all([
+        import("@/data/tafsir-jalalayn.json"),
+        import("@/data/abridged-explanation-of-the-quran.json"),
+        import("@/data/en-sahih-international-inline-footnotes.json"),
+      ]).then(() => {
+        console.log('📚 Tafsir data preloaded');
+      }).catch(e => {
+        console.log('Tafsir preload skipped:', e.message);
+      });
+    }, 2000);
+
+    return () => clearTimeout(preloadTimer);
   }, []);
 
   // Log when coordinates are loaded
@@ -223,6 +243,7 @@ function MushafScreenContent() {
   const [wordScrubberTouchPosition, setWordScrubberTouchPosition] = useState<{ x: number; y: number } | undefined>(undefined);
   const [showSearchBar, setShowSearchBar] = useState(false);
   const searchInputRef = useRef<TextInput>(null);
+  const surahListRef = useRef<FlatList>(null);
   const [showBookmarks, setShowBookmarks] = useState(false);
   const [recentPages, setRecentPages] = useState<number[]>([]);
   const [juzSortAsc, setJuzSortAsc] = useState(true);
@@ -929,6 +950,27 @@ function MushafScreenContent() {
   const animatedButtonStyle = useAnimatedStyle(() => ({
     opacity: buttonOpacity.value,
   }));
+
+  // Calculate current surah from current page for initial scroll position
+  const currentSurahIndex = useMemo(() => {
+    const currentSurahNumber = Object.entries(surahPages).reduce((found, [surahNum, startPage]) => {
+      if (startPage <= currentPage) {
+        return parseInt(surahNum);
+      }
+      return found;
+    }, 1);
+    return currentSurahNumber - 1; // 0-based index
+  }, [currentPage]);
+
+  // Track if initial scroll has happened for surah list
+  const hasScrolledSurahListRef = useRef(false);
+
+  // Reset scroll flag when surah list opens
+  useEffect(() => {
+    if (showSurahList) {
+      hasScrolledSurahListRef.current = false;
+    }
+  }, [showSurahList]);
 
   const loadBookmarks = async () => {
     try {
@@ -2136,33 +2178,14 @@ function MushafScreenContent() {
       <View style={[styles.surahListHeader, {
         backgroundColor: isDark ? 'rgba(0, 0, 0, 0.95)' : 'rgba(255, 255, 255, 0.95)',
         paddingTop: Platform.OS === 'android' ? Math.max(insets.top, 10) + 10 : insets.top + 10,
+        zIndex: 10,
       }]}>
         <View style={styles.headerContent}>
           <View style={styles.headerTop}>
-            <Pressable
-              onPress={() => {
-                // Triple-tap to clear timing cache (dev feature)
-                const now = Date.now();
-                if (!global.lastTitleTap) global.lastTitleTap = [];
-                global.lastTitleTap.push(now);
-                // Keep only last 3 taps within 1 second
-                global.lastTitleTap = global.lastTitleTap.filter((t: number) => now - t < 1000);
-                if (global.lastTitleTap.length >= 3) {
-                  global.lastTitleTap = [];
-                  AudioService.clearTimingCache().then((result) => {
-                    Alert.alert('Timing Cache Cleared',
-                      result.error
-                        ? `Error: ${result.error}`
-                        : `Cleared ${result.deleted} reciter(s) from cache. Timing data will re-download on next play.`
-                    );
-                  });
-                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-                }
-              }}
-            >
+            <View>
               <ThemedText type="h3" style={{ fontWeight: '700', letterSpacing: -1, fontSize: 28 }}>Quran</ThemedText>
               <ThemedText type="caption" style={{ opacity: 0.5, marginTop: 2, fontSize: 13 }}>{navigationMode === 'surah' ? '114 Surahs' : navigationMode === 'juz' ? '30 Juz' : `${recentPages.length} Recent`}</ThemedText>
-            </Pressable>
+            </View>
             <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
               <Pressable
                 onPress={() => setShowSearchBar(!showSearchBar)}
@@ -2603,6 +2626,7 @@ function MushafScreenContent() {
       {/* Surah Tab - Direct FlatList for virtualization (only renders ~12 visible items) */}
       {navigationMode === 'surah' && searchQuery.trim().length < 2 && (
         <FlatList
+          ref={surahListRef}
           data={surahs}
           keyExtractor={(item) => `surah-${item.number}`}
           renderItem={renderSurahItem}
@@ -2611,9 +2635,23 @@ function MushafScreenContent() {
           ListHeaderComponent={
             <ThemedText type="body" style={{ fontWeight: '600', opacity: 0.6, fontSize: 13, marginTop: Spacing.sm, marginBottom: Spacing.md }}>ALL SURAHS</ThemedText>
           }
-          initialNumToRender={15}
-          maxToRenderPerBatch={10}
-          windowSize={5}
+          initialNumToRender={114}
+          onLayout={() => {
+            if (currentSurahIndex > 0 && !hasScrolledSurahListRef.current) {
+              hasScrolledSurahListRef.current = true;
+              surahListRef.current?.scrollToIndex({
+                index: currentSurahIndex,
+                animated: false,
+                viewPosition: 0.2,
+              });
+            }
+          }}
+          getItemLayout={(data, index) => ({
+            length: 80,
+            offset: 80 * index,
+            index,
+          })}
+          onScrollToIndexFailed={() => { }}
         />
       )}
 

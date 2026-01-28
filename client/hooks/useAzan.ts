@@ -8,11 +8,25 @@ const AZAN_SETTINGS_KEY = "@azan_settings";
 export interface AzanSettings {
   enabled: boolean;
   volume: number;
+  prayers: {
+    Fajr: boolean;
+    Dhuhr: boolean;
+    Asr: boolean;
+    Maghrib: boolean;
+    Isha: boolean;
+  };
 }
 
 const DEFAULT_SETTINGS: AzanSettings = {
   enabled: true,
   volume: 1.0, // Maximum volume
+  prayers: {
+    Fajr: true,
+    Dhuhr: true,
+    Asr: true,
+    Maghrib: true,
+    Isha: true,
+  },
 };
 
 // Use local azan file - place azan.mp3 in assets/audio/
@@ -60,7 +74,9 @@ export function useAzan() {
     try {
       const stored = await AsyncStorage.getItem(AZAN_SETTINGS_KEY);
       if (stored) {
-        setSettings(JSON.parse(stored));
+        const parsed = JSON.parse(stored);
+        // Merge with defaults to handle migration (existing users without prayers setting)
+        setSettings({ ...DEFAULT_SETTINGS, ...parsed, prayers: { ...DEFAULT_SETTINGS.prayers, ...parsed.prayers } });
       }
     } catch (error) {
       console.error("Failed to load azan settings:", error);
@@ -81,6 +97,17 @@ export function useAzan() {
 
   const toggleAzan = async (enabled: boolean) => {
     const newSettings = { ...settings, enabled };
+    await saveSettings(newSettings);
+  };
+
+  const togglePrayerAzan = async (
+    prayer: keyof AzanSettings["prayers"],
+    enabled: boolean
+  ) => {
+    const newSettings = {
+      ...settings,
+      prayers: { ...settings.prayers, [prayer]: enabled },
+    };
     await saveSettings(newSettings);
   };
 
@@ -166,11 +193,63 @@ export function useAzan() {
     }
   }, [settings.volume]);
 
+  // Test azan for a specific prayer - returns true if played, false if prayer is disabled
+  const testAzanForPrayer = useCallback(async (
+    prayer: keyof AzanSettings["prayers"]
+  ): Promise<boolean> => {
+    // Check if azan is globally enabled and prayer is enabled
+    if (!settings.enabled) {
+      return false;
+    }
+    if (!settings.prayers[prayer]) {
+      return false;
+    }
+
+    // Play a short preview (5 seconds)
+    try {
+      if (soundRef.current) {
+        await soundRef.current.unloadAsync();
+      }
+
+      const { sound } = await Audio.Sound.createAsync(
+        AZAN_AUDIO,
+        { shouldPlay: true, volume: settings.volume }
+      );
+
+      soundRef.current = sound;
+      setIsPlaying(true);
+
+      // Stop after 5 seconds
+      setTimeout(async () => {
+        if (soundRef.current) {
+          await soundRef.current.stopAsync();
+          await soundRef.current.unloadAsync();
+          soundRef.current = null;
+          setIsPlaying(false);
+        }
+      }, 5000);
+
+      sound.setOnPlaybackStatusUpdate((status) => {
+        if (status.isLoaded && status.didJustFinish) {
+          setIsPlaying(false);
+        }
+      });
+
+      return true;
+    } catch (error) {
+      console.error("Failed to test azan:", error);
+      setIsPlaying(false);
+      return false;
+    }
+  }, [settings]);
+
   return {
     settings,
     isPlaying,
     loading,
     toggleAzan,
+    togglePrayerAzan,
+    testAzanForPrayer,
     setVolume,
     playAzan,
     stopAzan,

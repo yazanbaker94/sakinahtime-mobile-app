@@ -44,7 +44,7 @@ export default function NotificationSettingsScreen() {
     togglePrayerNotification,
     testIqamaNotification,
   } = useNotifications();
-  const { settings: azanSettings, toggleAzan } = useAzan();
+  const { settings: azanSettings, toggleAzan, togglePrayerAzan } = useAzan();
   const {
     settings: iqamaSettings,
     toggleIqama,
@@ -200,6 +200,26 @@ export default function NotificationSettingsScreen() {
               thumbColor="#FFFFFF"
             />
           </View>
+
+          {/* Per-Prayer Azan Toggles */}
+          {azanSettings.enabled && (
+            <View style={styles.prayerNotifications}>
+              <ThemedText type="small" secondary style={{ marginBottom: 8 }}>
+                Select which prayers play azan sound
+              </ThemedText>
+              {PRAYERS.map((prayer) => (
+                <View key={prayer.key} style={styles.prayerNotificationRow}>
+                  <ThemedText type="body">{prayer.nameEn} - {prayer.nameAr}</ThemedText>
+                  <Switch
+                    value={azanSettings.prayers[prayer.key as keyof typeof azanSettings.prayers]}
+                    onValueChange={(value) => togglePrayerAzan(prayer.key as keyof typeof azanSettings.prayers, value)}
+                    trackColor={{ false: theme.backgroundSecondary, true: theme.primary }}
+                    thumbColor="#FFFFFF"
+                  />
+                </View>
+              ))}
+            </View>
+          )}
         </View>
 
         {/* Iqama Reminder */}
