@@ -160,8 +160,9 @@ export default function QiblaScreen() {
   const lastHeadingRef = useRef<number | null>(null);
 
   // Haptic feedback on every movement - stops when aligned (silence = "locked in" feeling)
+  // Note: Only on iOS - Android's haptic hardware doesn't support subtle per-scroll vibrations
   useEffect(() => {
-    if (!isFocused || Platform.OS === "web" || isAligned || isLocked) return;
+    if (!isFocused || Platform.OS !== "ios" || isAligned || isLocked) return;
     if (heading === null) return;
 
     // Check if heading actually changed significantly (at least 2 degrees)
@@ -372,20 +373,45 @@ export default function QiblaScreen() {
           },
         ]}
       >
-        {/* Location Badge */}
-        {city ? (
-          <View style={styles.locationBadge}>
-            <Feather name="map-pin" size={15} color={primaryColor} />
-            <ThemedText type="small" style={{
-              marginLeft: 7,
-              color: primaryColor,
-              fontWeight: '700',
-              fontSize: 13,
-            }}>
-              {city}
+        {/* Header Row - Location Badge and Mosque Icon */}
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingHorizontal: Spacing.lg }}>
+          {/* Location Badge */}
+          {city ? (
+            <View style={styles.locationBadge}>
+              <Feather name="map-pin" size={15} color={primaryColor} />
+              <ThemedText type="small" style={{
+                marginLeft: 7,
+                color: primaryColor,
+                fontWeight: '700',
+                fontSize: 13,
+              }}>
+                {city}
+              </ThemedText>
+            </View>
+          ) : <View />}
+
+          {/* Mosque Icon Button */}
+          <Pressable
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              navigation.navigate('MosqueFinder');
+            }}
+            style={({ pressed }) => ({
+              flexDirection: 'row',
+              alignItems: 'center',
+              backgroundColor: pressed ? `${primaryColor}25` : `${primaryColor}15`,
+              paddingHorizontal: 12,
+              paddingVertical: 8,
+              borderRadius: 20,
+              gap: 6,
+            })}
+          >
+            <Feather name="home" size={16} color={primaryColor} />
+            <ThemedText type="caption" style={{ color: primaryColor, fontWeight: '600', fontSize: 12 }}>
+              Mosques
             </ThemedText>
-          </View>
-        ) : null}
+          </Pressable>
+        </View>
 
         {/* Premium Compass */}
         <View style={[styles.compassWrapper, {
@@ -650,23 +676,7 @@ export default function QiblaScreen() {
           </View>
         </View>
 
-        {/* Find Nearby Mosques Button */}
-        <Pressable
-          onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            navigation.navigate('MosqueFinder');
-          }}
-          style={[styles.mosquesButton, {
-            backgroundColor: `${primaryColor}15`,
-            borderColor: `${primaryColor}4D`,
-          }]}
-        >
-          <Feather name="map" size={18} color={primaryColor} />
-          <ThemedText type="body" style={{ color: primaryColor, fontWeight: '600', marginLeft: Spacing.sm }}>
-            Find Nearby Mosques
-          </ThemedText>
-          <Feather name="chevron-right" size={18} color={primaryColor} style={{ marginLeft: 'auto' }} />
-        </Pressable>
+
 
         {/* Calibration Hint */}
         {showCalibrationHint ? (

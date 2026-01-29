@@ -14,6 +14,7 @@ import {
   setLastGpsLocation,
 } from "@/utils/locationStorage";
 import { prayerTimesPreloader } from "@/services/PrayerTimesPreloader";
+import { networkService } from "@/services/NetworkService";
 
 interface LocationState {
   // Core location data (works for both GPS and manual)
@@ -213,6 +214,27 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
     }
   }, [permission, initialized, fetchGpsLocation]);
+
+  // Refresh location when coming back online (to get city if it was missing)
+  useEffect(() => {
+    if (!initialized || !permission?.granted) return;
+
+    const wasOnlineRef = { current: networkService.isOnline() };
+
+    const unsubscribe = networkService.onStatusChange((status) => {
+      // If we just came back online and city is missing, refresh
+      if (!wasOnlineRef.current && status.isConnected) {
+        console.log('[LocationContext] Network reconnected, refreshing location');
+        // Only refresh if city is missing
+        if (!gpsState.city && gpsState.latitude) {
+          fetchGpsLocation();
+        }
+      }
+      wasOnlineRef.current = status.isConnected;
+    });
+
+    return () => unsubscribe();
+  }, [initialized, permission?.granted, gpsState.city, gpsState.latitude, fetchGpsLocation]);
 
   const handleRequestPermission = useCallback(async () => {
     const result = await requestPermission();

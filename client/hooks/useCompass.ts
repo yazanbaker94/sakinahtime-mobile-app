@@ -17,7 +17,7 @@ interface SensorData {
   z: number;
 }
 
-const LOW_PASS_ALPHA = 0.4;
+const LOW_PASS_ALPHA = 0.2; // Lower = more smoothing, less jitter
 
 function applyLowPassFilter(
   current: SensorData,
@@ -216,12 +216,25 @@ export function useCompass() {
             trueHeading = (smoothedHeading + magneticDeclination + 360) % 360;
           }
 
-          setState((prev) => ({
-            ...prev,
-            heading: Math.round(trueHeading),
-            accuracy,
-            declination: magneticDeclination,
-          }));
+          const roundedHeading = Math.round(trueHeading);
+
+          // Dead zone: only update if change is >= 2 degrees to prevent jitter
+          setState((prev) => {
+            let headingDiff = Math.abs(prev.heading - roundedHeading);
+            if (headingDiff > 180) headingDiff = 360 - headingDiff;
+
+            // Skip update if change is less than 2 degrees (reduces jitter)
+            if (headingDiff < 2) {
+              return prev;
+            }
+
+            return {
+              ...prev,
+              heading: roundedHeading,
+              accuracy,
+              declination: magneticDeclination,
+            };
+          });
         }, 32);
       } catch (error) {
         setState((prev) => ({

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, StyleSheet, ScrollView, Pressable, Platform } from "react-native";
+import { View, StyleSheet, ScrollView, Pressable, Platform, useWindowDimensions } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -67,6 +67,13 @@ export default function PrayerTimesScreen() {
   const insets = useSafeAreaInsets();
   const { theme, isDark } = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { height: screenHeight } = useWindowDimensions();
+
+  // Responsive sizes based on screen height (smaller screens = smaller elements)
+  const isSmallScreen = screenHeight < 700;
+  const iconSize = isSmallScreen ? 40 : 48;
+  const prayerNameFontSize = isSmallScreen ? 15 : 17;
+  const timeFontSize = isSmallScreen ? 18 : 22;
 
   const [countdown, setCountdown] = useState({ hours: 0, minutes: 0, seconds: 0 });
   const [nextPrayer, setNextPrayer] = useState<{ name: string; time: string; nameAr: string } | null>(null);
@@ -342,7 +349,8 @@ export default function PrayerTimesScreen() {
     );
   }
 
-  if (locationLoading || prayerLoading || methodLoading) {
+  // Only show loading if we have NO data at all (no cached/preloaded data)
+  if ((locationLoading || prayerLoading || methodLoading) && !prayerData) {
     return (
       <ThemedView style={styles.container}>
         <View
@@ -393,20 +401,19 @@ export default function PrayerTimesScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <ScrollView
-        contentContainerStyle={[
+      <View
+        style={[
           styles.scrollContent,
           {
-            paddingTop: insets.top + Spacing.xl,
-            paddingBottom: tabBarHeight + Spacing.xl,
+            paddingTop: insets.top + Spacing.md,
+            paddingBottom: tabBarHeight,
+            flex: 1,
           },
         ]}
-        scrollIndicatorInsets={{ bottom: insets.bottom }}
-        showsVerticalScrollIndicator={false}
       >
-        {/* Offline indicator when using cached data */}
+        {/* Offline indicator - only when actually offline */}
         <OfflineIndicator
-          isOffline={isOffline || isUsingCache}
+          isOffline={isOffline}
           lastSync={cacheLastSync}
         />
 
@@ -452,11 +459,11 @@ export default function PrayerTimesScreen() {
                       NEXT PRAYER
                     </ThemedText>
                   </View>
-                  {trackingEnabled && isPerfectDay && (
-                    <View style={styles.perfectDayBadge}>
-                      <Feather name="star" size={12} color="#FBBF24" />
+                  {trackingEnabled && streak && streak.currentStreak > 0 && (
+                    <View style={[styles.nextPrayerBadge, { backgroundColor: 'rgba(251, 191, 36, 0.25)' }]}>
+                      <Feather name="zap" size={12} color="#FBBF24" />
                       <ThemedText type="caption" style={{ color: "#FBBF24", marginLeft: 4, fontWeight: '700', fontSize: 10 }}>
-                        PERFECT DAY!
+                        {streak.currentStreak} DAY{streak.currentStreak > 1 ? 'S' : ''}
                       </ThemedText>
                     </View>
                   )}
@@ -535,12 +542,7 @@ export default function PrayerTimesScreen() {
           </View>
         ) : null}
 
-        {/* Streak indicator */}
-        {trackingEnabled && streak && streak.currentStreak > 0 && (
-          <StreakCard streak={streak} compact />
-        )}
-
-        <View style={styles.prayersList}>
+        <View style={[styles.prayersList, { flex: 1, marginBottom: Spacing.md }]}>
           {PRAYERS.map((prayer) => {
             const originalTime = prayerData?.timings?.[prayer.key] || "";
             const adjustment = prayerAdjustments[prayer.key as keyof typeof prayerAdjustments] || 0;
@@ -565,6 +567,7 @@ export default function PrayerTimesScreen() {
                 style={[
                   styles.prayerCard,
                   {
+                    flex: 1,
                     backgroundColor: isNext
                       ? (isDark ? `${theme.primary}20` : theme.cardBackground)
                       : (isDark ? theme.cardBackground : theme.cardBackground),
@@ -586,10 +589,21 @@ export default function PrayerTimesScreen() {
                 )}
 
                 <View style={styles.prayerCardLeft}>
+                  {/* Status indicator - before the icon */}
+                  {trackingEnabled && (
+                    <PrayerStatusIndicator
+                      status={prayerStatus}
+                      onStatusChange={handleStatusChange}
+                      size="compact"
+                    />
+                  )}
                   <View
                     style={[
                       styles.prayerIcon,
                       {
+                        width: iconSize,
+                        height: iconSize,
+                        borderRadius: iconSize / 2,
                         backgroundColor: isNext
                           ? `${theme.primary}20`
                           : (isDark ? theme.backgroundSecondary : 'rgba(0, 0, 0, 0.04)'),
@@ -600,15 +614,15 @@ export default function PrayerTimesScreen() {
                   >
                     <Feather
                       name={prayer.icon as any}
-                      size={22}
+                      size={iconSize * 0.42}
                       color={isNext ? theme.primary : theme.textSecondary}
                     />
                   </View>
                   <View style={styles.prayerNames}>
-                    <ThemedText type="body" style={{ fontWeight: isNext ? "700" : "500", fontSize: 17 }}>
+                    <ThemedText type="body" style={{ fontWeight: isNext ? "700" : "500", fontSize: prayerNameFontSize }}>
                       {prayer.nameEn}
                     </ThemedText>
-                    <ThemedText type="arabic" secondary style={{ fontFamily: 'AlMushafQuran', fontSize: 15, textAlign: "left", marginTop: 2 }}>
+                    <ThemedText type="arabic" secondary style={{ fontFamily: 'AlMushafQuran', fontSize: prayerNameFontSize * 0.88, textAlign: "left", marginTop: 1 }}>
                       {prayer.nameAr}
                     </ThemedText>
                   </View>
@@ -618,7 +632,7 @@ export default function PrayerTimesScreen() {
                     <ThemedText type="h3" style={{
                       color: isNext ? theme.primary : theme.text,
                       fontWeight: '700',
-                      fontSize: 22,
+                      fontSize: timeFontSize,
                       letterSpacing: -0.5
                     }}>
                       {formatTime(displayTime)}
@@ -634,22 +648,13 @@ export default function PrayerTimesScreen() {
                       </ThemedText>
                     )}
                   </View>
-                  {trackingEnabled && (
-                    <View style={styles.statusIndicatorContainer}>
-                      <PrayerStatusIndicator
-                        status={prayerStatus}
-                        onStatusChange={handleStatusChange}
-                        size="compact"
-                      />
-                    </View>
-                  )}
                 </View>
               </View>
             );
           })}
         </View>
 
-      </ScrollView>
+      </View>
     </ThemedView>
   );
 }
@@ -754,6 +759,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.sm,
     marginBottom: Spacing.sm,
+    paddingRight: 90, // Space for header buttons
+    flexWrap: 'wrap',
   },
   nextPrayerBadge: {
     flexDirection: 'row',
@@ -830,13 +837,14 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
   },
   prayersList: {
-    gap: Spacing.md,
+    gap: Spacing.sm,
   },
   prayerCard: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: Spacing.xl,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm,
     borderRadius: 16,
     position: 'relative',
     overflow: 'hidden',
@@ -855,9 +863,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   prayerIcon: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
     alignItems: "center",
     justifyContent: "center",
   },

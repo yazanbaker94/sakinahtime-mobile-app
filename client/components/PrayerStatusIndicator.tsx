@@ -1,8 +1,7 @@
-import React from 'react';
-import { View, Pressable, StyleSheet } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Pressable, StyleSheet, Animated } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import { ThemedText } from './ThemedText';
-import { PrayerStatus, PRAYER_STATUS_INFO } from '../types/prayerLog';
+import { PrayerStatus } from '../types/prayerLog';
 import { useTheme } from '../hooks/useTheme';
 
 interface PrayerStatusIndicatorProps {
@@ -13,97 +12,135 @@ interface PrayerStatusIndicatorProps {
   disabled?: boolean;
 }
 
-// Status options to display (excludes 'unmarked' since that's the default/unselected state)
-const STATUS_OPTIONS: Array<{ status: PrayerStatus; icon: string; color: string; label: string }> = [
+// Status cycle order and display info
+const STATUS_CYCLE: Array<{ status: PrayerStatus; icon: string; color: string; label: string }> = [
+  { status: 'unmarked', icon: 'circle', color: 'transparent', label: '' },
   { status: 'prayed', icon: 'check', color: '#10B981', label: 'Prayed' },
-  { status: 'missed', icon: 'x', color: '#EF4444', label: 'Missed' },
   { status: 'late', icon: 'clock', color: '#F59E0B', label: 'Late' },
+  { status: 'missed', icon: 'x', color: '#EF4444', label: 'Missed' },
 ];
 
 // Legacy function for backwards compatibility
 export function getNextStatus(current: PrayerStatus): PrayerStatus {
-  const cycle: PrayerStatus[] = ['unmarked', 'prayed', 'missed', 'late'];
-  const currentIndex = cycle.indexOf(current);
-  const nextIndex = (currentIndex + 1) % cycle.length;
-  return cycle[nextIndex];
+  const currentIndex = STATUS_CYCLE.findIndex(s => s.status === current);
+  const nextIndex = (currentIndex + 1) % STATUS_CYCLE.length;
+  return STATUS_CYCLE[nextIndex].status;
 }
 
 export function PrayerStatusIndicator({
   status,
   onStatusChange,
   size = 'compact',
-  showLabels = false,
   disabled = false,
 }: PrayerStatusIndicatorProps) {
-  const { theme, isDark } = useTheme();
+  const { isDark } = useTheme();
+  const [showLabel, setShowLabel] = useState(false);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const hideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const sizeConfig = {
-    compact: { button: 28, icon: 14, gap: 6, fontSize: 9 },
-    normal: { button: 36, icon: 18, gap: 8, fontSize: 11 },
+    compact: { button: 32, icon: 16, fontSize: 10 },
+    normal: { button: 40, icon: 20, fontSize: 12 },
   };
 
   const config = sizeConfig[size];
 
-  const handlePress = (newStatus: PrayerStatus) => {
-    if (disabled) return;
+  const currentStatusInfo = STATUS_CYCLE.find(s => s.status === status) || STATUS_CYCLE[0];
+  const isUnmarked = status === 'unmarked';
 
-    // If same status, toggle back to unmarked
-    if (status === newStatus) {
-      onStatusChange('unmarked');
+  // Show label briefly when status changes (not on initial render)
+  const handlePress = () => {
+    if (disabled) return;
+    const nextStatus = getNextStatus(status);
+    onStatusChange(nextStatus);
+
+    // Show label briefly for non-unmarked states
+    if (nextStatus !== 'unmarked') {
+      // Clear any existing timeout
+      if (hideTimeoutRef.current) {
+        clearTimeout(hideTimeoutRef.current);
+      }
+
+      setShowLabel(true);
+      fadeAnim.setValue(1);
+
+      // Hide after 2 seconds with fade
+      hideTimeoutRef.current = setTimeout(() => {
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }).start(() => {
+          setShowLabel(false);
+        });
+      }, 2000);
     } else {
-      onStatusChange(newStatus);
+      setShowLabel(false);
+      fadeAnim.setValue(0);
     }
   };
 
-  return (
-    <View style={[styles.container, { gap: config.gap }]}>
-      {STATUS_OPTIONS.map((option) => {
-        const isSelected = status === option.status;
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (hideTimeoutRef.current) {
+        clearTimeout(hideTimeoutRef.current);
+      }
+    };
+  }, []);
 
-        return (
-          <View key={option.status} style={styles.buttonWrapper}>
-            <Pressable
-              onPress={() => handlePress(option.status)}
-              disabled={disabled}
-              style={({ pressed }) => [
-                styles.button,
-                {
-                  width: config.button,
-                  height: config.button,
-                  borderRadius: config.button / 2,
-                  backgroundColor: isSelected
-                    ? option.color
-                    : (isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.05)'),
-                  borderWidth: isSelected ? 0 : 1.5,
-                  borderColor: isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.1)',
-                  opacity: pressed ? 0.7 : (disabled ? 0.4 : 1),
-                },
-              ]}
-            >
-              <Feather
-                name={option.icon as any}
-                size={config.icon}
-                color={isSelected ? '#FFFFFF' : (isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.3)')}
-              />
-            </Pressable>
-            {showLabels && (
-              <ThemedText
-                type="caption"
-                style={[
-                  styles.label,
-                  {
-                    fontSize: config.fontSize,
-                    color: isSelected ? option.color : theme.textSecondary,
-                    fontWeight: isSelected ? '600' : '400',
-                  },
-                ]}
-              >
-                {option.label}
-              </ThemedText>
-            )}
-          </View>
-        );
-      })}
+  return (
+    <View style={styles.container}>
+      {/* Status label - shows briefly after tap, positioned above button */}
+      {showLabel && !isUnmarked && (
+        <Animated.Text
+          style={{
+            position: 'absolute',
+            bottom: config.button + 4,
+            left: -10,
+            fontSize: config.fontSize,
+            color: currentStatusInfo.color,
+            fontWeight: '600',
+            opacity: fadeAnim,
+            backgroundColor: isDark ? 'rgba(0,0,0,0.9)' : 'rgba(255,255,255,0.95)',
+            paddingHorizontal: 8,
+            paddingVertical: 3,
+            borderRadius: 6,
+            overflow: 'hidden',
+            zIndex: 10,
+          }}
+        >
+          {currentStatusInfo.label}
+        </Animated.Text>
+      )}
+
+      {/* Single tap-to-cycle button */}
+      <Pressable
+        onPress={handlePress}
+        disabled={disabled}
+        style={({ pressed }) => [
+          styles.button,
+          {
+            width: config.button,
+            height: config.button,
+            borderRadius: config.button / 2,
+            backgroundColor: isUnmarked
+              ? (isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.05)')
+              : currentStatusInfo.color,
+            borderWidth: isUnmarked ? 1.5 : 0,
+            borderColor: isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.1)',
+            opacity: pressed ? 0.7 : (disabled ? 0.4 : 1),
+          },
+        ]}
+      >
+        {!isUnmarked && (
+          <Feather
+            name={currentStatusInfo.icon as any}
+            size={config.icon}
+            color="#FFFFFF"
+          />
+        )}
+      </Pressable>
     </View>
   );
 }
@@ -113,16 +150,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  buttonWrapper: {
-    alignItems: 'center',
-  },
   button: {
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  label: {
-    marginTop: 2,
-    textAlign: 'center',
   },
 });
 
