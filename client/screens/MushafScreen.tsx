@@ -965,12 +965,25 @@ function MushafScreenContent() {
   // Track if initial scroll has happened for surah list
   const hasScrolledSurahListRef = useRef(false);
 
-  // Reset scroll flag when surah list opens
+  // Scroll to current surah when list opens - using requestAnimationFrame for single execution
   useEffect(() => {
-    if (showSurahList) {
+    if (showSurahList && currentSurahIndex > 0) {
+      if (!hasScrolledSurahListRef.current) {
+        hasScrolledSurahListRef.current = true;
+        // Use requestAnimationFrame to scroll after first paint
+        requestAnimationFrame(() => {
+          surahListRef.current?.scrollToIndex({
+            index: currentSurahIndex,
+            animated: false,
+            viewPosition: 0.3,
+          });
+        });
+      }
+    } else if (!showSurahList) {
+      // Reset flag when modal closes
       hasScrolledSurahListRef.current = false;
     }
-  }, [showSurahList]);
+  }, [showSurahList, currentSurahIndex]);
 
   const loadBookmarks = async () => {
     try {
@@ -2636,16 +2649,6 @@ function MushafScreenContent() {
             <ThemedText type="body" style={{ fontWeight: '600', opacity: 0.6, fontSize: 13, marginTop: Spacing.sm, marginBottom: Spacing.md }}>ALL SURAHS</ThemedText>
           }
           initialNumToRender={114}
-          onLayout={() => {
-            if (currentSurahIndex > 0 && !hasScrolledSurahListRef.current) {
-              hasScrolledSurahListRef.current = true;
-              surahListRef.current?.scrollToIndex({
-                index: currentSurahIndex,
-                animated: false,
-                viewPosition: 0.2,
-              });
-            }
-          }}
           getItemLayout={(data, index) => ({
             length: 80,
             offset: 80 * index,

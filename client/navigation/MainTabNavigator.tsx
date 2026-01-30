@@ -69,6 +69,7 @@ export default function MainTabNavigator() {
           title: "Prayer",
           headerTitle: "",
           headerShown: false,
+          lazy: false, // Pre-render this screen so it's ready instantly
           tabBarIcon: ({ color, size }) => (
             <Feather name="clock" size={size} color={color} />
           ),
@@ -81,6 +82,7 @@ export default function MainTabNavigator() {
           title: "Quran",
           headerTitle: "",
           headerShown: false,
+          lazy: false, // Pre-render this screen so it's ready instantly
           tabBarIcon: ({ color, size }) => (
             <Feather name="book-open" size={size} color={color} />
           ),

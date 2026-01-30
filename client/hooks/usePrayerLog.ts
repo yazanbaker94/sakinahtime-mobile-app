@@ -122,7 +122,7 @@ export function usePrayerLog(): UsePrayerLogReturn {
   const todayRecord = data ? prayerLogService.getDailyRecord(data, getTodayDateString()) : null;
   const isPerfectDay = todayRecord?.isPerfectDay || false;
   const streak = data?.streak || null;
-  const trackingEnabled = data?.settings?.trackingEnabled ?? true;
+  const trackingEnabled = data?.settings?.trackingEnabled ?? false;
   const missedReminderEnabled = data?.settings?.missedReminderEnabled ?? false;
   const missedReminderDelayMinutes = data?.settings?.missedReminderDelayMinutes ?? 30;
 

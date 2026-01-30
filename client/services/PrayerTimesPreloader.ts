@@ -84,12 +84,54 @@ class PrayerTimesPreloader {
                 if (transformed) {
                     this.state.data = transformed;
                     this.state.cachedAt = new Date(cached.cachedAt);
+                    this.state.isLoaded = true;
+                    console.log('[PrayerTimesPreloader] Loaded from cache');
+                    return; // Cache hit, we're done
                 }
             }
+
+            // No cache - fetch from API in background
+            console.log('[PrayerTimesPreloader] No cache, fetching from API...');
+            await this.fetchFromApi();
         } catch (error) {
             console.warn('[PrayerTimesPreloader] Failed to preload:', error);
         } finally {
             this.state.isLoaded = true;
+        }
+    }
+
+    private async fetchFromApi(): Promise<void> {
+        if (!this.location) return;
+
+        try {
+            const today = new Date();
+            const day = today.getDate();
+            const month = today.getMonth() + 1;
+            const year = today.getFullYear();
+
+            const url = `https://api.aladhan.com/v1/timings/${day}-${month}-${year}?latitude=${this.location.lat}&longitude=${this.location.lng}&method=${this.method}`;
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch prayer times');
+            }
+
+            const data = await response.json();
+
+            if (data.code === 200 && data.data) {
+                this.state.data = data.data;
+                this.state.cachedAt = new Date();
+
+                // Also cache it for future use
+                await prayerTimesCacheService.cachePrayerTimes(
+                    data.data,
+                    this.location,
+                    this.method
+                );
+                console.log('[PrayerTimesPreloader] Fetched and cached from API');
+            }
+        } catch (error) {
+            console.warn('[PrayerTimesPreloader] API fetch failed:', error);
         }
     }
 

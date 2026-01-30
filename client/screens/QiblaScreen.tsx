@@ -1,5 +1,6 @@
 import React, { useMemo, useEffect, useRef } from "react";
-import { View, StyleSheet, Platform, Pressable, useWindowDimensions, PixelRatio, Image } from "react-native";
+import { View, StyleSheet, Platform, Pressable, useWindowDimensions, PixelRatio } from "react-native";
+import { Image } from "expo-image";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -542,7 +543,9 @@ export default function QiblaScreen() {
                       height: dims.kaabaSize,
                       transform: [{ rotate: `${heading || 0}deg` }]
                     }}
-                    resizeMode="contain"
+                    contentFit="contain"
+                    priority="high"
+                    cachePolicy="memory-disk"
                   />
                 </Animated.View>
               </View>

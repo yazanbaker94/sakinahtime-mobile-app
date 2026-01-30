@@ -144,6 +144,10 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
     loadSavedSettings();
   }, []);
 
+  // Ref to track gpsState without causing re-renders
+  const gpsStateRef = useRef(gpsState);
+  gpsStateRef.current = gpsState;
+
   // Fetch GPS location
   const fetchGpsLocation = useCallback(async () => {
     if (!permission?.granted) {
@@ -195,14 +199,14 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
     } catch (err) {
       // Only set error if we don't have cached location to fall back on
-      if (!gpsState.latitude) {
+      if (!gpsStateRef.current.latitude) {
         setError(err instanceof Error ? err.message : "Failed to get location");
       } else {
         console.log('[LocationContext] GPS fetch failed, using cached location');
       }
       setLoading(false);
     }
-  }, [permission?.granted, gpsState.latitude]);
+  }, [permission?.granted]);
 
   // Fetch GPS when permission granted
   useEffect(() => {
@@ -216,25 +220,29 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
   }, [permission, initialized, fetchGpsLocation]);
 
   // Refresh location when coming back online (to get city if it was missing)
+
   useEffect(() => {
     if (!initialized || !permission?.granted) return;
 
-    const wasOnlineRef = { current: networkService.isOnline() };
+    let wasOnline = networkService.isOnline();
+    let hasTriggeredRefresh = false; // Prevent multiple refreshes
 
     const unsubscribe = networkService.onStatusChange((status) => {
-      // If we just came back online and city is missing, refresh
-      if (!wasOnlineRef.current && status.isConnected) {
-        console.log('[LocationContext] Network reconnected, refreshing location');
-        // Only refresh if city is missing
-        if (!gpsState.city && gpsState.latitude) {
+      // If we just came back online and city is missing, refresh (only once)
+      if (!wasOnline && status.isConnected && !hasTriggeredRefresh) {
+        const currentGps = gpsStateRef.current;
+        // Only refresh if city is missing but we have coordinates
+        if (!currentGps.city && currentGps.latitude) {
+          console.log('[LocationContext] Network reconnected, refreshing location for city');
+          hasTriggeredRefresh = true;
           fetchGpsLocation();
         }
       }
-      wasOnlineRef.current = status.isConnected;
+      wasOnline = status.isConnected;
     });
 
     return () => unsubscribe();
-  }, [initialized, permission?.granted, gpsState.city, gpsState.latitude, fetchGpsLocation]);
+  }, [initialized, permission?.granted, fetchGpsLocation]);
 
   const handleRequestPermission = useCallback(async () => {
     const result = await requestPermission();

@@ -122,7 +122,7 @@ export const DEFAULT_STREAK_DATA: PrayerStreakData = {
 };
 
 export const DEFAULT_PRAYER_LOG_SETTINGS: PrayerLogSettings = {
-  trackingEnabled: true,
+  trackingEnabled: false,
   missedReminderEnabled: false,
   missedReminderDelayMinutes: 30,
   autoMarkEnabled: true,
