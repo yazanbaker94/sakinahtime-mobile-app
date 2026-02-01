@@ -29,7 +29,7 @@ export default function AzkarDetailScreen() {
 
   const [showTransliteration, setShowTransliteration] = useState(false);
   const [showTranslation, setShowTranslation] = useState(false);
-  const [showCounter, setShowCounter] = useState(false);
+  const [showCounter, setShowCounter] = useState(true);
   const [counters, setCounters] = useState<Record<string, number>>({});
 
   // Load saved preferences on mount
@@ -41,7 +41,7 @@ export default function AzkarDetailScreen() {
           AsyncStorage.getItem(STORAGE_KEYS.TRANSLATION),
           AsyncStorage.getItem(STORAGE_KEYS.COUNTER),
         ]);
-        
+
         if (translitValue !== null) {
           setShowTransliteration(translitValue === 'true');
         }
@@ -55,7 +55,7 @@ export default function AzkarDetailScreen() {
         // Silently fail, use default values
       }
     };
-    
+
     loadPreferences();
   }, []);
 
@@ -205,7 +205,7 @@ export default function AzkarDetailScreen() {
                   {item.repetitions}x
                 </ThemedText>
               </View>
-            ) : null}
+            ) : <View />}
 
             {showCounter ? (
               <View style={styles.counterContainer}>
@@ -222,27 +222,21 @@ export default function AzkarDetailScreen() {
                   <Feather name="rotate-ccw" size={12} color={isDark ? '#EF4444' : '#DC2626'} />
                 </Pressable>
                 <View style={[styles.counterBadge, {
-                  backgroundColor: isComplete 
-                    ? `${theme.primary}20`
-                    : `${theme.gold}20`,
-                  borderColor: isComplete
-                    ? theme.primary
-                    : theme.gold,
+                  backgroundColor: `${theme.primary}20`,
+                  borderColor: theme.primary,
                 }]}>
                   {isComplete && (
-                    <Feather 
-                      name="check" 
-                      size={14} 
-                      color={theme.primary} 
+                    <Feather
+                      name="check"
+                      size={14}
+                      color={theme.primary}
                       style={{ marginRight: 4 }}
                     />
                   )}
                   <ThemedText
                     type="body"
-                    style={{ 
-                      color: isComplete
-                        ? theme.primary
-                        : theme.gold,
+                    style={{
+                      color: theme.primary,
                       fontWeight: '700',
                       fontSize: 16,
                     }}
@@ -252,10 +246,8 @@ export default function AzkarDetailScreen() {
                   {targetCount > 0 && (
                     <ThemedText
                       type="caption"
-                      style={{ 
-                        color: isComplete
-                          ? theme.primary
-                          : theme.gold,
+                      style={{
+                        color: theme.primary,
                         marginLeft: 4,
                         opacity: 0.7,
                       }}
@@ -315,18 +307,9 @@ export default function AzkarDetailScreen() {
               },
             ]}
           >
-            <Feather
-              name="type"
-              size={14}
-              color={showTransliteration
-                ? theme.primary
-                : theme.textSecondary
-              }
-            />
             <ThemedText
               type="caption"
               style={{
-                marginLeft: 4,
                 color: showTransliteration
                   ? theme.primary
                   : theme.textSecondary,
@@ -342,29 +325,20 @@ export default function AzkarDetailScreen() {
               styles.toggleButton,
               {
                 backgroundColor: showTranslation
-                  ? `${theme.gold}20`
+                  ? `${theme.primary}20`
                   : theme.backgroundSecondary,
                 borderColor: showTranslation
-                  ? theme.gold
+                  ? theme.primary
                   : 'transparent',
                 opacity: pressed ? 0.7 : 1,
               },
             ]}
           >
-            <Feather
-              name="globe"
-              size={14}
-              color={showTranslation
-                ? theme.gold
-                : theme.textSecondary
-              }
-            />
             <ThemedText
               type="caption"
               style={{
-                marginLeft: 4,
                 color: showTranslation
-                  ? theme.gold
+                  ? theme.primary
                   : theme.textSecondary,
               }}
             >
@@ -378,29 +352,20 @@ export default function AzkarDetailScreen() {
               styles.toggleButton,
               {
                 backgroundColor: showCounter
-                  ? '#8B5CF620'
+                  ? `${theme.primary}20`
                   : theme.backgroundSecondary,
                 borderColor: showCounter
-                  ? '#8B5CF6'
+                  ? theme.primary
                   : 'transparent',
                 opacity: pressed ? 0.7 : 1,
               },
             ]}
           >
-            <Feather
-              name="hash"
-              size={14}
-              color={showCounter
-                ? '#8B5CF6'
-                : theme.textSecondary
-              }
-            />
             <ThemedText
               type="caption"
               style={{
-                marginLeft: 4,
                 color: showCounter
-                  ? '#8B5CF6'
+                  ? theme.primary
                   : theme.textSecondary,
               }}
             >

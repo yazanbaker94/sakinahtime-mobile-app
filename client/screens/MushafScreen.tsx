@@ -2294,14 +2294,16 @@ function MushafScreenContent() {
                   ref={searchInputRef}
                   value={searchQuery}
                   onChangeText={setSearchQuery}
-                  placeholder="Search verses, surahs, or references..."
+                  placeholder="Search..."
                   placeholderTextColor={theme.textSecondary}
                   autoFocus={true}
                   style={{
                     flex: 1,
                     fontSize: 15,
                     color: theme.text,
-                    padding: 0,
+                    height: Platform.OS === 'ios' ? 36 : 40,
+                    paddingVertical: Platform.OS === 'ios' ? 8 : 0,
+                    textAlignVertical: 'center',
                   }}
                 />
                 {searchQuery.length > 0 && (

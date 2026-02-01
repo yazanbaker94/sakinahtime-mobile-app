@@ -30,23 +30,11 @@ export function CompactCategoryCard({ category, onPress }: CompactCategoryCardPr
   const { isDark, theme } = useTheme();
 
   const getIconColor = () => {
-    if (category.id === 'morning') {
-      return theme.gold;
-    }
-    if (category.id === 'evening') {
-      return theme.primary;
-    }
-    return theme.textSecondary;
+    return theme.primary;
   };
 
   const getIconBgColor = () => {
-    if (category.id === 'morning') {
-      return `${theme.gold}33`;
-    }
-    if (category.id === 'evening') {
-      return `${theme.primary}33`;
-    }
-    return `${theme.primary}15`;
+    return `${theme.primary}20`;
   };
 
   const cardBgColor = isDark

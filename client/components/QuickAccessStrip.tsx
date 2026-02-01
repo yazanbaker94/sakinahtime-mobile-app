@@ -40,23 +40,11 @@ export function QuickAccessStrip({ categories, onCategoryPress }: QuickAccessStr
   const { theme } = useTheme();
 
   const getCategoryColor = (categoryId: string) => {
-    if (categoryId === 'morning') {
-      return theme.gold;
-    }
-    if (categoryId === 'evening') {
-      return theme.primary;
-    }
-    return theme.textSecondary;
+    return theme.primary;
   };
 
   const getCategoryBgColor = (categoryId: string) => {
-    if (categoryId === 'morning') {
-      return `${theme.gold}20`;
-    }
-    if (categoryId === 'evening') {
-      return `${theme.primary}15`;
-    }
-    return `${theme.primary}10`;
+    return `${theme.primary}15`;
   };
 
   return (

@@ -270,10 +270,8 @@ export default function AzkarScreen() {
       <ScrollView contentContainerStyle={[styles.scrollContent, { paddingBottom: tabBarHeight + Spacing.xl }]} scrollIndicatorInsets={{ bottom: tabBarHeight }} showsVerticalScrollIndicator={false}>
         {activeTab === 'azkar' && (
           <>
-            <TimeAwareHeroCard onPress={handleHeroPress} />
             <QuickAccessStrip categories={azkarCategories} onCategoryPress={handleCategoryPress} />
             <TasbihCounter />
-            <DailyDhikrCard onPress={handleDailyDhikrPress} />
             <View style={styles.sectionHeader}><ThemedText type="small" secondary style={styles.sectionTitle}>All Categories</ThemedText></View>
             <View style={styles.categoriesGrid}>
               {azkarCategories.map((category) => (<CompactCategoryCard key={category.id} category={category} onPress={() => handleCategoryPress(category)} />))}
@@ -369,15 +367,10 @@ export default function AzkarScreen() {
               filteredCategories.map((category) => (
                 <View key={category.id} style={styles.guideCategory}>
                   <View style={styles.guideCategoryHeader}>
-                    <View style={[styles.guideCategoryIcon, { backgroundColor: `${theme.primary}20` }]}>
-                      <Feather name={category.icon} size={20} color={theme.primary} />
-                    </View>
                     <View style={styles.guideCategoryTitles}>
                       <View style={styles.categoryTitleRow}><ThemedText type="h4" style={{ flex: 1 }}>{category.titleEn}</ThemedText><ThemedText type="arabic" secondary style={{ fontFamily: 'AlMushafQuran' }}>{category.titleAr}</ThemedText></View>
                     </View>
-                    <View style={[styles.guideCount, { backgroundColor: `${theme.primary}20` }]}>
-                      <ThemedText type="caption" style={{ color: theme.primary }}>{category.guides.length}</ThemedText>
-                    </View>
+
                   </View>
                   <View style={styles.guidesList}>
                     {category.guides.map((guide) => (

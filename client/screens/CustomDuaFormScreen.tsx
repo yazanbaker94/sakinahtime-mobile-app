@@ -50,11 +50,6 @@ export function CustomDuaFormScreen() {
   }, [isEditing, duaId, getCustomDuaById]);
 
   const handleSave = useCallback(async () => {
-    // Validate required field
-    if (!translation.trim()) {
-      Alert.alert('Required Field', 'Please enter the translation/meaning of the dua.');
-      return;
-    }
 
     setIsSaving(true);
     try {
@@ -107,7 +102,7 @@ export function CustomDuaFormScreen() {
 
   const inputStyle = [
     styles.input,
-    { 
+    {
       backgroundColor: theme.backgroundSecondary,
       color: theme.text,
     },
@@ -123,12 +118,12 @@ export function CustomDuaFormScreen() {
         <ThemedText type="h3" style={{ flex: 1 }}>
           {isEditing ? 'Edit Dua' : 'Add Custom Dua'}
         </ThemedText>
-        <Pressable 
-          onPress={handleSave} 
+        <Pressable
+          onPress={handleSave}
           disabled={isSaving}
           style={({ pressed }) => [
             styles.saveButton,
-            { 
+            {
               backgroundColor: theme.primary,
               opacity: pressed || isSaving ? 0.7 : 1,
             },
@@ -140,7 +135,7 @@ export function CustomDuaFormScreen() {
         </Pressable>
       </View>
 
-      <KeyboardAvoidingView 
+      <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
@@ -184,7 +179,7 @@ export function CustomDuaFormScreen() {
           {/* Translation - Required */}
           <View style={styles.fieldContainer}>
             <ThemedText type="small" style={styles.label}>
-              Translation / Meaning <ThemedText type="caption" style={{ color: '#EF4444' }}>*Required</ThemedText>
+              Translation / Meaning <ThemedText type="caption" secondary>(Optional)</ThemedText>
             </ThemedText>
             <TextInput
               style={[inputStyle, styles.translationInput]}
@@ -219,7 +214,7 @@ export function CustomDuaFormScreen() {
               onPress={handleDelete}
               style={({ pressed }) => [
                 styles.deleteButton,
-                { 
+                {
                   backgroundColor: isDark ? 'rgba(248, 113, 113, 0.15)' : 'rgba(239, 68, 68, 0.1)',
                   opacity: pressed ? 0.7 : 1,
                 },

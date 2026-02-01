@@ -646,62 +646,51 @@ export default function QiblaScreen() {
           </ThemedText>
         </Pressable>
 
-        {/* Info Cards */}
+        {/* Info Cards - All 3 on one row */}
         <View style={styles.infoContainer}>
-          <View style={styles.infoCard}>
-            <Feather name="navigation" size={18} color={isDark ? '#94A3B8' : '#64748B'} style={{ marginBottom: 6 }} />
-            <ThemedText type="h2" style={{ fontWeight: '800', fontSize: 24, letterSpacing: -1 }}>
-              {heading}°
-            </ThemedText>
-            <ThemedText type="caption" secondary style={{ marginTop: 4, fontSize: 9, fontWeight: '700', letterSpacing: 0.5 }}>
-              YOUR HEADING
-            </ThemedText>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
+            <View style={[styles.infoCard, { flex: 1 }]}>
+              <Feather name="navigation" size={16} color={isDark ? '#94A3B8' : '#64748B'} style={{ marginBottom: 4 }} />
+              <ThemedText type="h3" style={{ fontWeight: '800', fontSize: 20, letterSpacing: -0.5 }}>
+                {heading}°
+              </ThemedText>
+              <ThemedText type="caption" secondary style={{ marginTop: 2, fontSize: 8, fontWeight: '700', letterSpacing: 0.3 }}>
+                HEADING
+              </ThemedText>
+            </View>
+
+            <View style={[styles.infoCard, { flex: 1 }]}>
+              <Feather name="compass" size={16} color={primaryColor} style={{ marginBottom: 4 }} />
+              <ThemedText type="h3" style={{ color: primaryColor, fontWeight: '800', fontSize: 20, letterSpacing: -0.5 }}>
+                {qiblaDirection}°
+              </ThemedText>
+              <ThemedText type="caption" secondary style={{ marginTop: 2, fontSize: 8, fontWeight: '700', letterSpacing: 0.3 }}>
+                QIBLA
+              </ThemedText>
+            </View>
+
+            <View style={[styles.infoCard, { flex: 1 }]}>
+              <Feather name="map-pin" size={16} color={goldColor} style={{ marginBottom: 4 }} />
+              <ThemedText type="h3" style={{ color: goldColor, fontWeight: '800', fontSize: 20, letterSpacing: -0.5 }}>
+                {distanceToMecca.toLocaleString()}
+              </ThemedText>
+              <ThemedText type="caption" secondary style={{ marginTop: 2, fontSize: 8, fontWeight: '700', letterSpacing: 0.3 }}>
+                KM
+              </ThemedText>
+            </View>
           </View>
 
-          <View style={styles.infoCard}>
-            <Feather name="compass" size={18} color={primaryColor} style={{ marginBottom: 6 }} />
-            <ThemedText type="h2" style={{ color: primaryColor, fontWeight: '800', fontSize: 24, letterSpacing: -1 }}>
-              {qiblaDirection}°
-            </ThemedText>
-            <ThemedText type="caption" secondary style={{ marginTop: 4, fontSize: 9, fontWeight: '700', letterSpacing: 0.5 }}>
-              QIBLA BEARING
-            </ThemedText>
-          </View>
-
-          <View style={styles.infoCard}>
-            <Feather name="map-pin" size={18} color={goldColor} style={{ marginBottom: 6 }} />
-            <ThemedText type="h2" style={{ color: goldColor, fontWeight: '800', fontSize: 24, letterSpacing: -1 }}>
-              {distanceToMecca.toLocaleString()}
-            </ThemedText>
-            <ThemedText type="caption" secondary style={{ marginTop: 4, fontSize: 9, fontWeight: '700', letterSpacing: 0.5 }}>
-              KM TO MECCA
-            </ThemedText>
-          </View>
+          {/* Calibration hint if needed */}
+          {showCalibrationHint && (
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8 }}>
+              <Feather name="info" size={12} color={goldColor} />
+              <ThemedText type="caption" style={{ marginLeft: 6, color: goldColor, fontWeight: '500', fontSize: 11 }}>
+                Move phone in figure-8 to calibrate
+              </ThemedText>
+            </View>
+          )}
         </View>
 
-
-
-        {/* Calibration Hint */}
-        {showCalibrationHint ? (
-          <View style={[styles.calibrationHint, {
-            backgroundColor: isDark ? 'rgba(245, 158, 11, 0.15)' : 'rgba(217, 119, 6, 0.1)',
-            paddingHorizontal: 16,
-            paddingVertical: 12,
-            borderRadius: 12,
-            borderWidth: 1.5,
-            borderColor: isDark ? 'rgba(245, 158, 11, 0.25)' : 'rgba(217, 119, 6, 0.25)',
-          }]}>
-            <Feather name="info" size={16} color={goldColor} />
-            <ThemedText type="caption" style={{
-              marginLeft: 10,
-              color: goldColor,
-              fontWeight: '600',
-              flex: 1,
-            }}>
-              Move your phone in a figure-8 pattern to calibrate
-            </ThemedText>
-          </View>
-        ) : null}
 
         {/* Warning */}
         {!compassAvailable || compassError ? (
@@ -840,17 +829,16 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   infoContainer: {
-    flexDirection: "row",
-    gap: Spacing.lg,
+    flexDirection: "column",
+    gap: Spacing.md,
     width: '100%',
-    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.md,
   },
   infoCard: {
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
     alignItems: "center",
-    flex: 1,
-    maxWidth: 155,
   },
   mosquesButton: {
     flexDirection: 'row',

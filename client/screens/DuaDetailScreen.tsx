@@ -19,6 +19,7 @@ import { useDuaFavorites } from '@/hooks/useDuaFavorites';
 import { useDuaAudio } from '@/hooks/useDuaAudio';
 import { DuaCard } from '@/components/DuaCard';
 import { DuaAudioPlayer } from '@/components/DuaAudioPlayer';
+import { Ionicons } from '@expo/vector-icons';
 import type { RootStackParamList } from '@/navigation/RootStackNavigator';
 
 type DuaDetailRouteProp = RouteProp<RootStackParamList, 'DuaDetail'>;
@@ -37,30 +38,30 @@ export function formatDuaForShare(dua: {
   hadithSource?: string;
 }): string {
   const parts: string[] = [];
-  
+
   // Arabic text
   parts.push(dua.textAr);
   parts.push('');
-  
+
   // Transliteration
   parts.push(dua.transliteration);
   parts.push('');
-  
+
   // Translation
   parts.push(dua.translation);
   parts.push('');
-  
+
   // Source reference
   if (dua.source === 'quran' && dua.surahName && dua.ayahNumber) {
     parts.push(`📖 ${dua.surahName} ${dua.ayahNumber}`);
   } else if (dua.hadithSource) {
     parts.push(`📚 ${dua.hadithSource}`);
   }
-  
+
   // App attribution
   parts.push('');
   parts.push('— Shared from SakinahTime');
-  
+
   return parts.join('\n');
 }
 
@@ -79,7 +80,7 @@ export function DuaDetailScreen() {
 
   const handleShare = useCallback(async () => {
     if (!dua) return;
-    
+
     try {
       const message = formatDuaForShare(dua);
       await Share.share({ message });
@@ -90,7 +91,7 @@ export function DuaDetailScreen() {
 
   const handlePlayAudio = useCallback(async () => {
     if (!dua || !dua.audioUrl) return;
-    
+
     if (isPlaying && currentDuaId === dua.id) {
       await pause();
     } else {
@@ -100,7 +101,7 @@ export function DuaDetailScreen() {
 
   const handleNavigateToQuran = useCallback(() => {
     if (!dua || dua.source !== 'quran' || !dua.surahNumber || !dua.ayahNumber) return;
-    
+
     // Navigate to Main tab navigator, then to QuranTab with params
     // First go back to main, then navigate to the Quran tab
     navigation.navigate('Main', {
@@ -145,11 +146,10 @@ export function DuaDetailScreen() {
             <Feather name="share-2" size={22} color={theme.text} />
           </Pressable>
           <Pressable onPress={() => toggleFavorite(dua.id)} style={styles.headerButton}>
-            <Feather 
-              name="heart" 
-              size={22} 
-              color={isFavorite(dua.id) ? '#EF4444' : theme.text}
-              style={isFavorite(dua.id) ? { opacity: 1 } : { opacity: 0.7 }}
+            <Ionicons
+              name={isFavorite(dua.id) ? 'heart' : 'heart-outline'}
+              size={24}
+              color={isFavorite(dua.id) ? theme.primary : theme.text}
             />
           </Pressable>
         </View>
@@ -197,16 +197,16 @@ export function DuaDetailScreen() {
             onPress={handleNavigateToQuran}
             style={({ pressed }) => [
               styles.quranLink,
-              { 
+              {
                 backgroundColor: `${theme.primary}15`,
                 opacity: pressed ? 0.7 : 1,
               },
             ]}
           >
-            <Feather 
-              name="book-open" 
-              size={20} 
-              color={theme.primary} 
+            <Feather
+              name="book-open"
+              size={20}
+              color={theme.primary}
             />
             <View style={styles.quranLinkText}>
               <ThemedText type="body" style={{ fontWeight: '600' }}>
@@ -216,10 +216,10 @@ export function DuaDetailScreen() {
                 {dua.surahName} - Ayah {dua.ayahNumber}
               </ThemedText>
             </View>
-            <Feather 
-              name="chevron-right" 
-              size={20} 
-              color={theme.textSecondary} 
+            <Feather
+              name="chevron-right"
+              size={20}
+              color={theme.textSecondary}
             />
           </Pressable>
         )}

@@ -6,7 +6,7 @@
 
 import React, { useRef, useEffect } from 'react';
 import { Pressable, StyleSheet, Animated } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
 import { Colors } from '@/constants/theme';
 
@@ -17,13 +17,13 @@ interface FavoriteButtonProps {
   disabled?: boolean;
 }
 
-export function FavoriteButton({ 
-  isFavorite, 
-  onToggle, 
+export function FavoriteButton({
+  isFavorite,
+  onToggle,
   size = 24,
   disabled = false,
 }: FavoriteButtonProps) {
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
   // Animate on favorite change
@@ -50,7 +50,7 @@ export function FavoriteButton({
     }
   };
 
-  const favoriteColor = isDark ? '#F87171' : '#EF4444';
+  const favoriteColor = theme.primary;
   const inactiveColor = isDark ? Colors.dark.textSecondary : Colors.light.textSecondary;
 
   return (
@@ -64,20 +64,11 @@ export function FavoriteButton({
       hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
     >
       <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-        <Feather
-          name={isFavorite ? 'heart' : 'heart'}
+        <Ionicons
+          name={isFavorite ? 'heart' : 'heart-outline'}
           size={size}
           color={isFavorite ? favoriteColor : inactiveColor}
-          style={isFavorite ? styles.filled : undefined}
         />
-        {isFavorite && (
-          <Feather
-            name="heart"
-            size={size}
-            color={favoriteColor}
-            style={[styles.filledOverlay, { position: 'absolute' }]}
-          />
-        )}
       </Animated.View>
     </Pressable>
   );
@@ -87,12 +78,7 @@ const styles = StyleSheet.create({
   button: {
     padding: 4,
   },
-  filled: {
-    // Heart is filled when favorited
-  },
-  filledOverlay: {
-    // Overlay for filled effect
-  },
 });
 
 export default FavoriteButton;
+

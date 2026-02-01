@@ -34,7 +34,7 @@ class CustomDuaServiceClass {
       }
 
       const data: StoredCustomDuas = JSON.parse(stored);
-      
+
       // Validate structure
       if (!data.duas || !Array.isArray(data.duas)) {
         this.cache = [];
@@ -62,19 +62,14 @@ class CustomDuaServiceClass {
    * Create a new custom dua
    */
   async create(dua: Omit<CustomDua, 'id' | 'createdAt' | 'updatedAt'>): Promise<CustomDua> {
-    // Validate required field
-    if (!dua.translation || dua.translation.trim().length === 0) {
-      throw new Error('Translation is required');
-    }
-
     const duas = await this.getAll();
     const now = Date.now();
-    
+
     const newDua: CustomDua = {
       id: generateId(),
       textAr: dua.textAr?.trim() || undefined,
       transliteration: dua.transliteration?.trim() || undefined,
-      translation: dua.translation.trim(),
+      translation: dua.translation?.trim() || '',
       notes: dua.notes?.trim() || undefined,
       createdAt: now,
       updatedAt: now,
@@ -82,7 +77,7 @@ class CustomDuaServiceClass {
 
     const updatedDuas = [...duas, newDua];
     await this.saveDuas(updatedDuas);
-    
+
     return newDua;
   }
 
@@ -92,14 +87,9 @@ class CustomDuaServiceClass {
   async update(id: string, updates: Partial<Omit<CustomDua, 'id' | 'createdAt' | 'updatedAt'>>): Promise<CustomDua> {
     const duas = await this.getAll();
     const index = duas.findIndex(d => d.id === id);
-    
+
     if (index === -1) {
       throw new Error('Custom dua not found');
-    }
-
-    // Validate translation if being updated
-    if (updates.translation !== undefined && updates.translation.trim().length === 0) {
-      throw new Error('Translation cannot be empty');
     }
 
     const updatedDua: CustomDua = {
@@ -122,7 +112,7 @@ class CustomDuaServiceClass {
     const updatedDuas = [...duas];
     updatedDuas[index] = updatedDua;
     await this.saveDuas(updatedDuas);
-    
+
     return updatedDua;
   }
 
@@ -132,7 +122,7 @@ class CustomDuaServiceClass {
   async delete(id: string): Promise<void> {
     const duas = await this.getAll();
     const updatedDuas = duas.filter(d => d.id !== id);
-    
+
     if (updatedDuas.length === duas.length) {
       throw new Error('Custom dua not found');
     }

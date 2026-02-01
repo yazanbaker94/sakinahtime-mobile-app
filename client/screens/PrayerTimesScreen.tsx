@@ -1,5 +1,13 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, StyleSheet, ScrollView, Pressable, Platform, useWindowDimensions } from "react-native";
+import { View, StyleSheet, ScrollView, Pressable, Platform, useWindowDimensions, ImageBackground } from "react-native";
+
+// Prayer card backgrounds
+const mosqueBackground = require('../../assets/images/mosque-silhouette.jpg');
+const fajrBackground = require('../../assets/images/fajr-mosque.jpg');
+const dhuhrBackground = require('../../assets/images/dhuhr-mosque.jpg');
+const asrBackground = require('../../assets/images/asr-mosque.jpg');
+const maghribBackground = require('../../assets/images/maghrib-mosque.jpg');
+const ishaBackground = require('../../assets/images/isha-mosque.jpg');
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -418,11 +426,11 @@ export default function PrayerTimesScreen() {
         />
 
         {nextPrayer ? (
-          <View
+          <ImageBackground
+            source={nextPrayer.name === 'Fajr' ? fajrBackground : mosqueBackground}
             style={[
               styles.nextPrayerCard,
               {
-                backgroundColor: isDark ? `${theme.primary}30` : `${theme.primary}F2`,
                 shadowColor: theme.primary,
                 shadowOffset: { width: 0, height: 6 },
                 shadowOpacity: isDark ? 0 : 0.25,
@@ -430,7 +438,14 @@ export default function PrayerTimesScreen() {
                 elevation: isDark ? 0 : 6,
               },
             ]}
+            imageStyle={{
+              borderRadius: 18,
+              opacity: isDark ? 0.6 : 0.85,
+            }}
+            resizeMode="cover"
           >
+            {/* Overlay for better text readability */}
+            <View style={[styles.prayerCardOverlay, { backgroundColor: isDark ? 'rgba(0,0,0,0.4)' : 'rgba(0,0,0,0.25)' }]} />
             {/* Header buttons row */}
             <View style={styles.headerButtons}>
               {/* Calendar button */}
@@ -539,7 +554,7 @@ export default function PrayerTimesScreen() {
                 </ThemedText>
               </View>
             </View>
-          </View>
+          </ImageBackground>
         ) : null}
 
         <View style={[styles.prayersList, { flex: 1, marginBottom: Spacing.md }]}>
@@ -597,27 +612,7 @@ export default function PrayerTimesScreen() {
                       size="compact"
                     />
                   )}
-                  <View
-                    style={[
-                      styles.prayerIcon,
-                      {
-                        width: iconSize,
-                        height: iconSize,
-                        borderRadius: iconSize / 2,
-                        backgroundColor: isNext
-                          ? `${theme.primary}20`
-                          : (isDark ? theme.backgroundSecondary : 'rgba(0, 0, 0, 0.04)'),
-                        borderWidth: isNext ? 2 : 0,
-                        borderColor: isNext ? theme.primary : 'transparent',
-                      },
-                    ]}
-                  >
-                    <Feather
-                      name={prayer.icon as any}
-                      size={iconSize * 0.42}
-                      color={isNext ? theme.primary : theme.textSecondary}
-                    />
-                  </View>
+
                   <View style={styles.prayerNames}>
                     <ThemedText type="body" style={{ fontWeight: isNext ? "700" : "500", fontSize: prayerNameFontSize }}>
                       {prayer.nameEn}
@@ -731,6 +726,10 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
     overflow: 'hidden',
     position: 'relative',
+  },
+  prayerCardOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: 18,
   },
   headerButtons: {
     position: 'absolute',
