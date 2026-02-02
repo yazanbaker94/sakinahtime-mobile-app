@@ -1,13 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { View, StyleSheet, ScrollView, Pressable, Platform, useWindowDimensions, ImageBackground } from "react-native";
 
-// Prayer card backgrounds
+// Prayer card background
 const mosqueBackground = require('../../assets/images/mosque-silhouette.png');
-const fajrBackground = require('../../assets/images/fajr-mosque.jpg');
-const dhuhrBackground = require('../../assets/images/dhuhr-mosque.jpg');
-const asrBackground = require('../../assets/images/asr-mosque.jpg');
-const maghribBackground = require('../../assets/images/maghrib-mosque.jpg');
-const ishaBackground = require('../../assets/images/isha-mosque.jpg');
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -421,7 +416,7 @@ export default function PrayerTimesScreen() {
       >
         {nextPrayer ? (
           <ImageBackground
-            source={nextPrayer.name === 'Fajr' ? fajrBackground : mosqueBackground}
+            source={mosqueBackground}
             style={[
               styles.nextPrayerCard,
               {

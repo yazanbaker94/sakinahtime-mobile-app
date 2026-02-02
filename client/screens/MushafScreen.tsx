@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, useRef, useEffect } from "react";
+import React, { useState, useCallback, useMemo, useRef, useEffect, useLayoutEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -58,6 +58,9 @@ import { useHifzProgress } from "@/hooks/useHifzProgress";
 import { useRevisionSchedule } from "@/hooks/useRevisionSchedule";
 import { HIDDEN_TEXT_BG } from "@/constants/hifz";
 import type { MemorizationStatus } from "@/types/hifz";
+// Coach Marks
+import { CoachMark } from "@/components/CoachMark";
+import { useFeatureHint } from "@/hooks/useFeatureHint";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -244,6 +247,7 @@ function MushafScreenContent() {
   const [showSearchBar, setShowSearchBar] = useState(false);
   const searchInputRef = useRef<TextInput>(null);
   const surahListRef = useRef<FlatList>(null);
+  const justNavigatedRef = useRef(false); // Track if user just selected a surah (prevents re-scroll)
   const [showBookmarks, setShowBookmarks] = useState(false);
   const [recentPages, setRecentPages] = useState<number[]>([]);
   const [juzSortAsc, setJuzSortAsc] = useState(true);
@@ -308,6 +312,7 @@ function MushafScreenContent() {
   const [hifzMenuVerseKey, setHifzMenuVerseKey] = useState<string | null>(null);
   const [hifzMenuPosition, setHifzMenuPosition] = useState({ x: 0, y: 0 });
   const [showHifzTooltip, setShowHifzTooltip] = useState(false);
+  const [showHifzCoachMark, setShowHifzCoachMark] = useState(false);
   const [navigationToast, setNavigationToast] = useState<string | null>(null);
 
   // Hifz Mode hooks
@@ -315,7 +320,24 @@ function MushafScreenContent() {
   const { progress: hifzProgress, markVerse: markHifzVerse } = useHifzProgress();
   const { dueRevisions, isVerseDueForRevision } = useRevisionSchedule();
 
-  // Function to get full language name from code
+  // Feature hints for one-time coach marks
+  const { shouldShowHint, markHintSeen } = useFeatureHint();
+  const [showScrubberCoachMark, setShowScrubberCoachMark] = useState(false);
+  const hasShownScrubberHint = useRef(false);
+
+  // Show word scrubber coach mark on first audio play with word highlighting
+  useEffect(() => {
+    if (
+      currentAudioWordIndex >= 0 &&
+      !hasShownScrubberHint.current &&
+      shouldShowHint('word_scrubber')
+    ) {
+      hasShownScrubberHint.current = true;
+      // Delay slightly so user sees the highlighting first
+      setTimeout(() => setShowScrubberCoachMark(true), 1500);
+    }
+  }, [currentAudioWordIndex, shouldShowHint]);
+
   const getLanguageName = (code: string): string => {
     const languageMap: Record<string, string> = {
       'ar': 'Arabic', 'en': 'English', 'bn': 'Bengali', 'id': 'Indonesian', 'tr': 'Turkish',
@@ -962,7 +984,24 @@ function MushafScreenContent() {
     return currentSurahNumber - 1; // 0-based index
   }, [currentPage]);
 
-  // Note: initialScrollIndex on FlatList handles scrolling to current surah without flash
+  // Keep surah list scroll position synced with current page
+  // Scrolls whenever currentSurahIndex changes, so list is ALWAYS at right position
+  // This ensures when overlay opens, it's already positioned correctly (no visible scroll)
+  useLayoutEffect(() => {
+    // Skip if we just navigated by clicking a surah (list should stay where user clicked)
+    if (justNavigatedRef.current) {
+      justNavigatedRef.current = false;
+      return;
+    }
+    // Scroll to current surah position
+    if (surahListRef.current && currentSurahIndex > 0) {
+      surahListRef.current.scrollToOffset({
+        offset: currentSurahIndex * 80,
+        animated: false,
+      });
+    }
+  }, [currentSurahIndex]); // Only depends on currentSurahIndex, runs even when overlay hidden
+
 
   const loadBookmarks = async () => {
     try {
@@ -1622,25 +1661,23 @@ function MushafScreenContent() {
     const page = surahPages[surahNumber];
     if (page) {
       const pageIndex = 604 - page;
+      const offset = pageIndex * layout.screenWidth;
 
-      // Start fade animation
-      setIsNavigating(true);
+      // Mark that we just navigated (prevents useLayoutEffect from re-scrolling the list)
+      justNavigatedRef.current = true;
 
-      // Update current page immediately
+      // Update state immediately
       setCurrentPage(page);
-
-      // Save the page to recent pages immediately
       saveRecentPage(page);
 
-      // Navigate to page FIRST (while overlay is still visible)
-      const offset = pageIndex * layout.screenWidth;
+      // NAVIGATE-THEN-REVEAL PATTERN:
+      // 1. Scroll Mushaf FIRST (while overlay still covers it)
       (pagerViewRef.current as any)?.scrollToOffset({ offset, animated: false });
 
-      // Then close modal and end fade after image likely loaded
+      // 2. THEN close overlay (revealing already-positioned Mushaf)
+      // The overlay acts as the "curtain" - no need for extra fade animation
       requestAnimationFrame(() => {
         setShowSurahList(false);
-        // Give the image a moment to load before fading out
-        setTimeout(() => setIsNavigating(false), 400);
       });
     }
   };
@@ -2154,9 +2191,21 @@ function MushafScreenContent() {
     );
   }
 
-  // Surah list renders as overlay to keep FlatList mounted (instant navigation)
-  const renderSurahListOverlay = () => !showSurahList ? null : (
-    <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: isDark ? '#000000' : '#FFFFFF', zIndex: 100 }}>
+  // Surah list overlay - ALWAYS MOUNTED (preserves scroll position, no flash on open)
+  const renderSurahListOverlay = () => (
+    <View
+      pointerEvents={showSurahList ? 'auto' : 'none'}
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: isDark ? '#000000' : '#FFFFFF',
+        zIndex: showSurahList ? 100 : -1,
+        opacity: showSurahList ? 1 : 0,
+      }}
+    >
       <View style={[styles.surahListHeader, {
         backgroundColor: isDark ? 'rgba(0, 0, 0, 0.95)' : 'rgba(255, 255, 255, 0.95)',
         paddingTop: Platform.OS === 'android' ? Math.max(insets.top, 10) + 10 : insets.top + 10,
@@ -2345,416 +2394,422 @@ function MushafScreenContent() {
         </View>
       </View>
       {/* ScrollView - only for Search results and Recent tab */}
-      {(searchQuery.trim().length >= 2 || navigationMode === 'recent') && (
-        <ScrollView contentContainerStyle={{ paddingBottom: tabBarHeight + 60 }}>
-          {/* Search Results */}
-          {searchQuery.trim().length >= 2 && (
-            <View style={{ padding: Spacing.lg }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: Spacing.md }}>
-                {isSearching ? (
-                  <ActivityIndicator size="small" color={theme.primary} style={{ marginRight: 8 }} />
+      {
+        (searchQuery.trim().length >= 2 || navigationMode === 'recent') && (
+          <ScrollView contentContainerStyle={{ paddingBottom: tabBarHeight + 60 }}>
+            {/* Search Results */}
+            {searchQuery.trim().length >= 2 && (
+              <View style={{ padding: Spacing.lg }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: Spacing.md }}>
+                  {isSearching ? (
+                    <ActivityIndicator size="small" color={theme.primary} style={{ marginRight: 8 }} />
+                  ) : (
+                    <Feather name="search" size={16} color={theme.primary} style={{ marginRight: 8 }} />
+                  )}
+                  <ThemedText type="body" style={{ fontWeight: '600', fontSize: 13, opacity: 0.6 }}>
+                    {isSearching ? 'SEARCHING...' : `${searchResults.length} RESULTS`}
+                  </ThemedText>
+                </View>
+                {searchResults.length === 0 && !isSearching ? (
+                  <View style={{ alignItems: 'center', paddingVertical: 40 }}>
+                    <Feather name="search" size={48} color={theme.textSecondary} style={{ opacity: 0.3, marginBottom: 16 }} />
+                    <ThemedText type="body" style={{ opacity: 0.5 }}>No results found</ThemedText>
+                    <ThemedText type="caption" style={{ opacity: 0.4, marginTop: 4 }}>Try different keywords</ThemedText>
+                  </View>
                 ) : (
-                  <Feather name="search" size={16} color={theme.primary} style={{ marginRight: 8 }} />
-                )}
-                <ThemedText type="body" style={{ fontWeight: '600', fontSize: 13, opacity: 0.6 }}>
-                  {isSearching ? 'SEARCHING...' : `${searchResults.length} RESULTS`}
-                </ThemedText>
-              </View>
-              {searchResults.length === 0 && !isSearching ? (
-                <View style={{ alignItems: 'center', paddingVertical: 40 }}>
-                  <Feather name="search" size={48} color={theme.textSecondary} style={{ opacity: 0.3, marginBottom: 16 }} />
-                  <ThemedText type="body" style={{ opacity: 0.5 }}>No results found</ThemedText>
-                  <ThemedText type="caption" style={{ opacity: 0.4, marginTop: 4 }}>Try different keywords</ThemedText>
-                </View>
-              ) : (
-                searchResults.map((result, index) => {
-                  const surahInfo = surahs.find(s => s.number === result.surah);
-                  return (
-                    <Pressable
-                      key={`${result.verseKey}-${index}`}
-                      onPress={async () => {
-                        const page = result.page;
-                        const pageIndex = 604 - page;
-                        setShowSurahList(false);
-                        setSearchQuery('');
-                        setIsNavigating(true);
-                        setCurrentPage(page);
-
-                        // If match is from tafsir, load that tafsir and skip selection menu
-                        if (result.matchType === 'tafsir' && result.tafsirSource) {
-                          // Set the tafsir source first
-                          setSelectedTafsirId(result.tafsirSource);
-
-                          // Load the tafsir data for this specific verse
-                          try {
-                            const tafsirPath = `${FileSystem.documentDirectory}tafsir-${result.tafsirSource}.json`;
-                            const fileInfo = await FileSystem.getInfoAsync(tafsirPath);
-
-                            let verseData;
-                            if (fileInfo.exists) {
-                              const content = await FileSystem.readAsStringAsync(tafsirPath);
-                              const fullData = JSON.parse(content);
-                              verseData = fullData[result.verseKey];
-                            } else {
-                              // Fallback to bundled tafsir
-                              let fullData;
-                              if (result.tafsirSource === 'jalalayn') {
-                                fullData = await import("@/data/tafsir-jalalayn.json");
-                              } else if (result.tafsirSource === 'sahih-international') {
-                                fullData = await import("@/data/en-sahih-international-inline-footnotes.json");
-                              } else {
-                                fullData = await import("@/data/abridged-explanation-of-the-quran.json");
-                              }
-                              verseData = fullData[result.verseKey];
-                            }
-
-                            // Set the tafsir data in the expected format
-                            if (verseData) {
-                              setTafsirData({ text: verseData.text || verseData.t || verseData });
-                            }
-                          } catch (error) {
-                            console.error('Error loading tafsir:', error);
-                          }
-                        }
-
-                        requestAnimationFrame(() => {
-                          (pagerViewRef.current as any)?.scrollToOffset({ offset: pageIndex * layout.screenWidth, animated: false });
-                          setTimeout(() => {
-                            setIsNavigating(false);
-                            // Set highlighted verse and search term
-                            setHighlightedVerse(result.verseKey);
-                            setLastSearchTerm(searchQuery);
-                            // Clear highlight after 3 seconds
-                            setTimeout(() => setHighlightedVerse(null), 3000);
-
-                            // If match is from tafsir, open the tafsir modal directly
-                            if (result.matchType === 'tafsir') {
-                              setTafsirVerse({
-                                verseKey: result.verseKey,
-                                surah: result.surah,
-                                ayah: result.ayah
-                              } as VerseRegion);
-                              setShowArabicTafsir(result.tafsirSource === 'jalalayn');
-                            }
-                          }, 300);
-                        });
-                      }}
-                      style={({ pressed }) => [{
-                        padding: 14,
-                        marginBottom: 8,
-                        borderRadius: 12,
-                        backgroundColor: isDark ? 'rgba(255, 255, 255, 0.04)' : '#FFFFFF',
-                        borderWidth: 1,
-                        borderColor: isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.04)',
-                        transform: [{ scale: pressed ? 0.98 : 1 }],
-                      }]}
-                    >
-                      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
-                        <View style={{
-                          paddingHorizontal: 8,
-                          paddingVertical: 4,
-                          borderRadius: 6,
-                          backgroundColor: `${theme.primary}15`,
-                          marginRight: 8,
-                        }}>
-                          <ThemedText type="caption" style={{ fontSize: 11, fontWeight: '700', color: theme.primary }}>
-                            {result.verseKey}
-                          </ThemedText>
-                        </View>
-                        {result.matchType === 'tafsir' && (
-                          <>
-                            <View style={{
-                              paddingHorizontal: 6,
-                              paddingVertical: 3,
-                              borderRadius: 4,
-                              backgroundColor: result.tafsirSource === 'sahih-international'
-                                ? (isDark ? 'rgba(59, 130, 246, 0.15)' : 'rgba(59, 130, 246, 0.1)')
-                                : (isDark ? 'rgba(147, 51, 234, 0.15)' : 'rgba(147, 51, 234, 0.1)'),
-                              marginRight: 8,
-                            }}>
-                              <ThemedText type="caption" style={{
-                                fontSize: 10,
-                                fontWeight: '600',
-                                color: result.tafsirSource === 'sahih-international'
-                                  ? (isDark ? '#60A5FA' : '#2563EB')
-                                  : (isDark ? '#C084FC' : '#9333EA')
-                              }}>
-                                {result.tafsirSource === 'sahih-international' ? 'TRANSLATION' : 'TAFSIR'}
-                              </ThemedText>
-                            </View>
-                            <View style={{
-                              paddingHorizontal: 6,
-                              paddingVertical: 3,
-                              borderRadius: 4,
-                              backgroundColor: result.tafsirSource === 'sahih-international'
-                                ? (isDark ? 'rgba(59, 130, 246, 0.15)' : 'rgba(59, 130, 246, 0.1)')
-                                : (isDark ? 'rgba(147, 51, 234, 0.15)' : 'rgba(147, 51, 234, 0.1)'),
-                              marginRight: 8,
-                            }}>
-                              <ThemedText type="caption" style={{
-                                fontSize: 10,
-                                fontWeight: '600',
-                                color: result.tafsirSource === 'sahih-international'
-                                  ? (isDark ? '#60A5FA' : '#2563EB')
-                                  : (isDark ? '#C084FC' : '#9333EA')
-                              }}>
-                                {result.tafsirSource === 'jalalayn' ? 'JALALAYN' : result.tafsirSource === 'sahih-international' ? 'SAHIH INT\'L' : 'ABRIDGED'}
-                              </ThemedText>
-                            </View>
-                          </>
-                        )}
-                        <ThemedText type="body" style={{ fontWeight: '600', fontSize: 14 }}>
-                          {surahInfo?.nameEn}
-                        </ThemedText>
-                        <ThemedText type="arabic" style={{ fontFamily: 'AlMushafQuran', fontSize: 14, opacity: 0.6, marginLeft: 6 }}>
-                          {surahInfo?.nameAr}
-                        </ThemedText>
-                      </View>
-                      {result.matchType === 'tafsir' ? (
-                        <ThemedText
-                          type="body"
-                          style={{
-                            fontSize: 13,
-                            lineHeight: 20,
-                            opacity: 0.7,
-                            fontStyle: 'italic',
-                          }}
-                          numberOfLines={3}
-                        >
-                          {result.tafsirPreview}
-                        </ThemedText>
-                      ) : (
-                        <ThemedText
-                          type="arabic"
-                          style={{ fontFamily: 'AlMushafQuran', fontSize: 15, lineHeight: 26, textAlign: 'right', opacity: 0.8 }}
-                          numberOfLines={2}
-                        >
-                          {result.text}
-                        </ThemedText>
-                      )}
-                    </Pressable>
-                  );
-                })
-              )}
-            </View>
-          )}
-
-          {/* Surah and Juz content now rendered via FlatLists outside ScrollView for virtualization */}
-
-          {/* Recent Tab Content */}
-          {navigationMode === 'recent' && searchQuery.trim().length < 2 && (
-            <View style={{ paddingHorizontal: Spacing.lg, paddingTop: Spacing.sm }}>
-              {recentPages.length === 0 ? (
-                <View style={{ alignItems: 'center', paddingVertical: 40 }}>
-                  <Feather name="clock" size={48} color={theme.textSecondary} style={{ marginBottom: 16 }} />
-                  <ThemedText type="body" style={{ color: theme.textSecondary, textAlign: 'center' }}>
-                    No recent pages yet
-                  </ThemedText>
-                  <ThemedText type="caption" style={{ color: theme.textSecondary, textAlign: 'center', marginTop: 4 }}>
-                    Pages you visit will appear here
-                  </ThemedText>
-                </View>
-              ) : (
-                <>
-                  <ThemedText type="body" style={{ fontWeight: '600', opacity: 0.6, fontSize: 13, marginBottom: Spacing.md }}>RECENTLY VIEWED</ThemedText>
-                  {recentPages.map((page, index) => {
-                    // Find which surah this page belongs to
-                    const pageSurah = Object.entries(surahPages).find(([surahNum, startPage]) => {
-                      const nextSurahStart = Object.values(surahPages).find(p => p > startPage) || 605;
-                      return page >= startPage && page < nextSurahStart;
-                    });
-                    const surahNum = pageSurah ? parseInt(pageSurah[0]) : 1;
-                    const surah = surahs.find(s => s.number === surahNum);
-                    const timeAgo = index === 0 ? 'Just now' : index < 3 ? 'Recently' : 'Earlier';
-
+                  searchResults.map((result, index) => {
+                    const surahInfo = surahs.find(s => s.number === result.surah);
                     return (
                       <Pressable
-                        key={`recent-${page}-${index}`}
-                        onPress={() => navigateToPageFromOverlay(page)}
+                        key={`${result.verseKey}-${index}`}
+                        onPress={async () => {
+                          const page = result.page;
+                          const pageIndex = 604 - page;
+                          setShowSurahList(false);
+                          setSearchQuery('');
+                          setIsNavigating(true);
+                          setCurrentPage(page);
+
+                          // If match is from tafsir, load that tafsir and skip selection menu
+                          if (result.matchType === 'tafsir' && result.tafsirSource) {
+                            // Set the tafsir source first
+                            setSelectedTafsirId(result.tafsirSource);
+
+                            // Load the tafsir data for this specific verse
+                            try {
+                              const tafsirPath = `${FileSystem.documentDirectory}tafsir-${result.tafsirSource}.json`;
+                              const fileInfo = await FileSystem.getInfoAsync(tafsirPath);
+
+                              let verseData;
+                              if (fileInfo.exists) {
+                                const content = await FileSystem.readAsStringAsync(tafsirPath);
+                                const fullData = JSON.parse(content);
+                                verseData = fullData[result.verseKey];
+                              } else {
+                                // Fallback to bundled tafsir
+                                let fullData;
+                                if (result.tafsirSource === 'jalalayn') {
+                                  fullData = await import("@/data/tafsir-jalalayn.json");
+                                } else if (result.tafsirSource === 'sahih-international') {
+                                  fullData = await import("@/data/en-sahih-international-inline-footnotes.json");
+                                } else {
+                                  fullData = await import("@/data/abridged-explanation-of-the-quran.json");
+                                }
+                                verseData = fullData[result.verseKey];
+                              }
+
+                              // Set the tafsir data in the expected format
+                              if (verseData) {
+                                setTafsirData({ text: verseData.text || verseData.t || verseData });
+                              }
+                            } catch (error) {
+                              console.error('Error loading tafsir:', error);
+                            }
+                          }
+
+                          requestAnimationFrame(() => {
+                            (pagerViewRef.current as any)?.scrollToOffset({ offset: pageIndex * layout.screenWidth, animated: false });
+                            setTimeout(() => {
+                              setIsNavigating(false);
+                              // Set highlighted verse and search term
+                              setHighlightedVerse(result.verseKey);
+                              setLastSearchTerm(searchQuery);
+                              // Clear highlight after 3 seconds
+                              setTimeout(() => setHighlightedVerse(null), 3000);
+
+                              // If match is from tafsir, open the tafsir modal directly
+                              if (result.matchType === 'tafsir') {
+                                setTafsirVerse({
+                                  verseKey: result.verseKey,
+                                  surah: result.surah,
+                                  ayah: result.ayah
+                                } as VerseRegion);
+                                setShowArabicTafsir(result.tafsirSource === 'jalalayn');
+                              }
+                            }, 300);
+                          });
+                        }}
                         style={({ pressed }) => [{
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          paddingVertical: 14,
-                          paddingHorizontal: 16,
+                          padding: 14,
                           marginBottom: 8,
                           borderRadius: 12,
-                          backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : '#FFFFFF',
-                          opacity: pressed ? 0.7 : 1,
+                          backgroundColor: isDark ? 'rgba(255, 255, 255, 0.04)' : '#FFFFFF',
+                          borderWidth: 1,
+                          borderColor: isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.04)',
+                          transform: [{ scale: pressed ? 0.98 : 1 }],
                         }]}
                       >
-                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-                          <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: `${theme.primary}15`, alignItems: 'center', justifyContent: 'center' }}>
-                            <ThemedText type="body" style={{ fontWeight: '700', fontSize: 12, color: theme.primary }}>{surah?.number || page}</ThemedText>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
+                          <View style={{
+                            paddingHorizontal: 8,
+                            paddingVertical: 4,
+                            borderRadius: 6,
+                            backgroundColor: `${theme.primary}15`,
+                            marginRight: 8,
+                          }}>
+                            <ThemedText type="caption" style={{ fontSize: 11, fontWeight: '700', color: theme.primary }}>
+                              {result.verseKey}
+                            </ThemedText>
                           </View>
-                          <View>
-                            <ThemedText type="body" style={{ fontWeight: '600', fontSize: 15 }}>{surah?.nameEn || `Page ${page}`}</ThemedText>
-                            <ThemedText type="arabic" style={{ fontFamily: 'AlMushafQuran', fontSize: 14, opacity: 0.7, marginTop: 2 }}>{surah?.nameAr}</ThemedText>
-                          </View>
+                          {result.matchType === 'tafsir' && (
+                            <>
+                              <View style={{
+                                paddingHorizontal: 6,
+                                paddingVertical: 3,
+                                borderRadius: 4,
+                                backgroundColor: result.tafsirSource === 'sahih-international'
+                                  ? (isDark ? 'rgba(59, 130, 246, 0.15)' : 'rgba(59, 130, 246, 0.1)')
+                                  : (isDark ? 'rgba(147, 51, 234, 0.15)' : 'rgba(147, 51, 234, 0.1)'),
+                                marginRight: 8,
+                              }}>
+                                <ThemedText type="caption" style={{
+                                  fontSize: 10,
+                                  fontWeight: '600',
+                                  color: result.tafsirSource === 'sahih-international'
+                                    ? (isDark ? '#60A5FA' : '#2563EB')
+                                    : (isDark ? '#C084FC' : '#9333EA')
+                                }}>
+                                  {result.tafsirSource === 'sahih-international' ? 'TRANSLATION' : 'TAFSIR'}
+                                </ThemedText>
+                              </View>
+                              <View style={{
+                                paddingHorizontal: 6,
+                                paddingVertical: 3,
+                                borderRadius: 4,
+                                backgroundColor: result.tafsirSource === 'sahih-international'
+                                  ? (isDark ? 'rgba(59, 130, 246, 0.15)' : 'rgba(59, 130, 246, 0.1)')
+                                  : (isDark ? 'rgba(147, 51, 234, 0.15)' : 'rgba(147, 51, 234, 0.1)'),
+                                marginRight: 8,
+                              }}>
+                                <ThemedText type="caption" style={{
+                                  fontSize: 10,
+                                  fontWeight: '600',
+                                  color: result.tafsirSource === 'sahih-international'
+                                    ? (isDark ? '#60A5FA' : '#2563EB')
+                                    : (isDark ? '#C084FC' : '#9333EA')
+                                }}>
+                                  {result.tafsirSource === 'jalalayn' ? 'JALALAYN' : result.tafsirSource === 'sahih-international' ? 'SAHIH INT\'L' : 'ABRIDGED'}
+                                </ThemedText>
+                              </View>
+                            </>
+                          )}
+                          <ThemedText type="body" style={{ fontWeight: '600', fontSize: 14 }}>
+                            {surahInfo?.nameEn}
+                          </ThemedText>
+                          <ThemedText type="arabic" style={{ fontFamily: 'AlMushafQuran', fontSize: 14, opacity: 0.6, marginLeft: 6 }}>
+                            {surahInfo?.nameAr}
+                          </ThemedText>
                         </View>
-                        <View style={{ alignItems: 'flex-end' }}>
-                          <ThemedText type="caption" style={{ color: theme.textSecondary, fontSize: 11 }}>{timeAgo}</ThemedText>
-                          <ThemedText type="caption" style={{ color: theme.textSecondary, fontSize: 11, marginTop: 2 }}>Page {page}</ThemedText>
-                        </View>
+                        {result.matchType === 'tafsir' ? (
+                          <ThemedText
+                            type="body"
+                            style={{
+                              fontSize: 13,
+                              lineHeight: 20,
+                              opacity: 0.7,
+                              fontStyle: 'italic',
+                            }}
+                            numberOfLines={3}
+                          >
+                            {result.tafsirPreview}
+                          </ThemedText>
+                        ) : (
+                          <ThemedText
+                            type="arabic"
+                            style={{ fontFamily: 'AlMushafQuran', fontSize: 15, lineHeight: 26, textAlign: 'right', opacity: 0.8 }}
+                            numberOfLines={2}
+                          >
+                            {result.text}
+                          </ThemedText>
+                        )}
                       </Pressable>
                     );
-                  })}
-                </>
-              )}
-            </View>
-          )
-          }
-        </ScrollView>
-      )}
+                  })
+                )}
+              </View>
+            )}
+
+            {/* Surah and Juz content now rendered via FlatLists outside ScrollView for virtualization */}
+
+            {/* Recent Tab Content */}
+            {navigationMode === 'recent' && searchQuery.trim().length < 2 && (
+              <View style={{ paddingHorizontal: Spacing.lg, paddingTop: Spacing.sm }}>
+                {recentPages.length === 0 ? (
+                  <View style={{ alignItems: 'center', paddingVertical: 40 }}>
+                    <Feather name="clock" size={48} color={theme.textSecondary} style={{ marginBottom: 16 }} />
+                    <ThemedText type="body" style={{ color: theme.textSecondary, textAlign: 'center' }}>
+                      No recent pages yet
+                    </ThemedText>
+                    <ThemedText type="caption" style={{ color: theme.textSecondary, textAlign: 'center', marginTop: 4 }}>
+                      Pages you visit will appear here
+                    </ThemedText>
+                  </View>
+                ) : (
+                  <>
+                    <ThemedText type="body" style={{ fontWeight: '600', opacity: 0.6, fontSize: 13, marginBottom: Spacing.md }}>RECENTLY VIEWED</ThemedText>
+                    {recentPages.map((page, index) => {
+                      // Find which surah this page belongs to
+                      const pageSurah = Object.entries(surahPages).find(([surahNum, startPage]) => {
+                        const nextSurahStart = Object.values(surahPages).find(p => p > startPage) || 605;
+                        return page >= startPage && page < nextSurahStart;
+                      });
+                      const surahNum = pageSurah ? parseInt(pageSurah[0]) : 1;
+                      const surah = surahs.find(s => s.number === surahNum);
+                      const timeAgo = index === 0 ? 'Just now' : index < 3 ? 'Recently' : 'Earlier';
+
+                      return (
+                        <Pressable
+                          key={`recent-${page}-${index}`}
+                          onPress={() => navigateToPageFromOverlay(page)}
+                          style={({ pressed }) => [{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            paddingVertical: 14,
+                            paddingHorizontal: 16,
+                            marginBottom: 8,
+                            borderRadius: 12,
+                            backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : '#FFFFFF',
+                            opacity: pressed ? 0.7 : 1,
+                          }]}
+                        >
+                          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                            <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: `${theme.primary}15`, alignItems: 'center', justifyContent: 'center' }}>
+                              <ThemedText type="body" style={{ fontWeight: '700', fontSize: 12, color: theme.primary }}>{surah?.number || page}</ThemedText>
+                            </View>
+                            <View>
+                              <ThemedText type="body" style={{ fontWeight: '600', fontSize: 15 }}>{surah?.nameEn || `Page ${page}`}</ThemedText>
+                              <ThemedText type="arabic" style={{ fontFamily: 'AlMushafQuran', fontSize: 14, opacity: 0.7, marginTop: 2 }}>{surah?.nameAr}</ThemedText>
+                            </View>
+                          </View>
+                          <View style={{ alignItems: 'flex-end' }}>
+                            <ThemedText type="caption" style={{ color: theme.textSecondary, fontSize: 11 }}>{timeAgo}</ThemedText>
+                            <ThemedText type="caption" style={{ color: theme.textSecondary, fontSize: 11, marginTop: 2 }}>Page {page}</ThemedText>
+                          </View>
+                        </Pressable>
+                      );
+                    })}
+                  </>
+                )}
+              </View>
+            )
+            }
+          </ScrollView>
+        )
+      }
 
       {/* Surah Tab - Direct FlatList for virtualization (only renders ~12 visible items) */}
-      {navigationMode === 'surah' && searchQuery.trim().length < 2 && (
-        <FlatList
-          ref={surahListRef}
-          data={surahs}
-          keyExtractor={(item) => `surah-${item.number}`}
-          renderItem={renderSurahItem}
-          contentContainerStyle={{ paddingHorizontal: Spacing.lg, paddingBottom: tabBarHeight + 60 }}
-          showsVerticalScrollIndicator={false}
-          ListHeaderComponent={
-            <ThemedText type="body" style={{ fontWeight: '600', opacity: 0.6, fontSize: 13, marginTop: Spacing.sm, marginBottom: Spacing.md }}>ALL SURAHS</ThemedText>
-          }
-          initialNumToRender={114}
-          initialScrollIndex={currentSurahIndex > 0 ? currentSurahIndex : undefined}
-          getItemLayout={(data, index) => ({
-            length: 80,
-            offset: 80 * index,
-            index,
-          })}
-          onScrollToIndexFailed={() => { }}
-        />
-      )}
+      {
+        navigationMode === 'surah' && searchQuery.trim().length < 2 && (
+          <FlatList
+            ref={surahListRef}
+            data={surahs}
+            keyExtractor={(item) => `surah-${item.number}`}
+            renderItem={renderSurahItem}
+            contentContainerStyle={{ paddingHorizontal: Spacing.lg, paddingBottom: tabBarHeight + 60 }}
+            showsVerticalScrollIndicator={false}
+            ListHeaderComponent={
+              <ThemedText type="body" style={{ fontWeight: '600', opacity: 0.6, fontSize: 13, marginTop: Spacing.sm, marginBottom: Spacing.md }}>ALL SURAHS</ThemedText>
+            }
+            initialNumToRender={114}
+            getItemLayout={(data, index) => ({
+              length: 80,
+              offset: 80 * index,
+              index,
+            })}
+            initialScrollIndex={currentSurahIndex > 0 ? currentSurahIndex : undefined}
+            onScrollToIndexFailed={() => { }}
+          />
+        )
+      }
 
       {/* Juz Tab - Direct FlatList for virtualization (only renders ~15 visible items) */}
-      {navigationMode === 'juz' && searchQuery.trim().length < 2 && (
-        <FlatList
-          data={juzData}
-          keyExtractor={(item, index) => `juz-${item.juz}-${item.hizb}-${item.quarter}-${index}`}
-          renderItem={renderJuzItem}
-          contentContainerStyle={{ paddingHorizontal: Spacing.lg, paddingBottom: tabBarHeight + 60 }}
-          showsVerticalScrollIndicator={false}
-          ListHeaderComponent={
-            <View style={{ marginTop: Spacing.sm, marginBottom: Spacing.md }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                <ThemedText type="body" style={{ fontWeight: '600', opacity: 0.6, fontSize: 13 }}>
-                  {juzData.length} {hizbGranularity === 'quarter' ? 'QUARTERS' : hizbGranularity === 'half' ? 'HALVES' : 'JUZ'}
-                </ThemedText>
-                <View style={{ flexDirection: 'row', gap: 8 }}>
-                  {/* Granularity Dropdown Button */}
-                  <Pressable
-                    onPress={() => setShowGranularityPicker(!showGranularityPicker)}
-                    style={({ pressed }) => [{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      gap: 4,
-                      paddingVertical: 5,
-                      paddingHorizontal: 10,
-                      borderRadius: 8,
-                      backgroundColor: showGranularityPicker ? `${theme.primary}20` : (isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.05)'),
-                      opacity: pressed ? 0.7 : 1,
-                    }]}
-                  >
-                    <ThemedText style={{ fontSize: 12, fontWeight: '500', color: showGranularityPicker ? theme.primary : theme.text }}>
-                      {hizbGranularity === 'quarter' ? '¼' : hizbGranularity === 'half' ? '½' : 'Juz'}
-                    </ThemedText>
-                    <Feather name={showGranularityPicker ? 'chevron-up' : 'chevron-down'} size={14} color={showGranularityPicker ? theme.primary : theme.text} />
-                  </Pressable>
-                  {/* Sort Button */}
-                  <Pressable
-                    onPress={() => setJuzSortAsc(!juzSortAsc)}
-                    style={({ pressed }) => [{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      gap: 4,
-                      paddingVertical: 5,
-                      paddingHorizontal: 10,
-                      borderRadius: 8,
-                      backgroundColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.05)',
-                      opacity: pressed ? 0.7 : 1,
-                    }]}
-                  >
-                    <Feather name={juzSortAsc ? 'arrow-up' : 'arrow-down'} size={14} color={theme.text} />
-                  </Pressable>
+      {
+        navigationMode === 'juz' && searchQuery.trim().length < 2 && (
+          <FlatList
+            data={juzData}
+            keyExtractor={(item, index) => `juz-${item.juz}-${item.hizb}-${item.quarter}-${index}`}
+            renderItem={renderJuzItem}
+            contentContainerStyle={{ paddingHorizontal: Spacing.lg, paddingBottom: tabBarHeight + 60 }}
+            showsVerticalScrollIndicator={false}
+            ListHeaderComponent={
+              <View style={{ marginTop: Spacing.sm, marginBottom: Spacing.md }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <ThemedText type="body" style={{ fontWeight: '600', opacity: 0.6, fontSize: 13 }}>
+                    {juzData.length} {hizbGranularity === 'quarter' ? 'QUARTERS' : hizbGranularity === 'half' ? 'HALVES' : 'JUZ'}
+                  </ThemedText>
+                  <View style={{ flexDirection: 'row', gap: 8 }}>
+                    {/* Granularity Dropdown Button */}
+                    <Pressable
+                      onPress={() => setShowGranularityPicker(!showGranularityPicker)}
+                      style={({ pressed }) => [{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: 4,
+                        paddingVertical: 5,
+                        paddingHorizontal: 10,
+                        borderRadius: 8,
+                        backgroundColor: showGranularityPicker ? `${theme.primary}20` : (isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.05)'),
+                        opacity: pressed ? 0.7 : 1,
+                      }]}
+                    >
+                      <ThemedText style={{ fontSize: 12, fontWeight: '500', color: showGranularityPicker ? theme.primary : theme.text }}>
+                        {hizbGranularity === 'quarter' ? '¼' : hizbGranularity === 'half' ? '½' : 'Juz'}
+                      </ThemedText>
+                      <Feather name={showGranularityPicker ? 'chevron-up' : 'chevron-down'} size={14} color={showGranularityPicker ? theme.primary : theme.text} />
+                    </Pressable>
+                    {/* Sort Button */}
+                    <Pressable
+                      onPress={() => setJuzSortAsc(!juzSortAsc)}
+                      style={({ pressed }) => [{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: 4,
+                        paddingVertical: 5,
+                        paddingHorizontal: 10,
+                        borderRadius: 8,
+                        backgroundColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.05)',
+                        opacity: pressed ? 0.7 : 1,
+                      }]}
+                    >
+                      <Feather name={juzSortAsc ? 'arrow-up' : 'arrow-down'} size={14} color={theme.text} />
+                    </Pressable>
+                  </View>
                 </View>
+                {/* Dropdown Options */}
+                {showGranularityPicker && (
+                  <View style={{
+                    marginTop: Spacing.sm,
+                    backgroundColor: isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.03)',
+                    borderRadius: 10,
+                    overflow: 'hidden',
+                  }}>
+                    <Pressable
+                      onPress={() => { setHizbGranularity('quarter'); setShowGranularityPicker(false); }}
+                      style={({ pressed }) => [{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        paddingVertical: 12,
+                        paddingHorizontal: 14,
+                        backgroundColor: hizbGranularity === 'quarter' ? `${theme.primary}15` : 'transparent',
+                        opacity: pressed ? 0.7 : 1,
+                      }]}
+                    >
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                        <ThemedText style={{ fontSize: 16, fontWeight: '600' }}>¼</ThemedText>
+                        <ThemedText style={{ fontSize: 13 }}>Quarter Hizb</ThemedText>
+                      </View>
+                      {hizbGranularity === 'quarter' && <Feather name="check" size={16} color={theme.primary} />}
+                    </Pressable>
+                    <View style={{ height: 1, backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)' }} />
+                    <Pressable
+                      onPress={() => { setHizbGranularity('half'); setShowGranularityPicker(false); }}
+                      style={({ pressed }) => [{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        paddingVertical: 12,
+                        paddingHorizontal: 14,
+                        backgroundColor: hizbGranularity === 'half' ? `${theme.primary}15` : 'transparent',
+                        opacity: pressed ? 0.7 : 1,
+                      }]}
+                    >
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                        <ThemedText style={{ fontSize: 16, fontWeight: '600' }}>½</ThemedText>
+                        <ThemedText style={{ fontSize: 13 }}>Half Hizb</ThemedText>
+                      </View>
+                      {hizbGranularity === 'half' && <Feather name="check" size={16} color={theme.primary} />}
+                    </Pressable>
+                    <View style={{ height: 1, backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)' }} />
+                    <Pressable
+                      onPress={() => { setHizbGranularity('fullJuz'); setShowGranularityPicker(false); }}
+                      style={({ pressed }) => [{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        paddingVertical: 12,
+                        paddingHorizontal: 14,
+                        backgroundColor: hizbGranularity === 'fullJuz' ? `${theme.primary}15` : 'transparent',
+                        opacity: pressed ? 0.7 : 1,
+                      }]}
+                    >
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                        <ThemedText style={{ fontSize: 16, fontWeight: '600' }}>Juz</ThemedText>
+                        <ThemedText style={{ fontSize: 13 }}>Full Juz Only</ThemedText>
+                      </View>
+                      {hizbGranularity === 'fullJuz' && <Feather name="check" size={16} color={theme.primary} />}
+                    </Pressable>
+                  </View>
+                )}
               </View>
-              {/* Dropdown Options */}
-              {showGranularityPicker && (
-                <View style={{
-                  marginTop: Spacing.sm,
-                  backgroundColor: isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.03)',
-                  borderRadius: 10,
-                  overflow: 'hidden',
-                }}>
-                  <Pressable
-                    onPress={() => { setHizbGranularity('quarter'); setShowGranularityPicker(false); }}
-                    style={({ pressed }) => [{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      paddingVertical: 12,
-                      paddingHorizontal: 14,
-                      backgroundColor: hizbGranularity === 'quarter' ? `${theme.primary}15` : 'transparent',
-                      opacity: pressed ? 0.7 : 1,
-                    }]}
-                  >
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                      <ThemedText style={{ fontSize: 16, fontWeight: '600' }}>¼</ThemedText>
-                      <ThemedText style={{ fontSize: 13 }}>Quarter Hizb</ThemedText>
-                    </View>
-                    {hizbGranularity === 'quarter' && <Feather name="check" size={16} color={theme.primary} />}
-                  </Pressable>
-                  <View style={{ height: 1, backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)' }} />
-                  <Pressable
-                    onPress={() => { setHizbGranularity('half'); setShowGranularityPicker(false); }}
-                    style={({ pressed }) => [{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      paddingVertical: 12,
-                      paddingHorizontal: 14,
-                      backgroundColor: hizbGranularity === 'half' ? `${theme.primary}15` : 'transparent',
-                      opacity: pressed ? 0.7 : 1,
-                    }]}
-                  >
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                      <ThemedText style={{ fontSize: 16, fontWeight: '600' }}>½</ThemedText>
-                      <ThemedText style={{ fontSize: 13 }}>Half Hizb</ThemedText>
-                    </View>
-                    {hizbGranularity === 'half' && <Feather name="check" size={16} color={theme.primary} />}
-                  </Pressable>
-                  <View style={{ height: 1, backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)' }} />
-                  <Pressable
-                    onPress={() => { setHizbGranularity('fullJuz'); setShowGranularityPicker(false); }}
-                    style={({ pressed }) => [{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      paddingVertical: 12,
-                      paddingHorizontal: 14,
-                      backgroundColor: hizbGranularity === 'fullJuz' ? `${theme.primary}15` : 'transparent',
-                      opacity: pressed ? 0.7 : 1,
-                    }]}
-                  >
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                      <ThemedText style={{ fontSize: 16, fontWeight: '600' }}>Juz</ThemedText>
-                      <ThemedText style={{ fontSize: 13 }}>Full Juz Only</ThemedText>
-                    </View>
-                    {hizbGranularity === 'fullJuz' && <Feather name="check" size={16} color={theme.primary} />}
-                  </Pressable>
-                </View>
-              )}
-            </View>
-          }
-          initialNumToRender={15}
-          maxToRenderPerBatch={10}
-          windowSize={5}
-        />
-      )}
+            }
+            initialNumToRender={15}
+            maxToRenderPerBatch={10}
+            windowSize={5}
+          />
+        )
+      }
 
     </View >
   );
@@ -2837,10 +2892,9 @@ function MushafScreenContent() {
             onPress={() => {
               const wasActive = hifzMode.isActive;
               hifzMode.toggleHifzMode();
-              // Show tooltip when activating Hifz mode
-              if (!wasActive) {
-                setShowHifzTooltip(true);
-                setTimeout(() => setShowHifzTooltip(false), 3000);
+              // Show coach mark on first activation only
+              if (!wasActive && shouldShowHint('hifz_mode')) {
+                setShowHifzCoachMark(true);
               }
             }}
             onLongPress={() => hifzMode.isActive && setShowHifzControlPanel(true)}
@@ -2908,6 +2962,16 @@ function MushafScreenContent() {
           overScrollMode="never"
           disableIntervalMomentum={true}
           initialScrollIndex={603}
+          onScroll={(e) => {
+            // Update page number during scroll for responsive UI
+            const offset = e.nativeEvent.contentOffset.x;
+            const index = Math.round(offset / layout.screenWidth);
+            const page = 604 - index;
+            if (page !== currentPage && page >= 1 && page <= 604) {
+              setCurrentPage(page);
+            }
+          }}
+          scrollEventThrottle={16}
           onMomentumScrollEnd={(e) => {
             const offset = e.nativeEvent.contentOffset.x;
             const index = Math.round(offset / layout.screenWidth);
@@ -5506,36 +5570,31 @@ function MushafScreenContent() {
         onCloseControlPanel={() => setShowHifzControlPanel(false)}
       />
 
-      {/* Hifz tooltip - rendered at screen level to avoid clipping */}
-      {showHifzTooltip && (
-        <View
-          style={{
-            position: 'absolute',
-            top: 85,
-            left: 0,
-            right: 0,
-            alignItems: 'center',
-            zIndex: 9999,
-            pointerEvents: 'none',
-          }}
-        >
-          <View style={{
-            backgroundColor: theme.primary,
-            paddingHorizontal: 14,
-            paddingVertical: 8,
-            borderRadius: 8,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.25,
-            shadowRadius: 4,
-            elevation: 5,
-          }}>
-            <ThemedText style={{ color: '#FFF', fontSize: 13, fontWeight: '600' }}>
-              Hold Hifz button for settings
-            </ThemedText>
-          </View>
-        </View>
-      )}
+      {/* Hifz Mode Coach Mark - shown on first use */}
+      <CoachMark
+        visible={showHifzCoachMark}
+        onDismiss={() => {
+          setShowHifzCoachMark(false);
+          markHintSeen('hifz_mode');
+        }}
+        title="Hifz Mode Activated"
+        message="Tap any verse to reveal it. Long-press on a verse for memorization options. Hold the Hifz button for settings."
+        icon="book-open"
+        position="top"
+      />
+
+      {/* Word Scrubber Coach Mark - shown on first audio play with word highlighting */}
+      <CoachMark
+        visible={showScrubberCoachMark}
+        onDismiss={() => {
+          setShowScrubberCoachMark(false);
+          markHintSeen('word_scrubber');
+        }}
+        title="Word-by-Word Highlighting"
+        message="Long-press anywhere on the page and drag to scrub through the audio. The highlighted word will follow your finger."
+        icon="volume-2"
+        position="center"
+      />
 
       {/* Surah List Overlay - renders on top to keep FlatList mounted */}
       {renderSurahListOverlay()}
