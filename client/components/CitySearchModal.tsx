@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   StyleSheet,
   Platform,
+  Alert,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
@@ -16,6 +17,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { useTheme } from '@/hooks/useTheme';
 import { Spacing, BorderRadius } from '@/constants/theme';
 import { searchCitiesAsync, searchCities } from '@/utils/citySearch';
+import { useNetworkStatus } from '@/hooks/useNetworkStatus';
 import type { City, ManualLocation } from '@/types/location';
 
 /**
@@ -56,6 +58,7 @@ export function CitySearchModal({
 }: CitySearchModalProps) {
   const { theme, isDark } = useTheme();
   const insets = useSafeAreaInsets();
+  const { isOnline } = useNetworkStatus();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<City[]>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -124,7 +127,24 @@ export function CitySearchModal({
     }
   }, [visible]);
 
+  // Check if location exists in recent locations
+  const isInRecentLocations = useCallback((city: City) => {
+    return recentLocations.some(
+      loc => loc.city === city.name && loc.country === city.country
+    );
+  }, [recentLocations]);
+
   const handleSelectCity = useCallback((city: City) => {
+    // If offline and city is not in recent locations, show warning
+    if (!isOnline && !isInRecentLocations(city)) {
+      Alert.alert(
+        'Offline',
+        'You are currently offline. Switching to a new city requires internet to fetch prayer times. Please use a recently visited city or try again when online.',
+        [{ text: 'OK' }]
+      );
+      return;
+    }
+
     const location: ManualLocation = {
       city: city.name,
       country: city.country,
@@ -135,7 +155,7 @@ export function CitySearchModal({
     onSelectCity(location);
     setSearchQuery('');
     onClose();
-  }, [onSelectCity, onClose]);
+  }, [onSelectCity, onClose, isOnline, isInRecentLocations]);
 
   const handleSelectRecent = useCallback((location: ManualLocation) => {
     onSelectCity(location);

@@ -962,28 +962,7 @@ function MushafScreenContent() {
     return currentSurahNumber - 1; // 0-based index
   }, [currentPage]);
 
-  // Track if initial scroll has happened for surah list
-  const hasScrolledSurahListRef = useRef(false);
-
-  // Scroll to current surah when list opens - using requestAnimationFrame for single execution
-  useEffect(() => {
-    if (showSurahList && currentSurahIndex > 0) {
-      if (!hasScrolledSurahListRef.current) {
-        hasScrolledSurahListRef.current = true;
-        // Use requestAnimationFrame to scroll after first paint
-        requestAnimationFrame(() => {
-          surahListRef.current?.scrollToIndex({
-            index: currentSurahIndex,
-            animated: false,
-            viewPosition: 0.3,
-          });
-        });
-      }
-    } else if (!showSurahList) {
-      // Reset flag when modal closes
-      hasScrolledSurahListRef.current = false;
-    }
-  }, [showSurahList, currentSurahIndex]);
+  // Note: initialScrollIndex on FlatList handles scrolling to current surah without flash
 
   const loadBookmarks = async () => {
     try {
@@ -1790,11 +1769,7 @@ function MushafScreenContent() {
       <ThemedView style={styles.container}>
         <View style={[styles.surahListHeader, { backgroundColor: isDark ? 'rgba(0, 0, 0, 0.95)' : 'rgba(255, 255, 255, 0.95)', paddingTop: Platform.OS === 'android' ? Math.max(insets.top, 10) + 10 : insets.top + 10 }]}>
           <View style={styles.headerContent}>
-            <View style={styles.headerTop}>
-              <View>
-                <ThemedText type="h3" style={{ fontWeight: '700', letterSpacing: -1, fontSize: 28 }}>Notes</ThemedText>
-                <ThemedText type="caption" style={{ opacity: 0.5, marginTop: 2, fontSize: 13 }}>{[...Object.keys(highlights), ...Object.keys(notes)].filter((v, i, a) => a.indexOf(v) === i).length} items</ThemedText>
-              </View>
+            <View style={[styles.headerTop, { justifyContent: 'flex-start' }]}>
               <Pressable
                 onPress={() => {
                   setShowNotes(false);
@@ -1803,10 +1778,13 @@ function MushafScreenContent() {
                     (pagerViewRef.current as any)?.scrollToOffset({ offset: pageIndex * layout.screenWidth, animated: false });
                   });
                 }}
-                style={({ pressed }) => [{ width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center', backgroundColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)', opacity: pressed ? 0.6 : 1 }]}
+                style={({ pressed }) => [{ padding: Spacing.xs, opacity: pressed ? 0.6 : 1 }]}
               >
-                <Feather name="x" size={20} color={theme.text} />
+                <Feather name="arrow-left" size={24} color={theme.text} />
               </Pressable>
+              <View style={{ flex: 1, alignItems: 'center', marginRight: 32 }}>
+                <ThemedText type="h3" style={{ fontWeight: '700', letterSpacing: -1, fontSize: 22 }}>Notes</ThemedText>
+              </View>
             </View>
           </View>
         </View>
@@ -2059,11 +2037,7 @@ function MushafScreenContent() {
           paddingTop: Platform.OS === 'android' ? Math.max(insets.top, 10) + 10 : insets.top + 10,
         }]}>
           <View style={styles.headerContent}>
-            <View style={styles.headerTop}>
-              <View>
-                <ThemedText type="h3" style={{ fontWeight: '700', letterSpacing: -1, fontSize: 28 }}>Bookmarks</ThemedText>
-                <ThemedText type="caption" style={{ opacity: 0.5, marginTop: 2, fontSize: 13 }}>{bookmarks.length} verses</ThemedText>
-              </View>
+            <View style={[styles.headerTop, { justifyContent: 'flex-start' }]}>
               <Pressable
                 onPress={() => {
                   setShowBookmarks(false);
@@ -2072,18 +2046,13 @@ function MushafScreenContent() {
                     (pagerViewRef.current as any)?.scrollToOffset({ offset: pageIndex * layout.screenWidth, animated: false });
                   });
                 }}
-                style={({ pressed }) => [{
-                  width: 36,
-                  height: 36,
-                  borderRadius: 18,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)',
-                  opacity: pressed ? 0.6 : 1,
-                }]}
+                style={({ pressed }) => [{ padding: Spacing.xs, opacity: pressed ? 0.6 : 1 }]}
               >
-                <Feather name="x" size={20} color={theme.text} />
+                <Feather name="arrow-left" size={24} color={theme.text} />
               </Pressable>
+              <View style={{ flex: 1, alignItems: 'center', marginRight: 32 }}>
+                <ThemedText type="h3" style={{ fontWeight: '700', letterSpacing: -1, fontSize: 22 }}>Bookmarks</ThemedText>
+              </View>
             </View>
           </View>
         </View>
@@ -2651,6 +2620,7 @@ function MushafScreenContent() {
             <ThemedText type="body" style={{ fontWeight: '600', opacity: 0.6, fontSize: 13, marginTop: Spacing.sm, marginBottom: Spacing.md }}>ALL SURAHS</ThemedText>
           }
           initialNumToRender={114}
+          initialScrollIndex={currentSurahIndex > 0 ? currentSurahIndex : undefined}
           getItemLayout={(data, index) => ({
             length: 80,
             offset: 80 * index,
@@ -2793,13 +2763,6 @@ function MushafScreenContent() {
     <ThemedView style={styles.container}>
       {/* Safe Area Top Spacer */}
       <View style={{ height: layout.safeAreaTop }} />
-
-      {/* Offline Indicator */}
-      {!isOnline && (
-        <View style={{ paddingHorizontal: Spacing.md, marginBottom: Spacing.xs }}>
-          <OfflineIndicator isOffline={!isOnline} compact />
-        </View>
-      )}
 
       {/* Header Zone - contains Juz/Hizb, Action Pill, Surah info */}
       <View style={[styles.headerZone, { height: layout.headerZoneHeight }]}>

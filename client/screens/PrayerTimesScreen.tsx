@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { View, StyleSheet, ScrollView, Pressable, Platform, useWindowDimensions, ImageBackground } from "react-native";
 
 // Prayer card backgrounds
-const mosqueBackground = require('../../assets/images/mosque-silhouette.jpg');
+const mosqueBackground = require('../../assets/images/mosque-silhouette.png');
 const fajrBackground = require('../../assets/images/fajr-mosque.jpg');
 const dhuhrBackground = require('../../assets/images/dhuhr-mosque.jpg');
 const asrBackground = require('../../assets/images/asr-mosque.jpg');
@@ -419,12 +419,6 @@ export default function PrayerTimesScreen() {
           },
         ]}
       >
-        {/* Offline indicator - only when actually offline */}
-        <OfflineIndicator
-          isOffline={isOffline}
-          lastSync={cacheLastSync}
-        />
-
         {nextPrayer ? (
           <ImageBackground
             source={nextPrayer.name === 'Fajr' ? fajrBackground : mosqueBackground}
@@ -650,7 +644,7 @@ export default function PrayerTimesScreen() {
         </View>
 
       </View>
-    </ThemedView>
+    </ThemedView >
   );
 }
 

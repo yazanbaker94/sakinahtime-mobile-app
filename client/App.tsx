@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Platform } from "react-native";
+import { StyleSheet, Platform, Image } from "react-native";
 import { NavigationContainer, LinkingOptions, createNavigationContainerRef } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
@@ -125,6 +125,23 @@ export default function App() {
         if (Platform.OS === 'android') {
           syncWidgetDataOnLaunch();
         }
+
+        // Pre-fetch prayer card backgrounds in parallel for instant rendering
+        // This prevents the "pop-in" effect when navigating to prayer section
+        const prayerBackgrounds = [
+          require('../assets/images/mosque-silhouette.png'),
+          require('../assets/images/fajr-mosque.jpg'),
+          require('../assets/images/dhuhr-mosque.jpg'),
+          require('../assets/images/asr-mosque.jpg'),
+          require('../assets/images/maghrib-mosque.jpg'),
+          require('../assets/images/isha-mosque.jpg'),
+        ];
+        Promise.all(
+          prayerBackgrounds.map(img => {
+            const resolved = Image.resolveAssetSource(img);
+            return Image.prefetch(resolved.uri).catch(() => { });
+          })
+        ).then(() => console.log('[App] Prayer backgrounds prefetched'));
 
         // Pre-fetch word timing data for default reciter in background
         // This ensures word-by-word highlighting is ready when user plays audio

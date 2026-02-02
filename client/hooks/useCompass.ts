@@ -17,7 +17,8 @@ interface SensorData {
   z: number;
 }
 
-const LOW_PASS_ALPHA = 0.2; // Lower = more smoothing, less jitter
+// Platform-specific alpha: Android uses higher value for faster response
+const LOW_PASS_ALPHA = Platform.OS === 'android' ? 0.4 : 0.2;
 
 function applyLowPassFilter(
   current: SensorData,
@@ -138,16 +139,38 @@ export function useCompass() {
         }
 
         magSubscription = Magnetometer.addListener((data) => {
-          const filtered = applyLowPassFilter(data, lastMagRef.current);
-          lastMagRef.current = filtered;
-          magDataRef.current = filtered;
+          // Android: Use lighter filtering (0.6) for faster response
+          // iOS: Use heavier filtering (0.2) for smoothness
+          const alpha = Platform.OS === 'android' ? 0.6 : LOW_PASS_ALPHA;
+          if (!lastMagRef.current) {
+            lastMagRef.current = data;
+            magDataRef.current = data;
+          } else {
+            const filtered = {
+              x: lastMagRef.current.x + alpha * (data.x - lastMagRef.current.x),
+              y: lastMagRef.current.y + alpha * (data.y - lastMagRef.current.y),
+              z: lastMagRef.current.z + alpha * (data.z - lastMagRef.current.z),
+            };
+            lastMagRef.current = filtered;
+            magDataRef.current = filtered;
+          }
         });
 
         if (accelAvailable) {
           accelSubscription = Accelerometer.addListener((data) => {
-            const filtered = applyLowPassFilter(data, lastAccelRef.current);
-            lastAccelRef.current = filtered;
-            accelDataRef.current = filtered;
+            const alpha = Platform.OS === 'android' ? 0.6 : LOW_PASS_ALPHA;
+            if (!lastAccelRef.current) {
+              lastAccelRef.current = data;
+              accelDataRef.current = data;
+            } else {
+              const filtered = {
+                x: lastAccelRef.current.x + alpha * (data.x - lastAccelRef.current.x),
+                y: lastAccelRef.current.y + alpha * (data.y - lastAccelRef.current.y),
+                z: lastAccelRef.current.z + alpha * (data.z - lastAccelRef.current.z),
+              };
+              lastAccelRef.current = filtered;
+              accelDataRef.current = filtered;
+            }
           });
         }
 
@@ -180,34 +203,57 @@ export function useCompass() {
             }
           }
 
-          headingHistoryRef.current.push(heading);
-          if (headingHistoryRef.current.length > 5) {
-            headingHistoryRef.current.shift();
-          }
-
-          const history = headingHistoryRef.current;
           let smoothedHeading: number;
+          let accuracy: "low" | "medium" | "high" = "medium";
 
-          if (history.length >= 3) {
-            const sinSum = history.reduce((sum, h) => sum + Math.sin((h * Math.PI) / 180), 0);
-            const cosSum = history.reduce((sum, h) => sum + Math.cos((h * Math.PI) / 180), 0);
-            smoothedHeading = (Math.atan2(sinSum, cosSum) * 180) / Math.PI;
-            smoothedHeading = (smoothedHeading + 360) % 360;
+          if (Platform.OS === 'android') {
+            // Android: Minimal 2-sample averaging for jitter reduction while staying responsive
+            headingHistoryRef.current.push(heading);
+            if (headingHistoryRef.current.length > 2) {
+              headingHistoryRef.current.shift();
+            }
+
+            const history = headingHistoryRef.current;
+            if (history.length === 2) {
+              // Average just 2 readings using circular mean
+              const sinSum = history.reduce((sum, h) => sum + Math.sin((h * Math.PI) / 180), 0);
+              const cosSum = history.reduce((sum, h) => sum + Math.cos((h * Math.PI) / 180), 0);
+              smoothedHeading = (Math.atan2(sinSum, cosSum) * 180) / Math.PI;
+              smoothedHeading = (smoothedHeading + 360) % 360;
+            } else {
+              smoothedHeading = heading;
+            }
+            accuracy = "high";
           } else {
-            smoothedHeading = heading;
+            // iOS: Keep smoothing for stability
+            headingHistoryRef.current.push(heading);
+            if (headingHistoryRef.current.length > 5) {
+              headingHistoryRef.current.shift();
+            }
+
+            const history = headingHistoryRef.current;
+
+            if (history.length >= 3) {
+              const sinSum = history.reduce((sum, h) => sum + Math.sin((h * Math.PI) / 180), 0);
+              const cosSum = history.reduce((sum, h) => sum + Math.cos((h * Math.PI) / 180), 0);
+              smoothedHeading = (Math.atan2(sinSum, cosSum) * 180) / Math.PI;
+              smoothedHeading = (smoothedHeading + 360) % 360;
+            } else {
+              smoothedHeading = heading;
+            }
+
+            const variance = history.length >= 3
+              ? history.reduce((sum, h) => {
+                let diff = Math.abs(h - smoothedHeading);
+                if (diff > 180) diff = 360 - diff;
+                return sum + diff * diff;
+              }, 0) / history.length
+              : 100;
+
+            if (variance < 25) accuracy = "high";
+            else if (variance < 100) accuracy = "medium";
+            else accuracy = "low";
           }
-
-          const variance = history.length >= 3
-            ? history.reduce((sum, h) => {
-              let diff = Math.abs(h - smoothedHeading);
-              if (diff > 180) diff = 360 - diff;
-              return sum + diff * diff;
-            }, 0) / history.length
-            : 100;
-
-          let accuracy: "low" | "medium" | "high" = "low";
-          if (variance < 25) accuracy = "high";
-          else if (variance < 100) accuracy = "medium";
 
           // Apply magnetic declination to get true north
           let trueHeading = smoothedHeading;
@@ -218,13 +264,13 @@ export function useCompass() {
 
           const roundedHeading = Math.round(trueHeading);
 
-          // Dead zone: only update if change is >= 2 degrees to prevent jitter
+          // Dead zone: Skip updates smaller than 2 degrees to prevent jitter
+          const deadZone = 2;
           setState((prev) => {
             let headingDiff = Math.abs(prev.heading - roundedHeading);
             if (headingDiff > 180) headingDiff = 360 - headingDiff;
 
-            // Skip update if change is less than 2 degrees (reduces jitter)
-            if (headingDiff < 2) {
+            if (headingDiff < deadZone) {
               return prev;
             }
 
@@ -235,7 +281,7 @@ export function useCompass() {
               declination: magneticDeclination,
             };
           });
-        }, 32);
+        }, Platform.OS === 'android' ? 16 : 32); // Android: faster update interval
       } catch (error) {
         setState((prev) => ({
           ...prev,

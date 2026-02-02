@@ -30,6 +30,8 @@ import NotificationSettingsScreen from "@/screens/NotificationSettingsScreen";
 import WordByWordSettingsScreen from "@/screens/WordByWordSettingsScreen";
 import { ReciterSelectionScreen } from "@/screens/ReciterSelectionScreen";
 import LocationSettingsScreen from "@/screens/LocationSettingsScreen";
+import OnboardingScreen from "@/screens/OnboardingScreen";
+import { useOnboarding } from "@/hooks/useOnboarding";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 import type { AzkarCategory } from "@/data/azkar";
 import type { IslamicGuide } from "@/data/islamicGuides";
@@ -37,6 +39,7 @@ import type { TaraweehEntry } from "@/types/ramadan";
 import type { Mosque } from "@/types/mosque";
 
 export type RootStackParamList = {
+  Onboarding: undefined;
   Main: undefined;
   AzkarDetail: { category: AzkarCategory };
   IslamicGuideDetail: { guide: IslamicGuide };
@@ -73,9 +76,24 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function RootStackNavigator() {
   const screenOptions = useScreenOptions({ transparent: false });
+  const { isLoading, hasCompletedOnboarding, completeOnboarding } = useOnboarding();
+
+  // Don't render until we know onboarding status
+  if (isLoading) {
+    return null;
+  }
 
   return (
-    <Stack.Navigator screenOptions={screenOptions}>
+    <Stack.Navigator
+      screenOptions={screenOptions}
+      initialRouteName={hasCompletedOnboarding ? 'Main' : 'Onboarding'}
+    >
+      <Stack.Screen
+        name="Onboarding"
+        options={{ headerShown: false, gestureEnabled: false }}
+      >
+        {() => <OnboardingScreen onComplete={completeOnboarding} />}
+      </Stack.Screen>
       <Stack.Screen
         name="Main"
         component={MainTabNavigator}
