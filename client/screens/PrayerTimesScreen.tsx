@@ -437,6 +437,7 @@ export default function PrayerTimesScreen() {
               opacity: isDark ? 0.6 : 0.85,
             }}
             resizeMode="cover"
+            fadeDuration={0}
           >
             {/* Overlay for better text readability */}
             <View style={[styles.prayerCardOverlay, { backgroundColor: isDark ? 'rgba(0,0,0,0.4)' : 'rgba(0,0,0,0.25)' }]} />

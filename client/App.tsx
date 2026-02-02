@@ -5,6 +5,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import * as Font from "expo-font";
+import { Asset } from "expo-asset";
 import * as SplashScreen from "expo-splash-screen";
 import * as Notifications from "expo-notifications";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
@@ -126,8 +127,8 @@ export default function App() {
           syncWidgetDataOnLaunch();
         }
 
-        // Pre-fetch prayer card backgrounds in parallel for instant rendering
-        // This prevents the "pop-in" effect when navigating to prayer section
+        // Pre-load prayer card backgrounds for instant rendering
+        // Using Asset.loadAsync ensures images are decoded before navigation
         const prayerBackgrounds = [
           require('../assets/images/mosque-silhouette.png'),
           require('../assets/images/fajr-mosque.jpg'),
@@ -136,12 +137,8 @@ export default function App() {
           require('../assets/images/maghrib-mosque.jpg'),
           require('../assets/images/isha-mosque.jpg'),
         ];
-        Promise.all(
-          prayerBackgrounds.map(img => {
-            const resolved = Image.resolveAssetSource(img);
-            return Image.prefetch(resolved.uri).catch(() => { });
-          })
-        ).then(() => console.log('[App] Prayer backgrounds prefetched'));
+        await Asset.loadAsync(prayerBackgrounds);
+        console.log('[App] Prayer backgrounds loaded');
 
         // Pre-fetch word timing data for default reciter in background
         // This ensures word-by-word highlighting is ready when user plays audio
