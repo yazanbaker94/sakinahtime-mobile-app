@@ -9,6 +9,7 @@ import { useLocation } from '@/contexts/LocationContext';
 import { usePrayerTimes, useCalculationMethod, formatTime } from '@/hooks/usePrayerTimes';
 import { Feather } from '@expo/vector-icons';
 import { Spacing, BorderRadius } from '@/constants/theme';
+import { useTranslation } from '@/hooks/useTranslation';
 
 const PRAYERS = [
     { key: 'Fajr', nameEn: 'Fajr', nameAr: 'الفجر', icon: 'sunrise' },
@@ -19,8 +20,9 @@ const PRAYERS = [
     { key: 'Isha', nameEn: 'Isha', nameAr: 'العشاء', icon: 'moon' },
 ] as const;
 
-const WEEKDAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+// Moved to component body to use translations
+const WEEKDAYS_EN = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+const MONTHS_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 const screenWidth = Dimensions.get('window').width;
 const CALENDAR_PADDING = Spacing.lg * 2 + Spacing.sm * 2;
@@ -30,6 +32,9 @@ export default function PrayerCalendarScreen() {
     const insets = useSafeAreaInsets();
     const navigation = useNavigation();
     const { theme, isDark } = useTheme();
+    const { t, locale } = useTranslation();
+    const MONTHS = locale === 'ar' ? ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'] : MONTHS_EN;
+    const WEEKDAYS = locale === 'ar' ? ['أ', 'إ', 'ث', 'أ', 'خ', 'ج', 'س'] : WEEKDAYS_EN;
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [viewMonth, setViewMonth] = useState(new Date());
     const [showMonthYearPicker, setShowMonthYearPicker] = useState(false);
@@ -127,12 +132,12 @@ export default function PrayerCalendarScreen() {
                     <Feather name="arrow-left" size={24} color={theme.text} />
                 </Pressable>
                 <View style={styles.headerContent}>
-                    <ThemedText type="h3" style={{ fontWeight: '700' }}>Prayer Calendar</ThemedText>
-                    <ThemedText type="caption" secondary>{city || 'Loading...'}</ThemedText>
+                    <ThemedText type="h3" style={{ fontWeight: '700' }}>{t('prayerCalendar.title')}</ThemedText>
+                    <ThemedText type="caption" secondary>{city || t('common.loading')}</ThemedText>
                 </View>
                 {!isToday && (
                     <Pressable onPress={goToToday} style={[styles.todayButton, { backgroundColor: theme.primary }]}>
-                        <ThemedText type="caption" style={{ color: '#fff', fontWeight: '600' }}>Today</ThemedText>
+                        <ThemedText type="caption" style={{ color: '#fff', fontWeight: '600' }}>{t('prayerCalendar.today')}</ThemedText>
                     </Pressable>
                 )}
             </View>
@@ -211,7 +216,7 @@ export default function PrayerCalendarScreen() {
                 <View style={[styles.dateRow, { backgroundColor: isDark ? theme.cardBackground : theme.backgroundSecondary }]}>
                     <View>
                         <ThemedText type="body" style={{ fontWeight: '600' }}>
-                            {isToday ? 'Today' : selectedDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                            {isToday ? t('prayerCalendar.today') : selectedDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
                         </ThemedText>
                         {prayerData?.date?.hijri && (
                             <ThemedText type="caption" secondary>
@@ -231,7 +236,7 @@ export default function PrayerCalendarScreen() {
                 {/* Error */}
                 {prayerError && !prayerLoading && (
                     <View style={styles.errorContainer}>
-                        <ThemedText type="caption" secondary>Unable to load prayer times</ThemedText>
+                        <ThemedText type="caption" secondary>{t('prayerCalendar.unableToLoad')}</ThemedText>
                     </View>
                 )}
 
@@ -247,7 +252,7 @@ export default function PrayerCalendarScreen() {
                                     <View style={styles.prayerInfo}>
                                         <Feather name={prayer.icon as any} size={16} color={theme.primary} />
                                         <ThemedText type="body" style={{ marginLeft: 8, fontWeight: '500' }}>
-                                            {prayer.nameEn}
+                                            {t(`prayer.${prayer.key.toLowerCase()}`)}
                                         </ThemedText>
                                     </View>
                                     <ThemedText type="body" style={{ fontWeight: '700', color: theme.primary }}>
@@ -270,14 +275,14 @@ export default function PrayerCalendarScreen() {
                 <Pressable style={styles.modalOverlay} onPress={() => setShowMonthYearPicker(false)}>
                     <Pressable style={[styles.pickerContainer, { backgroundColor: isDark ? theme.cardBackground : '#fff' }]}>
                         <View style={styles.pickerHeader}>
-                            <ThemedText type="body" style={{ fontWeight: '700' }}>Select Month & Year</ThemedText>
+                            <ThemedText type="body" style={{ fontWeight: '700' }}>{t('prayerCalendar.selectMonthYear')}</ThemedText>
                             <Pressable onPress={() => setShowMonthYearPicker(false)}>
                                 <Feather name="x" size={22} color={theme.text} />
                             </Pressable>
                         </View>
 
                         {/* Year Selector */}
-                        <ThemedText type="caption" secondary style={{ marginBottom: 6, marginTop: 12 }}>Year</ThemedText>
+                        <ThemedText type="caption" secondary style={{ marginBottom: 6, marginTop: 12 }}>{t('prayerCalendar.year')}</ThemedText>
                         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.yearScrollContent}>
                             {years.map((year) => (
                                 <Pressable
@@ -296,7 +301,7 @@ export default function PrayerCalendarScreen() {
                         </ScrollView>
 
                         {/* Month Grid */}
-                        <ThemedText type="caption" secondary style={{ marginBottom: 6, marginTop: 14 }}>Month</ThemedText>
+                        <ThemedText type="caption" secondary style={{ marginBottom: 6, marginTop: 14 }}>{t('prayerCalendar.month')}</ThemedText>
                         <View style={styles.monthGrid}>
                             {MONTHS.map((month, index) => (
                                 <Pressable
@@ -316,7 +321,7 @@ export default function PrayerCalendarScreen() {
                     </Pressable>
                 </Pressable>
             </Modal>
-        </ThemedView>
+        </ThemedView >
     );
 }
 

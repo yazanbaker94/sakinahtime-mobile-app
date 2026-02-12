@@ -9,6 +9,7 @@ import { View, StyleSheet, Pressable } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
+import { useTranslation } from '@/hooks/useTranslation';
 import { Spacing, BorderRadius } from '@/constants/theme';
 import { StorageInfo, StorageCategory } from '../types/offline';
 import { formatBytes } from '../constants/offline';
@@ -28,32 +29,33 @@ interface CategoryItem {
 
 export function StorageBreakdown({ storageInfo, onCategoryPress }: StorageBreakdownProps) {
   const { isDark, theme } = useTheme();
+  const { t } = useTranslation();
 
   const categories: CategoryItem[] = [
     {
       key: 'audio',
-      label: 'Quran Audio',
+      label: t('storageBreakdown.quranAudio'),
       icon: 'headphones',
       size: storageInfo.audioSize,
       color: isDark ? '#60A5FA' : '#3B82F6',
     },
     {
       key: 'tafsir',
-      label: 'Tafsir',
+      label: t('storageBreakdown.tafsir'),
       icon: 'book-open',
       size: storageInfo.tafsirSize,
       color: isDark ? '#A78BFA' : '#8B5CF6',
     },
     {
       key: 'prayer',
-      label: 'Prayer Times',
+      label: t('storageBreakdown.prayerTimes'),
       icon: 'clock',
       size: storageInfo.prayerCacheSize,
       color: theme.primary,
     },
     {
       key: 'cache',
-      label: 'Other Cache',
+      label: t('storageBreakdown.otherCache'),
       icon: 'archive',
       size: storageInfo.otherCacheSize,
       color: isDark ? '#9CA3AF' : '#6B7280',
@@ -65,14 +67,14 @@ export function StorageBreakdown({ storageInfo, onCategoryPress }: StorageBreakd
   return (
     <View style={[
       styles.container,
-      { 
+      {
         backgroundColor: isDark ? `${theme.primary}33` : theme.backgroundDefault,
         elevation: isDark ? 0 : 3,
         shadowOpacity: isDark ? 0 : 0.08,
       }
     ]}>
       <ThemedText type="body" style={styles.title}>
-        Storage Breakdown
+        {t('storageBreakdown.title')}
       </ThemedText>
 
       {categories.map((category) => {
@@ -107,23 +109,23 @@ export function StorageBreakdown({ storageInfo, onCategoryPress }: StorageBreakd
                 styles.bar,
                 { backgroundColor: isDark ? 'rgba(255, 255, 255, 0.1)' : '#E5E7EB' }
               ]}>
-                <View 
+                <View
                   style={[
                     styles.barFill,
-                    { 
+                    {
                       width: `${barWidth}%`,
                       backgroundColor: category.color,
                     }
-                  ]} 
+                  ]}
                 />
               </View>
             </View>
 
             {onCategoryPress && (
-              <Feather 
-                name="chevron-right" 
-                size={16} 
-                color={theme.textSecondary} 
+              <Feather
+                name="chevron-right"
+                size={16}
+                color={theme.textSecondary}
               />
             )}
           </Pressable>

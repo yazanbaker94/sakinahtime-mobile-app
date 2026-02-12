@@ -61,6 +61,7 @@ import type { MemorizationStatus } from "@/types/hifz";
 // Coach Marks
 import { CoachMark } from "@/components/CoachMark";
 import { useFeatureHint } from "@/hooks/useFeatureHint";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -91,6 +92,7 @@ export default function MushafScreen() {
 // Inner component that can use Hifz hooks
 function MushafScreenContent() {
   const { theme, isDark } = useTheme();
+  const { t, locale } = useTranslation();
   useKeepAwake(); // Keep screen on while reading Quran
   const insets = useSafeAreaInsets();
   const route = useRoute<RouteProp<MainTabParamList, 'QuranTab'>>();
@@ -677,34 +679,34 @@ function MushafScreenContent() {
   ];
 
   const reciters = [
-    { value: 'Alafasy_128kbps', label: 'Mishary Alafasy' },
-    { value: 'Abdul_Basit_Murattal_192kbps', label: 'Abdul Basit' },
-    { value: 'Abdullah_Basfar_192kbps', label: 'Abdullah Basfar' },
-    { value: 'Abdurrahmaan_As-Sudais_192kbps', label: 'Abdurrahman As-Sudais' },
-    { value: 'Abu_Bakr_Ash-Shaatree_128kbps', label: 'Abu Bakr Ash-Shatri' },
-    { value: 'Ahmed_Neana_128kbps', label: 'Ahmed Neana' },
-    { value: 'Ahmed_ibn_Ali_al-Ajamy_128kbps_ketaballah.net', label: 'Ahmed Al-Ajamy' },
-    { value: 'Akram_AlAlaqimy_128kbps', label: 'Akram AlAlaqimy' },
-    { value: 'Ali_Jaber_64kbps', label: 'Ali Jaber' },
-    { value: 'Ayman_Sowaid_64kbps', label: 'Ayman Sowaid' },
-    { value: 'Fares_Abbad_64kbps', label: 'Fares Abbad' },
-    { value: 'Ghamadi_40kbps', label: 'Saad Al-Ghamadi' },
-    { value: 'Hani_Rifai_192kbps', label: 'Hani Rifai' },
-    { value: 'Hudhaify_128kbps', label: 'Ali Hudhaify' },
-    { value: 'Husary_128kbps', label: 'Mahmoud Al-Hussary' },
-    { value: 'Ibrahim_Akhdar_32kbps', label: 'Ibrahim Akhdar' },
-    { value: 'Khaalid_Abdullaah_al-Qahtaanee_192kbps', label: 'Khalid Al-Qahtani' },
-    { value: 'MaherAlMuaiqly128kbps', label: 'Maher Al-Muaiqly' },
-    { value: 'Minshawy_Murattal_128kbps', label: 'Mohamed Al-Minshawi' },
-    { value: 'Mohammad_al_Tablaway_128kbps', label: 'Mohammad Al-Tablaway' },
-    { value: 'Muhammad_Ayyoub_128kbps', label: 'Muhammad Ayyub' },
-    { value: 'Muhammad_Jibreel_128kbps', label: 'Muhammad Jibreel' },
-    { value: 'Muhsin_Al_Qasim_192kbps', label: 'Muhsin Al-Qasim' },
-    { value: 'Nasser_Alqatami_128kbps', label: 'Nasser Al-Qatami' },
-    { value: 'Salaah_AbdulRahman_Bukhatir_128kbps', label: 'Salah Bukhatir' },
-    { value: 'Salah_Al_Budair_128kbps', label: 'Salah Al-Budair' },
-    { value: 'Saood_ash-Shuraym_128kbps', label: 'Saud Ash-Shuraim' },
-    { value: 'warsh/warsh_yassin_al_jazaery_64kbps', label: 'Yassin Al-Jazaery (Warsh)' },
+    { value: 'Alafasy_128kbps', label: 'Mishary Alafasy', labelAr: 'مشاري العفاسي' },
+    { value: 'Abdul_Basit_Murattal_192kbps', label: 'Abdul Basit', labelAr: 'عبد الباسط عبد الصمد' },
+    { value: 'Abdullah_Basfar_192kbps', label: 'Abdullah Basfar', labelAr: 'عبدالله بصفر' },
+    { value: 'Abdurrahmaan_As-Sudais_192kbps', label: 'Abdurrahman As-Sudais', labelAr: 'عبدالرحمن السديس' },
+    { value: 'Abu_Bakr_Ash-Shaatree_128kbps', label: 'Abu Bakr Ash-Shatri', labelAr: 'أبو بكر الشاطري' },
+    { value: 'Ahmed_Neana_128kbps', label: 'Ahmed Neana', labelAr: 'أحمد نعينع' },
+    { value: 'Ahmed_ibn_Ali_al-Ajamy_128kbps_ketaballah.net', label: 'Ahmed Al-Ajamy', labelAr: 'أحمد العجمي' },
+    { value: 'Akram_AlAlaqimy_128kbps', label: 'Akram AlAlaqimy', labelAr: 'أكرم العلاقمي' },
+    { value: 'Ali_Jaber_64kbps', label: 'Ali Jaber', labelAr: 'علي جابر' },
+    { value: 'Ayman_Sowaid_64kbps', label: 'Ayman Sowaid', labelAr: 'أيمن سويد' },
+    { value: 'Fares_Abbad_64kbps', label: 'Fares Abbad', labelAr: 'فارس عبّاد' },
+    { value: 'Ghamadi_40kbps', label: 'Saad Al-Ghamadi', labelAr: 'سعد الغامدي' },
+    { value: 'Hani_Rifai_192kbps', label: 'Hani Rifai', labelAr: 'هاني الرفاعي' },
+    { value: 'Hudhaify_128kbps', label: 'Ali Hudhaify', labelAr: 'علي الحذيفي' },
+    { value: 'Husary_128kbps', label: 'Mahmoud Al-Hussary', labelAr: 'محمود الحصري' },
+    { value: 'Ibrahim_Akhdar_32kbps', label: 'Ibrahim Akhdar', labelAr: 'إبراهيم الأخضر' },
+    { value: 'Khaalid_Abdullaah_al-Qahtaanee_192kbps', label: 'Khalid Al-Qahtani', labelAr: 'خالد القحطاني' },
+    { value: 'MaherAlMuaiqly128kbps', label: 'Maher Al-Muaiqly', labelAr: 'ماهر المعيقلي' },
+    { value: 'Minshawy_Murattal_128kbps', label: 'Mohamed Al-Minshawi', labelAr: 'محمد المنشاوي' },
+    { value: 'Mohammad_al_Tablaway_128kbps', label: 'Mohammad Al-Tablaway', labelAr: 'محمد الطبلاوي' },
+    { value: 'Muhammad_Ayyoub_128kbps', label: 'Muhammad Ayyub', labelAr: 'محمد أيوب' },
+    { value: 'Muhammad_Jibreel_128kbps', label: 'Muhammad Jibreel', labelAr: 'محمد جبريل' },
+    { value: 'Muhsin_Al_Qasim_192kbps', label: 'Muhsin Al-Qasim', labelAr: 'محسن القاسم' },
+    { value: 'Nasser_Alqatami_128kbps', label: 'Nasser Al-Qatami', labelAr: 'ناصر القطامي' },
+    { value: 'Salaah_AbdulRahman_Bukhatir_128kbps', label: 'Salah Bukhatir', labelAr: 'صلاح بوخاطر' },
+    { value: 'Salah_Al_Budair_128kbps', label: 'Salah Al-Budair', labelAr: 'صالح البدير' },
+    { value: 'Saood_ash-Shuraym_128kbps', label: 'Saud Ash-Shuraim', labelAr: 'سعود الشريم' },
+    { value: 'warsh/warsh_yassin_al_jazaery_64kbps', label: 'Yassin Al-Jazaery (Warsh)', labelAr: 'ياسين الجزائري (ورش)' },
   ];
 
   const handleReciterChange = (reciter: string) => {
@@ -1074,8 +1076,9 @@ function MushafScreenContent() {
     try {
       await AsyncStorage.setItem('@notes', JSON.stringify(newNotes));
       await AsyncStorage.setItem('@noteTimestamps', JSON.stringify(newTimestamps));
+      console.log('📝 [SAVE NOTE] ✅ Persisted to AsyncStorage successfully');
     } catch (e) {
-      console.error('Failed to save note:', e);
+      console.error('📝 [SAVE NOTE] ❌ Failed to save note:', e);
     }
   };
 
@@ -1706,7 +1709,7 @@ function MushafScreenContent() {
             <ThemedText type="body" style={{ fontWeight: '600', fontSize: 16, letterSpacing: -0.3 }}>{item.nameEn}</ThemedText>
             <View style={styles.versesBadge}>
               <View style={[styles.verseDot, { backgroundColor: theme.primary }]} />
-              <ThemedText type="caption" style={{ fontSize: 12, opacity: 0.6, marginLeft: 4 }}>{item.versesCount} verses</ThemedText>
+              <ThemedText type="caption" style={{ fontSize: 12, opacity: 0.6, marginLeft: 4 }}>{item.versesCount} {t('mushaf.verses')}</ThemedText>
             </View>
           </View>
         </View>
@@ -1755,7 +1758,7 @@ function MushafScreenContent() {
     const isNewJuz = index === 0 || item.juz !== juzData[index - 1]?.juz;
     const isNewHizb = isNewJuz || item.hizb !== juzData[index - 1]?.hizb;
     const quarterLabel = ['¼', '½', '¾', '1'][item.quarter - 1];
-    const hizbLabel = `Hizb ${(item.juz - 1) * 2 + item.hizb}`;
+    const hizbLabel = `${t('mushaf.hizbLabel')} ${(item.juz - 1) * 2 + item.hizb}`;
 
     return (
       <View>
@@ -1764,7 +1767,7 @@ function MushafScreenContent() {
             <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: `${theme.primary}15`, alignItems: 'center', justifyContent: 'center' }}>
               <ThemedText type="small" style={{ fontWeight: '700', fontSize: 13, color: theme.primary }}>{item.juz}</ThemedText>
             </View>
-            <ThemedText type="body" style={{ fontSize: 14, fontWeight: '600', opacity: 0.7 }}>Juz {item.juz}</ThemedText>
+            <ThemedText type="body" style={{ fontSize: 14, fontWeight: '600', opacity: 0.7 }}>{t('mushaf.juzLabel')} {item.juz}</ThemedText>
           </View>
         )}
         {isNewHizb && (
@@ -1820,7 +1823,7 @@ function MushafScreenContent() {
                 <Feather name="arrow-left" size={24} color={theme.text} />
               </Pressable>
               <View style={{ flex: 1, alignItems: 'center', marginRight: 32 }}>
-                <ThemedText type="h3" style={{ fontWeight: '700', letterSpacing: -1, fontSize: 22 }}>Notes</ThemedText>
+                <ThemedText type="h3" style={{ fontWeight: '700', letterSpacing: -1, fontSize: 22 }}>{t('mushaf.notes')}</ThemedText>
               </View>
             </View>
           </View>
@@ -1828,8 +1831,8 @@ function MushafScreenContent() {
         {Object.keys(highlights).length === 0 && Object.keys(notes).length === 0 ? (
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: Spacing.xl }}>
             <Feather name="edit-3" size={48} color={theme.textSecondary} style={{ opacity: 0.3, marginBottom: Spacing.md }} />
-            <ThemedText type="body" style={{ opacity: 0.5, textAlign: 'center' }}>No notes yet</ThemedText>
-            <ThemedText type="caption" style={{ opacity: 0.4, textAlign: 'center', marginTop: Spacing.xs }}>Tap any verse to add a note</ThemedText>
+            <ThemedText type="body" style={{ opacity: 0.5, textAlign: 'center' }}>{t('mushaf.noNotesYet')}</ThemedText>
+            <ThemedText type="caption" style={{ opacity: 0.4, textAlign: 'center', marginTop: Spacing.xs }}>{t('mushaf.tapToAddNote')}</ThemedText>
           </View>
         ) : (
           <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
@@ -1849,7 +1852,7 @@ function MushafScreenContent() {
                     <Feather name="file-text" size={16} color={theme.gold} />
                   </View>
                   <ThemedText type="body" style={{ fontWeight: '700', fontSize: 15, letterSpacing: 0.5, opacity: 0.9 }}>
-                    NOTES ({Object.keys(notes).length})
+                    {t('mushaf.notesSection')} ({Object.keys(notes).length})
                   </ThemedText>
                 </View>
                 {Object.keys(notes).map((verseKey) => {
@@ -1865,10 +1868,10 @@ function MushafScreenContent() {
                     const mins = Math.floor(diff / 60000);
                     const hrs = Math.floor(diff / 3600000);
                     const days = Math.floor(diff / 86400000);
-                    if (days > 0) return `${days}d ago`;
-                    if (hrs > 0) return `${hrs}h ago`;
-                    if (mins > 0) return `${mins}m ago`;
-                    return 'Just now';
+                    if (days > 0) return `${days}${t('mushaf.daysAgo', { count: days }).replace(`${days}`, '')}`;
+                    if (hrs > 0) return `${hrs}${t('mushaf.hoursAgo', { count: hrs }).replace(`${hrs}`, '')}`;
+                    if (mins > 0) return `${mins}${t('mushaf.minutesAgo', { count: mins }).replace(`${mins}`, '')}`;
+                    return t('mushaf.justNow');
                   })() : '';
 
                   const renderRightActions = (progress: RNAnimated.AnimatedInterpolation<number>, dragX: RNAnimated.AnimatedInterpolation<number>) => {
@@ -1889,7 +1892,7 @@ function MushafScreenContent() {
                           style={{ width: 80, backgroundColor: '#FF4444', justifyContent: 'center', alignItems: 'center', marginHorizontal: Spacing.lg, borderRadius: 12 }}
                         >
                           <Feather name="trash-2" size={20} color="#FFF" />
-                          <ThemedText type="caption" style={{ color: '#FFF', fontSize: 11, marginTop: 4 }}>Delete</ThemedText>
+                          <ThemedText type="caption" style={{ color: '#FFF', fontSize: 11, marginTop: 4 }}>{t('mushaf.delete')}</ThemedText>
                         </Pressable>
                       </RNAnimated.View>
                     );
@@ -1972,7 +1975,7 @@ function MushafScreenContent() {
                     <Feather name="edit-3" size={16} color={theme.primary} />
                   </View>
                   <ThemedText type="body" style={{ fontWeight: '700', fontSize: 15, letterSpacing: 0.5, opacity: 0.9 }}>
-                    HIGHLIGHTS ({Object.keys(highlights).filter(key => !notes[key]).length})
+                    {t('mushaf.highlightsSection')} ({Object.keys(highlights).filter(key => !notes[key]).length})
                   </ThemedText>
                 </View>
                 {Object.keys(highlights).filter(key => !notes[key]).map((verseKey) => {
@@ -1989,10 +1992,10 @@ function MushafScreenContent() {
                     const mins = Math.floor(diff / 60000);
                     const hrs = Math.floor(diff / 3600000);
                     const days = Math.floor(diff / 86400000);
-                    if (days > 0) return `${days}d ago`;
-                    if (hrs > 0) return `${hrs}h ago`;
-                    if (mins > 0) return `${mins}m ago`;
-                    return 'Just now';
+                    if (days > 0) return t('mushaf.daysAgo', { count: days });
+                    if (hrs > 0) return t('mushaf.hoursAgo', { count: hrs });
+                    if (mins > 0) return t('mushaf.minutesAgo', { count: mins });
+                    return t('mushaf.justNow');
                   })() : '';
 
                   const renderRightActions = (progress: RNAnimated.AnimatedInterpolation<number>, dragX: RNAnimated.AnimatedInterpolation<number>) => {
@@ -2008,7 +2011,7 @@ function MushafScreenContent() {
                           style={{ width: 80, backgroundColor: '#FF4444', justifyContent: 'center', alignItems: 'center', marginHorizontal: Spacing.lg, borderRadius: 12 }}
                         >
                           <Feather name="trash-2" size={20} color="#FFF" />
-                          <ThemedText type="caption" style={{ color: '#FFF', fontSize: 11, marginTop: 4 }}>Delete</ThemedText>
+                          <ThemedText type="caption" style={{ color: '#FFF', fontSize: 11, marginTop: 4 }}>{t('mushaf.delete')}</ThemedText>
                         </Pressable>
                       </RNAnimated.View>
                     );
@@ -2088,7 +2091,7 @@ function MushafScreenContent() {
                 <Feather name="arrow-left" size={24} color={theme.text} />
               </Pressable>
               <View style={{ flex: 1, alignItems: 'center', marginRight: 32 }}>
-                <ThemedText type="h3" style={{ fontWeight: '700', letterSpacing: -1, fontSize: 22 }}>Bookmarks</ThemedText>
+                <ThemedText type="h3" style={{ fontWeight: '700', letterSpacing: -1, fontSize: 22 }}>{t('mushaf.bookmarks')}</ThemedText>
               </View>
             </View>
           </View>
@@ -2096,8 +2099,8 @@ function MushafScreenContent() {
         {bookmarks.length === 0 ? (
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: Spacing.xl }}>
             <Feather name="bookmark" size={48} color={theme.textSecondary} style={{ opacity: 0.3, marginBottom: Spacing.md }} />
-            <ThemedText type="body" style={{ opacity: 0.5, textAlign: 'center' }}>No bookmarks yet</ThemedText>
-            <ThemedText type="caption" style={{ opacity: 0.4, textAlign: 'center', marginTop: Spacing.xs }}>Tap any verse to bookmark it</ThemedText>
+            <ThemedText type="body" style={{ opacity: 0.5, textAlign: 'center' }}>{t('mushaf.noBookmarksYet')}</ThemedText>
+            <ThemedText type="caption" style={{ opacity: 0.4, textAlign: 'center', marginTop: Spacing.xs }}>{t('mushaf.tapToBookmark')}</ThemedText>
           </View>
         ) : (
           <FlatList
@@ -2124,7 +2127,7 @@ function MushafScreenContent() {
                       style={{ width: 80, backgroundColor: '#FF4444', justifyContent: 'center', alignItems: 'center', marginHorizontal: Spacing.lg, borderRadius: 12 }}
                     >
                       <Feather name="trash-2" size={20} color="#FFF" />
-                      <ThemedText type="caption" style={{ color: '#FFF', fontSize: 11, marginTop: 4 }}>Delete</ThemedText>
+                      <ThemedText type="caption" style={{ color: '#FFF', fontSize: 11, marginTop: 4 }}>{t('mushaf.delete')}</ThemedText>
                     </Pressable>
                   </RNAnimated.View>
                 );
@@ -2214,8 +2217,8 @@ function MushafScreenContent() {
         <View style={styles.headerContent}>
           <View style={styles.headerTop}>
             <View>
-              <ThemedText type="h3" style={{ fontWeight: '700', letterSpacing: -1, fontSize: 28 }}>Quran</ThemedText>
-              <ThemedText type="caption" style={{ opacity: 0.5, marginTop: 2, fontSize: 13 }}>{navigationMode === 'surah' ? '114 Surahs' : navigationMode === 'juz' ? '30 Juz' : `${recentPages.length} Recent`}</ThemedText>
+              <ThemedText type="h3" style={{ fontWeight: '700', letterSpacing: -1, fontSize: 28 }}>{t('mushaf.quran')}</ThemedText>
+              <ThemedText type="caption" style={{ opacity: 0.5, marginTop: 2, fontSize: 13 }}>{navigationMode === 'surah' ? t('mushaf.surahs114') : navigationMode === 'juz' ? t('mushaf.juz30') : `${recentPages.length} ${t('mushaf.recentCount')}`}</ThemedText>
             </View>
             <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
               <Pressable
@@ -2266,7 +2269,7 @@ function MushafScreenContent() {
                 opacity: pressed ? 0.7 : 1,
               }]}
             >
-              <ThemedText type="body" style={{ fontWeight: navigationMode === 'surah' ? '600' : '500', color: navigationMode === 'surah' ? '#FFF' : (isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)'), fontSize: 14 }}>Surah</ThemedText>
+              <ThemedText type="body" style={{ fontWeight: navigationMode === 'surah' ? '600' : '500', color: navigationMode === 'surah' ? '#FFF' : (isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)'), fontSize: 14 }}>{t('mushaf.surahTab')}</ThemedText>
             </Pressable>
             <Pressable
               onPress={() => setNavigationMode('juz')}
@@ -2279,7 +2282,7 @@ function MushafScreenContent() {
                 opacity: pressed ? 0.7 : 1,
               }]}
             >
-              <ThemedText type="body" style={{ fontWeight: navigationMode === 'juz' ? '600' : '500', color: navigationMode === 'juz' ? '#FFF' : (isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)'), fontSize: 14 }}>Juz</ThemedText>
+              <ThemedText type="body" style={{ fontWeight: navigationMode === 'juz' ? '600' : '500', color: navigationMode === 'juz' ? '#FFF' : (isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)'), fontSize: 14 }}>{t('mushaf.juzTab')}</ThemedText>
             </Pressable>
             <Pressable
               onPress={() => setNavigationMode('recent')}
@@ -2292,7 +2295,7 @@ function MushafScreenContent() {
                 opacity: pressed ? 0.7 : 1,
               }]}
             >
-              <ThemedText type="body" style={{ fontWeight: navigationMode === 'recent' ? '600' : '500', color: navigationMode === 'recent' ? '#FFF' : (isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)'), fontSize: 14 }}>Recent</ThemedText>
+              <ThemedText type="body" style={{ fontWeight: navigationMode === 'recent' ? '600' : '500', color: navigationMode === 'recent' ? '#FFF' : (isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)'), fontSize: 14 }}>{t('mushaf.recentTab')}</ThemedText>
             </Pressable>
           </View>
 
@@ -2312,7 +2315,7 @@ function MushafScreenContent() {
                   ref={searchInputRef}
                   value={searchQuery}
                   onChangeText={setSearchQuery}
-                  placeholder="Search..."
+                  placeholder={t('mushaf.searchPlaceholder')}
                   placeholderTextColor={theme.textSecondary}
                   autoFocus={true}
                   style={{
@@ -2367,7 +2370,7 @@ function MushafScreenContent() {
                       color: includeTafsirInSearch ? theme.primary : theme.text
                     }}
                   >
-                    Include Tafsir/Translation in search
+                    {t('mushaf.includeTafsir')}
                   </ThemedText>
                 </View>
                 <View style={{
@@ -2407,14 +2410,14 @@ function MushafScreenContent() {
                     <Feather name="search" size={16} color={theme.primary} style={{ marginRight: 8 }} />
                   )}
                   <ThemedText type="body" style={{ fontWeight: '600', fontSize: 13, opacity: 0.6 }}>
-                    {isSearching ? 'SEARCHING...' : `${searchResults.length} RESULTS`}
+                    {isSearching ? t('mushaf.searching') : `${searchResults.length} ${t('mushaf.resultsCount')}`}
                   </ThemedText>
                 </View>
                 {searchResults.length === 0 && !isSearching ? (
                   <View style={{ alignItems: 'center', paddingVertical: 40 }}>
                     <Feather name="search" size={48} color={theme.textSecondary} style={{ opacity: 0.3, marginBottom: 16 }} />
-                    <ThemedText type="body" style={{ opacity: 0.5 }}>No results found</ThemedText>
-                    <ThemedText type="caption" style={{ opacity: 0.4, marginTop: 4 }}>Try different keywords</ThemedText>
+                    <ThemedText type="body" style={{ opacity: 0.5 }}>{t('mushaf.noResults')}</ThemedText>
+                    <ThemedText type="caption" style={{ opacity: 0.4, marginTop: 4 }}>{t('mushaf.tryDifferent')}</ThemedText>
                   </View>
                 ) : (
                   searchResults.map((result, index) => {
@@ -2598,15 +2601,15 @@ function MushafScreenContent() {
                   <View style={{ alignItems: 'center', paddingVertical: 40 }}>
                     <Feather name="clock" size={48} color={theme.textSecondary} style={{ marginBottom: 16 }} />
                     <ThemedText type="body" style={{ color: theme.textSecondary, textAlign: 'center' }}>
-                      No recent pages yet
+                      {t('mushaf.noRecentPages')}
                     </ThemedText>
                     <ThemedText type="caption" style={{ color: theme.textSecondary, textAlign: 'center', marginTop: 4 }}>
-                      Pages you visit will appear here
+                      {t('mushaf.pagesYouVisit')}
                     </ThemedText>
                   </View>
                 ) : (
                   <>
-                    <ThemedText type="body" style={{ fontWeight: '600', opacity: 0.6, fontSize: 13, marginBottom: Spacing.md }}>RECENTLY VIEWED</ThemedText>
+                    <ThemedText type="body" style={{ fontWeight: '600', opacity: 0.6, fontSize: 13, marginBottom: Spacing.md }}>{t('mushaf.recentlyViewedLabel')}</ThemedText>
                     {recentPages.map((page, index) => {
                       // Find which surah this page belongs to
                       const pageSurah = Object.entries(surahPages).find(([surahNum, startPage]) => {
@@ -2615,7 +2618,7 @@ function MushafScreenContent() {
                       });
                       const surahNum = pageSurah ? parseInt(pageSurah[0]) : 1;
                       const surah = surahs.find(s => s.number === surahNum);
-                      const timeAgo = index === 0 ? 'Just now' : index < 3 ? 'Recently' : 'Earlier';
+                      const timeAgo = index === 0 ? t('mushaf.justNow') : index < 3 ? t('mushaf.recently') : t('mushaf.earlier');
 
                       return (
                         <Pressable
@@ -2638,13 +2641,13 @@ function MushafScreenContent() {
                               <ThemedText type="body" style={{ fontWeight: '700', fontSize: 12, color: theme.primary }}>{surah?.number || page}</ThemedText>
                             </View>
                             <View>
-                              <ThemedText type="body" style={{ fontWeight: '600', fontSize: 15 }}>{surah?.nameEn || `Page ${page}`}</ThemedText>
+                              <ThemedText type="body" style={{ fontWeight: '600', fontSize: 15 }}>{surah?.nameEn || `${t('mushaf.pageNumber')} ${page}`}</ThemedText>
                               <ThemedText type="arabic" style={{ fontFamily: 'AlMushafQuran', fontSize: 14, opacity: 0.7, marginTop: 2 }}>{surah?.nameAr}</ThemedText>
                             </View>
                           </View>
                           <View style={{ alignItems: 'flex-end' }}>
                             <ThemedText type="caption" style={{ color: theme.textSecondary, fontSize: 11 }}>{timeAgo}</ThemedText>
-                            <ThemedText type="caption" style={{ color: theme.textSecondary, fontSize: 11, marginTop: 2 }}>Page {page}</ThemedText>
+                            <ThemedText type="caption" style={{ color: theme.textSecondary, fontSize: 11, marginTop: 2 }}>{t('mushaf.pageNumber')} {page}</ThemedText>
                           </View>
                         </Pressable>
                       );
@@ -2669,7 +2672,7 @@ function MushafScreenContent() {
             contentContainerStyle={{ paddingHorizontal: Spacing.lg, paddingBottom: tabBarHeight + 60 }}
             showsVerticalScrollIndicator={false}
             ListHeaderComponent={
-              <ThemedText type="body" style={{ fontWeight: '600', opacity: 0.6, fontSize: 13, marginTop: Spacing.sm, marginBottom: Spacing.md }}>ALL SURAHS</ThemedText>
+              <ThemedText type="body" style={{ fontWeight: '600', opacity: 0.6, fontSize: 13, marginTop: Spacing.sm, marginBottom: Spacing.md }}>{t('mushaf.allSurahs')}</ThemedText>
             }
             initialNumToRender={114}
             getItemLayout={(data, index) => ({
@@ -2696,7 +2699,7 @@ function MushafScreenContent() {
               <View style={{ marginTop: Spacing.sm, marginBottom: Spacing.md }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                   <ThemedText type="body" style={{ fontWeight: '600', opacity: 0.6, fontSize: 13 }}>
-                    {juzData.length} {hizbGranularity === 'quarter' ? 'QUARTERS' : hizbGranularity === 'half' ? 'HALVES' : 'JUZ'}
+                    {juzData.length} {hizbGranularity === 'quarter' ? t('mushaf.quartersLabel') : hizbGranularity === 'half' ? t('mushaf.halvesLabel') : t('mushaf.juzLabel')}
                   </ThemedText>
                   <View style={{ flexDirection: 'row', gap: 8 }}>
                     {/* Granularity Dropdown Button */}
@@ -2758,7 +2761,7 @@ function MushafScreenContent() {
                     >
                       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
                         <ThemedText style={{ fontSize: 16, fontWeight: '600' }}>¼</ThemedText>
-                        <ThemedText style={{ fontSize: 13 }}>Quarter Hizb</ThemedText>
+                        <ThemedText style={{ fontSize: 13 }}>{t('mushaf.quarterHizb')}</ThemedText>
                       </View>
                       {hizbGranularity === 'quarter' && <Feather name="check" size={16} color={theme.primary} />}
                     </Pressable>
@@ -2777,7 +2780,7 @@ function MushafScreenContent() {
                     >
                       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
                         <ThemedText style={{ fontSize: 16, fontWeight: '600' }}>½</ThemedText>
-                        <ThemedText style={{ fontSize: 13 }}>Half Hizb</ThemedText>
+                        <ThemedText style={{ fontSize: 13 }}>{t('mushaf.halfHizb')}</ThemedText>
                       </View>
                       {hizbGranularity === 'half' && <Feather name="check" size={16} color={theme.primary} />}
                     </Pressable>
@@ -2795,8 +2798,8 @@ function MushafScreenContent() {
                       }]}
                     >
                       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                        <ThemedText style={{ fontSize: 16, fontWeight: '600' }}>Juz</ThemedText>
-                        <ThemedText style={{ fontSize: 13 }}>Full Juz Only</ThemedText>
+                        <ThemedText style={{ fontSize: 16, fontWeight: '600' }}>{t('mushaf.juz')}</ThemedText>
+                        <ThemedText style={{ fontSize: 13 }}>{t('mushaf.fullJuzOnly')}</ThemedText>
                       </View>
                       {hizbGranularity === 'fullJuz' && <Feather name="check" size={16} color={theme.primary} />}
                     </Pressable>
@@ -2994,15 +2997,12 @@ function MushafScreenContent() {
         />
       </View>
 
-      {/* Footer Zone - Page Number */}
-      <View style={[styles.footerZone, { height: layout.footerZoneHeight }]}>
+      {/* Footer Zone - Page Number (absolute overlay, doesn't take layout space) */}
+      <View style={{ position: 'absolute', bottom: layout.tabBarHeight, left: 0, right: 0, height: layout.footerZoneHeight, alignItems: 'center', justifyContent: 'center', zIndex: 5 }}>
         <ThemedText type="caption" style={{ fontSize: 14, opacity: isDark ? 0.6 : 0.4 }}>
           {currentPage}
         </ThemedText>
       </View>
-
-      {/* Tab Bar Spacer */}
-      <View style={{ height: layout.tabBarHeight }} />
 
       {/* Navigation fade overlay - smooth transition when jumping to distant pages */}
       <Animated.View
@@ -3042,7 +3042,7 @@ function MushafScreenContent() {
             gap: 12,
           }}>
             <ActivityIndicator size="large" color={theme.gold} />
-            <ThemedText type="body" style={{ fontWeight: '600' }}>Loading verses...</ThemedText>
+            <ThemedText type="body" style={{ fontWeight: '600' }}>{t('mushaf.loadingVerses')}</ThemedText>
           </View>
         </View>
       )}
@@ -3122,8 +3122,8 @@ function MushafScreenContent() {
               <Feather name="play" size={20} color={theme.gold} />
               <ThemedText type="body" style={{ marginLeft: 12, fontWeight: '500' }}>
                 {hifzMode.isActive && hifzMode.settings.repeatCount > 1
-                  ? `Play ${hifzMode.settings.repeatCount}×`
-                  : 'Play'}
+                  ? `${t('mushaf.play')} ${hifzMode.settings.repeatCount}×`
+                  : t('mushaf.play')}
               </ThemedText>
             </Pressable>
             <View style={[styles.menuDivider, { backgroundColor: `${theme.gold}33` }]} />
@@ -3143,7 +3143,7 @@ function MushafScreenContent() {
               ]}
             >
               <Feather name="copy" size={20} color={theme.gold} />
-              <ThemedText type="body" style={{ marginLeft: 12, fontWeight: '500' }}>Copy Verse</ThemedText>
+              <ThemedText type="body" style={{ marginLeft: 12, fontWeight: '500' }}>{t('mushaf.copyVerse')}</ThemedText>
             </Pressable>
             <View style={[styles.menuDivider, { backgroundColor: `${theme.gold}33` }]} />
             <Pressable
@@ -3166,7 +3166,7 @@ function MushafScreenContent() {
               ]}
             >
               <Feather name="share-2" size={20} color={theme.gold} />
-              <ThemedText type="body" style={{ marginLeft: 12, fontWeight: '500' }}>Share Verse</ThemedText>
+              <ThemedText type="body" style={{ marginLeft: 12, fontWeight: '500' }}>{t('mushaf.shareVerse')}</ThemedText>
             </Pressable>
             <View style={[styles.menuDivider, { backgroundColor: `${theme.gold}33` }]} />
             <Pressable
@@ -3186,7 +3186,7 @@ function MushafScreenContent() {
                 fill={bookmarks.includes(selectedVerse.verseKey) ? theme.gold : 'none'}
               />
               <ThemedText type="body" style={{ marginLeft: 12, fontWeight: '500' }}>
-                {bookmarks.includes(selectedVerse.verseKey) ? 'Remove Bookmark' : 'Bookmark'}
+                {bookmarks.includes(selectedVerse.verseKey) ? t('mushaf.removeBookmark') : t('mushaf.bookmark')}
               </ThemedText>
             </Pressable>
             <View style={[styles.menuDivider, { backgroundColor: `${theme.gold}33` }]} />
@@ -3200,7 +3200,7 @@ function MushafScreenContent() {
               ]}
             >
               <Feather name="book" size={20} color={theme.gold} />
-              <ThemedText type="body" style={{ marginLeft: 12, fontWeight: '500' }}>Tafsir/Translation</ThemedText>
+              <ThemedText type="body" style={{ marginLeft: 12, fontWeight: '500' }}>{t('mushaf.tafsirTranslation')}</ThemedText>
             </Pressable>
             <View style={[styles.menuDivider, { backgroundColor: `${theme.gold}33` }]} />
             <Pressable
@@ -3217,7 +3217,7 @@ function MushafScreenContent() {
             >
               <Feather name="file-text" size={20} color={theme.gold} />
               <ThemedText type="body" style={{ marginLeft: 12, fontWeight: '500' }}>
-                {notes[selectedVerse.verseKey] ? 'Edit Note' : 'Add Note'}
+                {notes[selectedVerse.verseKey] ? t('mushaf.editNote') : t('mushaf.addNote')}
               </ThemedText>
             </Pressable>
             <View style={[styles.menuDivider, { backgroundColor: `${theme.gold}33` }]} />
@@ -3238,7 +3238,7 @@ function MushafScreenContent() {
               >
                 <Feather name="edit-3" size={20} color={theme.gold} />
                 <ThemedText type="body" style={{ marginLeft: 12, fontWeight: '500' }}>
-                  {highlights[selectedVerse.verseKey] ? 'Remove' : 'Highlight'}
+                  {highlights[selectedVerse.verseKey] ? t('mushaf.removeHighlight') : t('mushaf.highlight')}
                 </ThemedText>
               </Pressable>
               <Pressable
@@ -3270,7 +3270,7 @@ function MushafScreenContent() {
                 { backgroundColor: isDark ? `${theme.primary}FA` : 'rgba(245, 245, 245, 0.98)' },
               ]}
             >
-              <ThemedText type="body" style={{ fontWeight: '600', marginBottom: 16, textAlign: 'center' }}>Choose Highlight Color</ThemedText>
+              <ThemedText type="body" style={{ fontWeight: '600', marginBottom: 16, textAlign: 'center' }}>{t('mushaf.chooseHighlight')}</ThemedText>
               <View style={{ flexDirection: 'row', gap: 12, marginBottom: 16, justifyContent: 'center' }}>
                 {highlightColors.map((color) => (
                   <Pressable
@@ -3309,7 +3309,7 @@ function MushafScreenContent() {
                     opacity: pressed ? 0.7 : 1,
                   }]}
                 >
-                  <ThemedText type="body" style={{ textAlign: 'center', fontWeight: '600', color: '#FF0000' }}>Remove Highlight</ThemedText>
+                  <ThemedText type="body" style={{ textAlign: 'center', fontWeight: '600', color: '#FF0000' }}>{t('mushaf.removeHighlight')}</ThemedText>
                 </Pressable>
               )}
             </Animated.View>
@@ -3333,7 +3333,7 @@ function MushafScreenContent() {
                 ]}
               >
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                  <ThemedText type="body" style={{ fontWeight: '600', fontSize: 18 }}>Add Note</ThemedText>
+                  <ThemedText type="body" style={{ fontWeight: '600', fontSize: 18 }}>{t('mushaf.addNote')}</ThemedText>
                   <Pressable onPress={() => { setShowNoteModal(false); setNoteVerseKey(null); }}>
                     <Feather name="x" size={20} color={theme.text} />
                   </Pressable>
@@ -3341,7 +3341,7 @@ function MushafScreenContent() {
                 <TextInput
                   value={noteText}
                   onChangeText={setNoteText}
-                  placeholder="Write your note here..."
+                  placeholder={t('mushaf.noteInputPlaceholder')}
                   placeholderTextColor={isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)'}
                   multiline
                   numberOfLines={6}
@@ -3370,7 +3370,7 @@ function MushafScreenContent() {
                         opacity: pressed ? 0.7 : 1,
                       }]}
                     >
-                      <ThemedText type="body" style={{ textAlign: 'center', fontWeight: '600', color: '#FF0000' }}>Delete</ThemedText>
+                      <ThemedText type="body" style={{ textAlign: 'center', fontWeight: '600', color: '#FF0000' }}>{t('mushaf.delete')}</ThemedText>
                     </Pressable>
                   )}
                   <Pressable
@@ -3389,7 +3389,7 @@ function MushafScreenContent() {
                       opacity: pressed ? 0.7 : 1,
                     }]}
                   >
-                    <ThemedText type="body" style={{ textAlign: 'center', fontWeight: '600', color: '#FFF' }}>Save</ThemedText>
+                    <ThemedText type="body" style={{ textAlign: 'center', fontWeight: '600', color: '#FFF' }}>{t('mushaf.save')}</ThemedText>
                   </Pressable>
                 </View>
               </Animated.View>
@@ -3562,7 +3562,7 @@ function MushafScreenContent() {
 
                         if (!text) {
                           console.log('❌ No text found');
-                          return "No tafsir available for this verse";
+                          return t('mushaf.noTafsirAvailable');
                         }
 
                         // Strip HTML tags more aggressively
@@ -3706,7 +3706,7 @@ function MushafScreenContent() {
                           }
                         }
 
-                        return cleanText || "No tafsir available for this verse";
+                        return cleanText || t('mushaf.noTafsirAvailable');
                       })()}
                     </ThemedText>
                   </View>
@@ -3779,9 +3779,9 @@ function MushafScreenContent() {
               <Feather name="arrow-left" size={24} color={theme.text} />
             </Pressable>
             <View style={{ flex: 1 }}>
-              <ThemedText type="h3" style={{ fontWeight: '700', fontSize: 24 }}>Tafsir & Translations</ThemedText>
+              <ThemedText type="h3" style={{ fontWeight: '700', fontSize: 24 }}>{t('mushaf.tafsirAndTranslations')}</ThemedText>
               <ThemedText type="caption" style={{ opacity: 0.5, marginTop: 2, fontSize: 13 }}>
-                {availableTafsirs.filter(t => t.downloaded).length} downloaded
+                {availableTafsirs.filter(tf => tf.downloaded).length} {t('mushaf.downloadedCount')}
               </ThemedText>
             </View>
           </View>
@@ -3814,7 +3814,7 @@ function MushafScreenContent() {
                     <Feather name="globe" size={16} color={isDark ? '#60A5FA' : '#2563EB'} />
                   </View>
                   <ThemedText type="body" style={{ fontWeight: '700', fontSize: 15, letterSpacing: 0.5, opacity: 0.9, flex: 1 }}>
-                    MY TRANSLATIONS
+                    {t('mushaf.myTranslations')}
                   </ThemedText>
                   <View style={{
                     width: 24,
@@ -3955,9 +3955,9 @@ function MushafScreenContent() {
                         console.error('Error type:', error.constructor.name);
                         console.error('Error message:', error.message);
                         if (error.message?.includes('SQLITE_FULL')) {
-                          alert('Storage full. Please free up space on your device and try again.');
+                          alert(t('mushaf.storageFull'));
                         } else {
-                          alert('Download failed. Please check your connection and storage space.');
+                          alert(t('mushaf.downloadFailed'));
                         }
                       } finally {
                         setDownloadingTafsir(null);
@@ -3989,7 +3989,7 @@ function MushafScreenContent() {
                         }]}
                       >
                         <Feather name="trash-2" size={20} color="#FFF" />
-                        <ThemedText style={{ color: '#FFF', fontSize: 12, fontWeight: '600', marginTop: 4 }}>Delete</ThemedText>
+                        <ThemedText style={{ color: '#FFF', fontSize: 12, fontWeight: '600', marginTop: 4 }}>{t('mushaf.delete')}</ThemedText>
                       </Pressable>
                     </View>
                   );
@@ -4001,11 +4001,11 @@ function MushafScreenContent() {
                       onLongPress={() => {
                         if (canDelete && Platform.OS === 'android') {
                           Alert.alert(
-                            'Delete Tafsir',
-                            `Delete ${tafsir.name}?`,
+                            t('mushaf.deleteTafsir'),
+                            t('mushaf.deleteTafsirConfirm', { name: tafsir.name }),
                             [
-                              { text: 'Cancel', style: 'cancel' },
-                              { text: 'Delete', style: 'destructive', onPress: () => deleteTafsir(tafsir.id) }
+                              { text: t('common.cancel'), style: 'cancel' },
+                              { text: t('mushaf.delete'), style: 'destructive', onPress: () => deleteTafsir(tafsir.id) }
                             ]
                           );
                         }
@@ -4063,7 +4063,7 @@ function MushafScreenContent() {
                                 color: isDark ? '#C084FC' : '#9333EA',
                                 letterSpacing: 0.5
                               }}>
-                                TAFSIR
+                                {t('mushaf.tafsirBadge')}
                               </ThemedText>
                             </View>
                           ) : (
@@ -4079,7 +4079,7 @@ function MushafScreenContent() {
                                 color: isDark ? '#60A5FA' : '#2563EB',
                                 letterSpacing: 0.5
                               }}>
-                                TRANSLATION
+                                {t('mushaf.translationBadge')}
                               </ThemedText>
                             </View>
                           )}
@@ -4088,7 +4088,7 @@ function MushafScreenContent() {
                           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                             <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: theme.primary }} />
                             <ThemedText type="caption" style={{ fontSize: 12, color: theme.primary, fontWeight: '600' }}>
-                              Currently Active
+                              {t('mushaf.currentlyActive')}
                             </ThemedText>
                           </View>
                         )}
@@ -4114,7 +4114,7 @@ function MushafScreenContent() {
                           backgroundColor: `${theme.gold}26`
                         }}>
                           <ThemedText type="caption" style={{ fontSize: 12, color: theme.gold, fontWeight: '600' }}>
-                            Select
+                            {t('mushaf.select')}
                           </ThemedText>
                         </View>
                       )}
@@ -4164,7 +4164,7 @@ function MushafScreenContent() {
                     <Feather name="book-open" size={16} color={isDark ? '#C084FC' : '#9333EA'} />
                   </View>
                   <ThemedText type="body" style={{ fontWeight: '700', fontSize: 15, letterSpacing: 0.5, opacity: 0.9, flex: 1 }}>
-                    MY TAFSIRS
+                    {t('mushaf.myTafsirs')}
                   </ThemedText>
                   <View style={{
                     width: 24,
@@ -4287,7 +4287,7 @@ function MushafScreenContent() {
                         }]}
                       >
                         <Feather name="trash-2" size={20} color="#FFF" />
-                        <ThemedText style={{ color: '#FFF', fontSize: 12, fontWeight: '600', marginTop: 4 }}>Delete</ThemedText>
+                        <ThemedText style={{ color: '#FFF', fontSize: 12, fontWeight: '600', marginTop: 4 }}>{t('mushaf.delete')}</ThemedText>
                       </Pressable>
                     </View>
                   );
@@ -4348,7 +4348,7 @@ function MushafScreenContent() {
                                 color: isDark ? '#C084FC' : '#9333EA',
                                 letterSpacing: 0.5
                               }}>
-                                TAFSIR
+                                {t('mushaf.tafsirBadge')}
                               </ThemedText>
                             </View>
                           ) : (
@@ -4364,7 +4364,7 @@ function MushafScreenContent() {
                                 color: isDark ? '#60A5FA' : '#2563EB',
                                 letterSpacing: 0.5
                               }}>
-                                TRANSLATION
+                                {t('mushaf.translationBadge')}
                               </ThemedText>
                             </View>
                           )}
@@ -4373,7 +4373,7 @@ function MushafScreenContent() {
                           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 8 }}>
                             <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: theme.primary }} />
                             <ThemedText type="caption" style={{ fontSize: 12, color: theme.primary, fontWeight: '600' }}>
-                              Currently Active
+                              {t('mushaf.currentlyActive')}
                             </ThemedText>
                           </View>
                         )}
@@ -4436,7 +4436,7 @@ function MushafScreenContent() {
                     <Feather name="download-cloud" size={16} color={theme.gold} />
                   </View>
                   <ThemedText type="body" style={{ fontWeight: '700', fontSize: 15, letterSpacing: 0.5, opacity: 0.9, flex: 1 }}>
-                    AVAILABLE TO DOWNLOAD
+                    {t('mushaf.availableToDownload')}
                   </ThemedText>
                   <View style={{
                     width: 24,
@@ -4469,7 +4469,7 @@ function MushafScreenContent() {
                           }]}
                         >
                           <ThemedText type="body" style={{ fontWeight: '600', fontSize: 13, letterSpacing: 0.5, opacity: 0.6, flex: 1 }}>
-                            Translations ({availableTafsirs.filter(t => !t.downloaded && !isTafsir(t.id) && (!translationLanguageFilter || t.language === translationLanguageFilter)).length})
+                            {t('mushaf.translationsCount')} ({availableTafsirs.filter(tf => !tf.downloaded && !isTafsir(tf.id) && (!translationLanguageFilter || tf.language === translationLanguageFilter)).length})
                           </ThemedText>
                           <Feather
                             name={expandedAvailableTranslations ? "chevron-up" : "chevron-down"}
@@ -4506,7 +4506,7 @@ function MushafScreenContent() {
                                 backgroundColor: translationLanguageFilter === null ? theme.primary : (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'),
                               }}
                             >
-                              <ThemedText type="caption" style={{ color: translationLanguageFilter === null ? '#fff' : theme.textSecondary, fontWeight: '600' }}>All</ThemedText>
+                              <ThemedText type="caption" style={{ color: translationLanguageFilter === null ? '#fff' : theme.textSecondary, fontWeight: '600' }}>{t('mushaf.all')}</ThemedText>
                             </Pressable>
                             {[...new Set(availableTafsirs.filter(t => !t.downloaded && !isTafsir(t.id)).map(t => t.language))].sort().map(lang => (
                               <Pressable
@@ -4572,9 +4572,9 @@ function MushafScreenContent() {
                                 console.error('Error type:', error.constructor.name);
                                 console.error('Error message:', error.message);
                                 if (error.message?.includes('SQLITE_FULL')) {
-                                  alert('Storage full. Please free up space on your device and try again.');
+                                  alert(t('mushaf.storageFull'));
                                 } else {
-                                  alert('Download failed. Please check your connection and storage space.');
+                                  alert(t('mushaf.downloadFailed'));
                                 }
                               } finally {
                                 setDownloadingTafsir(null);
@@ -4636,7 +4636,7 @@ function MushafScreenContent() {
                                         color: isDark ? '#C084FC' : '#9333EA',
                                         letterSpacing: 0.5
                                       }}>
-                                        TAFSIR
+                                        {t('mushaf.tafsirBadge')}
                                       </ThemedText>
                                     </View>
                                   ) : (
@@ -4652,13 +4652,13 @@ function MushafScreenContent() {
                                         color: isDark ? '#60A5FA' : '#2563EB',
                                         letterSpacing: 0.5
                                       }}>
-                                        TRANSLATION
+                                        {t('mushaf.translationBadge')}
                                       </ThemedText>
                                     </View>
                                   )}
                                 </View>
                                 <ThemedText type="caption" style={{ fontSize: 12, opacity: 0.5, marginTop: 8 }}>
-                                  Tap to download
+                                  {t('mushaf.tapToDownload')}
                                 </ThemedText>
                               </View>
                               {downloadingTafsir === tafsir.id ? (
@@ -4695,7 +4695,7 @@ function MushafScreenContent() {
                           }]}
                         >
                           <ThemedText type="body" style={{ fontWeight: '600', fontSize: 13, letterSpacing: 0.5, opacity: 0.6, flex: 1 }}>
-                            Tafsirs ({availableTafsirs.filter(t => !t.downloaded && isTafsir(t.id) && (!tafsirLanguageFilter || t.language === tafsirLanguageFilter)).length})
+                            {t('mushaf.tafsirsCount')} ({availableTafsirs.filter(tf => !tf.downloaded && isTafsir(tf.id) && (!tafsirLanguageFilter || tf.language === tafsirLanguageFilter)).length})
                           </ThemedText>
                           <Feather
                             name={expandedAvailableTafsirs ? "chevron-up" : "chevron-down"}
@@ -4732,7 +4732,7 @@ function MushafScreenContent() {
                                 backgroundColor: tafsirLanguageFilter === null ? theme.primary : (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'),
                               }}
                             >
-                              <ThemedText type="caption" style={{ color: tafsirLanguageFilter === null ? '#fff' : theme.textSecondary, fontWeight: '600' }}>All</ThemedText>
+                              <ThemedText type="caption" style={{ color: tafsirLanguageFilter === null ? '#fff' : theme.textSecondary, fontWeight: '600' }}>{t('mushaf.all')}</ThemedText>
                             </Pressable>
                             {[...new Set(availableTafsirs.filter(t => !t.downloaded && isTafsir(t.id)).map(t => t.language))].sort().map(lang => (
                               <Pressable
@@ -4927,7 +4927,7 @@ function MushafScreenContent() {
               <Pressable onPress={() => setShowReciterPicker(false)} style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1, marginRight: 12 }]}>
                 <Feather name="arrow-left" size={24} color={theme.text} />
               </Pressable>
-              <ThemedText type="h3" style={{ fontWeight: '700', fontSize: 24, flex: 1 }}>Select Reciter</ThemedText>
+              <ThemedText type="h3" style={{ fontWeight: '700', fontSize: 24, flex: 1 }}>{t('mushaf.selectReciter')}</ThemedText>
             </View>
             <FlatList
               data={reciters}
@@ -4949,7 +4949,7 @@ function MushafScreenContent() {
                     borderBottomColor: isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)',
                   }]}
                 >
-                  <ThemedText type="body" style={{ fontWeight: selectedReciter === item.value ? '600' : '400', fontSize: 16 }}>{item.label}</ThemedText>
+                  <ThemedText type="body" style={{ fontWeight: selectedReciter === item.value ? '600' : '400', fontSize: 16 }}>{locale === 'ar' ? item.labelAr : item.label}</ThemedText>
                   {selectedReciter === item.value && <Feather name="check" size={20} color={theme.primary} />}
                 </Pressable>
               )}
@@ -4968,7 +4968,7 @@ function MushafScreenContent() {
       >
         <ThemedView style={styles.settingsContainer}>
           <View style={[styles.settingsHeader, { backgroundColor: isDark ? 'rgba(0, 0, 0, 0.98)' : 'rgba(255, 255, 255, 0.98)' }]}>
-            <ThemedText type="h3" style={{ fontWeight: '700', fontSize: 24 }}>Audio Settings</ThemedText>
+            <ThemedText type="h3" style={{ fontWeight: '700', fontSize: 24 }}>{t('mushaf.audioSettings')}</ThemedText>
             <Pressable onPress={() => setShowAudioSettings(false)} style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1 }]}>
               <Feather name="x" size={24} color={theme.text} />
             </Pressable>
@@ -4976,9 +4976,9 @@ function MushafScreenContent() {
 
           <ScrollView style={styles.settingsContent}>
             <View style={styles.settingsSection}>
-              <ThemedText type="body" style={{ fontWeight: '600', marginBottom: Spacing.sm, opacity: 0.6, fontSize: 13 }}>PLAY UNTIL</ThemedText>
+              <ThemedText type="body" style={{ fontWeight: '600', marginBottom: Spacing.sm, opacity: 0.6, fontSize: 13 }}>{t('mushaf.playUntil')}</ThemedText>
               <View style={{ flexDirection: 'row', gap: 8 }}>
-                {[{ value: 'verse', label: 'Verse', icon: 'type' }, { value: 'surah', label: 'Surah', icon: 'book' }, { value: 'page', label: 'Page', icon: 'file-text' }, { value: 'juz', label: 'Juz', icon: 'layers' }].map((option) => (
+                {[{ value: 'verse', label: t('mushaf.verse'), icon: 'type' }, { value: 'surah', label: t('mushaf.surah'), icon: 'book' }, { value: 'page', label: t('mushaf.page'), icon: 'file-text' }, { value: 'juz', label: t('mushaf.juz'), icon: 'layers' }].map((option) => (
                   <Pressable
                     key={option.value}
                     onPress={async () => {
@@ -5048,7 +5048,7 @@ function MushafScreenContent() {
             </View>
 
             <View style={styles.settingsSection}>
-              <ThemedText type="body" style={{ fontWeight: '600', marginBottom: Spacing.sm, opacity: 0.6, fontSize: 13 }}>RECITER</ThemedText>
+              <ThemedText type="body" style={{ fontWeight: '600', marginBottom: Spacing.sm, opacity: 0.6, fontSize: 13 }}>{t('mushaf.reciterLabel')}</ThemedText>
               <Pressable
                 onPress={() => {
                   console.log('Reciter button pressed');
@@ -5066,7 +5066,7 @@ function MushafScreenContent() {
                   opacity: pressed ? 0.7 : 1,
                 }]}
               >
-                <ThemedText type="body" style={{ fontSize: 15, pointerEvents: 'none' }}>{reciters.find(r => r.value === selectedReciter)?.label}</ThemedText>
+                <ThemedText type="body" style={{ fontSize: 15, pointerEvents: 'none' }}>{locale === 'ar' ? reciters.find(r => r.value === selectedReciter)?.labelAr : reciters.find(r => r.value === selectedReciter)?.label}</ThemedText>
                 <Feather name="chevron-right" size={20} color={theme.textSecondary} />
               </Pressable>
             </View>
@@ -5115,7 +5115,7 @@ function MushafScreenContent() {
               opacity: 0.4,
               letterSpacing: 0.5
             }}>
-              TAP TO MINIMIZE
+              {t('mushaf.tapToMinimize')}
             </ThemedText>
           </Pressable>
 
@@ -5136,7 +5136,7 @@ function MushafScreenContent() {
                   letterSpacing: 0.5,
                   fontWeight: '600'
                 }}>
-                  {audioState.isPlaying ? 'NOW PLAYING' : 'PAUSED'}
+                  {audioState.isPlaying ? t('mushaf.nowPlaying') : t('mushaf.paused')}
                 </ThemedText>
                 <Pressable
                   onPress={() => setShowSpeedMenu(!showSpeedMenu)}
@@ -5155,18 +5155,18 @@ function MushafScreenContent() {
                 </Pressable>
               </View>
               <ThemedText type="body" style={{ fontWeight: '700', fontSize: 16 * playerScale, letterSpacing: -0.3, marginBottom: 4 * playerScale }}>
-                {surahs.find(s => s.number === audioState.current.surah)?.nameEn || `Surah ${audioState.current.surah}`}
+                {(locale === 'ar' ? surahs.find(s => s.number === audioState.current.surah)?.nameAr : surahs.find(s => s.number === audioState.current.surah)?.nameEn) || `${t('mushaf.surah')} ${audioState.current.surah}`}
               </ThemedText>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 * playerScale, flexWrap: 'wrap' }}>
                 <ThemedText type="caption" style={{ opacity: 0.5, fontSize: 12 * playerScale }}>
-                  Verse {audioState.current.ayah}
+                  {t('mushaf.verse')} {audioState.current.ayah}
                 </ThemedText>
                 {/* Repeat Progress Indicator */}
                 {audioState.isRepeating && (
                   <>
                     <View style={{ width: 3 * playerScale, height: 3 * playerScale, borderRadius: 1.5 * playerScale, backgroundColor: theme.primary, opacity: 0.8 }} />
                     <ThemedText type="caption" style={{ fontSize: 12 * playerScale, color: theme.primary, fontWeight: '600' }}>
-                      Repeat {audioState.currentRepeat}/{audioState.totalRepeats === 0 ? '∞' : audioState.totalRepeats}
+                      {t('mushaf.repeat')} {audioState.currentRepeat}/{audioState.totalRepeats === 0 ? '∞' : audioState.totalRepeats}
                     </ThemedText>
                   </>
                 )}
@@ -5175,7 +5175,7 @@ function MushafScreenContent() {
                   <>
                     <View style={{ width: 3 * playerScale, height: 3 * playerScale, borderRadius: 1.5 * playerScale, backgroundColor: isDark ? '#8B5CF6' : '#7C3AED', opacity: 0.8 }} />
                     <ThemedText type="caption" style={{ fontSize: 12 * playerScale, color: isDark ? '#8B5CF6' : '#7C3AED', fontWeight: '600' }}>
-                      Loop
+                      {t('mushaf.loop')}
                     </ThemedText>
                   </>
                 )}
@@ -5183,7 +5183,7 @@ function MushafScreenContent() {
                   <>
                     <View style={{ width: 3 * playerScale, height: 3 * playerScale, borderRadius: 1.5 * playerScale, backgroundColor: theme.text, opacity: 0.3 }} />
                     <ThemedText type="caption" style={{ opacity: 0.5, fontSize: 12 * playerScale }}>
-                      {audioState.queue.length} remaining
+                      {audioState.queue.length} {t('mushaf.remaining')}
                     </ThemedText>
                   </>
                 )}
@@ -5336,7 +5336,7 @@ function MushafScreenContent() {
             >
               <Feather name={audioState.isPlaying ? 'pause' : 'play'} size={14 * playerScale} color={theme.gold} />
               <ThemedText type="caption" style={{ fontSize: 12 * playerScale, fontWeight: '600' }}>
-                {surahs.find(s => s.number === audioState.current.surah)?.nameEn?.split(' ')[0] || audioState.current.surah}:{audioState.current.ayah}
+                {(locale === 'ar' ? surahs.find(s => s.number === audioState.current.surah)?.nameAr : surahs.find(s => s.number === audioState.current.surah)?.nameEn?.split(' ')[0]) || audioState.current.surah}:{audioState.current.ayah}
               </ThemedText>
             </Pressable>
             <Pressable
@@ -5384,7 +5384,7 @@ function MushafScreenContent() {
             style={[
               styles.hifzStatusMenu,
               {
-                // Menu is approximately 320px tall, 160px wide
+                // Menu is approximately 320px tall, up to 240px wide
                 // Ensure it stays within screen bounds with padding
                 top: Math.max(
                   insets.top + 10, // Don't go above safe area
@@ -5396,8 +5396,8 @@ function MushafScreenContent() {
                 left: Math.max(
                   12, // Left padding
                   Math.min(
-                    hifzMenuPosition.x - 80, // Center horizontally on touch point
-                    SCREEN_WIDTH - 172 // Right padding (160 width + 12 padding)
+                    hifzMenuPosition.x - 100, // Center horizontally on touch point
+                    SCREEN_WIDTH - 252 // Right padding (240 width + 12 padding)
                   )
                 ),
                 backgroundColor: theme.cardBackground,
@@ -5417,7 +5417,7 @@ function MushafScreenContent() {
               }}
             >
               <View style={{ width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: theme.border }} />
-              <ThemedText style={styles.hifzStatusMenuText}>Not Started</ThemedText>
+              <ThemedText style={styles.hifzStatusMenuText}>{t('mushaf.notStarted')}</ThemedText>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.hifzStatusMenuItem}
@@ -5429,7 +5429,7 @@ function MushafScreenContent() {
               }}
             >
               <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: '#F59E0B' }} />
-              <ThemedText style={styles.hifzStatusMenuText}>In Progress</ThemedText>
+              <ThemedText style={styles.hifzStatusMenuText}>{t('mushaf.inProgress')}</ThemedText>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.hifzStatusMenuItem}
@@ -5441,7 +5441,7 @@ function MushafScreenContent() {
               }}
             >
               <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: theme.primary }} />
-              <ThemedText style={styles.hifzStatusMenuText}>Memorized</ThemedText>
+              <ThemedText style={styles.hifzStatusMenuText}>{t('mushaf.memorized')}</ThemedText>
             </TouchableOpacity>
 
             {/* Divider */}
@@ -5475,8 +5475,8 @@ function MushafScreenContent() {
               </View>
               <ThemedText style={styles.hifzStatusMenuText}>
                 {hifzMode.settings.repeatCount > 1
-                  ? `Play ${hifzMode.settings.repeatCount}×`
-                  : 'Play'}
+                  ? t('mushaf.playCount', { count: hifzMode.settings.repeatCount })
+                  : t('mushaf.play')}
               </ThemedText>
             </TouchableOpacity>
 
@@ -5497,7 +5497,7 @@ function MushafScreenContent() {
                 {hifzMode.loopStart && <ThemedText style={{ color: '#FFF', fontSize: 9, fontWeight: '700' }}>A</ThemedText>}
               </View>
               <ThemedText style={styles.hifzStatusMenuText}>
-                Set Loop Start
+                {t('mushaf.setLoopStart')}
               </ThemedText>
             </TouchableOpacity>
 
@@ -5515,7 +5515,7 @@ function MushafScreenContent() {
                 {hifzMode.loopEnd && <ThemedText style={{ color: '#FFF', fontSize: 9, fontWeight: '700' }}>B</ThemedText>}
               </View>
               <ThemedText style={styles.hifzStatusMenuText}>
-                Set Loop End
+                {t('mushaf.setLoopEnd')}
               </ThemedText>
             </TouchableOpacity>
 
@@ -5535,7 +5535,7 @@ function MushafScreenContent() {
                   <Feather name="play" size={10} color="#FFFFFF" />
                 </View>
                 <ThemedText style={[styles.hifzStatusMenuText, { color: theme.primary }]}>
-                  Play Loop
+                  {t('mushaf.playLoop')}
                 </ThemedText>
               </TouchableOpacity>
             )}
@@ -5577,8 +5577,8 @@ function MushafScreenContent() {
           setShowHifzCoachMark(false);
           markHintSeen('hifz_mode');
         }}
-        title="Hifz Mode Activated"
-        message="Tap any verse to reveal it. Long-press on a verse for memorization options. Hold the Hifz button for settings."
+        title={t('mushaf.hifzModeActivated')}
+        message={t('mushaf.hifzModeDesc')}
         icon="book-open"
         position="top"
       />
@@ -5590,8 +5590,8 @@ function MushafScreenContent() {
           setShowScrubberCoachMark(false);
           markHintSeen('word_scrubber');
         }}
-        title="Word-by-Word Highlighting"
-        message="Long-press anywhere on the page and drag to scrub through the audio. The highlighted word will follow your finger."
+        title={t('mushaf.wordByWordHighlighting')}
+        message={t('mushaf.wordByWordDesc')}
         icon="volume-2"
         position="center"
       />
@@ -5702,7 +5702,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 12,
     elevation: 8,
-    minWidth: 160,
+    minWidth: 180,
+    maxWidth: 240,
     zIndex: 1000,
   },
   hifzStatusMenuItem: {
@@ -5717,6 +5718,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '500',
     flex: 1,
+    flexShrink: 1,
   },
   loopIndicator: {
     position: 'absolute',

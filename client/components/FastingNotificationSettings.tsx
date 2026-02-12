@@ -18,22 +18,24 @@ import { FastingNotificationSettings as SettingsType } from '../services/Fasting
 import { ThemedText } from './ThemedText';
 import { Feather } from '@expo/vector-icons';
 import { Spacing, BorderRadius } from '../constants/theme';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface FastingNotificationSettingsProps {
   compact?: boolean;
 }
 
-const FASTING_TYPE_LABELS: Record<keyof SettingsType['types'], { label: string; description: string }> = {
-  monday: { label: 'Monday', description: 'Weekly Sunnah fast' },
-  thursday: { label: 'Thursday', description: 'Weekly Sunnah fast' },
-  white_day: { label: 'White Days', description: '13th, 14th, 15th of each month' },
-  ashura: { label: 'Ashura', description: '10th of Muharram' },
-  arafah: { label: 'Day of Arafah', description: '9th of Dhul Hijjah' },
-  shawwal: { label: 'Shawwal', description: '6 days after Ramadan' },
+const FASTING_TYPE_KEYS: Record<keyof SettingsType['types'], { labelKey: string; descKey: string }> = {
+  monday: { labelKey: 'fasting.monday', descKey: 'fasting.weeklySunnahFast' },
+  thursday: { labelKey: 'fasting.thursday', descKey: 'fasting.weeklySunnahFast' },
+  white_day: { labelKey: 'fasting.whiteDays', descKey: 'fasting.whiteDaysDesc' },
+  ashura: { labelKey: 'fasting.ashura', descKey: 'fasting.ashuraDesc' },
+  arafah: { labelKey: 'fasting.dayOfArafah', descKey: 'fasting.arafahDesc' },
+  shawwal: { labelKey: 'fasting.shawwal', descKey: 'fasting.shawwalDesc' },
 };
 
 export function FastingNotificationSettings({ compact = false }: FastingNotificationSettingsProps) {
   const { theme, isDark } = useTheme();
+  const { t } = useTranslation();
   const {
     settings,
     loading,
@@ -66,9 +68,9 @@ export function FastingNotificationSettings({ compact = false }: FastingNotifica
               <Feather name="moon" size={20} color={theme.gold} />
             </View>
             <View style={styles.settingText}>
-              <ThemedText type="body" style={{ fontWeight: '600' }}>Fasting Reminders</ThemedText>
+              <ThemedText type="body" style={{ fontWeight: '600' }}>{t('fasting.fastingReminders')}</ThemedText>
               <ThemedText type="small" secondary>
-                Get notified about upcoming fasting days
+                {t('fasting.getNotifiedFasting')}
               </ThemedText>
             </View>
           </View>
@@ -98,9 +100,9 @@ export function FastingNotificationSettings({ compact = false }: FastingNotifica
             <Feather name="moon" size={20} color={theme.gold} />
           </View>
           <View style={styles.settingText}>
-            <ThemedText type="body" style={{ fontWeight: '600' }}>Fasting Reminders</ThemedText>
+            <ThemedText type="body" style={{ fontWeight: '600' }}>{t('fasting.fastingReminders')}</ThemedText>
             <ThemedText type="small" secondary>
-              Receive reminders for recommended fasting days
+              {t('fasting.receiveReminders')}
             </ThemedText>
           </View>
         </View>
@@ -117,7 +119,7 @@ export function FastingNotificationSettings({ compact = false }: FastingNotifica
           {/* Reminder Time */}
           <View style={styles.reminderTimeSection}>
             <ThemedText type="small" secondary style={{ fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: Spacing.sm }}>
-              Reminder Time
+              {t('fasting.reminderTime')}
             </ThemedText>
             <View style={styles.reminderTimeOptions}>
               <Pressable
@@ -136,7 +138,7 @@ export function FastingNotificationSettings({ compact = false }: FastingNotifica
                   { fontWeight: '600' },
                   settings.reminderTime === 'evening' && { color: theme.primary },
                 ]}>
-                  Evening Before
+                  {t('fasting.eveningBefore')}
                 </ThemedText>
                 <ThemedText type="caption" secondary>8:00 PM</ThemedText>
               </Pressable>
@@ -156,9 +158,9 @@ export function FastingNotificationSettings({ compact = false }: FastingNotifica
                   { fontWeight: '600' },
                   settings.reminderTime === 'morning' && { color: theme.primary },
                 ]}>
-                  Before Fajr
+                  {t('fasting.beforeFajr')}
                 </ThemedText>
-                <ThemedText type="caption" secondary>30 min before</ThemedText>
+                <ThemedText type="caption" secondary>{t('fasting.thirtyMinBefore')}</ThemedText>
               </Pressable>
             </View>
           </View>
@@ -166,14 +168,14 @@ export function FastingNotificationSettings({ compact = false }: FastingNotifica
           {/* Fasting Types */}
           <View style={styles.fastingTypesSection}>
             <ThemedText type="small" secondary style={{ fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: Spacing.sm }}>
-              Fasting Days
+              {t('fasting.fastingDays')}
             </ThemedText>
-            {(Object.keys(FASTING_TYPE_LABELS) as Array<keyof SettingsType['types']>).map((type) => (
+            {(Object.keys(FASTING_TYPE_KEYS) as Array<keyof SettingsType['types']>).map((type) => (
               <View key={type} style={styles.fastingTypeRow}>
                 <View style={styles.fastingTypeInfo}>
-                  <ThemedText type="body">{FASTING_TYPE_LABELS[type].label}</ThemedText>
+                  <ThemedText type="body">{t(FASTING_TYPE_KEYS[type].labelKey)}</ThemedText>
                   <ThemedText type="caption" secondary>
-                    {FASTING_TYPE_LABELS[type].description}
+                    {t(FASTING_TYPE_KEYS[type].descKey)}
                   </ThemedText>
                 </View>
                 <Switch
@@ -191,7 +193,7 @@ export function FastingNotificationSettings({ compact = false }: FastingNotifica
       {permission !== 'granted' && settings.enabled && (
         <View style={[styles.permissionWarning, { backgroundColor: `${theme.gold}20` }]}>
           <ThemedText type="small" style={{ color: theme.gold, textAlign: 'center' }}>
-            ⚠️ Notification permission required
+            {t('fasting.notificationPermissionRequired')}
           </ThemedText>
         </View>
       )}

@@ -8,12 +8,14 @@ import { View, StyleSheet, TextInput, Pressable, Keyboard, ScrollView } from 're
 import { Feather } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { Card } from '@/components/Card';
 import { useTheme } from '@/hooks/useTheme';
 import { useCharityTracker } from '@/hooks/useCharityTracker';
 import { Spacing, BorderRadius } from '@/constants/theme';
+import { useTranslation } from '@/hooks/useTranslation';
 
 function formatCurrency(amount: number, currency: string = 'USD'): string {
   return new Intl.NumberFormat('en-US', {
@@ -27,7 +29,8 @@ function formatCurrency(amount: number, currency: string = 'USD'): string {
 export default function ZakatCalculatorScreen() {
   const insets = useSafeAreaInsets();
   const { isDark, theme } = useTheme();
-  const navigation = useNavigation();
+  const { t } = useTranslation();
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const { calculateZakat } = useCharityTracker();
 
   const [wealth, setWealth] = useState('');
@@ -48,7 +51,7 @@ export default function ZakatCalculatorScreen() {
         <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
           <Feather name="arrow-left" size={24} color={theme.text} />
         </Pressable>
-        <ThemedText type="h2" style={styles.title}>Zakat Calculator</ThemedText>
+        <ThemedText type="h2" style={styles.title}>{t('zakatCalculator.title')}</ThemedText>
         <View style={{ width: 24 }} />
       </View>
 
@@ -59,7 +62,7 @@ export default function ZakatCalculatorScreen() {
         keyboardDismissMode="interactive"
       >
         <Card elevation={2} style={styles.card} onPress={Keyboard.dismiss}>
-          <ThemedText type="body" style={styles.label}>Total Wealth (USD)</ThemedText>
+          <ThemedText type="body" style={styles.label}>{t('zakatCalculator.totalWealth')}</ThemedText>
           <TextInput
             style={[
               styles.input,
@@ -70,7 +73,7 @@ export default function ZakatCalculatorScreen() {
             ]}
             value={wealth}
             onChangeText={setWealth}
-            placeholder="Enter your total wealth"
+            placeholder={t('zakatCalculator.enterWealth')}
             placeholderTextColor={isDark ? '#6B7280' : '#9CA3AF'}
             keyboardType="decimal-pad"
           />
@@ -81,30 +84,30 @@ export default function ZakatCalculatorScreen() {
           >
             <Feather name="percent" size={18} color="#fff" />
             <ThemedText type="body" style={{ color: '#fff', marginLeft: Spacing.sm, fontWeight: '600' }}>
-              Calculate Zakat
+              {t('zakatCalculator.calculate')}
             </ThemedText>
           </Pressable>
         </Card>
 
         {result && (
           <Card elevation={2} style={styles.resultCard} onPress={Keyboard.dismiss}>
-            <ThemedText type="h4" style={styles.resultTitle}>Calculation Results</ThemedText>
+            <ThemedText type="h4" style={styles.resultTitle}>{t('zakatCalculator.results')}</ThemedText>
             <View style={styles.resultRow}>
-              <ThemedText type="body" secondary>Nisab (Gold):</ThemedText>
+              <ThemedText type="body" secondary>{t('zakatCalculator.nisabGold')}:</ThemedText>
               <ThemedText type="body">{formatCurrency(result.nisabGold)}</ThemedText>
             </View>
             <View style={styles.resultRow}>
-              <ThemedText type="body" secondary>Nisab (Silver):</ThemedText>
+              <ThemedText type="body" secondary>{t('zakatCalculator.nisabSilver')}:</ThemedText>
               <ThemedText type="body">{formatCurrency(result.nisabSilver)}</ThemedText>
             </View>
             <View style={styles.resultRow}>
-              <ThemedText type="body" secondary>Meets Nisab:</ThemedText>
+              <ThemedText type="body" secondary>{t('zakatCalculator.meetsNisab')}:</ThemedText>
               <ThemedText type="body" style={{ color: result.meetsNisab ? theme.primary : '#EF4444' }}>
-                {result.meetsNisab ? 'Yes' : 'No'}
+                {result.meetsNisab ? t('common.yes') : t('common.no')}
               </ThemedText>
             </View>
             <View style={[styles.zakatDueSection, { backgroundColor: `${theme.primary}1A` }]}>
-              <ThemedText type="body" secondary>Zakat Due (2.5%)</ThemedText>
+              <ThemedText type="body" secondary>{t('zakatCalculator.zakatDue')}</ThemedText>
               <ThemedText type="h2" style={{ color: accentColor }}>{formatCurrency(result.zakatDue)}</ThemedText>
             </View>
           </Card>
@@ -113,8 +116,7 @@ export default function ZakatCalculatorScreen() {
         <Card elevation={1} style={styles.infoCard} onPress={Keyboard.dismiss}>
           <Feather name="info" size={16} color={isDark ? '#9CA3AF' : '#6B7280'} />
           <ThemedText type="small" secondary style={styles.infoText}>
-            Zakat is 2.5% of wealth held for one lunar year above the Nisab threshold. 
-            The Nisab is based on the value of 87.48g of gold or 612.36g of silver.
+            {t('zakatCalculator.info')}
           </ThemedText>
         </Card>
       </ScrollView>

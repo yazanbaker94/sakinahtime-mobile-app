@@ -3,6 +3,7 @@ import { View, Pressable, StyleSheet, Animated } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { PrayerStatus } from '../types/prayerLog';
 import { useTheme } from '../hooks/useTheme';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface PrayerStatusIndicatorProps {
   status: PrayerStatus;
@@ -12,19 +13,25 @@ interface PrayerStatusIndicatorProps {
   disabled?: boolean;
 }
 
-// Status cycle order and display info
-const STATUS_CYCLE: Array<{ status: PrayerStatus; icon: string; color: string; label: string }> = [
-  { status: 'unmarked', icon: 'circle', color: 'transparent', label: '' },
-  { status: 'prayed', icon: 'check', color: '#10B981', label: 'Prayed' },
-  { status: 'late', icon: 'clock', color: '#F59E0B', label: 'Late' },
-  { status: 'missed', icon: 'x', color: '#EF4444', label: 'Missed' },
-];
+// Status cycle order and display info - uses t() for translations
+function getStatusCycle(t: (key: string) => string): Array<{ status: PrayerStatus; icon: string; color: string; label: string }> {
+  return [
+    { status: 'unmarked', icon: 'circle', color: 'transparent', label: '' },
+    { status: 'prayed', icon: 'check', color: '#10B981', label: t('prayerStatus.prayed') },
+    { status: 'late', icon: 'clock', color: '#F59E0B', label: t('prayerStatus.late') },
+    { status: 'missed', icon: 'x', color: '#EF4444', label: t('prayerStatus.missed') },
+  ];
+}
 
 // Legacy function for backwards compatibility
 export function getNextStatus(current: PrayerStatus): PrayerStatus {
-  const currentIndex = STATUS_CYCLE.findIndex(s => s.status === current);
-  const nextIndex = (currentIndex + 1) % STATUS_CYCLE.length;
-  return STATUS_CYCLE[nextIndex].status;
+  const cycle = getStatusCycle((key: string) => {
+    const map: Record<string, string> = { 'prayerStatus.prayed': 'Prayed', 'prayerStatus.late': 'Late', 'prayerStatus.missed': 'Missed' };
+    return map[key] || key;
+  });
+  const currentIndex = cycle.findIndex(s => s.status === current);
+  const nextIndex = (currentIndex + 1) % cycle.length;
+  return cycle[nextIndex].status;
 }
 
 export function PrayerStatusIndicator({
@@ -34,6 +41,8 @@ export function PrayerStatusIndicator({
   disabled = false,
 }: PrayerStatusIndicatorProps) {
   const { isDark } = useTheme();
+  const { t } = useTranslation();
+  const STATUS_CYCLE = getStatusCycle(t);
   const [showLabel, setShowLabel] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const hideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);

@@ -7,6 +7,7 @@ import { NotificationSettings } from "@/hooks/useNotifications";
 import { IqamaSettings, IQAMA_DELAY_OPTIONS } from "@/hooks/useIqamaSettings";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
+import { useTranslation } from "@/hooks/useTranslation";
 import { CALCULATION_METHODS } from "@/hooks/usePrayerTimes";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { PrayerAdjustments } from "@/hooks/usePrayerAdjustments";
@@ -64,6 +65,7 @@ export function NotificationSettingsModal({
   const { isDark, theme } = useTheme();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp>();
+  const { t, locale } = useTranslation();
   const [showMethodPicker, setShowMethodPicker] = useState(false);
   const [showAdjustments, setShowAdjustments] = useState(false);
   const [showIqamaDelayPicker, setShowIqamaDelayPicker] = useState(false);
@@ -92,14 +94,14 @@ export function NotificationSettingsModal({
             styles.modalHeader,
             { borderBottomColor: theme.border }
           ]}>
-            <ThemedText type="h3">Notification Settings</ThemedText>
+            <ThemedText type="h3">{t('notifications.title')}</ThemedText>
             <Pressable onPress={onClose} hitSlop={8}>
               <Feather name="x" size={24} color={theme.text} />
             </Pressable>
           </View>
 
-          <ScrollView 
-            style={styles.modalScroll} 
+          <ScrollView
+            style={styles.modalScroll}
             contentContainerStyle={{ paddingBottom: insets.bottom + Spacing.xl }}
             showsVerticalScrollIndicator={false}
           >
@@ -108,9 +110,9 @@ export function NotificationSettingsModal({
               <View style={styles.settingInfo}>
                 <Feather name="bell" size={20} color={theme.primary} />
                 <View style={styles.settingText}>
-                  <ThemedText type="body">Prayer Notifications</ThemedText>
+                  <ThemedText type="body">{t('notifications.prayerNotifications')}</ThemedText>
                   <ThemedText type="small" secondary>
-                    Get notified when it's time to pray
+                    {t('notifications.getNotified')}
                   </ThemedText>
                 </View>
               </View>
@@ -130,7 +132,7 @@ export function NotificationSettingsModal({
               <View style={styles.prayerNotifications}>
                 {PRAYERS.map((prayer) => (
                   <View key={prayer.key} style={styles.prayerNotificationRow}>
-                    <ThemedText type="body">{prayer.nameEn} - {prayer.nameAr}</ThemedText>
+                    <ThemedText type="body">{t(`prayer.${prayer.key.toLowerCase()}`)}</ThemedText>
                     <Switch
                       value={notificationSettings.prayers[prayer.key as keyof NotificationSettings["prayers"]]}
                       onValueChange={(value) =>
@@ -157,9 +159,9 @@ export function NotificationSettingsModal({
               <View style={styles.settingInfo}>
                 <Feather name="clock" size={20} color={theme.primary} />
                 <View style={styles.settingText}>
-                  <ThemedText type="body">Time Adjustments</ThemedText>
+                  <ThemedText type="body">{t('notifications.timeAdjustments')}</ThemedText>
                   <ThemedText type="small" secondary>
-                    Fine-tune prayer times (±30 min)
+                    {t('notifications.timeAdjustmentsFineTune')}
                   </ThemedText>
                 </View>
               </View>
@@ -177,7 +179,7 @@ export function NotificationSettingsModal({
                   return (
                     <View key={prayer.key} style={styles.adjustmentRow}>
                       <ThemedText type="body" style={{ flex: 1 }}>
-                        {prayer.nameEn}
+                        {t(`prayer.${prayer.key.toLowerCase()}`)}
                       </ThemedText>
                       <View style={styles.adjustmentControls}>
                         <Pressable
@@ -195,7 +197,7 @@ export function NotificationSettingsModal({
                           backgroundColor: theme.backgroundSecondary,
                         }]}>
                           <ThemedText type="body" style={{ fontWeight: '700', minWidth: 50, textAlign: 'center' }}>
-                            {adjustment > 0 ? '+' : ''}{adjustment} min
+                            {adjustment > 0 ? '+' : ''}{adjustment} {t('notifications.min')}
                           </ThemedText>
                         </View>
                         <Pressable
@@ -223,9 +225,9 @@ export function NotificationSettingsModal({
               <View style={styles.settingInfo}>
                 <Feather name="volume-2" size={20} color={theme.primary} />
                 <View style={styles.settingText}>
-                  <ThemedText type="body">Azan Sound</ThemedText>
+                  <ThemedText type="body">{t('notifications.azanSound')}</ThemedText>
                   <ThemedText type="small" secondary>
-                    Play azan when prayer time arrives
+                    {t('notifications.playAzanWhenPrayerTime')}
                   </ThemedText>
                 </View>
               </View>
@@ -247,9 +249,9 @@ export function NotificationSettingsModal({
               <View style={styles.settingInfo}>
                 <Feather name="bell" size={20} color={theme.primary} />
                 <View style={styles.settingText}>
-                  <ThemedText type="body">Iqama Reminder</ThemedText>
+                  <ThemedText type="body">{t('notifications.iqamaReminder')}</ThemedText>
                   <ThemedText type="small" secondary>
-                    Play "Haya Al Salat" before prayer
+                    {t('notifications.playHayaAlSalat')}
                   </ThemedText>
                 </View>
               </View>
@@ -274,9 +276,9 @@ export function NotificationSettingsModal({
                   <View style={styles.settingInfo}>
                     <Feather name="clock" size={18} color={theme.textSecondary} />
                     <View style={styles.settingText}>
-                      <ThemedText type="body">Reminder Delay</ThemedText>
+                      <ThemedText type="body">{t('notifications.reminderDelay')}</ThemedText>
                       <ThemedText type="small" secondary>
-                        {iqamaSettings.delayMinutes} minutes after Azan
+                        {iqamaSettings.delayMinutes} {t('notifications.minutesAfterAzan')}
                       </ThemedText>
                     </View>
                   </View>
@@ -304,7 +306,7 @@ export function NotificationSettingsModal({
                           }
                         ]}
                       >
-                        <ThemedText type="body">{delay} minutes</ThemedText>
+                        <ThemedText type="body">{delay} {t('notifications.minutes')}</ThemedText>
                         {iqamaSettings.delayMinutes === delay && (
                           <Feather name="check" size={20} color={theme.primary} />
                         )}
@@ -321,9 +323,9 @@ export function NotificationSettingsModal({
                   <View style={styles.settingInfo}>
                     <Feather name="list" size={18} color={theme.textSecondary} />
                     <View style={styles.settingText}>
-                      <ThemedText type="body">Prayer Selection</ThemedText>
+                      <ThemedText type="body">{t('notifications.prayerSelection')}</ThemedText>
                       <ThemedText type="small" secondary>
-                        Choose which prayers get iqama
+                        {t('notifications.choosePrayersForIqama')}
                       </ThemedText>
                     </View>
                   </View>
@@ -338,7 +340,7 @@ export function NotificationSettingsModal({
                   <View style={styles.iqamaPrayerToggles}>
                     {PRAYERS.map((prayer) => (
                       <View key={`iqama-${prayer.key}`} style={styles.prayerNotificationRow}>
-                        <ThemedText type="body">{prayer.nameEn} - {prayer.nameAr}</ThemedText>
+                        <ThemedText type="body">{t(`prayer.${prayer.key.toLowerCase()}`)}</ThemedText>
                         <Switch
                           value={iqamaSettings.prayers[prayer.key as keyof IqamaSettings["prayers"]]}
                           onValueChange={(value) =>
@@ -369,9 +371,9 @@ export function NotificationSettingsModal({
               <View style={styles.settingInfo}>
                 <Feather name="book" size={20} color={theme.primary} />
                 <View style={styles.settingText}>
-                  <ThemedText type="body">Calculation Method</ThemedText>
+                  <ThemedText type="body">{t('notifications.calculationMethod')}</ThemedText>
                   <ThemedText type="small" secondary>
-                    {CALCULATION_METHODS.find(m => m.id === calculationMethod)?.name || "ISNA"}
+                    {(() => { const m = CALCULATION_METHODS.find(m => m.id === calculationMethod); return m ? t(`calculationMethods.${m.localeKey}`) || m.name : 'ISNA'; })()}
                   </ThemedText>
                 </View>
               </View>
@@ -399,7 +401,7 @@ export function NotificationSettingsModal({
                       }
                     ]}
                   >
-                    <ThemedText type="body">{method.name}</ThemedText>
+                    <ThemedText type="body">{t(`calculationMethods.${method.localeKey}`) || method.name}</ThemedText>
                     {calculationMethod === method.id && (
                       <Feather name="check" size={20} color={theme.primary} />
                     )}
@@ -410,8 +412,8 @@ export function NotificationSettingsModal({
 
           </ScrollView>
         </View>
-      </View>
-    </Modal>
+      </View >
+    </Modal >
   );
 }
 

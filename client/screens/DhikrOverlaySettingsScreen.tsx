@@ -16,44 +16,46 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '@/hooks/useTheme';
+import { useTranslation } from '@/hooks/useTranslation';
 import { useDhikrOverlaySettings } from '@/hooks/useDhikrOverlaySettings';
 import { DhikrOverlayService } from '@/services/DhikrOverlayService';
 import { DHIKR_CATEGORIES, getRandomDhikr } from '@/data/dhikrContent';
 import { BorderRadius, Spacing, Shadows } from '@/constants/theme';
 
 const INTERVAL_OPTIONS = [
-  { value: 30, label: '30 min' },
-  { value: 60, label: '1 hour' },
-  { value: 120, label: '2 hours' },
-  { value: 180, label: '3 hours' },
-  { value: 240, label: '4 hours' },
+  { value: 30, labelKey: 'dhikrReminders.interval30min' },
+  { value: 60, labelKey: 'dhikrReminders.interval1hour' },
+  { value: 120, labelKey: 'dhikrReminders.interval2hours' },
+  { value: 180, labelKey: 'dhikrReminders.interval3hours' },
+  { value: 240, labelKey: 'dhikrReminders.interval4hours' },
 ] as const;
 
 const QUIET_HOUR_OPTIONS = [
-  { value: 21, label: '9 PM' },
-  { value: 22, label: '10 PM' },
-  { value: 23, label: '11 PM' },
-  { value: 0, label: '12 AM' },
+  { value: 21, labelKey: 'dhikrReminders.quiet9pm' },
+  { value: 22, labelKey: 'dhikrReminders.quiet10pm' },
+  { value: 23, labelKey: 'dhikrReminders.quiet11pm' },
+  { value: 0, labelKey: 'dhikrReminders.quiet12am' },
 ];
 
 const WAKE_HOUR_OPTIONS = [
-  { value: 5, label: '5 AM' },
-  { value: 6, label: '6 AM' },
-  { value: 7, label: '7 AM' },
-  { value: 8, label: '8 AM' },
+  { value: 5, labelKey: 'dhikrReminders.wake5am' },
+  { value: 6, labelKey: 'dhikrReminders.wake6am' },
+  { value: 7, labelKey: 'dhikrReminders.wake7am' },
+  { value: 8, labelKey: 'dhikrReminders.wake8am' },
 ];
 
 const AUTO_DISMISS_OPTIONS = [
-  { value: 5, label: '5s' },
-  { value: 10, label: '10s' },
-  { value: 15, label: '15s' },
-  { value: 20, label: '20s' },
-  { value: 30, label: '30s' },
+  { value: 5, labelKey: 'dhikrReminders.autoDismiss5s' },
+  { value: 10, labelKey: 'dhikrReminders.autoDismiss10s' },
+  { value: 15, labelKey: 'dhikrReminders.autoDismiss15s' },
+  { value: 20, labelKey: 'dhikrReminders.autoDismiss20s' },
+  { value: 30, labelKey: 'dhikrReminders.autoDismiss30s' },
 ];
 
 export default function DhikrOverlaySettingsScreen() {
   const navigation = useNavigation();
   const { theme } = useTheme();
+  const { t, locale } = useTranslation();
   const {
     settings,
     isLoading,
@@ -87,7 +89,7 @@ export default function DhikrOverlaySettingsScreen() {
         const granted = await DhikrOverlayService.checkPermission();
         console.log('[DhikrOverlay] Permission granted:', granted, 'pendingEnable:', pendingEnable);
         setHasPermission(granted);
-        
+
         // Auto-enable if permission was just granted and we were waiting for it
         if (granted && pendingEnable) {
           console.log('[DhikrOverlay] Auto-enabling service...');
@@ -107,7 +109,7 @@ export default function DhikrOverlaySettingsScreen() {
             });
             if (!success) {
               await updateEnabled(false);
-              Alert.alert('Error', 'Failed to start dhikr reminder service');
+              Alert.alert(t('dhikrReminders.error'), t('dhikrReminders.serviceFailed'));
             }
             setIsStartingService(false);
           }, 200);
@@ -136,7 +138,7 @@ export default function DhikrOverlaySettingsScreen() {
         });
       }
     };
-    
+
     // Only update if service is enabled and we're not in initial load
     if (!isLoading && settings.enabled) {
       updateServiceTheme();
@@ -178,7 +180,7 @@ export default function DhikrOverlaySettingsScreen() {
 
       if (!success) {
         await updateEnabled(false);
-        Alert.alert('Error', 'Failed to start dhikr reminder service');
+        Alert.alert(t('dhikrReminders.error'), t('dhikrReminders.serviceFailed'));
       }
     } else {
       await DhikrOverlayService.stopService();
@@ -189,18 +191,18 @@ export default function DhikrOverlaySettingsScreen() {
 
   const handlePreview = async () => {
     console.log('[DhikrOverlay] Preview button pressed');
-    
+
     const enabledCategories = getEnabledCategories();
     console.log('[DhikrOverlay] Enabled categories:', enabledCategories);
-    
+
     if (enabledCategories.length === 0) {
-      Alert.alert('No Categories', 'Please enable at least one dhikr category');
+      Alert.alert(t('dhikrReminders.error'), t('dhikrReminders.noCategories'));
       return;
     }
 
     const dhikr = getRandomDhikr(enabledCategories);
     console.log('[DhikrOverlay] Random dhikr:', dhikr);
-    
+
     if (dhikr) {
       try {
         console.log('[DhikrOverlay] Calling showNow with current theme...');
@@ -209,10 +211,10 @@ export default function DhikrOverlaySettingsScreen() {
         console.log('[DhikrOverlay] showNow completed');
       } catch (error) {
         console.error('[DhikrOverlay] Preview failed:', error);
-        Alert.alert('Preview Failed', 'Could not show overlay preview. Please try again.');
+        Alert.alert(t('dhikrReminders.error'), t('dhikrReminders.previewFailed'));
       }
     } else {
-      Alert.alert('No Dhikr', 'Could not find dhikr content for selected categories');
+      Alert.alert(t('dhikrReminders.error'), t('dhikrReminders.noDhikr'));
     }
   };
 
@@ -267,7 +269,7 @@ export default function DhikrOverlaySettingsScreen() {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color={theme.text} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: theme.text }]}>Dhikr Reminders</Text>
+        <Text style={[styles.headerTitle, { color: theme.text }]}>{t('dhikrReminders.title')}</Text>
         <View style={styles.headerRight} />
       </View>
 
@@ -277,7 +279,7 @@ export default function DhikrOverlaySettingsScreen() {
           <View style={[styles.noticeCard, { backgroundColor: theme.backgroundSecondary }]}>
             <Ionicons name="information-circle" size={20} color={theme.primary} />
             <Text style={[styles.noticeText, { color: theme.textSecondary }]}>
-              Floating overlay is only available on Android. On iOS, you'll receive standard notifications instead.
+              {t('dhikrReminders.iosNotice')}
             </Text>
           </View>
         )}
@@ -287,12 +289,12 @@ export default function DhikrOverlaySettingsScreen() {
           <View style={styles.toggleRow}>
             <View style={styles.toggleInfo}>
               <Text style={[styles.toggleTitle, { color: theme.text }]}>
-                {supportsOverlay ? 'Floating Reminders' : 'Dhikr Notifications'}
+                {supportsOverlay ? t('dhikrReminders.floatingReminders') : t('dhikrReminders.dhikrNotifications')}
               </Text>
               <Text style={[styles.toggleSubtitle, { color: theme.textSecondary }]}>
                 {supportsOverlay
-                  ? 'Show dhikr overlay on top of other apps'
-                  : 'Receive periodic dhikr notifications'}
+                  ? t('dhikrReminders.showOverlay')
+                  : t('dhikrReminders.receiveNotifications')}
               </Text>
             </View>
             {isStartingService ? (
@@ -314,7 +316,7 @@ export default function DhikrOverlaySettingsScreen() {
             >
               <Ionicons name="shield-checkmark" size={18} color={theme.primary} />
               <Text style={[styles.permissionText, { color: theme.primary }]}>
-                Grant overlay permission
+                {t('dhikrReminders.grantPermission')}
               </Text>
             </TouchableOpacity>
           )}
@@ -327,13 +329,13 @@ export default function DhikrOverlaySettingsScreen() {
             onPress={handlePreview}
           >
             <Ionicons name="eye" size={20} color="#FFFFFF" />
-            <Text style={styles.previewButtonText}>Preview Overlay</Text>
+            <Text style={styles.previewButtonText}>{t('dhikrReminders.previewOverlay')}</Text>
           </TouchableOpacity>
         )}
 
         {/* Interval Selection */}
         <View style={[styles.card, { backgroundColor: theme.cardBackground }, Shadows.card]}>
-          <Text style={[styles.sectionTitle, { color: theme.text }]}>Reminder Interval</Text>
+          <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('dhikrReminders.reminderInterval')}</Text>
           <View style={styles.optionsRow}>
             {INTERVAL_OPTIONS.map((option) => (
               <TouchableOpacity
@@ -357,7 +359,7 @@ export default function DhikrOverlaySettingsScreen() {
                     },
                   ]}
                 >
-                  {option.label}
+                  {t(option.labelKey)}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -366,17 +368,14 @@ export default function DhikrOverlaySettingsScreen() {
 
         {/* Categories */}
         <View style={[styles.card, { backgroundColor: theme.cardBackground }, Shadows.card]}>
-          <Text style={[styles.sectionTitle, { color: theme.text }]}>Dhikr Categories</Text>
+          <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('dhikrReminders.dhikrCategories')}</Text>
           <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>
-            Choose which types of dhikr to include
+            {t('dhikrReminders.chooseTypes')}
           </Text>
           {DHIKR_CATEGORIES.map((category) => (
             <View key={category.id} style={styles.categoryRow}>
               <View style={styles.categoryInfo}>
-                <Text style={[styles.categoryName, { color: theme.text }]}>{category.name}</Text>
-                <Text style={[styles.categoryNameAr, { color: theme.textSecondary }]}>
-                  {category.nameAr}
-                </Text>
+                <Text style={[styles.categoryName, { color: theme.text }]}>{locale === 'ar' ? category.nameAr : category.name}</Text>
               </View>
               <Switch
                 value={settings.categories[category.id]}
@@ -392,9 +391,9 @@ export default function DhikrOverlaySettingsScreen() {
         <View style={[styles.card, { backgroundColor: theme.cardBackground }, Shadows.card]}>
           <View style={styles.toggleRow}>
             <View style={styles.toggleInfo}>
-              <Text style={[styles.toggleTitle, { color: theme.text }]}>Quiet Hours</Text>
+              <Text style={[styles.toggleTitle, { color: theme.text }]}>{t('dhikrReminders.quietHours')}</Text>
               <Text style={[styles.toggleSubtitle, { color: theme.textSecondary }]}>
-                Pause reminders during sleep time
+                {t('dhikrReminders.pauseSleep')}
               </Text>
             </View>
             <Switch
@@ -407,7 +406,7 @@ export default function DhikrOverlaySettingsScreen() {
 
           {settings.quietHours.enabled && (
             <View style={styles.quietHoursConfig}>
-              <Text style={[styles.timeLabel, { color: theme.textSecondary }]}>Start at</Text>
+              <Text style={[styles.timeLabel, { color: theme.textSecondary }]}>{t('dhikrReminders.startAt')}</Text>
               <View style={styles.optionsRow}>
                 {QUIET_HOUR_OPTIONS.map((option) => (
                   <TouchableOpacity
@@ -432,14 +431,14 @@ export default function DhikrOverlaySettingsScreen() {
                         },
                       ]}
                     >
-                      {option.label}
+                      {t(option.labelKey)}
                     </Text>
                   </TouchableOpacity>
                 ))}
               </View>
 
               <Text style={[styles.timeLabel, { color: theme.textSecondary, marginTop: Spacing.md }]}>
-                End at
+                {t('dhikrReminders.endAt')}
               </Text>
               <View style={styles.optionsRow}>
                 {WAKE_HOUR_OPTIONS.map((option) => (
@@ -465,7 +464,7 @@ export default function DhikrOverlaySettingsScreen() {
                         },
                       ]}
                     >
-                      {option.label}
+                      {t(option.labelKey)}
                     </Text>
                   </TouchableOpacity>
                 ))}
@@ -476,9 +475,9 @@ export default function DhikrOverlaySettingsScreen() {
 
         {/* Auto Dismiss */}
         <View style={[styles.card, { backgroundColor: theme.cardBackground }, Shadows.card]}>
-          <Text style={[styles.sectionTitle, { color: theme.text }]}>Auto Dismiss</Text>
+          <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('dhikrReminders.autoDismiss')}</Text>
           <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>
-            Overlay disappears after this time
+            {t('dhikrReminders.overlayDisappears')}
           </Text>
           <View style={styles.optionsRow}>
             {AUTO_DISMISS_OPTIONS.map((option) => (
@@ -504,7 +503,7 @@ export default function DhikrOverlaySettingsScreen() {
                     },
                   ]}
                 >
-                  {option.label}
+                  {t(option.labelKey)}
                 </Text>
               </TouchableOpacity>
             ))}

@@ -13,6 +13,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
+import { useTranslation } from '../hooks/useTranslation';
 import { HijriDate, CalendarDay, IslamicEvent, FastingDay } from '../types/hijri';
 import { hijriDateService } from '../services/HijriDateService';
 import { islamicEventsService } from '../services/IslamicEventsService';
@@ -29,20 +30,20 @@ const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const DAY_SIZE = Math.floor((SCREEN_WIDTH - 48) / 7);
 
-function CalendarLegend({ isDark, theme }: { isDark: boolean; theme: any }) {
+function CalendarLegend({ isDark, theme, t }: { isDark: boolean; theme: any; t: (key: string) => string }) {
   return (
     <View style={[styles.legend, { borderTopColor: theme.border }]}>
       <View style={styles.legendItem}>
         <View style={[styles.legendDot, { backgroundColor: theme.gold }]} />
-        <Text style={[styles.legendText, { color: theme.textSecondary }]}>Event</Text>
+        <Text style={[styles.legendText, { color: theme.textSecondary }]}>{t('calendarGrid.event')}</Text>
       </View>
       <View style={styles.legendItem}>
         <View style={[styles.legendDot, { backgroundColor: '#3B82F6' }]} />
-        <Text style={[styles.legendText, { color: theme.textSecondary }]}>Fasting</Text>
+        <Text style={[styles.legendText, { color: theme.textSecondary }]}>{t('calendarGrid.fasting')}</Text>
       </View>
       <View style={styles.legendItem}>
         <View style={[styles.legendDot, { backgroundColor: '#8B5CF6' }]} />
-        <Text style={[styles.legendText, { color: theme.textSecondary }]}>White Day</Text>
+        <Text style={[styles.legendText, { color: theme.textSecondary }]}>{t('calendarGrid.whiteDay')}</Text>
       </View>
     </View>
   );
@@ -55,6 +56,7 @@ export function CalendarGrid({
   onMonthChange,
 }: CalendarGridProps) {
   const { isDark, theme } = useTheme();
+  const { t } = useTranslation();
   const [month, setMonth] = useState(initialMonth);
   const [year, setYear] = useState(initialYear);
 
@@ -97,10 +99,10 @@ export function CalendarGrid({
         monthNameEn: hijriDateService.getMonthName(month, 'en'),
       };
       const gregorianDate = hijriDateService.toGregorian(hijriDate);
-      
+
       const event = monthEvents.find(e => e.day === day);
       const fastingDay = monthFastingDays.find(f => f.hijriDate.day === day);
-      
+
       const isToday = today.day === day && today.month === month && today.year === year;
 
       days.push({
@@ -213,7 +215,7 @@ export function CalendarGrid({
         ))}
       </View>
 
-      <CalendarLegend isDark={isDark} theme={theme} />
+      <CalendarLegend isDark={isDark} theme={theme} t={t} />
     </View>
   );
 }

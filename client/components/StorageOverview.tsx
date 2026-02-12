@@ -9,6 +9,7 @@ import { View, StyleSheet, Pressable } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
+import { useTranslation } from '@/hooks/useTranslation';
 import { Spacing, BorderRadius } from '@/constants/theme';
 import { StorageInfo } from '../types/offline';
 import { formatBytes, STORAGE_LIMITS } from '../constants/offline';
@@ -20,6 +21,7 @@ interface StorageOverviewProps {
 
 export function StorageOverview({ storageInfo, onManagePress }: StorageOverviewProps) {
   const { isDark, theme } = useTheme();
+  const { t } = useTranslation();
 
   const usagePercent = (storageInfo.totalUsed / storageInfo.storageLimit) * 100;
   const isWarning = usagePercent >= STORAGE_LIMITS.WARNING_THRESHOLD * 100;
@@ -34,7 +36,7 @@ export function StorageOverview({ storageInfo, onManagePress }: StorageOverviewP
   return (
     <View style={[
       styles.container,
-      { 
+      {
         backgroundColor: isDark ? `${theme.primary}33` : theme.backgroundDefault,
         elevation: isDark ? 0 : 3,
         shadowOpacity: isDark ? 0 : 0.08,
@@ -46,15 +48,15 @@ export function StorageOverview({ storageInfo, onManagePress }: StorageOverviewP
             styles.iconCircle,
             { backgroundColor: `${theme.primary}26` }
           ]}>
-            <Feather 
-              name="hard-drive" 
-              size={20} 
-              color={theme.primary} 
+            <Feather
+              name="hard-drive"
+              size={20}
+              color={theme.primary}
             />
           </View>
           <View>
             <ThemedText type="body" style={{ fontWeight: '600' }}>
-              Storage Used
+              {t('storageOverview.storageUsed')}
             </ThemedText>
             <ThemedText type="caption" secondary>
               {formatBytes(storageInfo.totalUsed)} of {formatBytes(storageInfo.storageLimit)}
@@ -64,12 +66,12 @@ export function StorageOverview({ storageInfo, onManagePress }: StorageOverviewP
         {onManagePress && (
           <Pressable onPress={onManagePress} style={styles.manageButton}>
             <ThemedText type="small" style={{ color: theme.primary }}>
-              Manage
+              {t('storageOverview.manage')}
             </ThemedText>
-            <Feather 
-              name="chevron-right" 
-              size={16} 
-              color={theme.primary} 
+            <Feather
+              name="chevron-right"
+              size={16}
+              color={theme.primary}
             />
           </Pressable>
         )}
@@ -80,14 +82,14 @@ export function StorageOverview({ storageInfo, onManagePress }: StorageOverviewP
           styles.progressBar,
           { backgroundColor: isDark ? 'rgba(255, 255, 255, 0.1)' : '#E5E7EB' }
         ]}>
-          <View 
+          <View
             style={[
               styles.progressFill,
-              { 
+              {
                 width: `${Math.min(usagePercent, 100)}%`,
                 backgroundColor: getBarColor(),
               }
-            ]} 
+            ]}
           />
         </View>
         <ThemedText type="caption" style={[
@@ -102,19 +104,19 @@ export function StorageOverview({ storageInfo, onManagePress }: StorageOverviewP
         <View style={[styles.warningBanner, { backgroundColor: 'rgba(239, 68, 68, 0.1)' }]}>
           <Feather name="alert-triangle" size={14} color="#EF4444" />
           <ThemedText type="caption" style={{ color: '#EF4444', marginLeft: 6 }}>
-            Storage almost full. Clear some data to continue downloading.
+            {t('storageOverview.storageFull')}
           </ThemedText>
         </View>
       )}
 
       <View style={styles.deviceInfo}>
-        <Feather 
-          name="smartphone" 
-          size={12} 
-          color={theme.textSecondary} 
+        <Feather
+          name="smartphone"
+          size={12}
+          color={theme.textSecondary}
         />
         <ThemedText type="caption" secondary style={{ marginLeft: 4 }}>
-          {formatBytes(storageInfo.deviceAvailable)} available on device
+          {formatBytes(storageInfo.deviceAvailable)} {t('storageOverview.availableOnDevice')}
         </ThemedText>
       </View>
     </View>

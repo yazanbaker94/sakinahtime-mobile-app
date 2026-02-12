@@ -1,0 +1,2269 @@
+{
+  "tabs": {
+    "qibla": "Кибла",
+    "prayer": "Намаз",
+    "quran": "Коран",
+    "azkar": "Азкар",
+    "settings": "Настройки"
+  },
+  "settings": {
+    "title": "Настройки",
+    "appearance": "Внешний вид",
+    "customizeTheme": "Настройте тему",
+    "language": "Язык",
+    "chooseLanguage": "Выберите язык",
+    "prayerFasting": "Намаз и пост",
+    "notificationsAzanReminders": "Уведомления, азан и напоминания",
+    "storageDownloads": "Хранилище и загрузки",
+    "manageOfflineContent": "Управление офлайн-контентом",
+    "wordByWord": "Слово за словом",
+    "translationLanguage": "Язык перевода",
+    "dhikrReminders": "Напоминания о зикре",
+    "floatingOverlay": "Плавающие напоминания",
+    "feedbackSuggestions": "Отзывы и предложения",
+    "helpImprove": "Помогите нам улучшить приложение",
+    "colorMode": "Цветовой режим",
+    "theme": "Тема",
+    "light": "Светлая",
+    "dark": "Тёмная",
+    "auto": "Авто"
+  },
+  "prayer": {
+    "title": "Время намаза",
+    "fajr": "Фаджр",
+    "sunrise": "Восход",
+    "dhuhr": "Зухр",
+    "asr": "Аср",
+    "maghrib": "Магриб",
+    "isha": "Иша",
+    "nextPrayer": "СЛЕДУЮЩИЙ НАМАЗ",
+    "timeRemaining": "Оставшееся время",
+    "prayerCalendar": "Календарь намаза",
+    "prayerStats": "Статистика намаза",
+    "progress": "Прогресс",
+    "hijriCalendar": "Хиджра календарь",
+    "calculationMethod": "Метод расчёта",
+    "prayed": "Совершён",
+    "missed": "Пропущен",
+    "late": "Опоздал",
+    "onTime": "Вовремя",
+    "notLogged": "Не записано",
+    "logPrayer": "Записать намаз",
+    "currentStreak": "Текущая серия",
+    "days": "ДНЕЙ",
+    "day": "ДЕНЬ",
+    "today": "Сегодня",
+    "yesterday": "Вчера",
+    "location": "Местоположение",
+    "setLocation": "Установить местоположение",
+    "tapToSetLocation": "Нажмите, чтобы установить ваше местоположение для точного времени намаза",
+    "noLocation": "Местоположение не установлено",
+    "checkingPermission": "Проверка разрешения...",
+    "locationRequired": "Требуется доступ к местоположению",
+    "locationExplanation": "Нам нужно ваше местоположение для расчёта точного времени намаза.",
+    "browserLocationHint": "Пожалуйста, включите местоположение в настройках браузера.",
+    "enableLocation": "Включить местоположение",
+    "openSettings": "Открыть настройки",
+    "loadingPrayerTimes": "Загрузка времени намаза...",
+    "failedToLoad": "Не удалось загрузить время намаза",
+    "hours": "ЧАСОВ",
+    "minutes": "МИНУТ",
+    "seconds": "СЕКУНД",
+    "min": "мин"
+  },
+  "qibla": {
+    "title": "Кибла",
+    "direction": "Направление",
+    "degrees": "градусов",
+    "compass": "Компас",
+    "distance": "Расстояние",
+    "toKaaba": "до Каабы",
+    "facingQibla": "Направление Кибла",
+    "turnLeft": "Поверните налево",
+    "turnRight": "Поверните направо",
+    "directionLocked": "Направление зафиксировано",
+    "tapToUnlock": "Нажмите для разблокировки",
+    "lockDirection": "Зафиксировать направление",
+    "compassNotAvailable": "Компас недоступен",
+    "compassNotAvailableWeb": "Компас недоступен в веб-версии. Используйте мобильное устройство.",
+    "calibrate": "Откалибруйте компас, перемещая телефон в форме восьмёрки",
+    "calibrateShort": "Перемещайте телефон восьмёркой для калибровки",
+    "heading": "КУРС",
+    "qiblaLabel": "КИБЛА",
+    "km": "КМ",
+    "mosques": "Мечети",
+    "gettingLocation": "Определение местоположения...",
+    "initializingCompass": "Инициализация компаса...",
+    "locationRequiredQibla": "Нам нужно ваше местоположение для расчёта направления Киблы."
+  },
+  "quran": {
+    "title": "Коран",
+    "surah": "Сура",
+    "juz": "Джуз",
+    "page": "Страница",
+    "verse": "Аят",
+    "verses": "Аяты",
+    "search": "Поиск",
+    "searchQuran": "Поиск в Коране",
+    "bookmark": "Закладка",
+    "bookmarks": "Закладки",
+    "bookmarked": "Добавлено",
+    "addNote": "Добавить заметку",
+    "notes": "Заметки",
+    "highlight": "Выделить",
+    "highlights": "Выделения",
+    "copy": "Копировать",
+    "share": "Поделиться",
+    "play": "Воспроизвести",
+    "pause": "Пауза",
+    "stop": "Стоп",
+    "continue": "Продолжить",
+    "tafsir": "Тафсир",
+    "translation": "Перевод",
+    "translations": "Переводы",
+    "transliteration": "Транслитерация",
+    "reciter": "Чтец",
+    "lastRead": "Последнее чтение",
+    "continueLast": "Продолжить с того места, где вы остановились",
+    "meccan": "Мекканская",
+    "medinan": "Мединская",
+    "save": "Сохранить",
+    "delete": "Удалить",
+    "cancel": "Отмена",
+    "savedVerses": "Сохранённые аяты",
+    "all": "Все",
+    "recent": "Недавние",
+    "tafsirTranslations": "Тафсир и переводы",
+    "download": "Скачать",
+    "downloaded": "Скачано",
+    "downloading": "Скачивание",
+    "readMode": "Режим чтения",
+    "mushafMode": "Режим мусхафа",
+    "surahReader": "Чтение сур",
+    "goToPage": "Перейти на страницу",
+    "goToSurah": "Перейти к суре",
+    "goToJuz": "Перейти к джузу",
+    "wordByWord": "Слово за словом",
+    "audio": "Аудио",
+    "settings": "Настройки"
+  },
+  "azkar": {
+    "title": "Азкар и дуа",
+    "morningAzkar": "Утренние азкар",
+    "eveningAzkar": "Вечерние азкар",
+    "afterPrayer": "После намаза",
+    "sleep": "Сон",
+    "wakeUp": "Пробуждение",
+    "dailyTip": "Совет дня",
+    "categories": "Категории",
+    "duas": "Дуа",
+    "guides": "Руководства",
+    "all": "Все",
+    "favorites": "Избранное",
+    "count": "Счёт",
+    "completed": "Завершено",
+    "repeat": "Повторить",
+    "times": "раз",
+    "time": "раз",
+    "remaining": "осталось",
+    "reset": "Сбросить",
+    "duaOfTheDay": "Дуа дня",
+    "dailyDhikr": "Ежедневный зикр",
+    "dhikrGoal": "Цель зикра",
+    "worship": "Поклонение и намаз",
+    "dailyLife": "Повседневная жизнь",
+    "travel": "Путешествие",
+    "food": "Еда и напитки",
+    "protection": "Защита",
+    "hadith": "Хадис",
+    "islamicGuides": "Исламские руководства",
+    "search": "Поиск азкар и дуа...",
+    "searchDuas": "Поиск дуа...",
+    "quranic": "Коранические",
+    "prophetic": "Пророческие",
+    "custom": "Свои",
+    "customDuas": "Свои дуа",
+    "addCustomDua": "Добавить своё дуа",
+    "noDuasYet": "Пока нет своих дуа",
+    "noFavorites": "Пока нет избранного",
+    "noResults": "Результаты не найдены",
+    "deleteConfirm": "Вы уверены, что хотите удалить это дуа?",
+    "tapToStart": "Нажмите для начала",
+    "target": "Цель",
+    "progress": "Прогресс",
+    "allCategories": "Все категории",
+    "deleteDua": "Удалить дуа",
+    "deleteDuaConfirm": "Вы уверены, что хотите удалить это дуа?",
+    "myDuas": "Мои дуа",
+    "result": "результат",
+    "results": "результатов",
+    "noDuasFound": "Дуа не найдены для",
+    "searchGuides": "Поиск руководств...",
+    "noGuidesFound": "Руководства не найдены для",
+    "back": "Назад",
+    "addPersonalSupplications": "Пока нет своих дуа.\nДобавьте ваши личные мольбы.",
+    "tapHeartTip": "Пока нет избранных дуа.\nНажмите на сердечко у любого дуа.",
+    "noQuranicDuas": "Нет коранических дуа",
+    "noPropheticDuas": "Нет пророческих дуа",
+    "adhkarCount": "азкар",
+    "dailyTips": [
+      {
+        "text": "The Prophet ﷺ said: \"The best remembrance is La ilaha illallah (There is no god but Allah).\"",
+        "source": "Tirmidhi"
+      },
+      {
+        "text": "The Prophet ﷺ said: \"Whoever says SubhanAllah wa bihamdihi 100 times, his sins will be forgiven even if they were like foam of the sea.\"",
+        "source": "Bukhari & Muslim"
+      },
+      {
+        "text": "The Prophet ﷺ said: \"Two words are light on the tongue, heavy on the scales, beloved to the Most Merciful: SubhanAllahi wa bihamdihi, SubhanAllahil Adheem.\"",
+        "source": "Bukhari & Muslim"
+      },
+      {
+        "text": "The Prophet ﷺ said: \"Whoever reads Ayat al-Kursi after every obligatory prayer, nothing prevents him from entering Paradise except death.\"",
+        "source": "An-Nasa'i"
+      },
+      {
+        "text": "The Prophet ﷺ said: \"The closest a servant is to his Lord is when he is in prostration, so increase your supplication.\"",
+        "source": "Muslim"
+      },
+      {
+        "text": "The Prophet ﷺ said: \"None of you truly believes until he loves for his brother what he loves for himself.\"",
+        "source": "Bukhari & Muslim"
+      },
+      {
+        "text": "The Prophet ﷺ said: \"Whoever believes in Allah and the Last Day, let him speak good or remain silent.\"",
+        "source": "Bukhari & Muslim"
+      },
+      {
+        "text": "The Prophet ﷺ said: \"The best of you are those who learn the Quran and teach it.\"",
+        "source": "Bukhari"
+      },
+      {
+        "text": "The Prophet ﷺ said: \"A smile in the face of your brother is charity.\"",
+        "source": "Tirmidhi"
+      },
+      {
+        "text": "The Prophet ﷺ said: \"Whoever treads a path seeking knowledge, Allah will make easy for him the path to Paradise.\"",
+        "source": "Muslim"
+      },
+      {
+        "text": "The Prophet ﷺ said: \"The supplication between the Adhan and Iqamah is not rejected.\"",
+        "source": "Abu Dawud & Tirmidhi"
+      }
+    ]
+  },
+  "azkarDetail": {
+    "quran": "Коран",
+    "translit": "Транслит.",
+    "english": "Английский",
+    "counter": "Счётчик"
+  },
+  "duaCollection": {
+    "title": "Дуа",
+    "searchPlaceholder": "Поиск дуа...",
+    "categories": "Категории",
+    "quranic": "Коранические",
+    "prophetic": "Пророческие",
+    "favorites": "Избранное",
+    "myDuas": "Мои дуа",
+    "deleteDua": "Удалить дуа",
+    "deleteConfirm": "Вы уверены, что хотите удалить это дуа?",
+    "deleteFailed": "Не удалось удалить дуа",
+    "duasCount": "дуа",
+    "noResultsFor": "Дуа не найдены для \"{{query}}\"",
+    "results": "результатов",
+    "result": "результат",
+    "forQuery": "для",
+    "noQuranic": "Нет коранических дуа",
+    "noProphetic": "Нет пророческих дуа",
+    "noFavorites": "Пока нет избранных дуа.\nНажмите на сердечко у любого дуа.",
+    "noCustom": "Пока нет своих дуа.\nДобавьте ваши личные мольбы.",
+    "addCustom": "Добавить своё дуа"
+  },
+  "progress": {
+    "title": "Прогресс",
+    "readingProgress": "Прогресс чтения",
+    "overallProgress": "Общий прогресс",
+    "complete": "Завершено",
+    "pagesRead": "Страниц прочитано",
+    "juzComplete": "Джузов завершено",
+    "khatm": "Хатм",
+    "todaysProgress": "Прогресс за сегодня",
+    "versesRead": "аятов прочитано",
+    "pagesReadToday": "страниц прочитано",
+    "readingStreak": "Серия чтения",
+    "currentStreak": "Текущая серия",
+    "longestStreak": "Лучшая серия",
+    "bestStreak": "Лучшая серия",
+    "thisWeek": "Эта неделя",
+    "average": "Среднее",
+    "pagesPerDay": "стр./день",
+    "dailyGoalSettings": "Настройки дневной цели",
+    "enableDailyGoal": "Включить дневную цель",
+    "goalType": "Тип цели",
+    "pages": "Страницы",
+    "verses": "Аяты",
+    "target": "Цель",
+    "saveGoal": "Сохранить цель",
+    "readingReminder": "Напоминание о чтении",
+    "enableReminder": "Включить напоминание",
+    "reminderTime": "Время напоминания",
+    "resetAllProgress": "Сбросить весь прогресс",
+    "resetConfirm": "Вы уверены, что хотите сбросить весь прогресс чтения? Это действие нельзя отменить.",
+    "resetButton": "Сбросить",
+    "noGoalSet": "Дневная цель не установлена",
+    "invalidGoal": "Неверная цель",
+    "invalidGoalMessage": "Пожалуйста, введите валидное число",
+    "goalRange": "цель должна быть между",
+    "and": "и",
+    "permissionRequired": "Требуется разрешение",
+    "permissionMessage": "Включите уведомления в настройках устройства для напоминаний о чтении.",
+    "errorSavingGoal": "Не удалось сохранить цель",
+    "errorResetting": "Не удалось сбросить прогресс",
+    "loadingProgress": "Загрузка прогресса...",
+    "done": "Готово",
+    "goal": "Цель",
+    "weeklyOverview": "Обзор за неделю",
+    "monthlyOverview": "Обзор за месяц",
+    "streak": "Серия",
+    "totalPrayers": "Всего намазов",
+    "completionRate": "Процент выполнения",
+    "prayerLog": "Журнал намазов",
+    "weekly": "Еженедельно",
+    "monthly": "Ежемесячно",
+    "allTime": "За всё время",
+    "exportStats": "Экспорт статистики",
+    "qadaTracker": "Трекер каза",
+    "qadaRemaining": "Каза осталось",
+    "taraweeh": "Таравих",
+    "charity": "Благотворительность",
+    "zakatCalculator": "Калькулятор закята",
+    "hifzProgress": "Прогресс хифза",
+    "quranSchedule": "Расписание Корана"
+  },
+  "notifications": {
+    "title": "Настройки уведомлений",
+    "prayerNotifications": "Уведомления о намазе",
+    "getNotified": "Получать уведомления о времени намаза",
+    "prayerAlarms": "Будильники намаза",
+    "azanSettings": "Настройки азана",
+    "azan": "Азан",
+    "azanSound": "Звук азана",
+    "playHayaAlSalat": "Воспроизводить \"Хайя аля Салят\" перед намазом",
+    "silentMode": "Беззвучный режим",
+    "flipToSilence": "Переверните для тишины",
+    "flipToSilenceDesc": "Переверните телефон экраном вниз, чтобы заглушить азан",
+    "testAzan": "Тест азана",
+    "vibration": "Вибрация",
+    "iqama": "Икама",
+    "iqamaReminder": "Напоминание об икаме",
+    "iqamaWait": "Ожидание икамы",
+    "iqamaDelay": "Задержка икамы",
+    "minutesAfterAzan": "минут после азана",
+    "minutes": "минут",
+    "enabled": "Включено",
+    "disabled": "Отключено",
+    "timeAdjustments": "Корректировка времени",
+    "adjustPrayerTimes": "Корректировка времени намаза (минуты)",
+    "calculationMethod": "Метод расчёта",
+    "highLatitude": "Правило высоких широт",
+    "asrCalculation": "Расчёт Асра",
+    "standard": "Стандартный",
+    "hanafi": "Ханафитский",
+    "prayerTracking": "Отслеживание намазов",
+    "enableTracking": "Включить отслеживание",
+    "trackDailyPrayers": "Отслеживайте ваши ежедневные намазы",
+    "missedPrayerReminder": "Напоминание о пропущенном намазе",
+    "reminderAfterPrayer": "Напоминать после окончания времени намаза",
+    "reminderDelay": "Задержка напоминания",
+    "minutesAfterPrayer": "минут после намаза",
+    "fasting": "Пост",
+    "suhoorReminder": "Напоминание о сухуре",
+    "iftarReminder": "Напоминание об ифтаре",
+    "beforeSuhoor": "минут до сухура",
+    "beforeIftar": "минут до ифтара",
+    "fastingReminders": "Напоминания о посте",
+    "enableFastingReminders": "Включить напоминания о посте",
+    "playAzanWhenPrayerTime": "Воспроизводить азан при наступлении времени намаза",
+    "selectPrayersForAzan": "Выберите намазы для звука азана",
+    "prayerSelection": "Выбор намазов",
+    "choosePrayersForIqama": "Выберите намазы для икамы",
+    "testIqama": "Тест икамы",
+    "testIqamaPlaying": "Звук икамы воспроизводится. Если не слышите, проверьте громкость.",
+    "timeAdjustmentsFineTune": "Тонкая настройка времени намаза (±30 мин)",
+    "min": "мин",
+    "autoDetectByLocation": "Авто-определение по местоположению",
+    "recommended": "Рекомендуется",
+    "active": "Активно",
+    "useAuto": "Авто",
+    "autoDetectedFor": "Авто-определено для"
+  },
+  "qadaTracker": {
+    "title": "Трекер каза",
+    "totalRemaining": "Всего оставшихся каза-намазов",
+    "hint": "Нажмите на число для редактирования. Используйте 'Записать' после совершения каза."
+  },
+  "location": {
+    "title": "Настройки местоположения",
+    "searchCity": "Поиск города...",
+    "currentLocation": "Текущее местоположение",
+    "useCurrentLocation": "Использовать текущее",
+    "manualEntry": "Ручной ввод",
+    "latitude": "Широта",
+    "longitude": "Долгота",
+    "save": "Сохранить",
+    "detectingLocation": "Определение местоположения...",
+    "locationSaved": "Местоположение сохранено",
+    "invalidCoordinates": "Неверные координаты",
+    "detecting": "Определение местоположения...",
+    "unavailable": "Местоположение недоступно",
+    "permissionRequired": "Требуется разрешение",
+    "manual": "Ручной",
+    "locationSource": "ИСТОЧНИК МЕСТОПОЛОЖЕНИЯ",
+    "useGPS": "Использовать GPS",
+    "setManually": "Установить вручную",
+    "searchWorldwide": "Поиск города по всему миру",
+    "recentLocations": "НЕДАВНИЕ МЕСТОПОЛОЖЕНИЯ",
+    "info": "Ваше местоположение используется для расчёта точного времени намаза и направления Киблы."
+  },
+  "qada": {
+    "title": "Трекер каза",
+    "totalRemaining": "Всего осталось",
+    "addMissed": "Добавить пропущенный",
+    "prayersMadeUp": "Возмещённые намазы",
+    "prayersRemaining": "Осталось",
+    "hint": "Долгое нажатие на число для вычитания",
+    "noQada": "Нет оставшихся каза-намазов. МашаАллах!",
+    "fajr": "Фаджр",
+    "dhuhr": "Зухр",
+    "asr": "Аср",
+    "maghrib": "Магриб",
+    "isha": "Иша",
+    "prayers": "намазов"
+  },
+  "zakat": {
+    "title": "Калькулятор закята",
+    "totalWealth": "Общее имущество",
+    "enterWealth": "Введите общее имущество",
+    "calculate": "Рассчитать",
+    "zakatDue": "Закят к выплате",
+    "nisab": "Нисаб",
+    "meetsNisab": "Достигает нисаба",
+    "doesNotMeetNisab": "Не достигает нисаба",
+    "goldNisab": "Нисаб золота",
+    "silverNisab": "Нисаб серебра",
+    "info": "Закят составляет 2,5% от общего имущества, которым владели в течение лунного года.",
+    "gold": "Золото",
+    "silver": "Серебро",
+    "cash": "Наличные и банковские счета",
+    "stocks": "Акции и инвестиции",
+    "property": "Арендная недвижимость",
+    "totalAssets": "Общие активы",
+    "zakatPayable": "Закят к оплате",
+    "reset": "Сбросить",
+    "currency": "Валюта"
+  },
+  "charity": {
+    "title": "Трекер благотворительности",
+    "totalDonated": "Всего пожертвовано",
+    "addDonation": "Добавить пожертвование",
+    "setGoal": "Установить цель",
+    "goal": "Цель",
+    "recentDonations": "Недавние пожертвования",
+    "noDonations": "Пока нет пожертвований",
+    "amount": "Сумма",
+    "type": "Тип",
+    "category": "Категория",
+    "date": "Дата",
+    "deleteConfirm": "Вы уверены, что хотите удалить это пожертвование?",
+    "enterAmount": "Введите сумму",
+    "selectCategory": "Выберите категорию",
+    "sadaqah": "Садака",
+    "zakatPayment": "Закят",
+    "waqf": "Вакф",
+    "other": "Другое",
+    "goalAmount": "Сумма цели",
+    "goalProgress": "Прогресс цели",
+    "to": "Кому",
+    "totalGiven": "Всего отдано",
+    "editGoal": "Изменить цель",
+    "zakatStatus": "Статус закята",
+    "paid": "Оплачено",
+    "notYetPaid": "Ещё не оплачен в этом году",
+    "breakdownByType": "Разбивка по типу"
+  },
+  "ramadan": {
+    "title": "Рамадан",
+    "daysRemaining": "Дней осталось",
+    "fastingToday": "Пост сегодня",
+    "taraweeh": "Таравих",
+    "logTaraweeh": "Записать таравих",
+    "suhoor": "Сухур",
+    "iftar": "Ифтар",
+    "fastingDays": "Дни поста",
+    "completed": "Завершено",
+    "remaining": "Осталось",
+    "ramadanMode": "Режим Рамадана",
+    "activateMessage": "Режим Рамадана автоматически активируется в благословенный месяц Рамадан.",
+    "checkBackMessage": "Вернитесь, когда начнётся Рамадан, для доступа к расписанию сухура/ифтара, плану чтения Корана и отслеживанию таравиха."
+  },
+  "hifz": {
+    "title": "Прогресс хифза",
+    "memorized": "Выучено",
+    "inProgress": "В процессе",
+    "notStarted": "Не начато",
+    "totalMemorized": "Всего выучено",
+    "markMemorized": "Отметить как выученное",
+    "markInProgress": "Отметить как в процессе",
+    "resetSurah": "Сбросить суру",
+    "versesMemorized": "Аятов выучено",
+    "dueToday": "На сегодня",
+    "revisedToday": "Повторено сегодня",
+    "dailyGoal": "Дневная цель",
+    "overallProgress": "Общий прогресс",
+    "verses": "Аяты",
+    "pages": "Страницы",
+    "juz": "Джуз",
+    "dueForRevision": "На повторение",
+    "last": "Последний",
+    "ease": "Лёгкость",
+    "moreVersesDue": "ещё аятов на повторение",
+    "statusLegend": "Обозначения статусов",
+    "notifications": "Уведомления",
+    "dailyReminders": "Ежедневные напоминания",
+    "reminderHint": "Получайте напоминания о повторении заученного",
+    "resetAllProgress": "Сбросить весь прогресс"
+  },
+  "storage": {
+    "title": "Хранилище и загрузки",
+    "totalUsed": "Всего использовано",
+    "audioFiles": "Аудиофайлы",
+    "clearAllDownloads": "Удалить все загрузки",
+    "clearConfirm": "Вы уверены, что хотите удалить все загруженные данные?",
+    "confirm": "Подтвердить",
+    "cancel": "Отмена",
+    "reciterAudio": "Аудио чтеца",
+    "mushafPages": "Страницы мусхафа",
+    "totalSize": "Общий размер",
+    "noDownloads": "Пока нет загрузок",
+    "loadingInfo": "Загрузка информации...",
+    "quickActions": "Быстрые действия",
+    "manageAudio": "Управление аудио",
+    "downloadQuran": "Скачать Коран",
+    "clearAll": "Удалить всё",
+    "freeUpSpace": "Освободить место",
+    "refreshInfo": "Обновить информацию"
+  },
+  "onboarding": {
+    "welcome": "Добро пожаловать в SakinahTime",
+    "welcomeDesc": "Ваш спутник в духовном пути",
+    "skip": "Пропустить",
+    "next": "Далее",
+    "getStarted": "Начать",
+    "done": "Готово",
+    "prayerTimesTitle": "Точное время намаза",
+    "prayerTimesDesc": "Получайте точное время намаза с красивыми уведомлениями азана",
+    "quranTitle": "Прекрасный Коран",
+    "quranDesc": "Читайте Коран с переводами, пословным разбором и аудио-рецитацией",
+    "azkarTitle": "Ежедневные азкар и дуа",
+    "azkarDesc": "Утренние и вечерние азкар, дуа на все случаи и счётчик зикра",
+    "notificationsDesc": "Не пропустите ни одного намаза с настраиваемыми уведомлениями",
+    "widgetDesc": "Добавьте виджет для быстрого доступа к расписанию намазов",
+    "welcomeTitle": "Ассаляму алейкум",
+    "welcomeSubtitle": "Добро пожаловать в SakinahTime",
+    "welcomeDescription": "Ваш спутник для намаза, чтения Корана и духовного роста.",
+    "locationTitle": "Точное время намаза",
+    "locationSubtitle": "Доступ к местоположению",
+    "locationDescription": "Мы используем ваше местоположение для расчёта точного времени намаза.",
+    "notificationsTitle": "Не пропустите намаз",
+    "notificationsSubtitle": "Напоминания",
+    "notificationsDescription": "Получайте уведомления с красивым звуком азана при наступлении намаза.",
+    "widgetTitle": "Добавить виджет",
+    "widgetSubtitle": "Надёжный азан",
+    "widgetDescription": "Добавьте виджет времени намаза для надёжных уведомлений, даже после перезагрузки.",
+    "doneTitle": "Всё готово!",
+    "doneSubtitle": "Готовы начать",
+    "doneDescription": "Начните путь к более осознанной духовной практике.",
+    "locationEnabled": "Местоположение включено",
+    "notificationsEnabled": "Уведомления включены",
+    "enable": "Включить",
+    "continue": "Продолжить",
+    "notNow": "Не сейчас",
+    "enableExactAlarms": "Включить точные будильники",
+    "exactAlarmsDescription": "SakinahTime нужно разрешение для установки точных будильников намаза.\n\nПожалуйста, включите \"Будильники и напоминания\" на следующем экране.",
+    "openSettings": "Открыть настройки",
+    "enableReliableAzan": "Включить надёжный азан",
+    "reliableAzanDescription": "Чтобы азан звучал после перезагрузки, нажмите:\n\nБатарея → Без ограничений\n\nЭто позволит приложению будить телефон для намаза."
+  },
+  "mosque": {
+    "title": "Ближайшие мечети",
+    "findMosques": "Найти мечети",
+    "distance": "Расстояние",
+    "directions": "Маршрут",
+    "noMosques": "Мечети поблизости не найдены",
+    "searchMosques": "Поиск мечетей...",
+    "openInMaps": "Открыть в картах"
+  },
+  "hijri": {
+    "title": "Хиджра календарь",
+    "today": "Сегодня",
+    "months": {
+      "1": "Мухаррам",
+      "2": "Сафар",
+      "3": "Раби уль-Аввал",
+      "4": "Раби уль-Ахир",
+      "5": "Джумада уль-Уля",
+      "6": "Джумада уль-Ахира",
+      "7": "Раджаб",
+      "8": "Шабан",
+      "9": "Рамадан",
+      "10": "Шавваль",
+      "11": "Зуль-Каада",
+      "12": "Зуль-Хиджа"
+    }
+  },
+  "prayerStats": {
+    "title": "Статистика намаза",
+    "overview": "Обзор",
+    "totalPrayed": "Всего совершено",
+    "totalMissed": "Всего пропущено",
+    "onTimeRate": "Процент вовремя",
+    "weeklyBreakdown": "Недельная статистика",
+    "monthlyBreakdown": "Месячная статистика",
+    "bestDay": "Лучший день",
+    "prayerBreakdown": "Разбивка по намазам",
+    "noData": "Пока нет данных. Начните отслеживание!",
+    "loadingStats": "Загрузка статистики...",
+    "prayerTracking": "Отслеживание намазов",
+    "tapToMark": "Нажмите для отметки",
+    "enableToTrack": "Включите для отслеживания",
+    "tapToMarkStatus": "Нажмите кнопку для отметки статуса:",
+    "prayed": "Совершён",
+    "missed": "Пропущен",
+    "late": "Опоздал",
+    "missedReminder": "Напоминание о пропущенном",
+    "remindAfter": "Напомнить через {{minutes}} мин если не отмечено",
+    "getReminded": "Получайте напоминания",
+    "remindAfterLabel": "Напомнить через:",
+    "totalLogged": "Всего записано",
+    "qadaDue": "Каза к выполнению",
+    "weekly": "Неделя",
+    "monthly": "Месяц",
+    "exportFailed": "Ошибка экспорта",
+    "exportError": "Не удалось поделиться статистикой."
+  },
+  "prayerCalendar": {
+    "title": "Календарь намаза",
+    "monthlyView": "Месячный вид",
+    "allPrayed": "Все совершены",
+    "someMissed": "Некоторые пропущены",
+    "notTracked": "Не отслеживается",
+    "today": "Сегодня",
+    "unableToLoad": "Не удалось загрузить",
+    "selectMonthYear": "Выберите месяц и год",
+    "year": "Год",
+    "month": "Месяц"
+  },
+  "audioDownload": {
+    "title": "Загрузки аудио",
+    "downloadAll": "Скачать всё",
+    "deleteAll": "Удалить всё",
+    "downloading": "Скачивание...",
+    "downloaded": "Скачано",
+    "notDownloaded": "Не скачано",
+    "surahAudio": "Аудио суры",
+    "offline": "Офлайн",
+    "needInternet": "Для загрузки нужно подключение к интернету.",
+    "downloadAllSurahs": "Скачать все суры",
+    "deleteAllAudio": "Удалить всё аудио",
+    "download": "Скачать",
+    "delete": "Удалить",
+    "deleteAudio": "Удалить аудио",
+    "cancelDownloads": "Отменить загрузки",
+    "cancelAllDesc": "Отменить все загрузки? Частично скачанные суры будут удалены.",
+    "keepDownloading": "Продолжить",
+    "cancelAll": "Отменить все",
+    "deleteConfirmMessage": "Удалить скачанное аудио для"
+  },
+  "reciter": {
+    "title": "Выбрать чтеца",
+    "currentReciter": "Текущий чтец",
+    "popular": "Популярные",
+    "allReciters": "Все чтецы"
+  },
+  "duaDetail": {
+    "reference": "Источник",
+    "benefits": "Польза",
+    "occasion": "Случай",
+    "shareAsDua": "Поделиться дуа",
+    "notFound": "Дуа не найдено",
+    "notFoundMessage": "Это дуа не найдено.",
+    "listenPronunciation": "Прослушать произношение",
+    "viewInQuran": "Открыть в Коране",
+    "ayah": "Аят",
+    "benefitsVirtues": "Польза и достоинства"
+  },
+  "customDuaForm": {
+    "editDua": "Редактировать дуа",
+    "addCustomDua": "Добавить своё дуа",
+    "saving": "Сохранение...",
+    "saveFailed": "Не удалось сохранить.",
+    "deleteConfirm": "Вы уверены? Это действие нельзя отменить.",
+    "deleteFailed": "Не удалось удалить.",
+    "arabicText": "Арабский текст",
+    "optional": "Необязательно",
+    "transliteration": "Транслитерация",
+    "transliterationPlaceholder": "Введите транслитерацию (напр. Аллахумма...)",
+    "translationMeaning": "Перевод / Значение",
+    "translationPlaceholder": "Введите значение или перевод",
+    "personalNotes": "Личные заметки",
+    "notesPlaceholder": "Добавьте заметки",
+    "deleteThisDua": "Удалить это дуа"
+  },
+  "islamicGuide": {
+    "title": "Исламское руководство",
+    "steps": "Шаги",
+    "references": "Источники"
+  },
+  "dhikrOverlay": {
+    "title": "Настройки оверлея зикра",
+    "enableOverlay": "Включить оверлей",
+    "overlayDesc": "Показывать плавающие напоминания о зикре",
+    "frequency": "Частота",
+    "everyMinutes": "Каждые {{count}} минут",
+    "style": "Стиль",
+    "position": "Позиция"
+  },
+  "wordByWordSettings": {
+    "title": "Пословный разбор",
+    "translationLang": "Язык перевода",
+    "showTransliteration": "Показывать транслитерацию",
+    "fontSize": "Размер шрифта"
+  },
+  "quranSchedule": {
+    "title": "Расписание Корана",
+    "createSchedule": "Создать расписание",
+    "completionDate": "Дата завершения",
+    "pagesPerDay": "Страниц в день",
+    "startDate": "Дата начала",
+    "daysDone": "Дней пройдено",
+    "day": "День",
+    "pages": "Страницы",
+    "completed": "Завершено",
+    "pending": "Ожидает",
+    "openInMushaf": "Открыть в мусхафе",
+    "today": "Сегодня",
+    "juz": "Джуз",
+    "surahs": "Суры:",
+    "openMushaf": "Открыть мусхаф",
+    "markComplete": "Отметить завершённым",
+    "completedAt": "Завершено:",
+    "remaining": "Осталось",
+    "complete": "Завершено",
+    "behindSchedule": "отстаёте от графика"
+  },
+  "zakatCalculator": {
+    "title": "Калькулятор закята",
+    "totalWealth": "Общее имущество (USD)",
+    "enterWealth": "Введите ваше имущество",
+    "calculate": "Рассчитать закят",
+    "results": "Результаты расчёта",
+    "nisabGold": "Нисаб (золото)",
+    "nisabSilver": "Нисаб (серебро)",
+    "meetsNisab": "Достигает нисаба",
+    "zakatDue": "Закят к оплате (2,5%)",
+    "info": "Закят составляет 2,5% от имущества, которым владели в течение года выше порога нисаба."
+  },
+  "hijriCalendar": {
+    "title": "Исламский календарь",
+    "event": "Событие",
+    "fasting": "Пост",
+    "ah": "г.х.",
+    "fastingProhibited": "Пост запрещён сегодня",
+    "eventIn": "{{name}} через {{count}} день",
+    "eventIn_plural": "{{name}} через {{count}} дней"
+  },
+  "common": {
+    "loading": "Загрузка...",
+    "error": "Ошибка",
+    "retry": "Повторить",
+    "ok": "ОК",
+    "cancel": "Отмена",
+    "save": "Сохранить",
+    "delete": "Удалить",
+    "edit": "Редактировать",
+    "close": "Закрыть",
+    "back": "Назад",
+    "done": "Готово",
+    "search": "Поиск",
+    "share": "Поделиться",
+    "copy": "Копировать",
+    "copied": "Скопировано!",
+    "noResults": "Результатов не найдено",
+    "offline": "Вы офлайн",
+    "yes": "Да",
+    "no": "Нет",
+    "confirm": "Подтвердить",
+    "reset": "Сбросить",
+    "add": "Добавить",
+    "remove": "Удалить",
+    "enable": "Включить",
+    "disable": "Отключить",
+    "on": "Вкл",
+    "off": "Выкл",
+    "yourRegion": "ваш регион",
+    "goBack": "Назад",
+    "skip": "Пропустить"
+  },
+  "components": {
+    "streakDays": "дней подряд",
+    "streakDaysPlural": "дней подряд",
+    "perfectDay": "Идеальный день",
+    "offlineMode": "Офлайн-режим",
+    "usingCachedData": "Используются кэшированные данные",
+    "lastSynced": "Последняя синхронизация",
+    "somethingWentWrong": "Что-то пошло не так",
+    "tryAgain": "Попробовать снова"
+  },
+  "streak": {
+    "prayerStreak": "Серия намазов",
+    "currentStreak": "Текущая серия",
+    "longestStreak": "Лучшая серия",
+    "days": "дней",
+    "day": "день",
+    "startToday": "Начните серию сегодня!",
+    "greatStart": "Отличное начало! Продолжайте!",
+    "buildingMomentum": "Вы набираете обороты!",
+    "amazingConsistency": "Потрясающая последовательность!",
+    "incredibleDedication": "Невероятная преданность!",
+    "trulyInspiring": "МашаАллах! Вдохновляет!"
+  },
+  "fasting": {
+    "fastingReminders": "Напоминания о посте",
+    "getNotifiedFasting": "Получать уведомления о днях поста",
+    "receiveReminders": "Получать напоминания о рекомендуемых днях поста",
+    "reminderTime": "Время напоминания",
+    "eveningBefore": "Вечер накануне",
+    "beforeFajr": "До Фаджра",
+    "thirtyMinBefore": "За 30 мин",
+    "fastingDays": "Дни поста",
+    "monday": "Понедельник",
+    "thursday": "Четверг",
+    "whiteDays": "Белые дни",
+    "ashura": "Ашура",
+    "dayOfArafah": "День Арафа",
+    "shawwal": "Шавваль",
+    "weeklySunnahFast": "Еженедельный сунна-пост",
+    "whiteDaysDesc": "13, 14, 15 числа каждого месяца",
+    "ashuraDesc": "10 Мухаррама",
+    "arafahDesc": "9 Зуль-Хиджа",
+    "shawwalDesc": "6 дней после Рамадана",
+    "notificationPermissionRequired": "⚠️ Требуется разрешение на уведомления"
+  },
+  "storageAlerts": {
+    "quranAudio": "Аудио Корана",
+    "tafsir": "Тафсир",
+    "prayerTimesCache": "Кэш намазов",
+    "otherCache": "Другой кэш",
+    "allCachedData": "Все кэшированные данные",
+    "clearConfirm": "Удалить {{category}}?",
+    "clearAllDesc": "Это удалит все скачанные аудио и тафсир. Потребуется повторная загрузка.",
+    "clearCategoryDesc": "Это удалит все {{category}}.",
+    "cancel": "Отмена",
+    "clear": "Удалить",
+    "error": "Ошибка",
+    "failedToClear": "Не удалось очистить кэш."
+  },
+  "mushaf": {
+    "notes": "Заметки и выделения",
+    "bookmarks": "Закладки",
+    "highlights": "Выделения",
+    "addNote": "Добавить заметку",
+    "save": "Сохранить",
+    "delete": "Удалить",
+    "noNotesYet": "Пока нет заметок",
+    "tapToAddNote": "Долгое нажатие на аят для добавления заметки",
+    "noBookmarksYet": "Пока нет закладок",
+    "tapToBookmark": "Нажмите на аят для закладки",
+    "editNote": "Редактировать заметку",
+    "writeNoteHere": "Напишите заметку...",
+    "hifzModeActivated": "Режим хифза активирован",
+    "hifzModeDesc": "Нажмите на аят, чтобы его показать. Долгое нажатие для опций заучивания.",
+    "wordByWordHighlighting": "Пословная подсветка",
+    "wordByWordDesc": "Долгое нажатие и перетаскивание для навигации по аудио.",
+    "justNow": "Только что",
+    "minutesAgo": "{{count}} мин назад",
+    "hoursAgo": "{{count}} ч назад",
+    "daysAgo": "{{count}} дн назад",
+    "noBookmarks": "Нет закладок",
+    "noResults": "Нет результатов",
+    "tryDifferent": "Попробуйте другие слова",
+    "search": "Поиск...",
+    "writeNote": "Напишите заметку...",
+    "quarterHizb": "Четверть хизба",
+    "halfHizb": "Половина хизба",
+    "fullJuzOnly": "Только полный джуз",
+    "copyVerse": "Копировать аят",
+    "shareVerse": "Поделиться аятом",
+    "chooseHighlight": "Выбрать цвет",
+    "removeHighlight": "Убрать выделение",
+    "highlight": "Выделить",
+    "selectReciter": "Выбрать чтеца",
+    "audioSettings": "Настройки аудио",
+    "noTafsir": "Тафсир недоступен",
+    "noTafsirVerse": "Тафсир для этого аята недоступен",
+    "recently": "Недавно",
+    "earlier": "Ранее",
+    "deleteFailed": "Не удалось удалить.",
+    "quran": "Коран",
+    "surahs114": "114 Сур",
+    "juz30": "30 Джузов",
+    "recentCount": "Недавние",
+    "surahTab": "Суры",
+    "juzTab": "Джуз",
+    "recentTab": "Недавние",
+    "searchPlaceholder": "Поиск...",
+    "includeTafsir": "Включить тафсир в поиск",
+    "notesSection": "ЗАМЕТКИ",
+    "highlightsSection": "ВЫДЕЛЕНИЯ",
+    "tafsirTranslation": "Тафсир/Перевод",
+    "nowPlaying": "ВОСПРОИЗВОДИТСЯ",
+    "paused": "ПАУЗА",
+    "verse": "Аят",
+    "repeat": "Повтор",
+    "loop": "Цикл",
+    "remaining": "осталось",
+    "surah": "Сура",
+    "noTafsirAvailable": "Тафсир для этого аята недоступен",
+    "noteInputPlaceholder": "Напишите здесь...",
+    "juzLabel": "Джуз",
+    "hizbLabel": "Хизб",
+    "searching": "ПОИСК...",
+    "resultsCount": "РЕЗУЛЬТАТЫ",
+    "recentlyViewed": "Недавно просмотренные",
+    "allSurahs": "ВСЕ СУРЫ",
+    "recentlyViewedLabel": "НЕДАВНО ПРОСМОТРЕННЫЕ",
+    "quartersLabel": "ЧЕТВЕРТИ",
+    "halvesLabel": "ПОЛОВИНЫ",
+    "pagesYouVisit": "Посещённые страницы появятся здесь",
+    "noRecentPages": "Нет недавних страниц",
+    "verses": "аятов",
+    "pageNumber": "Страница",
+    "loadingVerses": "Загрузка аятов...",
+    "bookmark": "Закладка",
+    "removeBookmark": "Убрать закладку",
+    "tafsirAndTranslations": "Тафсир и переводы",
+    "downloadedCount": "скачано",
+    "playUntil": "ВОСПРОИЗВЕСТИ ДО",
+    "page": "Страница",
+    "juz": "Джуз",
+    "reciterLabel": "ЧТЕЦ",
+    "play": "Воспроизвести",
+    "playCount": "Воспроизвести {{count}}×",
+    "setLoopStart": "Начало цикла",
+    "setLoopEnd": "Конец цикла",
+    "playLoop": "Воспроизвести цикл",
+    "tapToReveal": "Нажмите для показа",
+    "notStarted": "Не начато",
+    "inProgress": "В процессе",
+    "memorized": "Выучено",
+    "all": "Все",
+    "tapToMinimize": "НАЖМИТЕ ДЛЯ СВОРАЧИВАНИЯ",
+    "myTranslations": "МОИ ПЕРЕВОДЫ",
+    "myTafsirs": "МОИ ТАФСИРЫ",
+    "tafsirBadge": "ТАФСИР",
+    "translationBadge": "ПЕРЕВОД",
+    "currentlyActive": "Сейчас активен",
+    "select": "Выбрать",
+    "availableToDownload": "ДОСТУПНО ДЛЯ ЗАГРУЗКИ",
+    "translationsCount": "Переводы",
+    "tafsirsCount": "Тафсиры",
+    "tapToDownload": "Нажмите для загрузки",
+    "deleteTafsir": "Удалить тафсир",
+    "deleteTafsirConfirm": "Удалить {{name}}?",
+    "storageFull": "Хранилище заполнено. Пожалуйста, освободите место и повторите попытку.",
+    "downloadFailed": "Загрузка не удалась. Проверьте соединение и свободное место.",
+    "tafsirNotAvailable": "Тафсир недоступен",
+    "tafsirNotAvailableVerse": "Тафсир для этого аята недоступен"
+  },
+  "mosqueFinder": {
+    "nearbyMosques": "Ближайшие мечети",
+    "searchPlaceholder": "Поиск мечетей...",
+    "radius1km": "1 км",
+    "radius5km": "5 км",
+    "radius10km": "10 км",
+    "radius25km": "25 км"
+  },
+  "calendar": {
+    "months": [
+      "Янв",
+      "Фев",
+      "Мар",
+      "Апр",
+      "Май",
+      "Июн",
+      "Июл",
+      "Авг",
+      "Сен",
+      "Окт",
+      "Ноя",
+      "Дек"
+    ],
+    "weekdays": [
+      "Вс",
+      "Пн",
+      "Вт",
+      "Ср",
+      "Чт",
+      "Пт",
+      "Сб"
+    ]
+  },
+  "themePicker": {
+    "colorMode": "Цветовой режим",
+    "theme": "Тема",
+    "light": "Светлая",
+    "dark": "Тёмная",
+    "auto": "Авто"
+  },
+  "storageOverview": {
+    "storageUsed": "Использовано",
+    "manage": "Управление",
+    "storageFull": "Хранилище почти заполнено.",
+    "availableOnDevice": "доступно на устройстве"
+  },
+  "storageBreakdown": {
+    "title": "Разбивка хранилища",
+    "quranAudio": "Аудио Корана",
+    "tafsir": "Тафсир",
+    "prayerTimes": "Время намаза",
+    "otherCache": "Другой кэш"
+  },
+  "storageSettings": {
+    "downloadSettings": "Настройки загрузки",
+    "storageLimit": "Лимит хранилища",
+    "maxSpace": "Максимальное пространство для офлайн-контента",
+    "wifiOnly": "Скачивать только по Wi-Fi",
+    "wifiOnlyDesc": "Экономьте мобильные данные",
+    "autoDelete": "Автоматическое удаление старого кэша",
+    "autoDeleteDesc": "Автоматически удалять старые данные при достижении лимита"
+  },
+  "dhikrReminders": {
+    "title": "Напоминания о зикре",
+    "floatingReminders": "Плавающие напоминания",
+    "dhikrNotifications": "Уведомления зикра",
+    "showOverlay": "Показывать оверлей зикра поверх других приложений",
+    "receiveNotifications": "Получать периодические уведомления о зикре",
+    "grantPermission": "Предоставить разрешение",
+    "previewOverlay": "Предпросмотр оверлея",
+    "reminderInterval": "Интервал",
+    "dhikrCategories": "Категории зикра",
+    "chooseTypes": "Выберите типы зикра",
+    "quietHours": "Тихие часы",
+    "pauseSleep": "Приостановить уведомления во время сна",
+    "startAt": "Начало",
+    "endAt": "Конец",
+    "autoDismiss": "Автозакрытие",
+    "overlayDisappears": "Оверлей исчезнет через это время",
+    "iosNotice": "Плавающий оверлей доступен только на Android. На iOS будут стандартные уведомления.",
+    "noCategories": "Выберите хотя бы одну категорию зикра",
+    "previewFailed": "Не удалось показать предпросмотр.",
+    "noDhikr": "Зикр не найден для выбранных категорий",
+    "error": "Ошибка",
+    "serviceFailed": "Не удалось запустить службу зикра",
+    "interval30min": "30 мин",
+    "interval1hour": "1 час",
+    "interval2hours": "2 часа",
+    "interval3hours": "3 часа",
+    "interval4hours": "4 часа",
+    "autoDismiss5s": "5с",
+    "autoDismiss10s": "10с",
+    "autoDismiss15s": "15с",
+    "autoDismiss20s": "20с",
+    "autoDismiss30s": "30с",
+    "quiet9pm": "21:00",
+    "quiet10pm": "22:00",
+    "quiet11pm": "23:00",
+    "quiet12am": "0:00",
+    "wake5am": "5:00",
+    "wake6am": "6:00",
+    "wake7am": "7:00",
+    "wake8am": "8:00"
+  },
+  "quickAccess": {
+    "title": "Быстрый доступ",
+    "morning": "Утро",
+    "evening": "Вечер",
+    "prayer": "Намаз",
+    "sleep": "Сон",
+    "wake": "Пробуждение",
+    "general": "Общее"
+  },
+  "tasbih": {
+    "title": "Тасбих-счётчик",
+    "target": "Цель",
+    "tapToCount": "Нажмите для счёта • Удерживайте для сброса",
+    "targetReached": "Цель достигнута!",
+    "resetCounter": "Сбросить счётчик",
+    "resetConfirm": "Вы уверены, что хотите сбросить счётчик?",
+    "cancel": "Отмена",
+    "reset": "Сбросить"
+  },
+  "weeklyChart": {
+    "title": "Эта неделя",
+    "prayed": "Совершён",
+    "missed": "Пропущен",
+    "late": "Опоздал",
+    "noData": "Нет данных",
+    "sun": "Вс",
+    "mon": "Пн",
+    "tue": "Вт",
+    "wed": "Ср",
+    "thu": "Чт",
+    "fri": "Пт",
+    "sat": "Сб"
+  },
+  "citySearch": {
+    "selectCity": "Выберите город",
+    "searchPlaceholder": "Поиск города...",
+    "recent": "НЕДАВНИЕ",
+    "popularCities": "ПОПУЛЯРНЫЕ ГОРОДА",
+    "noCities": "Города не найдены",
+    "tryDifferent": "Попробуйте другое написание",
+    "offline": "Офлайн",
+    "offlineMessage": "Вы сейчас офлайн. Для смены города нужен интернет.",
+    "networkError": "Ошибка сети. Показаны локальные результаты."
+  },
+  "upcomingEvents": {
+    "title": "Предстоящие события",
+    "noEvents": "Нет предстоящих событий"
+  },
+  "hifzControls": {
+    "title": "Управление хифзом",
+    "hideTab": "Скрыть",
+    "repeatTab": "Повтор",
+    "loopTab": "Цикл",
+    "progressTab": "Прогресс",
+    "hideMode": "Режим скрытия",
+    "wordAudio": "Аудио слов",
+    "requiresInternet": "нужен интернет",
+    "playPronunciation": "Воспроизводить произношение при показе",
+    "quickActions": "Быстрые действия",
+    "revealAll": "Показать все",
+    "hideAll": "Скрыть все",
+    "autoHideDelay": "Задержка скрытия",
+    "autoHideAfter": "Автоматически скрыть после показа",
+    "markCurrentVerse": "Отметить текущий аят",
+    "verse": "Аят",
+    "notStarted": "Не начато",
+    "inProgress": "В процессе",
+    "memorized": "Выучено",
+    "longPressToMark": "Долгое нажатие для отметки статуса",
+    "bulkMarking": "Массовая отметка",
+    "page": "Страница",
+    "juz": "Джуз",
+    "clear": "Очистить",
+    "clearPageMarkings": "Очистить отметки страницы",
+    "markEntirePage": "Отметить всю страницу",
+    "clearJuzMarkings": "Очистить отметки джуза",
+    "markEntireJuz": "Отметить весь джуз",
+    "cancel": "Отмена",
+    "confirm": "Подтвердить"
+  },
+  "taraweeh": {
+    "title": "Трекер таравиха",
+    "ramadanCalendar": "Календарь Рамадана",
+    "locationBreakdown": "По местоположению",
+    "completionRate": "Процент выполнения",
+    "logNight": "Записать ночь",
+    "edit": "Редактировать",
+    "night": "Ночь",
+    "nights": "Ночей",
+    "streak": "Серия",
+    "best": "Лучшая",
+    "atMosque": "в мечети",
+    "atHome": "дома"
+  },
+  "mosqueDetail": {
+    "title": "О мечети",
+    "openingHours": "Часы работы",
+    "directions": "Маршрут",
+    "call": "Позвонить",
+    "website": "Сайт",
+    "rating": "Рейтинг",
+    "reviews": "отзывов",
+    "failedToLoad": "Не удалось загрузить",
+    "tryAgain": "Попробовать снова",
+    "openNow": "Открыто",
+    "closed": "Закрыто",
+    "address": "Адрес",
+    "contact": "Контакт",
+    "getDirections": "Маршрут",
+    "away": "далеко"
+  },
+  "donation": {
+    "addTitle": "Добавить пожертвование",
+    "type": "Тип",
+    "amount": "Сумма",
+    "recipientOptional": "Получатель (необяз.)",
+    "recipientPlaceholder": "Организация или человек",
+    "notesOptional": "Заметки (необяз.)",
+    "notesPlaceholder": "Добавить заметки...",
+    "addButton": "Добавить пожертвование",
+    "sadaqah": "Садака",
+    "zakat": "Закят",
+    "fidya": "Фидья",
+    "kaffarah": "Каффара",
+    "other": "Другое"
+  },
+  "setGoal": {
+    "title": "Установить цель",
+    "goalAmount": "Сумма цели (USD)",
+    "setButton": "Установить цель",
+    "infoText": "Цель благотворительности помогает отслеживать прогресс в Рамадане."
+  },
+  "logTaraweeh": {
+    "editTitle": "Редактировать",
+    "logTitle": "Записать",
+    "night": "Ночь",
+    "rakaat": "Ракаат",
+    "location": "Место",
+    "mosque": "Мечеть",
+    "home": "Дома",
+    "notesOptional": "Заметки (необяз.)",
+    "notesPlaceholder": "Добавить заметки...",
+    "delete": "Удалить",
+    "save": "Сохранить"
+  },
+  "suhoorIftar": {
+    "suhoorReminder": "Напоминание о сухуре",
+    "iftarReminder": "Напоминание об ифтаре"
+  },
+  "ramadanCountdown": {
+    "daysLeft": "Дней осталось"
+  },
+  "quranProgress": {
+    "title": "Прогресс Корана"
+  },
+  "monthlyCalendar": {
+    "noData": "Нет данных"
+  },
+  "savedLoops": {
+    "title": "Сохранённые циклы",
+    "enterName": "Введите название...",
+    "noName": "Введите название",
+    "noRange": "Сначала установите диапазон",
+    "saveLoop": "Сохранить текущий цикл",
+    "saveCurrent": "Сохранить текущий",
+    "delete": "Удалить",
+    "deleteLoop": "Удалить цикл",
+    "deleteConfirm": "Вы уверены?",
+    "cancel": "Отмена",
+    "save": "Сохранить",
+    "noLoops": "Нет сохранённых циклов",
+    "error": "Ошибка",
+    "plays": "воспроизведений"
+  },
+  "surahDownload": {
+    "downloading": "Скачивание...",
+    "downloaded": "Скачано",
+    "download": "Скачать",
+    "delete": "Удалить"
+  },
+  "azkarCategories": {
+    "morning": "Утренние азкар",
+    "evening": "Вечерние азкар",
+    "after-prayer": "После намаза",
+    "sleep": "Азкар перед сном",
+    "waking": "При пробуждении",
+    "general": "Общие азкар"
+  },
+  "duaCategories": {
+    "travel": "Путешествие",
+    "eating": "Еда и напитки",
+    "sleeping": "Сон и пробуждение",
+    "places": "Вход и выход",
+    "weather": "Погода и природа",
+    "health": "Здоровье и исцеление",
+    "protection": "Защита",
+    "gratitude": "Благодарность",
+    "forgiveness": "Прощение",
+    "guidance": "Руководство",
+    "family": "Семья и дети",
+    "general": "Общее"
+  },
+  "guideCategories": {
+    "worship": "Поклонение и намаз",
+    "purification": "Очищение",
+    "hajj": "Хадж и Умра",
+    "charity": "Благотворительность и закят",
+    "fasting": "Пост",
+    "funeral": "Погребальные обряды",
+    "character": "Характер и нравы",
+    "knowledge": "Знание и духовность",
+    "finance": "Исламские финансы"
+  },
+  "guides": {
+    "how-to-perform-salah": {
+      "title": "Как совершать намаз (салят)",
+      "description": "Полное руководство по совершению пяти ежедневных намазов",
+      "steps": {
+        "0": {
+          "title": "1. Намерение (ният)",
+          "content": "Сделайте намерение в сердце совершить конкретный намаз. Намерение делается в сердце и не произносится вслух."
+        },
+        "1": {
+          "title": "2. Такбир (открытие)",
+          "content": "Поднимите руки до уровня плеч или ушей и скажите 'Аллаху Акбар'. Это отмечает начало намаза."
+        },
+        "2": {
+          "title": "3. Открывающее дуа",
+          "content": "Положите правую руку на левую на груди и прочитайте: 'Субханака Аллахумма ва бихамдика, ва табаракасмука, ва та'аля джаддука, ва ля иляха гайрук'."
+        },
+        "3": {
+          "title": "4. Чтение Аль-Фатихи",
+          "content": "Прочитайте суру Аль-Фатиха. Это обязательно в каждом ракаате. В конце тихо скажите 'Амин'."
+        },
+        "4": {
+          "title": "5. Дополнительная сура",
+          "content": "В первых двух ракаатах после Аль-Фатихи прочитайте ещё одну суру или аяты из Корана."
+        },
+        "5": {
+          "title": "6. Руку (поклон)",
+          "content": "Скажите 'Аллаху Акбар' и поклонитесь, положив руки на колени. Скажите трижды 'Субхана Раббияль Азым'."
+        },
+        "6": {
+          "title": "7. Подъём из руку",
+          "content": "Выпрямитесь, говоря 'Сами Аллаху лиман хамидах'. Стоя, скажите 'Раббана ва лякаль хамд'."
+        },
+        "7": {
+          "title": "8. Суджуд (земной поклон)",
+          "content": "Скажите 'Аллаху Акбар' и совершите земной поклон. Скажите трижды 'Субхана Раббияль А'ля'. Совершите два суджуда."
+        },
+        "8": {
+          "title": "9. Ташаххуд",
+          "content": "После каждых двух ракаатов сядьте и прочитайте ташаххуд, указывая указательным пальцем правой руки."
+        },
+        "9": {
+          "title": "10. Таслим",
+          "content": "Поверните голову направо и скажите 'Ас-саляму алейкум ва рахматуллах', затем налево и повторите."
+        }
+      }
+    },
+    "how-to-perform-istikhara": {
+      "title": "Как совершать истихару",
+      "description": "Руководство по обращению к Аллаху за наставлением",
+      "steps": {
+        "0": {
+          "title": "1. Определить вопрос",
+          "content": "Имейте конкретный вопрос, по которому нужно наставление. Истихара касается дозволенных дел, в которых вы сомневаетесь."
+        },
+        "1": {
+          "title": "2. Совершить два ракаата",
+          "content": "Совершите два ракаата добровольного намаза. В первом после Аль-Фатихи прочитайте Аль-Кяфирун, во втором — Аль-Ихляс."
+        },
+        "2": {
+          "title": "3. Прочитать дуа истихары",
+          "content": "После намаза поднимите руки и прочитайте: 'Аллахумма инни астахирука биильмика, ва астакдирука бикудратика...'"
+        },
+        "3": {
+          "title": "4. Назвать своё дело",
+          "content": "Когда дойдёте до слов 'фи хазаль амр', назовите дело, по которому ищете наставление."
+        },
+        "4": {
+          "title": "5. Положиться на Аллаха",
+          "content": "После дуа продолжайте принимать решение. Верьте, что Аллах облегчит для вас лучшее."
+        }
+      }
+    },
+    "how-to-perform-tahajjud": {
+      "title": "Как совершать тахаджуд",
+      "description": "Руководство по ночному намазу в последнюю треть ночи",
+      "steps": {
+        "0": {
+          "title": "1. Проснуться в последнюю треть",
+          "content": "Проснитесь в последнюю треть ночи (примерно за 1-2 часа до Фаджра). Это самое благословенное время."
+        },
+        "1": {
+          "title": "2. Совершить вуду",
+          "content": "Совершите омовение и подготовьтесь духовно предстать перед Аллахом."
+        },
+        "2": {
+          "title": "3. Молиться парами",
+          "content": "Совершите минимум 2 ракаата, можно больше парами. Пророк (ﷺ) совершал 11 ракаатов."
+        },
+        "3": {
+          "title": "4. Читать длинные суры",
+          "content": "Не торопитесь в чтении, руку и суджуде. Читайте более длинные отрывки Корана."
+        },
+        "4": {
+          "title": "5. Сделать дуа",
+          "content": "После намаза обратитесь к Аллаху с искренним дуа. В это время Аллах нисходит к нижнему небу и отвечает на мольбы."
+        },
+        "5": {
+          "title": "6. Завершить витром",
+          "content": "Завершите ночной намаз нечётным количеством ракаатов (витр) — обычно 1 или 3."
+        }
+      }
+    },
+    "how-to-perform-eid-prayer": {
+      "title": "Как совершать ид-намаз",
+      "description": "Руководство по намазу на Ид аль-Фитр и Ид аль-Адха",
+      "steps": {
+        "0": {
+          "title": "1. Подготовка к Иду",
+          "content": "Совершите гусль, наденьте лучшую одежду. На Ид аль-Фитр съешьте финики перед выходом. На Ид аль-Адха — после намаза."
+        },
+        "1": {
+          "title": "2. Идти на молитву",
+          "content": "Придите пораньше на место намаза. Сунна — идти одной дорогой и возвращаться другой."
+        },
+        "2": {
+          "title": "3. Первый ракаат",
+          "content": "После вступительного такбира произносятся 7 дополнительных такбиров с поднятием рук. Затем читается Аль-Фатиха и сура."
+        },
+        "3": {
+          "title": "4. Второй ракаат",
+          "content": "После подъёма из суджуда произносятся 5 дополнительных такбиров. Затем Аль-Фатиха и сура."
+        },
+        "4": {
+          "title": "5. Слушать хутбу",
+          "content": "После намаза имам произносит две хутбы. Рекомендуется остаться и слушать."
+        },
+        "5": {
+          "title": "6. Поздравления",
+          "content": "Поздравьте мусульман словами 'Ид Мубарак' или 'Такаббаль Аллаху минна ва минкум'."
+        }
+      }
+    },
+    "morning-evening-adhkar": {
+      "title": "Утренние и вечерние азкар",
+      "description": "Важные поминания для утра и вечера",
+      "steps": {
+        "0": {
+          "title": "1. Аят аль-Курси",
+          "content": "Прочитайте Аят аль-Курси (Коран 2:255). Пророк (ﷺ) сказал, что читающий его утром будет под защитой до вечера."
+        },
+        "1": {
+          "title": "2. Последние аяты Аль-Бакара",
+          "content": "Прочитайте последние два аята суры Аль-Бакара (2:285-286). Они достаточны для защиты."
+        },
+        "2": {
+          "title": "3. Аль-Ихляс, Аль-Фаляк, Ан-Нас",
+          "content": "Прочитайте эти три суры по три раза. Они обеспечивают полную защиту."
+        },
+        "3": {
+          "title": "4. Тасбих, тахмид, такбир",
+          "content": "Скажите 'Субхан Аллах' (33 раза), 'Альхамдулиллях' (33 раза), 'Аллаху Акбар' (34 раза)."
+        },
+        "4": {
+          "title": "5. Саид аль-Истигфар",
+          "content": "Прочитайте главную мольбу о прощении: 'Аллахумма анта Рабби, ля иляха илля ант...'"
+        },
+        "5": {
+          "title": "6. Дуа защиты",
+          "content": "Скажите: 'Бисмилляхи-ллязи ля ядурру ма'асмихи шайун филь-арди ва ля фис-сама' (три раза)."
+        }
+      }
+    },
+    "how-to-perform-wudu": {
+      "title": "Как совершать вуду (омовение)",
+      "description": "Подробное руководство по ритуальному омовению",
+      "steps": {
+        "0": {
+          "title": "1. Намерение",
+          "content": "Сделайте намерение в сердце совершить вуду. Скажите 'Бисмиллях'."
+        },
+        "1": {
+          "title": "2. Мытьё рук",
+          "content": "Вымойте обе руки до запястий три раза."
+        },
+        "2": {
+          "title": "3. Полоскание рта",
+          "content": "Прополощите рот три раза тщательно."
+        },
+        "3": {
+          "title": "4. Промывание носа",
+          "content": "Втяните воду в нос три раза и высморкайтесь."
+        },
+        "4": {
+          "title": "5. Мытьё лица",
+          "content": "Вымойте лицо полностью три раза, от линии волос до подбородка."
+        },
+        "5": {
+          "title": "6. Мытьё рук до локтей",
+          "content": "Вымойте правую руку до локтя три раза, затем левую."
+        },
+        "6": {
+          "title": "7. Протирание головы",
+          "content": "Проведите влажными руками по голове один раз."
+        },
+        "7": {
+          "title": "8. Протирание ушей",
+          "content": "Протрите внутреннюю часть ушей указательными пальцами, а внешнюю — большими."
+        },
+        "8": {
+          "title": "9. Мытьё ног",
+          "content": "Вымойте правую ногу до щиколотки три раза, затем левую."
+        },
+        "9": {
+          "title": "10. Дуа",
+          "content": "Скажите: 'Ашхаду ан ля иляха иллаллах вахдаху ля шарика лях, ва ашхаду анна Мухаммадан абдуху ва расулюх'."
+        }
+      }
+    },
+    "how-to-perform-ghusl": {
+      "title": "Как совершать гусль",
+      "description": "Руководство по полному ритуальному омовению",
+      "steps": {
+        "0": {
+          "title": "1. Намерение",
+          "content": "Сделайте намерение очиститься от ритуальной нечистоты. Скажите 'Бисмиллях'."
+        },
+        "1": {
+          "title": "2. Мытьё рук",
+          "content": "Вымойте обе руки до запястий три раза."
+        },
+        "2": {
+          "title": "3. Мытьё интимных мест",
+          "content": "Тщательно вымойте интимные области."
+        },
+        "3": {
+          "title": "4. Вуду",
+          "content": "Совершите полное омовение как для намаза."
+        },
+        "4": {
+          "title": "5. Полить голову",
+          "content": "Полейте голову водой три раза, убедившись, что вода достигает корней волос."
+        },
+        "5": {
+          "title": "6. Правая сторона",
+          "content": "Полейте водой правую сторону тела."
+        },
+        "6": {
+          "title": "7. Левая сторона",
+          "content": "Полейте водой левую сторону тела."
+        },
+        "7": {
+          "title": "8. Всё тело",
+          "content": "Убедитесь, что вода достигла каждой части тела."
+        }
+      }
+    },
+    "how-to-perform-tayammum": {
+      "title": "Как совершать таяммум",
+      "description": "Руководство по сухому омовению при отсутствии воды",
+      "steps": {
+        "0": {
+          "title": "1. Намерение",
+          "content": "Сделайте намерение совершить таяммум как замену вуду или гусля."
+        },
+        "1": {
+          "title": "2. Бисмиллях",
+          "content": "Начните со слов 'Бисмиллях' (Во имя Аллаха)."
+        },
+        "2": {
+          "title": "3. Удар по земле",
+          "content": "Ударьте ладонями один раз по чистой земле, песку или пыли."
+        },
+        "3": {
+          "title": "4. Протирание лица",
+          "content": "Протрите всё лицо обеими ладонями один раз."
+        },
+        "4": {
+          "title": "5. Протирание рук",
+          "content": "Протрите правую руку левой ладонью и наоборот, до запястий."
+        },
+        "5": {
+          "title": "6. Завершение",
+          "content": "Ваш таяммум завершён и действителен для одного намаза. Повторите для следующего."
+        }
+      }
+    },
+    "how-to-perform-umrah": {
+      "title": "Как совершить умру",
+      "description": "Полное руководство по малому паломничеству",
+      "steps": {
+        "0": {
+          "title": "1. Вхождение в ихрам",
+          "content": "Перед микатом сделайте намерение на умру, совершите гусль и наденьте одежду ихрама. Произнесите: 'Ляббайка Аллахумма Умра'."
+        },
+        "1": {
+          "title": "2. Вход в аль-Масджид аль-Харам",
+          "content": "Войдите с правой ноги и произнесите дуа входа в мечеть."
+        },
+        "2": {
+          "title": "3. Совершение тавафа",
+          "content": "Обойдите Каабу семь раз против часовой стрелки, начиная от Чёрного камня."
+        },
+        "3": {
+          "title": "4. Два ракаата",
+          "content": "После тавафа совершите два ракаата за Макамом Ибрахима или в любом месте Харама."
+        },
+        "4": {
+          "title": "5. Замзам",
+          "content": "Выпейте воды Замзам и попросите Аллаха о чём желаете."
+        },
+        "5": {
+          "title": "6. Сай",
+          "content": "Пройдите семь раз между Сафой и Марвой, начиная с Сафы."
+        },
+        "6": {
+          "title": "7. Стрижка волос",
+          "content": "Мужчины бреют или укорачивают волосы. Женщины отрезают кончик длиной в палец. Умра завершена."
+        }
+      }
+    },
+    "how-to-perform-tawaf": {
+      "title": "Как совершать таваф",
+      "description": "Руководство по обходу Каабы",
+      "steps": {
+        "0": {
+          "title": "1. Встать к Чёрному камню",
+          "content": "Встаньте напротив Чёрного камня, Кааба должна быть слева."
+        },
+        "1": {
+          "title": "2. Намерение",
+          "content": "Сделайте намерение совершить таваф в сердце."
+        },
+        "2": {
+          "title": "3. Коснуться или указать",
+          "content": "Если возможно, коснитесь и поцелуйте Чёрный камень. Иначе укажите на него и скажите 'Бисмиллях, Аллаху Акбар'."
+        },
+        "3": {
+          "title": "4. Начать обход",
+          "content": "Двигайтесь против часовой стрелки вокруг Каабы, держа её слева."
+        },
+        "4": {
+          "title": "5. Зикр и дуа",
+          "content": "Нет специальных дуа для тавафа. Читайте Коран, делайте зикр или личные мольбы."
+        },
+        "5": {
+          "title": "6. Йеменский угол",
+          "content": "Если возможно, коснитесь Йеменского угла правой рукой, не целуя его."
+        },
+        "6": {
+          "title": "7. Семь кругов",
+          "content": "Завершите семь полных кругов. Каждый раз у Чёрного камня указывайте на него и говорите 'Аллаху Акбар'."
+        },
+        "7": {
+          "title": "8. Два ракаата",
+          "content": "После тавафа совершите два ракаата за Макамом Ибрахима или в другом месте."
+        }
+      }
+    },
+    "how-to-calculate-zakat": {
+      "title": "Как рассчитать и выплатить закят",
+      "description": "Полное руководство по обязательному пожертвованию",
+      "steps": {
+        "0": {
+          "title": "1. Понимание нисаба",
+          "content": "Нисаб — минимальная сумма имущества для выплаты закята. Он равен 85 г золота или 595 г серебра."
+        },
+        "1": {
+          "title": "2. Подсчёт имущества",
+          "content": "Сложите все активы: наличные, банковские счета, золото, серебро, товары, акции и дебиторскую задолженность."
+        },
+        "2": {
+          "title": "3. Вычтите долги",
+          "content": "Вычтите все долги, подлежащие оплате в течение года."
+        },
+        "3": {
+          "title": "4. Сравните с нисабом",
+          "content": "Если чистое имущество превышает нисаб, закят обязателен."
+        },
+        "4": {
+          "title": "5. Рассчитайте 2,5%",
+          "content": "Умножьте имущество на 0,025 (2,5%). Это сумма вашего закята."
+        },
+        "5": {
+          "title": "6. Выплатите имеющим право",
+          "content": "Распределите закят между восемью категориями из Корана (9:60): бедные, нуждающиеся, сборщики, примиряемые, рабы, должники, на пути Аллаха и путники."
+        },
+        "6": {
+          "title": "7. Намерение",
+          "content": "При выплате сделайте намерение, что это ваш обязательный закят."
+        }
+      }
+    },
+    "how-to-pay-zakat-al-fitr": {
+      "title": "Как выплатить закят аль-фитр",
+      "description": "Руководство по обязательной милостыне в конце Рамадана",
+      "steps": {
+        "0": {
+          "title": "1. Цель",
+          "content": "Закят аль-фитр очищает постящегося от пустословия и обеспечивает бедных пищей в день Ида."
+        },
+        "1": {
+          "title": "2. Кто должен платить",
+          "content": "Каждый мусульманин, имеющий продукты сверх дневной потребности, платит за себя и иждивенцев."
+        },
+        "2": {
+          "title": "3. Размер",
+          "content": "Один са' (≈3 кг) основного продукта (пшеница, ячмень, финики, рис) или его денежный эквивалент."
+        },
+        "3": {
+          "title": "4. Время",
+          "content": "Должен быть выплачен до намаза Ид. Лучше за 1-2 дня. После намаза считается обычной милостыней."
+        },
+        "4": {
+          "title": "5. Кому отдать",
+          "content": "Отдайте бедным мусульманам в общине или через надёжную организацию."
+        }
+      }
+    },
+    "how-to-give-sadaqah": {
+      "title": "Как давать садаку",
+      "description": "Руководство по добровольной благотворительности",
+      "steps": {
+        "0": {
+          "title": "1. Очистить намерение",
+          "content": "Давайте милостыню исключительно ради довольства Аллаха, не ради похвалы."
+        },
+        "1": {
+          "title": "2. Из дозволенного",
+          "content": "Убедитесь, что милостыня из халяльного дохода. Аллах принимает только чистое."
+        },
+        "2": {
+          "title": "3. Тайно если возможно",
+          "content": "Пророк (ﷺ) сказал, что лучшая милостыня — тайная. Но открытая может вдохновить других."
+        },
+        "3": {
+          "title": "4. Регулярно",
+          "content": "Даже небольшие регулярные суммы лучше крупных редких. Любимые дела у Аллаха — постоянные."
+        },
+        "4": {
+          "title": "5. Не упрекать",
+          "content": "Не напоминайте о милостыне и не причиняйте обид. Это уничтожает награду."
+        },
+        "5": {
+          "title": "6. Улыбка — садака",
+          "content": "Милостыня — не только деньги. Улыбка, помощь, убирание препятствий с дороги — всё это садака."
+        }
+      }
+    },
+    "how-to-fast-ramadan": {
+      "title": "Как поститься в Рамадан",
+      "description": "Полное руководство по обязательному посту",
+      "steps": {
+        "0": {
+          "title": "1. Намерение ночью",
+          "content": "Сделайте намерение до Фаджра. Пророк (ﷺ) сказал: 'Кто не сделал намерение до Фаджра, тому пост не засчитывается.'"
+        },
+        "1": {
+          "title": "2. Сухур",
+          "content": "Поешьте перед рассветом. Пророк (ﷺ) сказал: 'В сухуре — благодать.' Прекратите до начала Фаджра."
+        },
+        "2": {
+          "title": "3. Воздержание",
+          "content": "От Фаджра до Магриба воздержитесь от еды, питья, курения и супружеской близости."
+        },
+        "3": {
+          "title": "4. Беречь язык",
+          "content": "Избегайте лжи, сплетен, ссор и грубости."
+        },
+        "4": {
+          "title": "5. Умножать добро",
+          "content": "Увеличьте намаз, чтение Корана, зикр и благотворительность. Рамадан — месяц Корана."
+        },
+        "5": {
+          "title": "6. Разговение при Магрибе",
+          "content": "Разговейтесь сразу при Магрибе. Пророк (ﷺ) разговлялся финиками и водой."
+        },
+        "6": {
+          "title": "7. Дуа при разговении",
+          "content": "Дуа постящегося принимается. Скажите: 'Аллахумма ляка сумту ва аля ризкика афтарту'."
+        }
+      }
+    },
+    "how-to-fast-voluntarily": {
+      "title": "Как соблюдать добровольный пост",
+      "description": "Руководство по рекомендуемым дням поста",
+      "steps": {
+        "0": {
+          "title": "1. Понедельник и четверг",
+          "content": "Пророк (ﷺ) постился по понедельникам и четвергам. Он сказал, что дела представляются Аллаху в эти дни."
+        },
+        "1": {
+          "title": "2. Три дня в месяц",
+          "content": "Поститесь 13, 14 и 15 числа лунного месяца (белые дни). Это равнозначно посту целого года."
+        },
+        "2": {
+          "title": "3. День Арафа",
+          "content": "Пост 9 Зуль-Хиджа (для не совершающих хадж). Пророк (ﷺ) сказал, что он искупает грехи прошлого и будущего года."
+        },
+        "3": {
+          "title": "4. День Ашура",
+          "content": "Пост 10 Мухаррама вместе с 9 или 11. Искупает грехи прошлого года."
+        },
+        "4": {
+          "title": "5. Шесть дней Шавваля",
+          "content": "Шесть дней после Рамадана. Пророк (ﷺ) сказал, это как пост целого года."
+        },
+        "5": {
+          "title": "6. Намерение",
+          "content": "При добровольном посте можно сделать намерение днём, если вы ещё ничего не ели."
+        }
+      }
+    },
+    "how-to-perform-janazah-prayer": {
+      "title": "Как совершать джаназа-намаз",
+      "description": "Руководство по заупокойной молитве",
+      "steps": {
+        "0": {
+          "title": "1. Встать в ряд",
+          "content": "Встаньте в ряды за имамом. Покойный помещается впереди."
+        },
+        "1": {
+          "title": "2. Первый такбир",
+          "content": "Поднимите руки и скажите 'Аллаху Акбар', затем прочитайте Аль-Фатиху тихо."
+        },
+        "2": {
+          "title": "3. Второй такбир",
+          "content": "Скажите 'Аллаху Акбар' и произнесите салават на Пророка."
+        },
+        "3": {
+          "title": "4. Третий такбир",
+          "content": "Скажите 'Аллаху Акбар' и сделайте дуа за покойного: 'Аллахумма игфир ляху вархамху...'"
+        },
+        "4": {
+          "title": "5. Четвёртый такбир",
+          "content": "Скажите 'Аллаху Акбар' и сделайте краткое дуа за себя и всех мусульман."
+        },
+        "5": {
+          "title": "6. Таслим",
+          "content": "Поверните голову направо, скажите 'Ас-саляму алейкум', затем налево и повторите."
+        }
+      }
+    },
+    "how-to-offer-condolences": {
+      "title": "Как выражать соболезнования",
+      "description": "Исламский этикет утешения скорбящих",
+      "steps": {
+        "0": {
+          "title": "1. Быстро навестить",
+          "content": "Навестите семью вскоре после известия, но уважайте их потребность в уединении."
+        },
+        "1": {
+          "title": "2. Правильные слова",
+          "content": "Скажите: 'Инна лилляхи ва инна иляйхи раджиун'. Напомните, что Аллах вознаградит за терпение."
+        },
+        "2": {
+          "title": "3. Дуа",
+          "content": "Помолитесь за покойного и его семью."
+        },
+        "3": {
+          "title": "4. Практическая помощь",
+          "content": "Предложите конкретную помощь: приготовление еды, покупки или помощь в подготовке."
+        },
+        "4": {
+          "title": "5. Не задерживаться",
+          "content": "Будьте кратки, если семья не просит остаться."
+        },
+        "5": {
+          "title": "6. Избегать причитаний",
+          "content": "Сохраняйте спокойствие, избегайте громких причитаний — это нежелательно в исламе."
+        }
+      }
+    },
+    "how-to-control-anger": {
+      "title": "Как контролировать гнев",
+      "description": "Исламское руководство по управлению гневом",
+      "steps": {
+        "0": {
+          "title": "1. Прибегнуть к Аллаху",
+          "content": "Ощутив гнев, скажите: 'А'узу билляхи мин аш-шайтан ир-раджим'."
+        },
+        "1": {
+          "title": "2. Молчать",
+          "content": "Пророк (ﷺ) сказал: 'Когда гневаетесь — молчите.' Молчание предотвращает слова, о которых пожалеете."
+        },
+        "2": {
+          "title": "3. Сменить положение",
+          "content": "Если стоите — сядьте. Если сидите — лягте. Так учил Пророк (ﷺ)."
+        },
+        "3": {
+          "title": "4. Совершить вуду",
+          "content": "Совершите омовение холодной водой. Пророк (ﷺ) сказал, что гнев от шайтана, а шайтан создан из огня."
+        },
+        "4": {
+          "title": "5. Помнить о прощении Аллаха",
+          "content": "Подумайте о том, как Аллах прощает вас несмотря на ваши ошибки. Это должно сделать вас снисходительнее."
+        },
+        "5": {
+          "title": "6. Подумать о последствиях",
+          "content": "Подумайте о последствиях гнева: разрушенные отношения, сказанные слова и потеря уважения."
+        }
+      }
+    },
+    "how-to-practice-humility": {
+      "title": "Как практиковать смирение",
+      "description": "Руководство по развитию смирения в исламе",
+      "steps": {
+        "0": {
+          "title": "1. Помнить о происхождении",
+          "content": "Помните, что вы созданы из земли и в землю вернётесь."
+        },
+        "1": {
+          "title": "2. Признавать дары Аллаха",
+          "content": "Признайте, что все ваши блага, таланты и успехи — дары Аллаха."
+        },
+        "2": {
+          "title": "3. Служить другим",
+          "content": "Пророк (ﷺ) помогал семье и делал домашнюю работу, будучи предводителем мусульман."
+        },
+        "3": {
+          "title": "4. Не хвастаться",
+          "content": "Не хвалитесь богатством, знаниями или достижениями. Пророк (ﷺ) сказал: 'Не войдёт в Рай тот, кто имеет хоть атом высокомерия.'"
+        },
+        "4": {
+          "title": "5. Принимать советы",
+          "content": "Будьте открыты критике и советам, независимо от статуса советующего."
+        },
+        "5": {
+          "title": "6. Относиться ко всем одинаково",
+          "content": "Проявляйте уважение к бедным, пожилым и обездоленным."
+        }
+      }
+    },
+    "how-to-forgive-others": {
+      "title": "Как прощать других",
+      "description": "Исламские учения о прощении",
+      "steps": {
+        "0": {
+          "title": "1. Помнить о прощении Аллаха",
+          "content": "Аллах прощает вам бесчисленные грехи. Коран говорит: 'Разве вы не хотите, чтобы Аллах простил вас?' (24:22)"
+        },
+        "1": {
+          "title": "2. Понять награду",
+          "content": "Пророк (ﷺ) сказал: 'Милостыня не уменьшает богатства, и Аллах возвышает прощающего.'"
+        },
+        "2": {
+          "title": "3. Встать на их место",
+          "content": "Попытайтесь понять, почему человек поступил с вами несправедливо."
+        },
+        "3": {
+          "title": "4. Молиться за них",
+          "content": "Помолитесь за того, кто причинил вам зло. Это смягчит ваше сердце."
+        },
+        "4": {
+          "title": "5. Отпустить обиду",
+          "content": "Обида вредит только вам самим. Пророк (ﷺ) сказал: 'Не ненавидьте друг друга, не завидуйте, будьте братьями.'"
+        },
+        "5": {
+          "title": "6. Примириться",
+          "content": "Если уместно, сделайте первый шаг к примирению."
+        }
+      }
+    },
+    "how-to-seek-knowledge": {
+      "title": "Как стремиться к знаниям",
+      "description": "Руководство по правильному поиску исламских знаний",
+      "steps": {
+        "0": {
+          "title": "1. Очистить намерение",
+          "content": "Ищите знание ради Аллаха. Пророк (ﷺ) предостерегал от поиска знаний ради хвастовства."
+        },
+        "1": {
+          "title": "2. Начать с основ",
+          "content": "Начните с базового знания: правильная акида, намаз, основные правила и чтение Корана."
+        },
+        "2": {
+          "title": "3. Найти учителей",
+          "content": "Учитесь у компетентных и надёжных учёных, следующих Корану и Сунне."
+        },
+        "3": {
+          "title": "4. Быть постоянным",
+          "content": "Учитесь регулярно, даже понемногу. Любимые дела у Аллаха — постоянные."
+        },
+        "4": {
+          "title": "5. Применять знание",
+          "content": "Применяйте знание в жизни. Знание без действия — как дерево без плодов."
+        },
+        "5": {
+          "title": "6. Обучать других",
+          "content": "Делитесь полезным знанием. Пророк (ﷺ) сказал: 'Лучшие из вас — те, кто учит Коран и обучает ему.'"
+        }
+      }
+    },
+    "how-to-make-tawbah": {
+      "title": "Как совершить тауба (покаяние)",
+      "description": "Руководство по искреннему раскаянию",
+      "steps": {
+        "0": {
+          "title": "1. Прекратить грех немедленно",
+          "content": "Первый шаг — немедленно прекратить грех. Нельзя каяться, продолжая грешить."
+        },
+        "1": {
+          "title": "2. Искреннее сожаление",
+          "content": "Испытайте искреннее сожаление за ослушание Аллаха. Пророк (ﷺ) сказал: 'Сожаление — это покаяние.'"
+        },
+        "2": {
+          "title": "3. Просить прощения",
+          "content": "Попросите Аллаха простить вас. Скажите 'Астагфируллах' и обратитесь с искренним дуа."
+        },
+        "3": {
+          "title": "4. Твёрдое намерение",
+          "content": "Твёрдо решите не возвращаться к этому греху. Эта решимость обязательна."
+        },
+        "4": {
+          "title": "5. Возместить если нужно",
+          "content": "Если ваш грех причинил вред кому-то, попросите прощения и возместите ущерб."
+        },
+        "5": {
+          "title": "6. Заменить добром",
+          "content": "Замените грех добрыми делами. Аллах говорит: 'Добрые дела стирают плохие' (Коран 11:114)."
+        },
+        "6": {
+          "title": "7. Никогда не отчаиваться",
+          "content": "Как бы тяжки ни были грехи, не теряйте надежду на милость Аллаха. Он говорит: 'Не отчаивайтесь в милости Аллаха' (Коран 39:53)."
+        }
+      }
+    },
+    "understanding-riba": {
+      "title": "Понимание рибы (процентов)",
+      "description": "Понимание запрета процентов в исламе",
+      "steps": {
+        "0": {
+          "title": "1. Что такое риба?",
+          "content": "Риба означает 'прирост' или 'излишек'. В исламских финансах это любой гарантированный процент на одолженные деньги."
+        },
+        "1": {
+          "title": "2. Почему запрещена?",
+          "content": "Аллах сказал: 'Аллах дозволил торговлю и запретил рибу' (Коран 2:275). Риба эксплуатирует нуждающихся."
+        },
+        "2": {
+          "title": "3. Виды рибы",
+          "content": "Риба ан-насиа: процент на кредит. Риба аль-фадль: обмен однородных товаров в неравных количествах."
+        },
+        "3": {
+          "title": "4. Тяжесть греха",
+          "content": "Пророк (ﷺ) сказал, что у рибы 73 вида. Прокляты и дающий, и берущий."
+        },
+        "4": {
+          "title": "5. Альтернативы",
+          "content": "Используйте исламские банки, мудараба (участие в прибыли) или кард хасан (беспроцентный заём)."
+        }
+      }
+    },
+    "halal-income": {
+      "title": "Халяльный доход",
+      "description": "Принципы дозволенного заработка в исламе",
+      "steps": {
+        "0": {
+          "title": "1. Важность",
+          "content": "Пророк (ﷺ) сказал: 'Никто не ел лучшей пищи, чем заработанная трудом своих рук.'"
+        },
+        "1": {
+          "title": "2. Запрещённые сферы",
+          "content": "Избегайте: алкоголь, азартные игры, свинина, обычные банки, индустрия развлечений."
+        },
+        "2": {
+          "title": "3. Честный бизнес",
+          "content": "Будьте честны в торговле. Пророк (ﷺ) сказал: 'Правдивый торговец будет с пророками и мучениками.'"
+        },
+        "3": {
+          "title": "4. Справедливые цены",
+          "content": "Не обманывайте покупателей и не накапливайте товары для завышения цен."
+        },
+        "4": {
+          "title": "5. Соблюдать договоры",
+          "content": "Выполняйте все соглашения. Аллах сказал: 'Соблюдайте договоры' (Коран 5:1)."
+        },
+        "5": {
+          "title": "6. Платить вовремя",
+          "content": "Пророк (ﷺ) сказал: 'Заплатите работнику до того, как высохнет его пот.'"
+        }
+      }
+    },
+    "islamic-banking": {
+      "title": "Основы исламского банкинга",
+      "description": "Понимание шариатского банкинга",
+      "steps": {
+        "0": {
+          "title": "1. Основные принципы",
+          "content": "Исламский банкинг запрещает проценты (риба), чрезмерную неопределённость (гарар) и азартные игры (майсир). Прибыль должна быть от реальной деятельности."
+        },
+        "1": {
+          "title": "2. Мурабаха",
+          "content": "Банк покупает актив и продаёт вам с объявленной наценкой. Вы платите в рассрочку."
+        },
+        "2": {
+          "title": "3. Мудараба",
+          "content": "Вы предоставляете капитал, банк управляет. Прибыль делится по согласованным пропорциям."
+        },
+        "3": {
+          "title": "4. Мушарака (партнёрство)",
+          "content": "Обе стороны вносят капитал и делят прибыль и убытки пропорционально."
+        },
+        "4": {
+          "title": "5. Иджара (аренда)",
+          "content": "Банк покупает актив и сдаёт вам в аренду. В конце срока вы можете его выкупить."
+        },
+        "5": {
+          "title": "6. Выбор банка",
+          "content": "Ищите банки с шариатским наблюдательным советом. Проверяйте соответствие продуктов шариату."
+        }
+      }
+    },
+    "halal-investing": {
+      "title": "Принципы халяльного инвестирования",
+      "description": "Как инвестировать согласно шариату",
+      "steps": {
+        "0": {
+          "title": "1. Фильтрация отраслей",
+          "content": "Избегайте: алкоголь, табак, азартные игры, банки/страхование, свинина, оружие."
+        },
+        "1": {
+          "title": "2. Финансовые показатели",
+          "content": "Многие учёные требуют: долг менее 33%, процентный доход менее 5% выручки."
+        },
+        "2": {
+          "title": "3. Очистка прибыли",
+          "content": "Если малая часть доходов из несоответствующих источников, пожертвуйте этот процент."
+        },
+        "3": {
+          "title": "4. Исламские фонды",
+          "content": "Рассмотрите халяльные инвестиционные фонды и ETF, проверенные учёными."
+        },
+        "4": {
+          "title": "5. Недвижимость",
+          "content": "Инвестиции в недвижимость халяль. Избегайте обычной ипотеки; используйте исламское финансирование."
+        },
+        "5": {
+          "title": "6. Консультация с учёными",
+          "content": "При сомнениях обращайтесь к компетентным учёным или сервисам скрининга."
+        }
+      }
+    },
+    "debt-management": {
+      "title": "Управление долгами в исламе",
+      "description": "Управление долгами по исламским принципам",
+      "steps": {
+        "0": {
+          "title": "1. Избегать ненужных долгов",
+          "content": "Пророк (ﷺ) искал защиты от долгов. Занимайте только при необходимости с чётким планом."
+        },
+        "1": {
+          "title": "2. Документировать долги",
+          "content": "Аллах велит: 'Если берёте в долг на срок, записывайте' (Коран 2:282)."
+        },
+        "2": {
+          "title": "3. Намерение вернуть",
+          "content": "Пророк (ﷺ) сказал: 'Кто берёт деньги людей с намерением вернуть, тому Аллах поможет.'"
+        },
+        "3": {
+          "title": "4. Возвращать быстро",
+          "content": "Не откладывайте, если можете платить. Пророк (ﷺ) сказал: 'Промедление богатого — несправедливость.'"
+        },
+        "4": {
+          "title": "5. Быть снисходительным",
+          "content": "Если должник в затруднении, дайте отсрочку. Аллах сказал: 'Дайте отсрочку до облегчения' (Коран 2:280)."
+        },
+        "5": {
+          "title": "6. Простить если возможно",
+          "content": "Прощение долга высоко награждается. Аллах сказал: 'Если простите, это лучше для вас' (Коран 2:280)."
+        }
+      }
+    }
+  },
+  "islamicEvents": {
+    "new_year": "Исламский Новый год",
+    "ashura": "День Ашура",
+    "mawlid": "Мавлид ан-Наби",
+    "isra_miraj": "Исра и Мирадж",
+    "mid_shaban": "Середина Шаабана",
+    "ramadan_start": "Начало Рамадана",
+    "laylat_qadr": "Ляйлят аль-Кадр",
+    "eid_fitr": "Ид аль-Фитр",
+    "arafah": "День Арафат",
+    "eid_adha": "Ид аль-Адха",
+    "new_year_desc": "Первый день Мухаррама знаменует начало исламского календарного года.",
+    "ashura_desc": "10-й день Мухаррама. Пост в этот день искупает грехи прошлого года.",
+    "mawlid_desc": "Память о рождении Пророка Мухаммада ﷺ.",
+    "isra_miraj_desc": "Ночное путешествие и вознесение Пророка Мухаммада ﷺ.",
+    "mid_shaban_desc": "Ночь, когда Аллах нисходит к нижнему небу и прощает многих.",
+    "ramadan_start_desc": "Начинается благословенный месяц поста.",
+    "laylat_qadr_desc": "Ночь Предопределения, лучше тысячи месяцев.",
+    "eid_fitr_desc": "Праздник разговения, празднование окончания Рамадана.",
+    "arafah_desc": "Пост в этот день искупает грехи прошлого и будущего года.",
+    "eid_adha_desc": "Праздник жертвоприношения в память о готовности Ибрагима принести в жертву своего сына."
+  },
+  "countdown": {
+    "today": "Сегодня",
+    "tomorrow": "Завтра",
+    "inDays": "Через %{count} дней",
+    "inWeek": "Через %{count} неделю",
+    "inWeeks": "Через %{count} недель",
+    "inMonth": "Через %{count} месяц",
+    "inMonths": "Через %{count} месяцев"
+  },
+  "fastingLabels": {
+    "monday": "Пост понедельника",
+    "thursday": "Пост четверга",
+    "white_day": "Белый день",
+    "ashura": "Пост Ашура",
+    "arafah": "Пост Арафат",
+    "shawwal": "Пост Шавваля"
+  },
+  "prayerStatus": {
+    "prayed": "Прочитан",
+    "late": "С опозданием",
+    "missed": "Пропущен"
+  },
+  "hifzConstants": {
+    "fullVerse": "Весь аят",
+    "fullVerseDesc": "Скрыть весь аят, нажмите для показа",
+    "wordByWord": "Слово за словом",
+    "wordByWordDesc": "Показывать по одному слову во время чтения",
+    "manual": "Вручную",
+    "none": "Нет",
+    "sec2": "2 сек",
+    "sec5": "5 сек",
+    "slow": "Медленно",
+    "medium": "Средне",
+    "normal": "Нормально"
+  },
+  "repeatControls": {
+    "title": "Настройки повтора",
+    "subtitle": "Настройка повтора аудио для заучивания",
+    "timesToRepeat": "Количество повторов",
+    "timesHint": "Сколько раз воспроизводить аят",
+    "gapBetween": "Пауза между повторами",
+    "gapHint": "Длительность паузы между повторами",
+    "recitationSpeed": "Скорость чтения",
+    "speedHint": "Настроить скорость воспроизведения",
+    "stopRepeating": "Остановить повтор"
+  },
+  "loopRange": {
+    "start": "Начало",
+    "end": "Конец",
+    "notSet": "Не задано",
+    "helpText": "Долгое нажатие на аят для установки точек цикла",
+    "clear": "Очистить",
+    "playLoop": "Воспроизвести цикл",
+    "stopLoop": "Остановить цикл"
+  },
+  "wordByWord": {
+    "title": "Дословный перевод",
+    "infoHint": "Долгое нажатие на любое слово в Коране покажет его значение, транслитерацию и частоту",
+    "translationLanguage": "ЯЗЫК ПЕРЕВОДА",
+    "tapToDownload": "Нажмите для загрузки",
+    "downloading": "Загрузка...",
+    "arabicMeanings": "Арабские значения из غريب القرآن",
+    "audio": "АУДИО",
+    "playPronunciation": "Воспроизвести произношение",
+    "audioHint": "Услышьте произношение каждого слова при поднятии пальца"
+  },
+  "calendarGrid": {
+    "event": "Событие",
+    "fasting": "Пост",
+    "whiteDay": "Белый день"
+  },
+  "duaOfDay": {
+    "title": "Дуа дня",
+    "islamicSupplication": "Исламская мольба",
+    "tapToRead": "Нажмите, чтобы прочитать полный дуа"
+  }
+}

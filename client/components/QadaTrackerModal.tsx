@@ -19,6 +19,7 @@ import { Feather } from '@expo/vector-icons';
 import { ThemedText } from './ThemedText';
 import { ThemedView } from './ThemedView';
 import { useTheme } from '../hooks/useTheme';
+import { useTranslation } from '../hooks/useTranslation';
 import { useQadaTracker } from '../hooks/useQadaTracker';
 import { PrayerName, PRAYER_NAMES } from '../types/prayerLog';
 import { Spacing, BorderRadius } from '../constants/theme';
@@ -38,6 +39,7 @@ const PRAYER_DISPLAY: Record<PrayerName, { nameEn: string; nameAr: string; icon:
 
 export function QadaTrackerModal({ visible, onClose }: QadaTrackerModalProps) {
   const { isDark, theme } = useTheme();
+  const { t } = useTranslation();
   const { qadaCounts, totalQada, logQadaPrayer, adjustQadaCount, loading } = useQadaTracker();
   const [editingPrayer, setEditingPrayer] = useState<PrayerName | null>(null);
   const [editValue, setEditValue] = useState('');
@@ -100,7 +102,7 @@ export function QadaTrackerModal({ visible, onClose }: QadaTrackerModalProps) {
               <View style={[styles.iconContainer, { backgroundColor: 'rgba(239, 68, 68, 0.15)' }]}>
                 <Feather name="rotate-ccw" size={20} color="#EF4444" />
               </View>
-              <ThemedText type="h3">Qada Tracker</ThemedText>
+              <ThemedText type="h3">{t('qadaTracker.title')}</ThemedText>
             </View>
             <Pressable onPress={onClose} style={styles.closeButton}>
               <Feather name="x" size={24} color={theme.text} />

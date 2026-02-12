@@ -4,11 +4,11 @@
  */
 
 import React, { useState } from 'react';
-import { 
-  View, 
-  StyleSheet, 
-  FlatList, 
-  TextInput, 
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  TextInput,
   Pressable,
   ActivityIndicator,
   RefreshControl,
@@ -27,15 +27,17 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/RootStackNavigator';
 import * as Haptics from 'expo-haptics';
+import { useTranslation } from '@/hooks/useTranslation';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'MosqueFinder'>;
 
 export default function MosqueFinderScreen() {
   const { isDark, theme } = useTheme();
+  const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const insets = useSafeAreaInsets();
   const [showRadiusPicker, setShowRadiusPicker] = useState(false);
-  
+
   const {
     filteredMosques,
     isLoading,
@@ -72,10 +74,10 @@ export default function MosqueFinderScreen() {
     if (!hasLocation) {
       return (
         <View style={styles.emptyState}>
-          <Feather 
-            name="map-pin" 
-            size={48} 
-            color={theme.textSecondary} 
+          <Feather
+            name="map-pin"
+            size={48}
+            color={theme.textSecondary}
           />
           <ThemedText type="body" style={styles.emptyTitle}>
             Location Required
@@ -90,10 +92,10 @@ export default function MosqueFinderScreen() {
     if (error) {
       return (
         <View style={styles.emptyState}>
-          <Feather 
-            name="alert-circle" 
-            size={48} 
-            color="#EF4444" 
+          <Feather
+            name="alert-circle"
+            size={48}
+            color="#EF4444"
           />
           <ThemedText type="body" style={styles.emptyTitle}>
             Something went wrong
@@ -117,10 +119,10 @@ export default function MosqueFinderScreen() {
 
     return (
       <View style={styles.emptyState}>
-        <Feather 
-          name="search" 
-          size={48} 
-          color={theme.textSecondary} 
+        <Feather
+          name="search"
+          size={48}
+          color={theme.textSecondary}
         />
         <ThemedText type="body" style={styles.emptyTitle}>
           No mosques found
@@ -133,22 +135,22 @@ export default function MosqueFinderScreen() {
   };
 
   return (
-    <SafeAreaView 
-      style={[styles.container, { 
-        backgroundColor: theme.backgroundDefault 
+    <SafeAreaView
+      style={[styles.container, {
+        backgroundColor: theme.backgroundDefault
       }]}
       edges={['top']}
     >
       {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => navigation.goBack()} hitSlop={8}>
-          <Feather 
-            name="arrow-left" 
-            size={24} 
-            color={theme.text} 
+          <Feather
+            name="arrow-left"
+            size={24}
+            color={theme.text}
           />
         </Pressable>
-        <ThemedText type="h3" style={styles.headerTitle}>Nearby Mosques</ThemedText>
+        <ThemedText type="h3" style={styles.headerTitle}>{t('mosqueFinder.nearbyMosques')}</ThemedText>
         <View style={{ width: 24 }} />
       </View>
 
@@ -158,26 +160,26 @@ export default function MosqueFinderScreen() {
         <View style={[styles.searchInputContainer, {
           backgroundColor: theme.backgroundSecondary,
         }]}>
-          <Feather 
-            name="search" 
-            size={18} 
-            color={theme.textSecondary} 
+          <Feather
+            name="search"
+            size={18}
+            color={theme.textSecondary}
           />
           <TextInput
             style={[styles.searchInput, {
               color: theme.text,
             }]}
-            placeholder="Search mosques..."
+            placeholder={t('mosqueFinder.searchPlaceholder')}
             placeholderTextColor={theme.textSecondary}
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
           {searchQuery.length > 0 && (
             <Pressable onPress={() => setSearchQuery('')} hitSlop={8}>
-              <Feather 
-                name="x" 
-                size={18} 
-                color={theme.textSecondary} 
+              <Feather
+                name="x"
+                size={18}
+                color={theme.textSecondary}
               />
             </Pressable>
           )}
@@ -190,10 +192,10 @@ export default function MosqueFinderScreen() {
             backgroundColor: theme.backgroundSecondary,
           }]}
         >
-          <Feather 
-            name="sliders" 
-            size={18} 
-            color={theme.primary} 
+          <Feather
+            name="sliders"
+            size={18}
+            color={theme.primary}
           />
           <ThemedText type="small" style={styles.radiusText}>
             {currentRadiusLabel}
@@ -219,10 +221,10 @@ export default function MosqueFinderScreen() {
             >
               <ThemedText type="body">{option.label}</ThemedText>
               {radius === option.value && (
-                <Feather 
-                  name="check" 
-                  size={18} 
-                  color={theme.primary} 
+                <Feather
+                  name="check"
+                  size={18}
+                  color={theme.primary}
                 />
               )}
             </Pressable>
@@ -233,9 +235,9 @@ export default function MosqueFinderScreen() {
       {/* Loading State */}
       {isLoading && filteredMosques.length === 0 ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator 
-            size="large" 
-            color={theme.primary} 
+          <ActivityIndicator
+            size="large"
+            color={theme.primary}
           />
           <ThemedText type="small" secondary style={styles.loadingText}>
             Finding nearby mosques...

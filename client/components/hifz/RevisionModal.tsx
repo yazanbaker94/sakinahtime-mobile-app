@@ -17,6 +17,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import Animated, { SlideInDown, SlideOutDown } from 'react-native-reanimated';
 import { useTheme } from '../../hooks/useTheme';
+import { useTranslation } from '../../hooks/useTranslation';
 import { useRevisionSchedule } from '../../hooks/useRevisionSchedule';
 import { ThemedText } from '../ThemedText';
 import type { RevisionEntry, VerseKey } from '../../types/hifz';
@@ -36,6 +37,7 @@ export function RevisionModal({
 }: RevisionModalProps) {
   const insets = useSafeAreaInsets();
   const { isDark, theme } = useTheme();
+  const { t } = useTranslation();
   const {
     dueRevisions,
     todayRevisions,
@@ -86,7 +88,7 @@ export function RevisionModal({
             <View style={[styles.metaTag, { backgroundColor: theme.backgroundSecondary }]}>
               <Feather name="clock" size={12} color={theme.textSecondary} />
               <ThemedText style={[styles.metaText, { color: theme.textSecondary }]}>
-                {daysSinceRevision}d ago
+                {daysSinceRevision}{t('revision.dAgo')}
               </ThemedText>
             </View>
             <View
@@ -101,7 +103,7 @@ export function RevisionModal({
                   { color: isOverdue ? '#EF4444' : theme.primary },
                 ]}
               >
-                {isOverdue ? 'Overdue' : 'Due'}
+                {isOverdue ? t('revision.overdue') : t('revision.due')}
               </ThemedText>
             </View>
           </View>
@@ -154,9 +156,9 @@ export function RevisionModal({
             {/* Header */}
             <View style={styles.header}>
               <View>
-                <ThemedText style={styles.title}>Daily Revision</ThemedText>
+                <ThemedText style={styles.title}>{t('revision.title')}</ThemedText>
                 <ThemedText style={[styles.subtitle, { color: theme.textSecondary }]}>
-                  {dueRevisions.length} verses due for review
+                  {dueRevisions.length} {t('revision.versesDue')}
                 </ThemedText>
               </View>
               <TouchableOpacity onPress={onClose} style={styles.closeButton}>
@@ -167,7 +169,7 @@ export function RevisionModal({
             {/* Progress Bar */}
             <View style={styles.progressSection}>
               <View style={styles.progressHeader}>
-                <ThemedText style={styles.progressLabel}>Today's Progress</ThemedText>
+                <ThemedText style={styles.progressLabel}>{t('revision.todayProgress')}</ThemedText>
                 <ThemedText style={[styles.progressCount, { color: activeColor }]}>
                   {todayCompleted} / {dailyGoal}
                 </ThemedText>
@@ -186,15 +188,15 @@ export function RevisionModal({
             {showRating && selectedRevision && (
               <View style={[styles.ratingSection, { backgroundColor: theme.backgroundSecondary }]}>
                 <ThemedText style={styles.ratingTitle}>
-                  How well did you remember {selectedRevision.verseKey}?
+                  {t('revision.howWell')} {selectedRevision.verseKey}?
                 </ThemedText>
                 <View style={styles.qualityButtons}>
-                  {renderQualityButton(0, 'Forgot', '#EF4444')}
-                  {renderQualityButton(1, 'Hard', '#F59E0B')}
-                  {renderQualityButton(2, 'Okay', '#3B82F6')}
-                  {renderQualityButton(3, 'Good', theme.primary)}
-                  {renderQualityButton(4, 'Easy', '#8B5CF6')}
-                  {renderQualityButton(5, 'Perfect', activeColor)}
+                  {renderQualityButton(0, t('revision.forgot'), '#EF4444')}
+                  {renderQualityButton(1, t('revision.hard'), '#F59E0B')}
+                  {renderQualityButton(2, t('revision.okay'), '#3B82F6')}
+                  {renderQualityButton(3, t('revision.good'), theme.primary)}
+                  {renderQualityButton(4, t('revision.easy'), '#8B5CF6')}
+                  {renderQualityButton(5, t('revision.perfect'), activeColor)}
                 </View>
               </View>
             )}
@@ -206,7 +208,7 @@ export function RevisionModal({
             >
               {dueRevisions.length > 0 ? (
                 <>
-                  <ThemedText style={styles.sectionTitle}>Due Now</ThemedText>
+                  <ThemedText style={styles.sectionTitle}>{t('revision.dueNow')}</ThemedText>
                   {dueRevisions.map((revision, index) =>
                     renderRevisionItem(revision, index)
                   )}
@@ -214,9 +216,9 @@ export function RevisionModal({
               ) : (
                 <View style={styles.emptyState}>
                   <Feather name="check-circle" size={48} color={activeColor} />
-                  <ThemedText style={styles.emptyTitle}>All caught up!</ThemedText>
+                  <ThemedText style={styles.emptyTitle}>{t('revision.allCaughtUp')}</ThemedText>
                   <ThemedText style={[styles.emptyText, { color: theme.textSecondary }]}>
-                    No verses due for revision right now
+                    {t('revision.noVersesDue')}
                   </ThemedText>
                 </View>
               )}
@@ -225,7 +227,7 @@ export function RevisionModal({
               {todayRevisions.length > 0 && (
                 <>
                   <ThemedText style={[styles.sectionTitle, { marginTop: 20 }]}>
-                    Completed Today
+                    {t('revision.completedToday')}
                   </ThemedText>
                   {todayRevisions.slice(0, 5).map((revision, index) => (
                     <View
@@ -256,7 +258,7 @@ export function RevisionModal({
               >
                 <Feather name="play" size={20} color="#FFFFFF" />
                 <ThemedText style={styles.startSessionText}>
-                  Start Revision Session
+                  {t('revision.startSession')}
                 </ThemedText>
               </TouchableOpacity>
             )}

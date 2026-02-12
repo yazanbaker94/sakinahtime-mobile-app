@@ -4,10 +4,10 @@
  */
 
 import React from 'react';
-import { 
-  View, 
-  StyleSheet, 
-  ScrollView, 
+import {
+  View,
+  StyleSheet,
+  ScrollView,
   Pressable,
   ActivityIndicator,
   Linking,
@@ -17,6 +17,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { ThemedText } from '@/components/ThemedText';
 import { Spacing, BorderRadius } from '@/constants/theme';
 import { useTheme } from '@/hooks/useTheme';
+import { useTranslation } from '@/hooks/useTranslation';
 import { Feather } from '@expo/vector-icons';
 import { useMosqueDetail } from '@/hooks/useMosqueFinder';
 import { MapsIntegrationService } from '@/services/MapsIntegrationService';
@@ -29,6 +30,7 @@ type RouteProps = RouteProp<RootStackParamList, 'MosqueDetail'>;
 
 export default function MosqueDetailScreen() {
   const { isDark, theme } = useTheme();
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const route = useRoute<RouteProps>();
   const insets = useSafeAreaInsets();
@@ -60,27 +62,27 @@ export default function MosqueDetailScreen() {
 
   if (isLoading && !mosque) {
     return (
-      <SafeAreaView 
-        style={[styles.container, { 
-          backgroundColor: theme.backgroundDefault 
+      <SafeAreaView
+        style={[styles.container, {
+          backgroundColor: theme.backgroundDefault
         }]}
         edges={['top']}
       >
         <View style={styles.header}>
           <Pressable onPress={() => navigation.goBack()} hitSlop={8}>
-            <Feather 
-              name="arrow-left" 
-              size={24} 
-              color={theme.text} 
+            <Feather
+              name="arrow-left"
+              size={24}
+              color={theme.text}
             />
           </Pressable>
-          <ThemedText type="h3" style={styles.headerTitle}>Mosque Details</ThemedText>
+          <ThemedText type="h3" style={styles.headerTitle}>{t('mosqueDetail.title')}</ThemedText>
           <View style={{ width: 24 }} />
         </View>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator 
-            size="large" 
-            color={theme.primary} 
+          <ActivityIndicator
+            size="large"
+            color={theme.primary}
           />
         </View>
       </SafeAreaView>
@@ -89,27 +91,27 @@ export default function MosqueDetailScreen() {
 
   if (error && !mosque) {
     return (
-      <SafeAreaView 
-        style={[styles.container, { 
-          backgroundColor: theme.backgroundDefault 
+      <SafeAreaView
+        style={[styles.container, {
+          backgroundColor: theme.backgroundDefault
         }]}
         edges={['top']}
       >
         <View style={styles.header}>
           <Pressable onPress={() => navigation.goBack()} hitSlop={8}>
-            <Feather 
-              name="arrow-left" 
-              size={24} 
-              color={theme.text} 
+            <Feather
+              name="arrow-left"
+              size={24}
+              color={theme.text}
             />
           </Pressable>
-          <ThemedText type="h3" style={styles.headerTitle}>Mosque Details</ThemedText>
+          <ThemedText type="h3" style={styles.headerTitle}>{t('mosqueDetail.title')}</ThemedText>
           <View style={{ width: 24 }} />
         </View>
         <View style={styles.errorContainer}>
           <Feather name="alert-circle" size={48} color="#EF4444" />
           <ThemedText type="body" style={styles.errorTitle}>
-            Failed to load details
+            {t('mosqueDetail.failedToLoad')}
           </ThemedText>
           <ThemedText type="small" secondary style={styles.errorText}>
             {error}
@@ -121,7 +123,7 @@ export default function MosqueDetailScreen() {
             }]}
           >
             <ThemedText type="body" style={{ color: '#FFFFFF' }}>
-              Try Again
+              {t('mosqueDetail.tryAgain')}
             </ThemedText>
           </Pressable>
         </View>
@@ -132,19 +134,19 @@ export default function MosqueDetailScreen() {
   if (!mosque) return null;
 
   return (
-    <SafeAreaView 
-      style={[styles.container, { 
-        backgroundColor: theme.backgroundDefault 
+    <SafeAreaView
+      style={[styles.container, {
+        backgroundColor: theme.backgroundDefault
       }]}
       edges={['top']}
     >
       {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => navigation.goBack()} hitSlop={8}>
-          <Feather 
-            name="arrow-left" 
-            size={24} 
-            color={theme.text} 
+          <Feather
+            name="arrow-left"
+            size={24}
+            color={theme.text}
           />
         </Pressable>
         <ThemedText type="h3" style={styles.headerTitle} numberOfLines={1}>
@@ -153,15 +155,15 @@ export default function MosqueDetailScreen() {
         <View style={{ width: 24 }} />
       </View>
 
-      <ScrollView 
+      <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
         {/* Photos */}
         {mosque.photos && mosque.photos.length > 0 && (
-          <ScrollView 
-            horizontal 
+          <ScrollView
+            horizontal
             showsHorizontalScrollIndicator={false}
             style={styles.photosContainer}
             contentContainerStyle={styles.photosContent}
@@ -194,7 +196,7 @@ export default function MosqueDetailScreen() {
               </ThemedText>
               {mosque.reviewCount !== undefined && (
                 <ThemedText type="small" secondary>
-                  ({mosque.reviewCount} reviews)
+                  ({mosque.reviewCount} {t('mosqueDetail.reviews')})
                 </ThemedText>
               )}
             </View>
@@ -202,13 +204,13 @@ export default function MosqueDetailScreen() {
 
           {/* Distance */}
           <View style={styles.infoRow}>
-            <Feather 
-              name="map-pin" 
-              size={18} 
-              color={theme.textSecondary} 
+            <Feather
+              name="map-pin"
+              size={18}
+              color={theme.textSecondary}
             />
             <ThemedText type="body" secondary style={styles.infoText}>
-              {formatDistance(mosque.distance)} away
+              {formatDistance(mosque.distance)} {t('mosqueDetail.away')}
             </ThemedText>
           </View>
 
@@ -217,21 +219,21 @@ export default function MosqueDetailScreen() {
             <View style={[
               styles.statusBadge,
               {
-                backgroundColor: mosque.isOpen 
+                backgroundColor: mosque.isOpen
                   ? `${theme.primary}26`
                   : (isDark ? 'rgba(239, 68, 68, 0.15)' : 'rgba(220, 38, 38, 0.1)'),
               }
             ]}>
-              <ThemedText 
-                type="body" 
-                style={{ 
-                  color: mosque.isOpen 
+              <ThemedText
+                type="body"
+                style={{
+                  color: mosque.isOpen
                     ? theme.primary
                     : '#EF4444',
                   fontWeight: '600',
                 }}
               >
-                {mosque.isOpen ? 'Open Now' : 'Closed'}
+                {mosque.isOpen ? t('mosqueDetail.openNow') : t('mosqueDetail.closed')}
               </ThemedText>
             </View>
           )}
@@ -242,12 +244,12 @@ export default function MosqueDetailScreen() {
           backgroundColor: theme.cardBackground,
         }]}>
           <View style={styles.cardHeader}>
-            <Feather 
-              name="map" 
-              size={20} 
-              color={theme.primary} 
+            <Feather
+              name="map"
+              size={20}
+              color={theme.primary}
             />
-            <ThemedText type="body" style={styles.cardTitle}>Address</ThemedText>
+            <ThemedText type="body" style={styles.cardTitle}>{t('mosqueDetail.address')}</ThemedText>
           </View>
           <ThemedText type="body" secondary style={styles.addressText}>
             {mosque.address}
@@ -260,46 +262,46 @@ export default function MosqueDetailScreen() {
             backgroundColor: theme.cardBackground,
           }]}>
             <View style={styles.cardHeader}>
-              <Feather 
-                name="phone" 
-                size={20} 
-                color={theme.primary} 
+              <Feather
+                name="phone"
+                size={20}
+                color={theme.primary}
               />
-              <ThemedText type="body" style={styles.cardTitle}>Contact</ThemedText>
+              <ThemedText type="body" style={styles.cardTitle}>{t('mosqueDetail.contact')}</ThemedText>
             </View>
-            
+
             {mosque.phoneNumber && (
               <Pressable onPress={handleCall} style={styles.contactRow}>
-                <Feather 
-                  name="phone" 
-                  size={16} 
-                  color={theme.textSecondary} 
+                <Feather
+                  name="phone"
+                  size={16}
+                  color={theme.textSecondary}
                 />
                 <ThemedText type="body" style={styles.contactText}>
                   {mosque.phoneNumber}
                 </ThemedText>
-                <Feather 
-                  name="external-link" 
-                  size={16} 
-                  color={theme.primary} 
+                <Feather
+                  name="external-link"
+                  size={16}
+                  color={theme.primary}
                 />
               </Pressable>
             )}
-            
+
             {mosque.website && (
               <Pressable onPress={handleWebsite} style={styles.contactRow}>
-                <Feather 
-                  name="globe" 
-                  size={16} 
-                  color={theme.textSecondary} 
+                <Feather
+                  name="globe"
+                  size={16}
+                  color={theme.textSecondary}
                 />
                 <ThemedText type="body" style={styles.contactText} numberOfLines={1}>
                   {mosque.website.replace(/^https?:\/\//, '')}
                 </ThemedText>
-                <Feather 
-                  name="external-link" 
-                  size={16} 
-                  color={theme.primary} 
+                <Feather
+                  name="external-link"
+                  size={16}
+                  color={theme.primary}
                 />
               </Pressable>
             )}
@@ -312,12 +314,12 @@ export default function MosqueDetailScreen() {
             backgroundColor: theme.cardBackground,
           }]}>
             <View style={styles.cardHeader}>
-              <Feather 
-                name="clock" 
-                size={20} 
-                color={theme.primary} 
+              <Feather
+                name="clock"
+                size={20}
+                color={theme.primary}
               />
-              <ThemedText type="body" style={styles.cardTitle}>Opening Hours</ThemedText>
+              <ThemedText type="body" style={styles.cardTitle}>{t('mosqueDetail.openingHours')}</ThemedText>
             </View>
             {mosque.openingHours.weekdayText.map((text, index) => (
               <ThemedText key={index} type="small" secondary style={styles.hoursText}>
@@ -342,7 +344,7 @@ export default function MosqueDetailScreen() {
         >
           <Feather name="navigation" size={20} color="#FFFFFF" />
           <ThemedText type="body" style={styles.directionsText}>
-            Get Directions
+            {t('mosqueDetail.getDirections')}
           </ThemedText>
         </Pressable>
       </View>

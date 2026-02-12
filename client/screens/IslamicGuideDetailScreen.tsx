@@ -6,11 +6,37 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { Spacing, BorderRadius } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
+import { useTranslation } from "@/hooks/useTranslation";
 import { Feather } from "@expo/vector-icons";
 import type { RouteProp } from "@react-navigation/native";
 import type { RootStackParamList } from "@/navigation/RootStackNavigator";
 
 type IslamicGuideDetailScreenRouteProp = RouteProp<RootStackParamList, "IslamicGuideDetail">;
+
+const REF_MAP: Record<string, string> = {
+  'Sahih al-Bukhari': 'صحيح البخاري',
+  'Sahih Muslim': 'صحيح مسلم',
+  'Sunan Abu Dawud': 'سنن أبي داود',
+  'Sunan Ibn Majah': 'سنن ابن ماجه',
+  'Sunan at-Tirmidhi': 'سنن الترمذي',
+  'Tirmidhi': 'الترمذي',
+  'Quran': 'القرآن الكريم',
+  'AAOIFI Sharia Standards': 'معايير هيئة المحاسبة والمراجعة للمؤسسات المالية الإسلامية',
+  'Islamic Finance Standards by AAOIFI': 'معايير التمويل الإسلامي - أيوفي',
+};
+
+function toArabicNumerals(str: string): string {
+  return str.replace(/\d/g, (d) => '٠١٢٣٤٥٦٧٨٩'[parseInt(d)]);
+}
+
+function translateReference(ref: string): string {
+  for (const [en, ar] of Object.entries(REF_MAP)) {
+    if (ref.startsWith(en)) {
+      return toArabicNumerals(ar + ref.slice(en.length));
+    }
+  }
+  return ref;
+}
 
 interface Props {
   route: IslamicGuideDetailScreenRouteProp;
@@ -20,6 +46,8 @@ export default function IslamicGuideDetailScreen({ route }: Props) {
   const { guide } = route.params;
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
+  const { t, locale } = useTranslation();
+  const isAr = locale === 'ar';
   const navigation = useNavigation();
 
   return (
@@ -39,11 +67,8 @@ export default function IslamicGuideDetailScreen({ route }: Props) {
           <Feather name="arrow-left" size={24} color={theme.text} />
         </Pressable>
         <View style={styles.headerTitles}>
-          <ThemedText type="h3" style={{ fontWeight: '700' }} numberOfLines={1}>
-            {guide.title}
-          </ThemedText>
-          <ThemedText type="arabic" secondary style={{ fontSize: 14, fontFamily: 'AlMushafQuran' }}>
-            {guide.titleAr}
+          <ThemedText type={isAr ? 'arabic' : 'h3'} style={isAr ? { fontSize: 18, fontFamily: 'AlMushafQuran', fontWeight: '700' } : { fontWeight: '700' }} numberOfLines={1}>
+            {t(`guides.${guide.id}.title`)}
           </ThemedText>
         </View>
         <View style={{ width: 40 }} />
@@ -67,14 +92,9 @@ export default function IslamicGuideDetailScreen({ route }: Props) {
             },
           ]}
         >
-          <ThemedText type="body" secondary>
-            {guide.description}
+          <ThemedText type={isAr ? 'arabic' : 'body'} secondary style={isAr ? styles.descriptionAr : undefined}>
+            {t(`guides.${guide.id}.description`)}
           </ThemedText>
-          {guide.descriptionAr && (
-            <ThemedText type="arabic" secondary style={styles.descriptionAr}>
-              {guide.descriptionAr}
-            </ThemedText>
-          )}
         </View>
 
         {/* Steps */}
@@ -109,26 +129,15 @@ export default function IslamicGuideDetailScreen({ route }: Props) {
                   </ThemedText>
                 </View>
                 <View style={styles.stepTitles}>
-                  <ThemedText type="h4" style={styles.stepTitle}>
-                    {step.title}
+                  <ThemedText type={isAr ? 'arabic' : 'h4'} style={isAr ? styles.stepTitleAr : styles.stepTitle}>
+                    {t(`guides.${guide.id}.steps.${index}.title`)}
                   </ThemedText>
-                  {step.titleAr && (
-                    <ThemedText type="arabic" secondary style={styles.stepTitleAr}>
-                      {step.titleAr}
-                    </ThemedText>
-                  )}
                 </View>
               </View>
 
-              <ThemedText type="body" style={styles.stepContent}>
-                {step.content}
+              <ThemedText type={isAr ? 'arabic' : 'body'} style={isAr ? styles.stepContentAr : styles.stepContent}>
+                {t(`guides.${guide.id}.steps.${index}.content`)}
               </ThemedText>
-
-              {step.contentAr && (
-                <ThemedText type="arabic" secondary style={styles.stepContentAr}>
-                  {step.contentAr}
-                </ThemedText>
-              )}
             </View>
           ))}
         </View>
@@ -157,7 +166,7 @@ export default function IslamicGuideDetailScreen({ route }: Props) {
                   color: theme.primary,
                 }}
               >
-                References
+                {t('islamicGuide.references')}
               </ThemedText>
             </View>
             {guide.references.map((ref, index) => (
@@ -168,7 +177,7 @@ export default function IslamicGuideDetailScreen({ route }: Props) {
                   color={theme.textSecondary}
                 />
                 <ThemedText type="small" secondary style={styles.referenceText}>
-                  {ref}
+                  {isAr ? translateReference(ref) : ref}
                 </ThemedText>
               </View>
             ))}

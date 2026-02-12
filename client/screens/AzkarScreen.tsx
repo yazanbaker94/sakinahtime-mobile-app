@@ -38,6 +38,7 @@ import { useCustomDuas } from '@/hooks/useCustomDuas';
 
 // Types
 import { Dua, DuaCategory, CustomDua } from '@/types/dua';
+import { useTranslation } from '@/hooks/useTranslation';
 
 type TabType = 'azkar' | 'duas' | 'guides';
 type DuaSubTab = 'categories' | 'quranic' | 'prophetic' | 'favorites' | 'custom';
@@ -57,31 +58,23 @@ const DUA_ICON_MAP: Record<string, keyof typeof Feather.glyphMap> = {
   star: 'star',
 };
 
-// Daily tips - rotate based on day of year
+// Daily tips — simple rotating hadith reminders
 const DAILY_TIPS = [
-  { text: 'The Prophet (peace be upon him) said: "The best remembrance is La ilaha illallah (There is no god but Allah)."', source: 'Tirmidhi' },
-  { text: 'The Prophet (peace be upon him) said: "Whoever says SubhanAllah wa bihamdihi 100 times, his sins will be forgiven even if they were like foam of the sea."', source: 'Bukhari & Muslim' },
-  { text: 'The Prophet (peace be upon him) said: "Two words are light on the tongue, heavy on the scales, beloved to the Most Merciful: SubhanAllahi wa bihamdihi, SubhanAllahil Adheem."', source: 'Bukhari & Muslim' },
-  { text: 'The Prophet (peace be upon him) said: "Whoever reads Ayat al-Kursi after every obligatory prayer, nothing prevents him from entering Paradise except death."', source: 'An-Nasa\'i' },
-  { text: 'The Prophet (peace be upon him) said: "The closest a servant is to his Lord is when he is in prostration, so increase your supplication."', source: 'Muslim' },
-  { text: 'The Prophet (peace be upon him) said: "Make things easy and do not make them difficult. Give glad tidings and do not repel people."', source: 'Bukhari & Muslim' },
-  { text: 'The Prophet (peace be upon him) said: "None of you truly believes until he loves for his brother what he loves for himself."', source: 'Bukhari & Muslim' },
-  { text: 'The Prophet (peace be upon him) said: "The strong person is not the one who can wrestle, but the strong person is the one who controls himself at the time of anger."', source: 'Bukhari & Muslim' },
-  { text: 'The Prophet (peace be upon him) said: "Cleanliness is half of faith."', source: 'Muslim' },
-  { text: 'The Prophet (peace be upon him) said: "Whoever believes in Allah and the Last Day, let him speak good or remain silent."', source: 'Bukhari & Muslim' },
-  { text: 'The Prophet (peace be upon him) said: "The best of you are those who learn the Quran and teach it."', source: 'Bukhari' },
-  { text: 'The Prophet (peace be upon him) said: "Allah does not look at your appearance or wealth, but He looks at your hearts and actions."', source: 'Muslim' },
-  { text: 'The Prophet (peace be upon him) said: "A smile in the face of your brother is charity."', source: 'Tirmidhi' },
-  { text: 'The Prophet (peace be upon him) said: "Whoever treads a path seeking knowledge, Allah will make easy for him the path to Paradise."', source: 'Muslim' },
-  { text: 'The Prophet (peace be upon him) said: "The supplication between the Adhan and Iqamah is not rejected."', source: 'Abu Dawud & Tirmidhi' },
+  { text: 'The Prophet ﷺ said: "The best remembrance is La ilaha illallah (There is no god but Allah)."', source: 'Tirmidhi' },
+  { text: 'The Prophet ﷺ said: "Whoever says SubhanAllah wa bihamdihi 100 times, his sins will be forgiven even if they were like foam of the sea."', source: 'Bukhari & Muslim' },
+  { text: 'The Prophet ﷺ said: "Two words are light on the tongue, heavy on the scales, beloved to the Most Merciful: SubhanAllahi wa bihamdihi, SubhanAllahil Adheem."', source: 'Bukhari & Muslim' },
+  { text: 'The Prophet ﷺ said: "Whoever reads Ayat al-Kursi after every obligatory prayer, nothing prevents him from entering Paradise except death."', source: "An-Nasa'i" },
+  { text: 'The Prophet ﷺ said: "The closest a servant is to his Lord is when he is in prostration, so increase your supplication."', source: 'Muslim' },
+  { text: 'The Prophet ﷺ said: "None of you truly believes until he loves for his brother what he loves for himself."', source: 'Bukhari & Muslim' },
+  { text: 'The Prophet ﷺ said: "Whoever believes in Allah and the Last Day, let him speak good or remain silent."', source: 'Bukhari & Muslim' },
+  { text: 'The Prophet ﷺ said: "The best of you are those who learn the Quran and teach it."', source: 'Bukhari' },
+  { text: 'The Prophet ﷺ said: "A smile in the face of your brother is charity."', source: 'Tirmidhi' },
+  { text: 'The Prophet ﷺ said: "Whoever treads a path seeking knowledge, Allah will make easy for him the path to Paradise."', source: 'Muslim' },
+  { text: 'The Prophet ﷺ said: "The supplication between the Adhan and Iqamah is not rejected."', source: 'Abu Dawud & Tirmidhi' },
 ];
 
-// Get daily tip based on day of year
 function getDailyTip() {
-  const now = new Date();
-  const start = new Date(now.getFullYear(), 0, 0);
-  const diff = now.getTime() - start.getTime();
-  const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
   return DAILY_TIPS[dayOfYear % DAILY_TIPS.length];
 }
 
@@ -102,6 +95,19 @@ export default function AzkarScreen() {
   const insets = useSafeAreaInsets();
   const { isDark, theme } = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
+  const { t, locale } = useTranslation();
+  const localeFiles: Record<string, any> = {
+    en: require('../i18n/locales/en.json'),
+    ar: require('../i18n/locales/ar.json'),
+    fr: require('../i18n/locales/fr.json'),
+    de: require('../i18n/locales/de.json'),
+    ru: require('../i18n/locales/ru.json'),
+    zh: require('../i18n/locales/zh.json'),
+  };
+  const currentLocale = localeFiles[locale] || localeFiles.en;
+  const localeTips = currentLocale?.azkar?.dailyTips || localeFiles.en?.azkar?.dailyTips;
+  const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
+  const tip = Array.isArray(localeTips) ? localeTips[dayOfYear % localeTips.length] : getDailyTip();
 
   const [activeTab, setActiveTab] = useState<TabType>('azkar');
   const [searchQuery, setSearchQuery] = useState('');
@@ -176,9 +182,9 @@ export default function AzkarScreen() {
   }, [navigation]);
 
   const handleDeleteCustomDua = useCallback((dua: CustomDua) => {
-    Alert.alert('Delete Dua', 'Are you sure you want to delete this dua?', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Delete', style: 'destructive', onPress: () => deleteCustomDua(dua.id) },
+    Alert.alert(t('azkar.deleteDua'), t('azkar.deleteDuaConfirm'), [
+      { text: t('common.cancel'), style: 'cancel' },
+      { text: t('common.delete'), style: 'destructive', onPress: () => deleteCustomDua(dua.id) },
     ]);
   }, [deleteCustomDua]);
 
@@ -262,9 +268,9 @@ export default function AzkarScreen() {
     <ThemedView style={styles.container}>
       {/* Tab Selector */}
       <View style={[styles.tabContainer, { paddingTop: insets.top + Spacing.md, backgroundColor: theme.backgroundDefault, borderBottomWidth: 1, borderBottomColor: theme.border }]}>
-        {renderTab('azkar', 'Azkar', 'sun')}
-        {renderTab('duas', 'Duas', 'book-open')}
-        {renderTab('guides', 'Guides', 'compass')}
+        {renderTab('azkar', t('tabs.azkar'), 'sun')}
+        {renderTab('duas', t('azkar.duas'), 'book-open')}
+        {renderTab('guides', t('azkar.guides'), 'compass')}
       </View>
 
       <ScrollView contentContainerStyle={[styles.scrollContent, { paddingBottom: tabBarHeight + Spacing.xl }]} scrollIndicatorInsets={{ bottom: tabBarHeight }} showsVerticalScrollIndicator={false}>
@@ -272,17 +278,17 @@ export default function AzkarScreen() {
           <>
             <QuickAccessStrip categories={azkarCategories} onCategoryPress={handleCategoryPress} />
             <TasbihCounter />
-            <View style={styles.sectionHeader}><ThemedText type="small" secondary style={styles.sectionTitle}>All Categories</ThemedText></View>
+            <View style={styles.sectionHeader}><ThemedText type="small" secondary style={styles.sectionTitle}>{t('azkar.allCategories')}</ThemedText></View>
             <View style={styles.categoriesGrid}>
               {azkarCategories.map((category) => (<CompactCategoryCard key={category.id} category={category} onPress={() => handleCategoryPress(category)} />))}
             </View>
             <View style={[styles.tipCard, { backgroundColor: `${theme.primary}15` }]}>
               <View style={styles.tipHeader}>
                 <Feather name="info" size={20} color={theme.primary} />
-                <ThemedText type="body" style={{ marginLeft: Spacing.sm, fontWeight: '600' }}>Daily Tip</ThemedText>
+                <ThemedText type="body" style={{ marginLeft: Spacing.sm, fontWeight: '600' }}>{t('azkar.dailyTip')}</ThemedText>
               </View>
-              <ThemedText type="small" secondary style={styles.tipText}>{getDailyTip().text}</ThemedText>
-              <ThemedText type="caption" style={{ color: theme.primary }}>- {getDailyTip().source}</ThemedText>
+              <ThemedText type="small" secondary style={styles.tipText}>{tip.text}</ThemedText>
+              <ThemedText type="caption" style={{ color: theme.primary }}>- {tip.source}</ThemedText>
             </View>
           </>
         )}
@@ -292,24 +298,24 @@ export default function AzkarScreen() {
             {/* Search Bar */}
             <View style={[styles.searchContainer, { backgroundColor: theme.backgroundSecondary }]}>
               <Feather name="search" size={20} color={theme.textSecondary} />
-              <TextInput style={[styles.searchInput, { color: theme.text }]} placeholder="Search duas..." placeholderTextColor={theme.textSecondary} value={duaSearchQuery} onChangeText={setDuaSearchQuery} />
+              <TextInput style={[styles.searchInput, { color: theme.text }]} placeholder={t('azkar.searchDuas')} placeholderTextColor={theme.textSecondary} value={duaSearchQuery} onChangeText={setDuaSearchQuery} />
               {duaSearchQuery.length > 0 && (<Pressable onPress={() => setDuaSearchQuery('')}><Feather name="x" size={20} color={theme.textSecondary} /></Pressable>)}
             </View>
 
             {/* Sub Tabs */}
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.duaSubTabsContainer} contentContainerStyle={styles.duaSubTabsContent}>
-              {renderDuaSubTab('categories', 'Categories', 'grid')}
-              {renderDuaSubTab('quranic', 'Quranic', 'book-open')}
-              {renderDuaSubTab('prophetic', 'Prophetic', 'bookmark')}
-              {renderDuaSubTab('favorites', 'Favorites', 'heart')}
-              {renderDuaSubTab('custom', 'My Duas', 'edit-3')}
+              {renderDuaSubTab('categories', t('azkar.categories'), 'grid')}
+              {renderDuaSubTab('quranic', t('azkar.quranic'), 'book-open')}
+              {renderDuaSubTab('prophetic', t('azkar.prophetic'), 'bookmark')}
+              {renderDuaSubTab('favorites', t('azkar.favorites'), 'heart')}
+              {renderDuaSubTab('custom', t('azkar.myDuas'), 'edit-3')}
             </ScrollView>
 
             {/* Search Results */}
             {duaSearchQuery.trim() ? (
               duaSearchResults.length > 0 ? (
-                <FlatList data={duaSearchResults} renderItem={renderDuaItem} keyExtractor={item => item.id} scrollEnabled={false} ListHeaderComponent={<ThemedText type="small" secondary style={{ marginBottom: Spacing.md }}>{duaSearchResults.length} result{duaSearchResults.length !== 1 ? 's' : ''}</ThemedText>} />
-              ) : renderEmptyState(`No duas found for "${duaSearchQuery}"`, 'search')
+                <FlatList data={duaSearchResults} renderItem={renderDuaItem} keyExtractor={item => item.id} scrollEnabled={false} ListHeaderComponent={<ThemedText type="small" secondary style={{ marginBottom: Spacing.md }}>{duaSearchResults.length} {duaSearchResults.length !== 1 ? t('azkar.results') : t('azkar.result')}</ThemedText>} />
+              ) : renderEmptyState(`${t('azkar.noDuasFound')} "${duaSearchQuery}"`, 'search')
             ) : (
               <>
                 {duaSubTab === 'categories' && !selectedDuaCategory && (
@@ -321,8 +327,8 @@ export default function AzkarScreen() {
                           <View style={[styles.duaCategoryIcon, { backgroundColor: `${theme.primary}15` }]}>
                             <Feather name={DUA_ICON_MAP[category.icon] || 'star'} size={24} color={theme.primary} />
                           </View>
-                          <ThemedText type="small" style={styles.duaCategoryTitle}>{category.titleEn}</ThemedText>
-                          <ThemedText type="caption" secondary>{category.count} duas</ThemedText>
+                          <ThemedText type="small" style={styles.duaCategoryTitle}>{t(`duaCategories.${category.id}`)}</ThemedText>
+                          <ThemedText type="caption" secondary>{category.count} {t('azkar.duas').toLowerCase()}</ThemedText>
                         </Pressable>
                       ))}
                     </View>
@@ -332,21 +338,21 @@ export default function AzkarScreen() {
                   <View>
                     <Pressable onPress={handleBackFromDuaCategory} style={styles.backButton}>
                       <Feather name="arrow-left" size={20} color={theme.text} />
-                      <ThemedText type="body" style={{ marginLeft: Spacing.sm, fontWeight: '600' }}>{duaCategories.find(c => c.id === selectedDuaCategory)?.titleEn || 'Back'}</ThemedText>
+                      <ThemedText type="body" style={{ marginLeft: Spacing.sm, fontWeight: '600' }}>{t(`duaCategories.${selectedDuaCategory}`) || t('azkar.back')}</ThemedText>
                     </Pressable>
                     <FlatList data={categoryDuas} renderItem={renderDuaItem} keyExtractor={item => item.id} scrollEnabled={false} />
                   </View>
                 )}
-                {duaSubTab === 'quranic' && (<FlatList data={quranicDuas} renderItem={renderDuaItem} keyExtractor={item => item.id} scrollEnabled={false} ListEmptyComponent={renderEmptyState('No Quranic duas available', 'book-open')} />)}
-                {duaSubTab === 'prophetic' && (<FlatList data={propheticDuas} renderItem={renderDuaItem} keyExtractor={item => item.id} scrollEnabled={false} ListEmptyComponent={renderEmptyState('No Prophetic duas available', 'bookmark')} />)}
-                {duaSubTab === 'favorites' && (<FlatList data={favoriteDuas} renderItem={renderDuaItem} keyExtractor={item => item.id} scrollEnabled={false} ListEmptyComponent={renderEmptyState('No favorite duas yet.\nTap the heart icon on any dua.', 'heart')} />)}
+                {duaSubTab === 'quranic' && (<FlatList data={quranicDuas} renderItem={renderDuaItem} keyExtractor={item => item.id} scrollEnabled={false} ListEmptyComponent={renderEmptyState(t('azkar.noQuranicDuas'), 'book-open')} />)}
+                {duaSubTab === 'prophetic' && (<FlatList data={propheticDuas} renderItem={renderDuaItem} keyExtractor={item => item.id} scrollEnabled={false} ListEmptyComponent={renderEmptyState(t('azkar.noPropheticDuas'), 'bookmark')} />)}
+                {duaSubTab === 'favorites' && (<FlatList data={favoriteDuas} renderItem={renderDuaItem} keyExtractor={item => item.id} scrollEnabled={false} ListEmptyComponent={renderEmptyState(t('azkar.tapHeartTip'), 'heart')} />)}
                 {duaSubTab === 'custom' && (
                   <>
                     <Pressable onPress={handleAddCustomDua} style={({ pressed }) => [styles.addButton, { backgroundColor: theme.primary, opacity: pressed ? 0.8 : 1 }]}>
                       <Feather name="plus" size={20} color="#fff" />
-                      <ThemedText type="body" style={{ color: '#fff', marginLeft: Spacing.sm, fontWeight: '600' }}>Add Custom Dua</ThemedText>
+                      <ThemedText type="body" style={{ color: '#fff', marginLeft: Spacing.sm, fontWeight: '600' }}>{t('azkar.addCustomDua')}</ThemedText>
                     </Pressable>
-                    <FlatList data={customDuas} renderItem={renderCustomDuaItem} keyExtractor={item => item.id} scrollEnabled={false} ListEmptyComponent={renderEmptyState('No custom duas yet.\nAdd your personal supplications.', 'edit-3')} />
+                    <FlatList data={customDuas} renderItem={renderCustomDuaItem} keyExtractor={item => item.id} scrollEnabled={false} ListEmptyComponent={renderEmptyState(t('azkar.addPersonalSupplications'), 'edit-3')} />
                   </>
                 )}
               </>
@@ -358,24 +364,24 @@ export default function AzkarScreen() {
           <View style={styles.guidesContainer}>
             <View style={[styles.searchContainer, { backgroundColor: theme.backgroundSecondary }]}>
               <Feather name="search" size={20} color={theme.textSecondary} />
-              <TextInput style={[styles.searchInput, { color: theme.text }]} placeholder="Search guides..." placeholderTextColor={theme.textSecondary} value={searchQuery} onChangeText={setSearchQuery} />
+              <TextInput style={[styles.searchInput, { color: theme.text }]} placeholder={t('azkar.searchGuides')} placeholderTextColor={theme.textSecondary} value={searchQuery} onChangeText={setSearchQuery} />
               {searchQuery.length > 0 && (<Pressable onPress={() => setSearchQuery('')}><Feather name="x" size={20} color={theme.textSecondary} /></Pressable>)}
             </View>
             {filteredCategories.length === 0 ? (
-              <View style={styles.noResults}><Feather name="search" size={48} color={theme.textSecondary} /><ThemedText type="body" secondary style={{ marginTop: Spacing.md }}>No guides found for &quot;{searchQuery}&quot;</ThemedText></View>
+              <View style={styles.noResults}><Feather name="search" size={48} color={theme.textSecondary} /><ThemedText type="body" secondary style={{ marginTop: Spacing.md }}>{t('azkar.noGuidesFound')} "{searchQuery}"</ThemedText></View>
             ) : (
               filteredCategories.map((category) => (
                 <View key={category.id} style={styles.guideCategory}>
                   <View style={styles.guideCategoryHeader}>
                     <View style={styles.guideCategoryTitles}>
-                      <View style={styles.categoryTitleRow}><ThemedText type="h4" style={{ flex: 1 }}>{category.titleEn}</ThemedText><ThemedText type="arabic" secondary style={{ fontFamily: 'AlMushafQuran' }}>{category.titleAr}</ThemedText></View>
+                      <View style={styles.categoryTitleRow}><ThemedText type="h4" style={{ flex: 1 }}>{t(`guideCategories.${category.id}`)}</ThemedText></View>
                     </View>
 
                   </View>
                   <View style={styles.guidesList}>
                     {category.guides.map((guide) => (
                       <Pressable key={guide.id} onPress={() => handleGuidePress(guide)} style={({ pressed }) => [styles.guideItem, { backgroundColor: theme.cardBackground, opacity: pressed ? 0.7 : 1 }]}>
-                        <ThemedText type="body" style={styles.guideTitle}>{guide.title}</ThemedText>
+                        <ThemedText type="body" style={styles.guideTitle}>{t(`guides.${guide.id}.title`)}</ThemedText>
                         <Feather name="chevron-right" size={18} color={theme.textSecondary} />
                       </Pressable>
                     ))}

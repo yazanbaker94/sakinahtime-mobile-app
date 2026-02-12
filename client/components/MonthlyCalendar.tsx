@@ -9,6 +9,7 @@ import { View, StyleSheet, Pressable } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { ThemedText } from './ThemedText';
 import { useTheme } from '../hooks/useTheme';
+import { useTranslation } from '../hooks/useTranslation';
 import { MonthlyStats } from '../types/prayerLog';
 import { Spacing, BorderRadius, Colors } from '../constants/theme';
 
@@ -18,12 +19,32 @@ interface MonthlyCalendarProps {
   onNextMonth: () => void;
 }
 
-const MONTH_NAMES = [
+const MONTH_NAMES_EN = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
-const DAY_HEADERS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+const MONTH_NAMES_AR = [
+  'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
+  'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
+];
+
+const MONTH_NAMES_FR = [
+  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+];
+
+const DAY_HEADERS_EN = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+const DAY_HEADERS_AR = ['ح', 'ن', 'ث', 'ر', 'خ', 'ج', 'س'];
+const DAY_HEADERS_FR = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
+
+const MONTH_NAMES_MAP: Record<string, string[]> = { en: MONTH_NAMES_EN, ar: MONTH_NAMES_AR, fr: MONTH_NAMES_FR };
+const DAY_HEADERS_MAP: Record<string, string[]> = { en: DAY_HEADERS_EN, ar: DAY_HEADERS_AR, fr: DAY_HEADERS_FR };
+
+
+function toArNumerals(n: number): string {
+  return String(n).replace(/\d/g, (d) => '٠١٢٣٤٥٦٧٨٩'[parseInt(d)]);
+}
 
 function getDayColor(prayedCount: number, isDark: boolean, theme: any): string {
   if (prayedCount === 5) return theme.primary;
@@ -34,11 +55,14 @@ function getDayColor(prayedCount: number, isDark: boolean, theme: any): string {
 
 export function MonthlyCalendar({ stats, onPrevMonth, onNextMonth }: MonthlyCalendarProps) {
   const { isDark, theme } = useTheme();
+  const { t, locale } = useTranslation();
+  const MONTH_NAMES = MONTH_NAMES_MAP[locale] || MONTH_NAMES_EN;
+  const DAY_HEADERS = DAY_HEADERS_MAP[locale] || DAY_HEADERS_EN;
 
   if (!stats) {
     return (
       <View style={[styles.container, { backgroundColor: isDark ? Colors.dark.backgroundSecondary : Colors.light.backgroundDefault }]}>
-        <ThemedText type="body" secondary>No data available</ThemedText>
+        <ThemedText type="body" secondary>{t('monthlyCalendar.noData')}</ThemedText>
       </View>
     );
   }
@@ -88,7 +112,7 @@ export function MonthlyCalendar({ stats, onPrevMonth, onNextMonth }: MonthlyCale
         </Pressable>
         <View style={styles.monthTitle}>
           <ThemedText type="h3" style={styles.monthText}>
-            {MONTH_NAMES[month - 1]} {year}
+            {MONTH_NAMES[month - 1]} {locale === 'ar' ? toArNumerals(year) : year}
           </ThemedText>
         </View>
         <Pressable onPress={onNextMonth} style={styles.navButton}>
@@ -100,12 +124,12 @@ export function MonthlyCalendar({ stats, onPrevMonth, onNextMonth }: MonthlyCale
       <View style={styles.summaryRow}>
         <View style={[styles.summaryBadge, { backgroundColor: `${theme.primary}26` }]}>
           <ThemedText type="small" style={{ color: theme.primary, fontWeight: '600' }}>
-            {completionPercentage}% Complete
+            {locale === 'ar' ? `${toArNumerals(completionPercentage)}% مكتمل` : locale === 'fr' ? `${completionPercentage}% Terminé` : `${completionPercentage}% Complete`}
           </ThemedText>
         </View>
         <View style={[styles.summaryBadge, { backgroundColor: isDark ? 'rgba(251, 191, 36, 0.15)' : 'rgba(251, 191, 36, 0.1)' }]}>
           <ThemedText type="small" style={{ color: '#FBBF24', fontWeight: '600' }}>
-            {perfectDays} Perfect Days
+            {locale === 'ar' ? `${toArNumerals(perfectDays)} أيام كاملة` : locale === 'fr' ? `${perfectDays} Jours parfaits` : `${perfectDays} Perfect Days`}
           </ThemedText>
         </View>
       </View>
@@ -156,7 +180,7 @@ export function MonthlyCalendar({ stats, onPrevMonth, onNextMonth }: MonthlyCale
                       isFuture && { opacity: 0.4 },
                     ]}
                   >
-                    {day}
+                    {locale === 'ar' ? toArNumerals(day) : day}
                   </ThemedText>
                 </View>
               </View>

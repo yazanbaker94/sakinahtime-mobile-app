@@ -1,0 +1,52 @@
+<!--
+  KAABA ICON - Qibla Compass Component
+  ======================================
+  Coordinate system: centered at (0,0)
+  ViewBox: -20 -20 40 40  (40x40 icon, center at origin)
+  
+  INTEGRATION GUIDE:
+  - This icon sits ON the compass ring at the Qibla bearing angle
+  - Position it at radius ~100 from center, at the Qibla bearing angle
+  
+  POSITIONING IN THE COMPOSED COMPASS:
+  The Kaaba should appear at the Qibla direction on the compass edge.
+  
+  In React Native (react-native-svg):
+    <G transform={`rotate(${qiblaBearing})`}>
+      <G transform="translate(0, -100)">
+        <G transform={`rotate(${-qiblaBearing})`}>
+          <!-- Paste Kaaba SVG content here -->
+        </G>
+      </G>
+    </G>
+  
+  Explanation of the triple transform:
+    1. rotate(qiblaBearing) — rotates to the Qibla angle on the compass
+    2. translate(0, -100)   — moves 100px outward from center (radius)
+    3. rotate(-qiblaBearing) — counter-rotates so the Kaaba stays upright
+  
+  OPTIONAL: Qibla direction marker line (place BEFORE the icon):
+    <Line x1="0" y1="-142" x2="0" y2="-155" 
+          stroke="#2ecc8f" strokeWidth="2.5" strokeLinecap="round"
+          transform={`rotate(${qiblaBearing})`} />
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-20 -20 40 40" width="40" height="40">
+  <!-- Kaaba body -->
+  <rect x="-13" y="-13" width="26" height="26" rx="3" fill="#1a1a1a" stroke="#c49228" stroke-width="1.2"/>
+  
+  <!-- Gold kiswa band -->
+  <line x1="-13" y1="-3" x2="13" y2="-3" stroke="#c49228" stroke-width="1.8"/>
+  
+  <!-- Decorative band details -->
+  <line x1="-13" y1="-5.5" x2="13" y2="-5.5" stroke="#c49228" stroke-width="0.4" opacity="0.5"/>
+  <line x1="-13" y1="-0.5" x2="13" y2="-0.5" stroke="#c49228" stroke-width="0.4" opacity="0.5"/>
+  
+  <!-- Door -->
+  <rect x="-3.5" y="1" width="7" height="10" rx="1.5" fill="none" stroke="#c49228" stroke-width="0.9"/>
+  
+  <!-- Hajar al-Aswad (Black Stone corner) -->
+  <circle cx="10" cy="8" r="2" fill="#2a2a2a" stroke="#c49228" stroke-width="0.6"/>
+  
+  <!-- Roof edge highlight -->
+  <line x1="-13" y1="-13" x2="13" y2="-13" stroke="#d4a853" stroke-width="0.5" opacity="0.3"/>
+</svg>

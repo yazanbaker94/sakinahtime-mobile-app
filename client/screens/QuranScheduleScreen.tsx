@@ -13,6 +13,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { Card } from '@/components/Card';
 import { useTheme } from '@/hooks/useTheme';
+import { useTranslation } from '@/hooks/useTranslation';
 import { useQuranSchedule } from '@/hooks/useQuranSchedule';
 import { useRamadan } from '@/contexts/RamadanContext';
 import { DayReading } from '@/types/ramadan';
@@ -24,19 +25,20 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 export default function QuranScheduleScreen() {
   const insets = useSafeAreaInsets();
   const { isDark, theme } = useTheme();
+  const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const { currentDay } = useRamadan();
   const { schedule, progress, markDayComplete, navigateToMushaf } = useQuranSchedule();
-  
+
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
 
   const accentColor = theme.primary;
 
   const handleOpenMushaf = (page: number) => {
     // Navigate directly to the specific page in QuranTab
-    navigation.navigate('Main', { 
-      screen: 'QuranTab', 
-      params: { page } 
+    navigation.navigate('Main', {
+      screen: 'QuranTab',
+      params: { page }
     } as any);
   };
 
@@ -62,12 +64,12 @@ export default function QuranScheduleScreen() {
         <View style={styles.dayHeader}>
           <View style={styles.dayInfo}>
             <ThemedText type="body" style={{ fontWeight: '700' }}>
-              Day {item.day}
+              {t('quranSchedule.day')} {item.day}
             </ThemedText>
             {isToday && (
               <View style={[styles.todayBadge, { backgroundColor: accentColor }]}>
                 <ThemedText type="caption" style={{ color: '#fff', fontWeight: '600' }}>
-                  Today
+                  {t('quranSchedule.today')}
                 </ThemedText>
               </View>
             )}
@@ -85,10 +87,10 @@ export default function QuranScheduleScreen() {
 
         <View style={styles.readingInfo}>
           <ThemedText type="h4" style={{ color: accentColor }}>
-            Juz {item.juzNumber}
+            {t('quranSchedule.juz')} {item.juzNumber}
           </ThemedText>
           <ThemedText type="small" secondary>
-            Pages {item.startPage}-{item.endPage}
+            {t('quranSchedule.pages')} {item.startPage}-{item.endPage}
           </ThemedText>
         </View>
 
@@ -97,7 +99,7 @@ export default function QuranScheduleScreen() {
           <View style={styles.expandedDetails}>
             <View style={styles.surahList}>
               <ThemedText type="caption" secondary style={{ marginBottom: Spacing.xs }}>
-                Surahs:
+                {t('quranSchedule.surahs')}
               </ThemedText>
               <ThemedText type="small">
                 {item.surahNames.join(', ')}
@@ -111,7 +113,7 @@ export default function QuranScheduleScreen() {
               >
                 <Feather name="book" size={16} color={accentColor} />
                 <ThemedText type="small" style={{ marginLeft: Spacing.xs, color: accentColor }}>
-                  Open Mushaf
+                  {t('quranSchedule.openMushaf')}
                 </ThemedText>
               </Pressable>
 
@@ -122,7 +124,7 @@ export default function QuranScheduleScreen() {
                 >
                   <Feather name="check-circle" size={16} color="#fff" />
                   <ThemedText type="small" style={{ marginLeft: Spacing.xs, color: '#fff' }}>
-                    Mark Complete
+                    {t('quranSchedule.markComplete')}
                   </ThemedText>
                 </Pressable>
               )}
@@ -130,7 +132,7 @@ export default function QuranScheduleScreen() {
 
             {item.completedAt && (
               <ThemedText type="caption" secondary style={{ marginTop: Spacing.sm }}>
-                Completed: {new Date(item.completedAt).toLocaleDateString()}
+                {t('quranSchedule.completedAt')} {new Date(item.completedAt).toLocaleDateString()}
               </ThemedText>
             )}
           </View>
@@ -146,7 +148,7 @@ export default function QuranScheduleScreen() {
         <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
           <Feather name="arrow-left" size={24} color={theme.text} />
         </Pressable>
-        <ThemedText type="h2" style={styles.title}>Quran Schedule</ThemedText>
+        <ThemedText type="h2" style={styles.title}>{t('quranSchedule.title')}</ThemedText>
         <View style={{ width: 24 }} />
       </View>
 
@@ -158,19 +160,19 @@ export default function QuranScheduleScreen() {
         <View style={styles.progressStats}>
           <View style={styles.progressStat}>
             <ThemedText type="h2" style={{ color: accentColor }}>{progress.daysCompleted}</ThemedText>
-            <ThemedText type="caption" secondary>Days Done</ThemedText>
+            <ThemedText type="caption" secondary>{t('quranSchedule.daysDone')}</ThemedText>
           </View>
           <View style={styles.progressStat}>
             <ThemedText type="h2" style={{ color: isDark ? '#9CA3AF' : '#6B7280' }}>
               {progress.totalDays - progress.daysCompleted}
             </ThemedText>
-            <ThemedText type="caption" secondary>Remaining</ThemedText>
+            <ThemedText type="caption" secondary>{t('quranSchedule.remaining')}</ThemedText>
           </View>
           <View style={styles.progressStat}>
             <ThemedText type="h2" style={{ color: progress.onTrack ? accentColor : '#F59E0B' }}>
               {progress.percentComplete}%
             </ThemedText>
-            <ThemedText type="caption" secondary>Complete</ThemedText>
+            <ThemedText type="caption" secondary>{t('quranSchedule.complete')}</ThemedText>
           </View>
         </View>
 

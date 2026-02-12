@@ -1,0 +1,2342 @@
+{
+  "tabs": {
+    "qibla": "Qibla",
+    "prayer": "Prayer",
+    "quran": "Quran",
+    "azkar": "Azkar",
+    "settings": "Settings"
+  },
+  "settings": {
+    "title": "Settings",
+    "appearance": "Appearance",
+    "customizeTheme": "Customize your theme",
+    "language": "Language",
+    "chooseLanguage": "Choose your language",
+    "prayerFasting": "Prayer & Fasting",
+    "notificationsAzanReminders": "Notifications, azan, and reminders",
+    "storageDownloads": "Storage & Downloads",
+    "manageOfflineContent": "Manage offline content",
+    "wordByWord": "Word by Word",
+    "translationLanguage": "Translation language",
+    "dhikrReminders": "Dhikr Reminders",
+    "floatingOverlay": "Floating overlay reminders",
+    "feedbackSuggestions": "Feedback & Suggestions",
+    "helpImprove": "Help us improve the app",
+    "colorMode": "Color Mode",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "auto": "Auto"
+  },
+  "prayer": {
+    "title": "Prayer Times",
+    "fajr": "Fajr",
+    "sunrise": "Sunrise",
+    "dhuhr": "Dhuhr",
+    "asr": "Asr",
+    "maghrib": "Maghrib",
+    "isha": "Isha",
+    "nextPrayer": "NEXT PRAYER",
+    "timeRemaining": "Time Remaining",
+    "prayerCalendar": "Prayer Calendar",
+    "prayerStats": "Prayer Stats",
+    "progress": "Progress",
+    "hijriCalendar": "Hijri Calendar",
+    "calculationMethod": "Calculation Method",
+    "prayed": "Prayed",
+    "missed": "Missed",
+    "late": "Late",
+    "onTime": "On Time",
+    "notLogged": "Not logged",
+    "logPrayer": "Log Prayer",
+    "currentStreak": "Current Streak",
+    "days": "DAYS",
+    "day": "DAY",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "location": "Location",
+    "setLocation": "Set your location",
+    "tapToSetLocation": "Tap to set your location for accurate prayer times",
+    "noLocation": "No Location Set",
+    "checkingPermission": "Checking location permission...",
+    "locationRequired": "Location Access Required",
+    "locationExplanation": "We need your location to calculate accurate prayer times for your area.",
+    "browserLocationHint": "Please enable location in your browser settings.",
+    "enableLocation": "Enable Location",
+    "openSettings": "Open Settings",
+    "loadingPrayerTimes": "Loading prayer times...",
+    "failedToLoad": "Failed to load prayer times",
+    "hours": "HOURS",
+    "minutes": "MINUTES",
+    "seconds": "SECONDS",
+    "min": "min"
+  },
+  "qibla": {
+    "title": "Qibla",
+    "direction": "Direction",
+    "degrees": "degrees",
+    "compass": "Compass",
+    "distance": "Distance",
+    "toKaaba": "to Kaaba",
+    "facingQibla": "Facing Qibla",
+    "turnLeft": "Turn Left",
+    "turnRight": "Turn Right",
+    "directionLocked": "Direction Locked",
+    "tapToUnlock": "Tap to Unlock",
+    "lockDirection": "Lock Direction",
+    "compassNotAvailable": "Compass not available",
+    "compassNotAvailableWeb": "Compass not available on web. Use on mobile device.",
+    "calibrate": "Calibrate your compass by moving your phone in a figure-8 pattern",
+    "calibrateShort": "Move phone in figure-8 to calibrate",
+    "heading": "HEADING",
+    "qiblaLabel": "QIBLA",
+    "km": "KM",
+    "mosques": "Mosques",
+    "gettingLocation": "Getting your location...",
+    "initializingCompass": "Initializing compass...",
+    "locationRequiredQibla": "We need your location to calculate the Qibla direction from your current position."
+  },
+  "quran": {
+    "title": "Quran",
+    "surah": "Surah",
+    "juz": "Juz",
+    "page": "Page",
+    "verse": "Verse",
+    "verses": "Verses",
+    "search": "Search",
+    "searchQuran": "Search Quran",
+    "bookmark": "Bookmark",
+    "bookmarks": "Bookmarks",
+    "bookmarked": "Bookmarked",
+    "addNote": "Add Note",
+    "notes": "Notes",
+    "highlight": "Highlight",
+    "highlights": "Highlights",
+    "copy": "Copy",
+    "share": "Share",
+    "play": "Play",
+    "pause": "Pause",
+    "stop": "Stop",
+    "continue": "Continue",
+    "tafsir": "Tafsir",
+    "translation": "Translation",
+    "translations": "Translations",
+    "transliteration": "Transliteration",
+    "reciter": "Reciter",
+    "lastRead": "Last Read",
+    "continueLast": "Continue where you left off",
+    "meccan": "Meccan",
+    "medinan": "Medinan",
+    "save": "Save",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "savedVerses": "Saved Verses",
+    "all": "All",
+    "recent": "Recent",
+    "tafsirTranslations": "Tafsir & Translations",
+    "download": "Download",
+    "downloaded": "Downloaded",
+    "downloading": "Downloading",
+    "readMode": "Read Mode",
+    "mushafMode": "Mushaf Mode",
+    "surahReader": "Surah Reader",
+    "goToPage": "Go to page",
+    "goToSurah": "Go to Surah",
+    "goToJuz": "Go to Juz",
+    "wordByWord": "Word by Word",
+    "audio": "Audio",
+    "settings": "Settings"
+  },
+  "azkar": {
+    "title": "Azkar & Duas",
+    "morningAzkar": "Morning Azkar",
+    "eveningAzkar": "Evening Azkar",
+    "afterPrayer": "After Prayer",
+    "sleep": "Sleep",
+    "wakeUp": "Wake Up",
+    "dailyTip": "Daily Tip",
+    "categories": "Categories",
+    "duas": "Duas",
+    "guides": "Guides",
+    "all": "All",
+    "favorites": "Favorites",
+    "count": "Count",
+    "completed": "Completed",
+    "repeat": "Repeat",
+    "times": "times",
+    "time": "time",
+    "remaining": "remaining",
+    "reset": "Reset",
+    "duaOfTheDay": "Dua of the Day",
+    "dailyDhikr": "Daily Dhikr",
+    "dhikrGoal": "Dhikr Goal",
+    "worship": "Worship & Prayer",
+    "dailyLife": "Daily Life",
+    "travel": "Travel",
+    "food": "Food & Drink",
+    "protection": "Protection",
+    "hadith": "Hadith",
+    "islamicGuides": "Islamic Guides",
+    "search": "Search azkar & duas...",
+    "searchDuas": "Search duas...",
+    "quranic": "Quranic",
+    "prophetic": "Prophetic",
+    "custom": "Custom",
+    "customDuas": "Custom Duas",
+    "addCustomDua": "Add Custom Dua",
+    "noDuasYet": "No custom duas yet",
+    "noFavorites": "No favorites yet",
+    "noResults": "No results found",
+    "deleteConfirm": "Are you sure you want to delete this dua?",
+    "tapToStart": "Tap to start",
+    "target": "Target",
+    "progress": "Progress",
+    "allCategories": "All Categories",
+    "deleteDua": "Delete Dua",
+    "deleteDuaConfirm": "Are you sure you want to delete this dua?",
+    "myDuas": "My Duas",
+    "result": "result",
+    "results": "results",
+    "noDuasFound": "No duas found for",
+    "searchGuides": "Search guides...",
+    "noGuidesFound": "No guides found for",
+    "back": "Back",
+    "addPersonalSupplications": "No custom duas yet.\nAdd your personal supplications.",
+    "tapHeartTip": "No favorite duas yet.\nTap the heart icon on any dua.",
+    "noQuranicDuas": "No Quranic duas available",
+    "noPropheticDuas": "No Prophetic duas available",
+    "adhkarCount": "adhkar",
+    "dailyTips": [
+      {
+        "text": "The Prophet ﷺ said: \"The best remembrance is La ilaha illallah (There is no god but Allah).\"",
+        "source": "Tirmidhi"
+      },
+      {
+        "text": "The Prophet ﷺ said: \"Whoever says SubhanAllah wa bihamdihi 100 times, his sins will be forgiven even if they were like foam of the sea.\"",
+        "source": "Bukhari & Muslim"
+      },
+      {
+        "text": "The Prophet ﷺ said: \"Two words are light on the tongue, heavy on the scales, beloved to the Most Merciful: SubhanAllahi wa bihamdihi, SubhanAllahil Adheem.\"",
+        "source": "Bukhari & Muslim"
+      },
+      {
+        "text": "The Prophet ﷺ said: \"Whoever reads Ayat al-Kursi after every obligatory prayer, nothing prevents him from entering Paradise except death.\"",
+        "source": "An-Nasa'i"
+      },
+      {
+        "text": "The Prophet ﷺ said: \"The closest a servant is to his Lord is when he is in prostration, so increase your supplication.\"",
+        "source": "Muslim"
+      },
+      {
+        "text": "The Prophet ﷺ said: \"None of you truly believes until he loves for his brother what he loves for himself.\"",
+        "source": "Bukhari & Muslim"
+      },
+      {
+        "text": "The Prophet ﷺ said: \"Whoever believes in Allah and the Last Day, let him speak good or remain silent.\"",
+        "source": "Bukhari & Muslim"
+      },
+      {
+        "text": "The Prophet ﷺ said: \"The best of you are those who learn the Quran and teach it.\"",
+        "source": "Bukhari"
+      },
+      {
+        "text": "The Prophet ﷺ said: \"A smile in the face of your brother is charity.\"",
+        "source": "Tirmidhi"
+      },
+      {
+        "text": "The Prophet ﷺ said: \"Whoever treads a path seeking knowledge, Allah will make easy for him the path to Paradise.\"",
+        "source": "Muslim"
+      },
+      {
+        "text": "The Prophet ﷺ said: \"The supplication between the Adhan and Iqamah is not rejected.\"",
+        "source": "Abu Dawud & Tirmidhi"
+      }
+    ]
+  },
+  "azkarDetail": {
+    "quran": "Quran",
+    "translit": "Translit",
+    "english": "English",
+    "counter": "Counter"
+  },
+  "duaCollection": {
+    "title": "Duas",
+    "searchPlaceholder": "Search duas...",
+    "categories": "Categories",
+    "quranic": "Quranic",
+    "prophetic": "Prophetic",
+    "favorites": "Favorites",
+    "myDuas": "My Duas",
+    "deleteDua": "Delete Dua",
+    "deleteConfirm": "Are you sure you want to delete this dua?",
+    "deleteFailed": "Failed to delete dua",
+    "duasCount": "duas",
+    "noResultsFor": "No duas found for \"{{query}}\"",
+    "results": "results",
+    "result": "result",
+    "forQuery": "for",
+    "noQuranic": "No Quranic duas available",
+    "noProphetic": "No Prophetic duas available",
+    "noFavorites": "No favorite duas yet.\nTap the heart icon on any dua to add it here.",
+    "noCustom": "No custom duas yet.\nAdd your personal supplications here.",
+    "addCustom": "Add Custom Dua"
+  },
+  "progress": {
+    "title": "Progress",
+    "readingProgress": "Reading Progress",
+    "overallProgress": "Overall Progress",
+    "complete": "Complete",
+    "pagesRead": "Pages Read",
+    "juzComplete": "Juz Complete",
+    "khatm": "Khatm",
+    "todaysProgress": "Today's Progress",
+    "versesRead": "verses read",
+    "pagesReadToday": "pages read",
+    "readingStreak": "Reading Streak",
+    "currentStreak": "Current Streak",
+    "longestStreak": "Longest Streak",
+    "bestStreak": "Best Streak",
+    "thisWeek": "This Week",
+    "average": "Average",
+    "pagesPerDay": "pages/day",
+    "dailyGoalSettings": "Daily Goal Settings",
+    "enableDailyGoal": "Enable Daily Goal",
+    "goalType": "Goal Type",
+    "pages": "Pages",
+    "verses": "Verses",
+    "target": "Target",
+    "saveGoal": "Save Goal",
+    "readingReminder": "Reading Reminder",
+    "enableReminder": "Enable Reminder",
+    "reminderTime": "Reminder Time",
+    "resetAllProgress": "Reset All Progress",
+    "resetConfirm": "Are you sure you want to reset all reading progress? This cannot be undone.",
+    "resetButton": "Reset",
+    "noGoalSet": "No daily goal set",
+    "invalidGoal": "Invalid Goal",
+    "invalidGoalMessage": "Please enter a valid number",
+    "goalRange": "goal must be between",
+    "and": "and",
+    "permissionRequired": "Permission Required",
+    "permissionMessage": "Please enable notifications in your device settings to use reading reminders.",
+    "errorSavingGoal": "Failed to save goal settings",
+    "errorResetting": "Failed to reset progress",
+    "loadingProgress": "Loading progress...",
+    "done": "Done",
+    "goal": "Goal",
+    "weeklyOverview": "Weekly Overview",
+    "monthlyOverview": "Monthly Overview",
+    "streak": "Streak",
+    "totalPrayers": "Total Prayers",
+    "completionRate": "Completion Rate",
+    "prayerLog": "Prayer Log",
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "allTime": "All Time",
+    "exportStats": "Export Stats",
+    "qadaTracker": "Qada Tracker",
+    "qadaRemaining": "Qada Remaining",
+    "taraweeh": "Taraweeh",
+    "charity": "Charity",
+    "zakatCalculator": "Zakat Calculator",
+    "hifzProgress": "Hifz Progress",
+    "quranSchedule": "Quran Schedule"
+  },
+  "notifications": {
+    "title": "Notification Settings",
+    "prayerNotifications": "Prayer Notifications",
+    "getNotified": "Get notified when it's time to pray",
+    "prayerAlarms": "Prayer Alarms",
+    "azanSettings": "Azan Settings",
+    "azan": "Azan",
+    "azanSound": "Azan Sound",
+    "playHayaAlSalat": "Play \"Haya Al Salat\" before prayer",
+    "silentMode": "Silent Mode",
+    "flipToSilence": "Flip to Silence",
+    "flipToSilenceDesc": "Flip your phone face-down to silence the azan",
+    "testAzan": "Test Azan",
+    "vibration": "Vibration",
+    "iqama": "Iqama",
+    "iqamaReminder": "Iqama Reminder",
+    "iqamaWait": "Iqama Wait",
+    "iqamaDelay": "Iqama Delay",
+    "minutesAfterAzan": "minutes after azan",
+    "minutes": "minutes",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "timeAdjustments": "Time Adjustments",
+    "adjustPrayerTimes": "Adjust prayer times (minutes)",
+    "calculationMethod": "Calculation Method",
+    "highLatitude": "High Latitude Rule",
+    "asrCalculation": "Asr Calculation",
+    "standard": "Standard",
+    "hanafi": "Hanafi",
+    "prayerTracking": "Prayer Tracking",
+    "enableTracking": "Enable Tracking",
+    "trackDailyPrayers": "Track your daily prayers",
+    "missedPrayerReminder": "Missed Prayer Reminder",
+    "reminderAfterPrayer": "Remind after prayer time passes",
+    "reminderDelay": "Reminder Delay",
+    "minutesAfterPrayer": "minutes after prayer",
+    "fasting": "Fasting",
+    "suhoorReminder": "Suhoor Reminder",
+    "iftarReminder": "Iftar Reminder",
+    "beforeSuhoor": "minutes before Suhoor",
+    "beforeIftar": "minutes before Iftar",
+    "fastingReminders": "Fasting Reminders",
+    "enableFastingReminders": "Enable fasting reminders",
+    "playAzanWhenPrayerTime": "Play azan when prayer time arrives",
+    "selectPrayersForAzan": "Select which prayers play azan sound",
+    "prayerSelection": "Prayer Selection",
+    "choosePrayersForIqama": "Choose which prayers get iqama",
+    "testIqama": "Test Iqama",
+    "testIqamaPlaying": "Iqama sound is playing now. If you don't hear it, check your volume.",
+    "timeAdjustmentsFineTune": "Fine-tune prayer times (±30 min)",
+    "min": "min",
+    "autoDetectByLocation": "Auto-detect by location",
+    "recommended": "Recommended",
+    "active": "Active",
+    "useAuto": "Use Auto",
+    "autoDetectedFor": "Auto-detected for"
+  },
+  "qadaTracker": {
+    "title": "Qada Tracker",
+    "totalRemaining": "Total Qada prayers remaining",
+    "hint": "Tap the count number to edit directly. Use 'Log' after praying a Qada."
+  },
+  "location": {
+    "title": "Location Settings",
+    "searchCity": "Search city...",
+    "currentLocation": "Current Location",
+    "useCurrentLocation": "Use Current Location",
+    "manualEntry": "Manual Entry",
+    "latitude": "Latitude",
+    "longitude": "Longitude",
+    "save": "Save",
+    "detectingLocation": "Detecting location...",
+    "locationSaved": "Location saved",
+    "invalidCoordinates": "Invalid coordinates",
+    "detecting": "Detecting location...",
+    "unavailable": "Location unavailable",
+    "permissionRequired": "Permission required",
+    "manual": "Manual",
+    "locationSource": "LOCATION SOURCE",
+    "useGPS": "Use GPS Location",
+    "setManually": "Set Location Manually",
+    "searchWorldwide": "Search for any city worldwide",
+    "recentLocations": "RECENT LOCATIONS",
+    "info": "Your location is used to calculate accurate prayer times and Qibla direction. Manual location is useful when GPS is unavailable or inaccurate."
+  },
+  "qada": {
+    "title": "Qada Tracker",
+    "totalRemaining": "Total Remaining",
+    "addMissed": "Add Missed",
+    "prayersMadeUp": "Prayers Made Up",
+    "prayersRemaining": "Remaining",
+    "hint": "Long press on a prayer count to subtract",
+    "noQada": "No Qada prayers remaining. MashaAllah!",
+    "fajr": "Fajr",
+    "dhuhr": "Dhuhr",
+    "asr": "Asr",
+    "maghrib": "Maghrib",
+    "isha": "Isha",
+    "prayers": "prayers"
+  },
+  "zakat": {
+    "title": "Zakat Calculator",
+    "totalWealth": "Total Wealth",
+    "enterWealth": "Enter total wealth amount",
+    "calculate": "Calculate",
+    "zakatDue": "Zakat Due",
+    "nisab": "Nisab",
+    "meetsNisab": "Meets Nisab threshold",
+    "doesNotMeetNisab": "Does not meet Nisab threshold",
+    "goldNisab": "Gold Nisab",
+    "silverNisab": "Silver Nisab",
+    "info": "Zakat is 2.5% of your total qualifying wealth held for one lunar year.",
+    "gold": "Gold",
+    "silver": "Silver",
+    "cash": "Cash & Bank Balances",
+    "stocks": "Stocks & Investments",
+    "property": "Rental Property",
+    "totalAssets": "Total Assets",
+    "zakatPayable": "Zakat Payable",
+    "reset": "Reset",
+    "currency": "Currency"
+  },
+  "charity": {
+    "title": "Charity Tracker",
+    "totalDonated": "Total Donated",
+    "addDonation": "Add Donation",
+    "setGoal": "Set Goal",
+    "goal": "Goal",
+    "recentDonations": "Recent Donations",
+    "noDonations": "No donations yet",
+    "amount": "Amount",
+    "type": "Type",
+    "category": "Category",
+    "date": "Date",
+    "deleteConfirm": "Are you sure you want to delete this donation?",
+    "enterAmount": "Enter amount",
+    "selectCategory": "Select category",
+    "sadaqah": "Sadaqah",
+    "zakatPayment": "Zakat",
+    "waqf": "Waqf",
+    "other": "Other",
+    "goalAmount": "Goal Amount",
+    "goalProgress": "Goal Progress",
+    "to": "To",
+    "totalGiven": "Total Given",
+    "editGoal": "Edit Goal",
+    "zakatStatus": "Zakat Status",
+    "paid": "Paid",
+    "notYetPaid": "Not yet paid this year",
+    "breakdownByType": "Breakdown by Type"
+  },
+  "ramadan": {
+    "title": "Ramadan Dashboard",
+    "daysRemaining": "Days Remaining",
+    "fastingToday": "Fasting Today",
+    "taraweeh": "Taraweeh",
+    "logTaraweeh": "Log Taraweeh",
+    "suhoor": "Suhoor",
+    "iftar": "Iftar",
+    "fastingDays": "Fasting Days",
+    "completed": "Completed",
+    "remaining": "Remaining",
+    "ramadanMode": "Ramadan Mode",
+    "activateMessage": "Ramadan Mode will automatically activate during the blessed month of Ramadan.",
+    "checkBackMessage": "Check back when Ramadan begins to access Suhoor/Iftar times, Quran reading schedules, Taraweeh tracking, and more."
+  },
+  "hifz": {
+    "title": "Hifz Progress",
+    "memorized": "Memorized",
+    "inProgress": "In Progress",
+    "notStarted": "Not Started",
+    "totalMemorized": "Total Memorized",
+    "markMemorized": "Mark as Memorized",
+    "markInProgress": "Mark as In Progress",
+    "resetSurah": "Reset Surah",
+    "versesMemorized": "Verses Memorized",
+    "dueToday": "Due Today",
+    "revisedToday": "Revised Today",
+    "dailyGoal": "Daily Goal",
+    "overallProgress": "Overall Progress",
+    "verses": "Verses",
+    "pages": "Pages",
+    "juz": "Juz",
+    "dueForRevision": "Due for Revision",
+    "last": "Last",
+    "ease": "Ease",
+    "moreVersesDue": "more verses due",
+    "statusLegend": "Status Legend",
+    "notifications": "Notifications",
+    "dailyReminders": "Daily Reminders",
+    "reminderHint": "Get reminded to review your memorization",
+    "resetAllProgress": "Reset All Progress"
+  },
+  "storage": {
+    "title": "Storage & Downloads",
+    "totalUsed": "Total Storage Used",
+    "audioFiles": "Audio Files",
+    "clearAllDownloads": "Clear All Downloads",
+    "clearConfirm": "Are you sure you want to delete all downloaded content?",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "reciterAudio": "Reciter Audio",
+    "mushafPages": "Mushaf Pages",
+    "totalSize": "Total Size",
+    "noDownloads": "No downloads yet",
+    "loadingInfo": "Loading storage info...",
+    "quickActions": "Quick Actions",
+    "manageAudio": "Manage Audio",
+    "downloadQuran": "Download Quran",
+    "clearAll": "Clear All",
+    "freeUpSpace": "Free up space",
+    "refreshInfo": "Refresh Storage Info"
+  },
+  "onboarding": {
+    "welcome": "Welcome to SakinahTime",
+    "welcomeDesc": "Your companion for a mindful spiritual journey",
+    "skip": "Skip",
+    "next": "Next",
+    "getStarted": "Get Started",
+    "done": "Done",
+    "prayerTimesTitle": "Accurate Prayer Times",
+    "prayerTimesDesc": "Get precise prayer times based on your location with beautiful azan notifications",
+    "quranTitle": "Beautiful Quran Experience",
+    "quranDesc": "Read the Quran with multiple translations, word-by-word, and audio recitation",
+    "azkarTitle": "Daily Azkar & Duas",
+    "azkarDesc": "Access morning and evening azkar, duas for every occasion, and dhikr counter",
+    "notificationsDesc": "Never miss a prayer with customizable notifications and azan alarms",
+    "widgetDesc": "Add a widget to your home screen for quick access to prayer times",
+    "welcomeTitle": "Assalamu Alaikum",
+    "welcomeSubtitle": "Welcome to SakinahTime",
+    "welcomeDescription": "Your companion for prayer times, Quran reading, and spiritual growth.",
+    "locationTitle": "Accurate Prayer Times",
+    "locationSubtitle": "Location Access",
+    "locationDescription": "We use your location to calculate precise prayer times for your area.",
+    "notificationsTitle": "Never Miss a Prayer",
+    "notificationsSubtitle": "Notification Reminders",
+    "notificationsDescription": "Get notified with beautiful Azan sounds when prayer time arrives.",
+    "widgetTitle": "Add a Widget",
+    "widgetSubtitle": "Reliable Azan",
+    "widgetDescription": "Add a prayer times widget to your home screen for reliable Azan notifications, even after phone restarts.",
+    "doneTitle": "You're All Set!",
+    "doneSubtitle": "Ready to Begin",
+    "doneDescription": "Start your journey towards a more mindful spiritual practice.",
+    "locationEnabled": "Location enabled",
+    "notificationsEnabled": "Notifications enabled",
+    "enable": "Enable",
+    "continue": "Continue",
+    "notNow": "Not now",
+    "enableExactAlarms": "Enable Exact Alarms",
+    "exactAlarmsDescription": "SakinahTime needs permission to schedule precise prayer time alarms.\n\nPlease enable \"Alarms & reminders\" on the next screen.",
+    "openSettings": "Open Settings",
+    "enableReliableAzan": "Enable Reliable Azan",
+    "reliableAzanDescription": "To ensure Azan plays after phone restarts, please tap:\n\nBattery → Unrestricted\n\nThis allows the app to wake your phone for prayer times."
+  },
+  "mosque": {
+    "title": "Nearby Mosques",
+    "findMosques": "Find Mosques",
+    "distance": "Distance",
+    "directions": "Directions",
+    "noMosques": "No mosques found nearby",
+    "searchMosques": "Search mosques...",
+    "openInMaps": "Open in Maps"
+  },
+  "hijri": {
+    "title": "Hijri Calendar",
+    "today": "Today",
+    "months": {
+      "1": "Muharram",
+      "2": "Safar",
+      "3": "Rabi al-Awwal",
+      "4": "Rabi al-Thani",
+      "5": "Jumada al-Ula",
+      "6": "Jumada al-Thani",
+      "7": "Rajab",
+      "8": "Shaban",
+      "9": "Ramadan",
+      "10": "Shawwal",
+      "11": "Dhul Qadah",
+      "12": "Dhul Hijjah"
+    }
+  },
+  "prayerStats": {
+    "title": "Prayer Statistics",
+    "overview": "Overview",
+    "totalPrayed": "Total Prayed",
+    "totalMissed": "Total Missed",
+    "onTimeRate": "On-Time Rate",
+    "weeklyBreakdown": "Weekly Breakdown",
+    "monthlyBreakdown": "Monthly Breakdown",
+    "bestDay": "Best Day",
+    "prayerBreakdown": "Prayer Breakdown",
+    "noData": "No prayer data yet. Start tracking your prayers!",
+    "loadingStats": "Loading statistics...",
+    "prayerTracking": "Prayer Tracking",
+    "tapToMark": "Tap prayers to mark as prayed",
+    "enableToTrack": "Enable to track your prayers",
+    "tapToMarkStatus": "Tap a button to mark prayer status:",
+    "prayed": "Prayed",
+    "missed": "Missed",
+    "late": "Late",
+    "missedReminder": "Missed Prayer Reminder",
+    "remindAfter": "Remind after {{minutes}} min if unmarked",
+    "getReminded": "Get reminded to mark your prayers",
+    "remindAfterLabel": "Remind me after:",
+    "totalLogged": "Total Logged",
+    "qadaDue": "Qada Due",
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "exportFailed": "Export Failed",
+    "exportError": "Could not share prayer statistics."
+  },
+  "prayerCalendar": {
+    "title": "Prayer Calendar",
+    "monthlyView": "Monthly View",
+    "allPrayed": "All Prayed",
+    "someMissed": "Some Missed",
+    "notTracked": "Not Tracked",
+    "today": "Today",
+    "unableToLoad": "Unable to load prayer times",
+    "selectMonthYear": "Select Month & Year",
+    "year": "Year",
+    "month": "Month"
+  },
+  "audioDownload": {
+    "title": "Audio Downloads",
+    "downloadAll": "Download All",
+    "deleteAll": "Delete All",
+    "downloading": "Downloading...",
+    "downloaded": "Downloaded",
+    "notDownloaded": "Not Downloaded",
+    "surahAudio": "Surah Audio",
+    "offline": "Offline",
+    "needInternet": "You need an internet connection to download audio.",
+    "downloadAllSurahs": "Download All Surahs",
+    "deleteAllAudio": "Delete All Audio",
+    "download": "Download",
+    "delete": "Delete",
+    "deleteAudio": "Delete Audio",
+    "cancelDownloads": "Cancel Downloads",
+    "cancelAllDesc": "Cancel all pending downloads? Partially downloaded surahs will be removed.",
+    "keepDownloading": "Keep Downloading",
+    "cancelAll": "Cancel All",
+    "deleteConfirmMessage": "Delete downloaded audio for"
+  },
+  "reciter": {
+    "title": "Select Reciter",
+    "currentReciter": "Current Reciter",
+    "popular": "Popular",
+    "allReciters": "All Reciters"
+  },
+  "duaDetail": {
+    "reference": "Reference",
+    "benefits": "Benefits",
+    "occasion": "Occasion",
+    "shareAsDua": "Share Dua",
+    "notFound": "Dua Not Found",
+    "notFoundMessage": "This dua could not be found.",
+    "listenPronunciation": "Listen to Pronunciation",
+    "viewInQuran": "View in Quran",
+    "ayah": "Ayah",
+    "benefitsVirtues": "Benefits & Virtues"
+  },
+  "customDuaForm": {
+    "editDua": "Edit Dua",
+    "addCustomDua": "Add Custom Dua",
+    "saving": "Saving...",
+    "saveFailed": "Failed to save dua. Please try again.",
+    "deleteConfirm": "Are you sure you want to delete this dua? This action cannot be undone.",
+    "deleteFailed": "Failed to delete dua. Please try again.",
+    "arabicText": "Arabic Text",
+    "optional": "Optional",
+    "transliteration": "Transliteration",
+    "transliterationPlaceholder": "Enter transliteration (e.g., Allahumma...)",
+    "translationMeaning": "Translation / Meaning",
+    "translationPlaceholder": "Enter the meaning or translation",
+    "personalNotes": "Personal Notes",
+    "notesPlaceholder": "Add any personal notes or reminders",
+    "deleteThisDua": "Delete This Dua"
+  },
+  "islamicGuide": {
+    "title": "Islamic Guide",
+    "steps": "Steps",
+    "references": "References"
+  },
+  "dhikrOverlay": {
+    "title": "Dhikr Overlay Settings",
+    "enableOverlay": "Enable Overlay",
+    "overlayDesc": "Show floating dhikr reminders",
+    "frequency": "Frequency",
+    "everyMinutes": "Every {{count}} minutes",
+    "style": "Style",
+    "position": "Position"
+  },
+  "wordByWordSettings": {
+    "title": "Word by Word Settings",
+    "translationLang": "Translation Language",
+    "showTransliteration": "Show Transliteration",
+    "fontSize": "Font Size"
+  },
+  "quranSchedule": {
+    "title": "Quran Schedule",
+    "createSchedule": "Create Schedule",
+    "completionDate": "Target Completion Date",
+    "pagesPerDay": "Pages Per Day",
+    "startDate": "Start Date",
+    "daysDone": "Days Done",
+    "day": "Day",
+    "pages": "Pages",
+    "completed": "Completed",
+    "pending": "Pending",
+    "openInMushaf": "Open in Mushaf",
+    "today": "Today",
+    "juz": "Juz",
+    "surahs": "Surahs:",
+    "openMushaf": "Open Mushaf",
+    "markComplete": "Mark Complete",
+    "completedAt": "Completed:",
+    "remaining": "Remaining",
+    "complete": "Complete",
+    "behindSchedule": "behind schedule"
+  },
+  "zakatCalculator": {
+    "title": "Zakat Calculator",
+    "totalWealth": "Total Wealth (USD)",
+    "enterWealth": "Enter your total wealth",
+    "calculate": "Calculate Zakat",
+    "results": "Calculation Results",
+    "nisabGold": "Nisab (Gold)",
+    "nisabSilver": "Nisab (Silver)",
+    "meetsNisab": "Meets Nisab",
+    "zakatDue": "Zakat Due (2.5%)",
+    "info": "Zakat is 2.5% of wealth held for one lunar year above the Nisab threshold. The Nisab is based on the value of 87.48g of gold or 612.36g of silver."
+  },
+  "hijriCalendar": {
+    "title": "Islamic Calendar",
+    "event": "Event",
+    "fasting": "Fasting",
+    "ah": "AH",
+    "fastingProhibited": "Fasting prohibited today",
+    "eventIn": "{{name}} in {{count}} day",
+    "eventIn_plural": "{{name}} in {{count}} days"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "retry": "Retry",
+    "ok": "OK",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "back": "Back",
+    "done": "Done",
+    "search": "Search",
+    "share": "Share",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "noResults": "No results found",
+    "offline": "You are offline",
+    "yes": "Yes",
+    "no": "No",
+    "confirm": "Confirm",
+    "reset": "Reset",
+    "add": "Add",
+    "remove": "Remove",
+    "enable": "Enable",
+    "disable": "Disable",
+    "on": "On",
+    "off": "Off",
+    "yourRegion": "your region",
+    "goBack": "Go Back",
+    "skip": "Skip"
+  },
+  "components": {
+    "streakDays": "day streak",
+    "streakDaysPlural": "day streak",
+    "perfectDay": "Perfect Day",
+    "offlineMode": "Offline Mode",
+    "usingCachedData": "Using cached data",
+    "lastSynced": "Last synced",
+    "somethingWentWrong": "Something went wrong",
+    "tryAgain": "Try Again"
+  },
+  "streak": {
+    "prayerStreak": "Prayer Streak",
+    "currentStreak": "Current Streak",
+    "longestStreak": "Longest Streak",
+    "days": "days",
+    "day": "day",
+    "startToday": "Start your streak today!",
+    "greatStart": "Great start! Keep it going!",
+    "buildingMomentum": "You're building momentum!",
+    "amazingConsistency": "Amazing consistency!",
+    "incredibleDedication": "Incredible dedication!",
+    "trulyInspiring": "Mashallah! Truly inspiring!"
+  },
+  "fasting": {
+    "fastingReminders": "Fasting Reminders",
+    "getNotifiedFasting": "Get notified about upcoming fasting days",
+    "receiveReminders": "Receive reminders for recommended fasting days",
+    "reminderTime": "Reminder Time",
+    "eveningBefore": "Evening Before",
+    "beforeFajr": "Before Fajr",
+    "thirtyMinBefore": "30 min before",
+    "fastingDays": "Fasting Days",
+    "monday": "Monday",
+    "thursday": "Thursday",
+    "whiteDays": "White Days",
+    "ashura": "Ashura",
+    "dayOfArafah": "Day of Arafah",
+    "shawwal": "Shawwal",
+    "weeklySunnahFast": "Weekly Sunnah fast",
+    "whiteDaysDesc": "13th, 14th, 15th of each month",
+    "ashuraDesc": "10th of Muharram",
+    "arafahDesc": "9th of Dhul Hijjah",
+    "shawwalDesc": "6 days after Ramadan",
+    "notificationPermissionRequired": "⚠️ Notification permission required"
+  },
+  "storageAlerts": {
+    "quranAudio": "Quran Audio",
+    "tafsir": "Tafsir",
+    "prayerTimesCache": "Prayer Times Cache",
+    "otherCache": "Other Cache",
+    "allCachedData": "All Cached Data",
+    "clearConfirm": "Clear {{category}}?",
+    "clearAllDesc": "This will remove all downloaded Quran audio and tafsir. You will need to re-download for offline use.",
+    "clearCategoryDesc": "This will remove all {{category}}. You may need to re-download for offline use.",
+    "cancel": "Cancel",
+    "clear": "Clear",
+    "error": "Error",
+    "failedToClear": "Failed to clear cache. Please try again."
+  },
+  "mushaf": {
+    "notes": "Notes & Highlights",
+    "bookmarks": "Bookmarks",
+    "highlights": "Highlights",
+    "addNote": "Add Note",
+    "save": "Save",
+    "delete": "Delete",
+    "noNotesYet": "No notes or highlights yet",
+    "tapToAddNote": "Long-press any verse to add a note or highlight",
+    "noBookmarksYet": "No bookmarks yet",
+    "tapToBookmark": "Tap any verse to bookmark it",
+    "editNote": "Edit Note",
+    "writeNoteHere": "Write your note here...",
+    "hifzModeActivated": "Hifz Mode Activated",
+    "hifzModeDesc": "Tap any verse to reveal it. Long-press on a verse for memorization options. Hold the Hifz button for settings.",
+    "wordByWordHighlighting": "Word-by-Word Highlighting",
+    "wordByWordDesc": "Long-press anywhere on the page and drag to scrub through the audio. The highlighted word will follow your finger.",
+    "justNow": "Just now",
+    "minutesAgo": "{{count}}m ago",
+    "hoursAgo": "{{count}}h ago",
+    "daysAgo": "{{count}}d ago",
+    "noBookmarks": "No bookmarks yet",
+    "noResults": "No results found",
+    "tryDifferent": "Try different keywords",
+    "search": "Search...",
+    "writeNote": "Write your note here...",
+    "quarterHizb": "Quarter Hizb",
+    "halfHizb": "Half Hizb",
+    "fullJuzOnly": "Full Juz Only",
+    "copyVerse": "Copy Verse",
+    "shareVerse": "Share Verse",
+    "chooseHighlight": "Choose Highlight Color",
+    "removeHighlight": "Remove Highlight",
+    "highlight": "Highlight",
+    "selectReciter": "Select Reciter",
+    "audioSettings": "Audio Settings",
+    "noTafsir": "No tafsir available",
+    "noTafsirVerse": "No tafsir available for this verse",
+    "recently": "Recently",
+    "earlier": "Earlier",
+    "deleteFailed": "Failed to delete. Please try again.",
+    "quran": "Quran",
+    "surahs114": "114 Surahs",
+    "juz30": "30 Juz",
+    "recentCount": "Recent",
+    "surahTab": "Surah",
+    "juzTab": "Juz",
+    "recentTab": "Recent",
+    "searchPlaceholder": "Search...",
+    "includeTafsir": "Include Tafsir/Translation in search",
+    "notesSection": "NOTES",
+    "highlightsSection": "HIGHLIGHTS",
+    "tafsirTranslation": "Tafsir/Translation",
+    "nowPlaying": "NOW PLAYING",
+    "paused": "PAUSED",
+    "verse": "Verse",
+    "repeat": "Repeat",
+    "loop": "Loop",
+    "remaining": "remaining",
+    "surah": "Surah",
+    "noTafsirAvailable": "No tafsir available for this verse",
+    "noteInputPlaceholder": "Write your note here...",
+    "juzLabel": "Juz",
+    "hizbLabel": "Hizb",
+    "searching": "SEARCHING...",
+    "resultsCount": "RESULTS",
+    "recentlyViewed": "Recently Viewed",
+    "allSurahs": "ALL SURAHS",
+    "recentlyViewedLabel": "RECENTLY VIEWED",
+    "quartersLabel": "QUARTERS",
+    "halvesLabel": "HALVES",
+    "pagesYouVisit": "Pages you visit will appear here",
+    "noRecentPages": "No recent pages yet",
+    "verses": "verses",
+    "pageNumber": "Page",
+    "loadingVerses": "Loading verses...",
+    "bookmark": "Bookmark",
+    "removeBookmark": "Remove Bookmark",
+    "tafsirAndTranslations": "Tafsir & Translations",
+    "downloadedCount": "downloaded",
+    "playUntil": "PLAY UNTIL",
+    "page": "Page",
+    "juz": "Juz",
+    "reciterLabel": "RECITER",
+    "play": "Play",
+    "playCount": "Play {{count}}×",
+    "setLoopStart": "Set Loop Start",
+    "setLoopEnd": "Set Loop End",
+    "playLoop": "Play Loop",
+    "tapToReveal": "Tap to reveal",
+    "notStarted": "Not Started",
+    "inProgress": "In Progress",
+    "memorized": "Memorized",
+    "all": "All",
+    "tapToMinimize": "TAP TO MINIMIZE",
+    "myTranslations": "MY TRANSLATIONS",
+    "myTafsirs": "MY TAFSIRS",
+    "tafsirBadge": "TAFSIR",
+    "translationBadge": "TRANSLATION",
+    "currentlyActive": "Currently Active",
+    "select": "Select",
+    "availableToDownload": "AVAILABLE TO DOWNLOAD",
+    "translationsCount": "Translations",
+    "tafsirsCount": "Tafsirs",
+    "tapToDownload": "Tap to download",
+    "deleteTafsir": "Delete Tafsir",
+    "deleteTafsirConfirm": "Delete {{name}}?",
+    "storageFull": "Storage full. Please free up space on your device and try again.",
+    "downloadFailed": "Download failed. Please check your connection and storage space.",
+    "tafsirNotAvailable": "No tafsir available",
+    "tafsirNotAvailableVerse": "No tafsir available for this verse"
+  },
+  "mosqueFinder": {
+    "nearbyMosques": "Nearby Mosques",
+    "searchPlaceholder": "Search mosques...",
+    "radius1km": "1 km",
+    "radius5km": "5 km",
+    "radius10km": "10 km",
+    "radius25km": "25 km"
+  },
+  "calendar": {
+    "months": [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ],
+    "weekdays": [
+      "S",
+      "M",
+      "T",
+      "W",
+      "T",
+      "F",
+      "S"
+    ]
+  },
+  "themePicker": {
+    "colorMode": "Color Mode",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "auto": "Auto"
+  },
+  "storageOverview": {
+    "storageUsed": "Storage Used",
+    "manage": "Manage",
+    "storageFull": "Storage almost full. Clear some data to continue downloading.",
+    "availableOnDevice": "available on device"
+  },
+  "storageBreakdown": {
+    "title": "Storage Breakdown",
+    "quranAudio": "Quran Audio",
+    "tafsir": "Tafsir",
+    "prayerTimes": "Prayer Times",
+    "otherCache": "Other Cache"
+  },
+  "storageSettings": {
+    "downloadSettings": "Download Settings",
+    "storageLimit": "Storage Limit",
+    "maxSpace": "Maximum space for offline content",
+    "wifiOnly": "Download over WiFi only",
+    "wifiOnlyDesc": "Save mobile data by downloading only on WiFi",
+    "autoDelete": "Auto-delete old cache",
+    "autoDeleteDesc": "Automatically remove old cached data when limit is reached"
+  },
+  "dhikrReminders": {
+    "title": "Dhikr Reminders",
+    "floatingReminders": "Floating Reminders",
+    "dhikrNotifications": "Dhikr Notifications",
+    "showOverlay": "Show dhikr overlay on top of other apps",
+    "receiveNotifications": "Receive periodic dhikr notifications",
+    "grantPermission": "Grant overlay permission",
+    "previewOverlay": "Preview Overlay",
+    "reminderInterval": "Reminder Interval",
+    "dhikrCategories": "Dhikr Categories",
+    "chooseTypes": "Choose which types of dhikr to include",
+    "quietHours": "Quiet Hours",
+    "pauseSleep": "Pause reminders during sleep time",
+    "startAt": "Start at",
+    "endAt": "End at",
+    "autoDismiss": "Auto Dismiss",
+    "overlayDisappears": "Overlay disappears after this time",
+    "iosNotice": "Floating overlay is only available on Android. On iOS, you'll receive standard notifications instead.",
+    "noCategories": "Please enable at least one dhikr category",
+    "previewFailed": "Could not show overlay preview. Please try again.",
+    "noDhikr": "Could not find dhikr content for selected categories",
+    "error": "Error",
+    "serviceFailed": "Failed to start dhikr reminder service",
+    "interval30min": "30 min",
+    "interval1hour": "1 hour",
+    "interval2hours": "2 hours",
+    "interval3hours": "3 hours",
+    "interval4hours": "4 hours",
+    "autoDismiss5s": "5s",
+    "autoDismiss10s": "10s",
+    "autoDismiss15s": "15s",
+    "autoDismiss20s": "20s",
+    "autoDismiss30s": "30s",
+    "quiet9pm": "9 PM",
+    "quiet10pm": "10 PM",
+    "quiet11pm": "11 PM",
+    "quiet12am": "12 AM",
+    "wake5am": "5 AM",
+    "wake6am": "6 AM",
+    "wake7am": "7 AM",
+    "wake8am": "8 AM"
+  },
+  "quickAccess": {
+    "title": "Quick Access",
+    "morning": "Morning",
+    "evening": "Evening",
+    "prayer": "Prayer",
+    "sleep": "Sleep",
+    "wake": "Wake",
+    "general": "General"
+  },
+  "tasbih": {
+    "title": "Tasbih Counter",
+    "target": "Target",
+    "tapToCount": "Tap to count • Hold to reset",
+    "targetReached": "Target reached!",
+    "resetCounter": "Reset Counter",
+    "resetConfirm": "Are you sure you want to reset the counter to 0?",
+    "cancel": "Cancel",
+    "reset": "Reset"
+  },
+  "weeklyChart": {
+    "title": "This Week",
+    "prayed": "Prayed",
+    "missed": "Missed",
+    "late": "Late",
+    "noData": "No data available",
+    "sun": "Sun",
+    "mon": "Mon",
+    "tue": "Tue",
+    "wed": "Wed",
+    "thu": "Thu",
+    "fri": "Fri",
+    "sat": "Sat"
+  },
+  "citySearch": {
+    "selectCity": "Select City",
+    "searchPlaceholder": "Search any city worldwide...",
+    "recent": "RECENT",
+    "popularCities": "POPULAR CITIES",
+    "noCities": "No cities found",
+    "tryDifferent": "Try a different spelling or search for a nearby larger city",
+    "offline": "Offline",
+    "offlineMessage": "You are currently offline. Switching to a new city requires internet to fetch prayer times. Please use a recently visited city or try again when online.",
+    "networkError": "Network error. Showing local results."
+  },
+  "upcomingEvents": {
+    "title": "Upcoming Events",
+    "noEvents": "No upcoming events"
+  },
+  "hifzControls": {
+    "title": "Hifz Controls",
+    "hideTab": "Hide",
+    "repeatTab": "Repeat",
+    "loopTab": "Loop",
+    "progressTab": "Progress",
+    "hideMode": "Hide Mode",
+    "wordAudio": "Word Audio",
+    "requiresInternet": "requires internet",
+    "playPronunciation": "Play pronunciation when revealing a word",
+    "quickActions": "Quick Actions",
+    "revealAll": "Reveal All",
+    "hideAll": "Hide All",
+    "autoHideDelay": "Auto-Hide Delay",
+    "autoHideAfter": "Automatically hide after revealing",
+    "markCurrentVerse": "Mark Current Verse",
+    "verse": "Verse",
+    "notStarted": "Not Started",
+    "inProgress": "In Progress",
+    "memorized": "Memorized",
+    "longPressToMark": "Long press on a verse to mark its memorization status",
+    "bulkMarking": "Bulk Marking",
+    "page": "Page",
+    "juz": "Juz",
+    "clear": "Clear",
+    "clearPageMarkings": "Clear Page Markings",
+    "markEntirePage": "Mark Entire Page",
+    "clearJuzMarkings": "Clear Juz Markings",
+    "markEntireJuz": "Mark Entire Juz",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
+  "taraweeh": {
+    "title": "Taraweeh Tracker",
+    "ramadanCalendar": "Ramadan Calendar",
+    "locationBreakdown": "Location Breakdown",
+    "completionRate": "Completion Rate",
+    "logNight": "Log Night",
+    "edit": "Edit",
+    "night": "Night",
+    "nights": "Nights",
+    "streak": "Streak",
+    "best": "Best",
+    "atMosque": "at Mosque",
+    "atHome": "at Home"
+  },
+  "mosqueDetail": {
+    "title": "Mosque Details",
+    "openingHours": "Opening Hours",
+    "directions": "Directions",
+    "call": "Call",
+    "website": "Website",
+    "rating": "Rating",
+    "reviews": "reviews",
+    "failedToLoad": "Failed to load details",
+    "tryAgain": "Try Again",
+    "openNow": "Open Now",
+    "closed": "Closed",
+    "address": "Address",
+    "contact": "Contact",
+    "getDirections": "Get Directions",
+    "away": "away"
+  },
+  "donation": {
+    "addTitle": "Add Donation",
+    "type": "Type",
+    "amount": "Amount",
+    "recipientOptional": "Recipient (optional)",
+    "recipientPlaceholder": "Organization or person",
+    "notesOptional": "Notes (optional)",
+    "notesPlaceholder": "Add any notes...",
+    "addButton": "Add Donation",
+    "sadaqah": "Sadaqah",
+    "zakat": "Zakat",
+    "fidya": "Fidya",
+    "kaffarah": "Kaffarah",
+    "other": "Other"
+  },
+  "setGoal": {
+    "title": "Set Goal",
+    "goalAmount": "Goal Amount (USD)",
+    "setButton": "Set Goal",
+    "infoText": "Setting a charity goal helps you track your progress throughout Ramadan. You can update this goal at any time."
+  },
+  "logTaraweeh": {
+    "editTitle": "Edit",
+    "logTitle": "Log",
+    "night": "Night",
+    "rakaat": "Rakaat",
+    "location": "Location",
+    "mosque": "Mosque",
+    "home": "Home",
+    "notesOptional": "Notes (optional)",
+    "notesPlaceholder": "Add any notes...",
+    "delete": "Delete",
+    "save": "Save"
+  },
+  "suhoorIftar": {
+    "suhoorReminder": "Suhoor Reminder",
+    "iftarReminder": "Iftar Reminder"
+  },
+  "ramadanCountdown": {
+    "daysLeft": "Days Left"
+  },
+  "quranProgress": {
+    "title": "Quran Progress"
+  },
+  "monthlyCalendar": {
+    "noData": "No data available"
+  },
+  "savedLoops": {
+    "title": "Saved Loops",
+    "enterName": "Enter loop name...",
+    "noName": "Please enter a name for the loop",
+    "noRange": "Please set a loop range first",
+    "saveLoop": "Save Current Loop",
+    "saveCurrent": "Save Current",
+    "delete": "Delete",
+    "deleteLoop": "Delete Loop",
+    "deleteConfirm": "Are you sure you want to delete",
+    "cancel": "Cancel",
+    "save": "Save",
+    "noLoops": "No saved loops yet",
+    "error": "Error",
+    "plays": "plays"
+  },
+  "revision": {
+    "title": "Daily Revision",
+    "dueNow": "Due Now",
+    "noRevision": "No revision due",
+    "startReview": "Start Review",
+    "markReviewed": "Mark as Reviewed",
+    "versesDue": "verses due for review",
+    "todayProgress": "Today's Progress",
+    "overdue": "Overdue",
+    "due": "Due",
+    "allCaughtUp": "All caught up!",
+    "noVersesDue": "No verses due for revision right now",
+    "completedToday": "Completed Today",
+    "startSession": "Start Revision Session",
+    "howWell": "How well did you remember",
+    "forgot": "Forgot",
+    "hard": "Hard",
+    "okay": "Okay",
+    "good": "Good",
+    "easy": "Easy",
+    "perfect": "Perfect",
+    "dAgo": "d ago"
+  },
+  "repeatControls": {
+    "title": "Audio Repeat Settings",
+    "subtitle": "For memorization practice",
+    "timesToRepeat": "Times to Repeat",
+    "timesHint": "Verse plays this many times",
+    "gapBetween": "Gap Between Repeats",
+    "gapHint": "Time to recite along before next play",
+    "recitationSpeed": "Recitation Speed",
+    "speedHint": "Slower helps with learning pronunciation",
+    "stopRepeating": "Stop Repeating"
+  },
+  "calendarGrid": {
+    "whiteDay": "White Day",
+    "event": "Event",
+    "fasting": "Fasting"
+  },
+  "hifzProgress": {
+    "title": "Hifz Progress",
+    "exportFailed": "Export Failed",
+    "exportError": "Could not export progress data",
+    "resetProgress": "Reset Progress",
+    "resetConfirm": "Are you sure you want to reset all memorization progress?",
+    "resetSuccess": "Progress has been reset",
+    "resetError": "Failed to reset progress",
+    "cancel": "Cancel",
+    "reset": "Reset",
+    "success": "Success",
+    "error": "Error"
+  },
+  "reciterSelection": {
+    "title": "Select Reciter",
+    "recitersAvailable": "reciters available",
+    "downloaded": "Downloaded",
+    "infoBanner": "Reciters with the download badge have audio files saved on your device"
+  },
+  "wordByWord": {
+    "title": "Word by Word",
+    "infoHint": "Long-press any word in the Mushaf to see its meaning and hear pronunciation.",
+    "translationLanguage": "Translation Language",
+    "arabicMeanings": "Arabic meanings of difficult words",
+    "tapToDownload": "Tap to download",
+    "downloading": "Downloading...",
+    "audio": "Audio",
+    "playPronunciation": "Play word pronunciation",
+    "audioHint": "Hear the word when you lift your finger"
+  },
+  "errorFallback": {
+    "title": "Something went wrong",
+    "message": "Please reload the app to continue.",
+    "tryAgain": "Try Again",
+    "errorDetails": "Error Details"
+  },
+  "downloadProgress": {
+    "downloading": "Downloading",
+    "paused": "Paused",
+    "failed": "Failed",
+    "pending": "Pending"
+  },
+  "duaOfDay": {
+    "title": "Dua of the Day",
+    "islamicSupplication": "Islamic Supplication",
+    "tapToRead": "Tap to read full dua"
+  },
+  "dailyDhikr": {
+    "title": "Daily Dhikr",
+    "subtitle": "Today's featured remembrance"
+  },
+  "surahDownload": {
+    "queued": "Queued"
+  },
+  "hifzConstants": {
+    "fullVerse": "Full Verse",
+    "fullVerseDesc": "Hide entire verse, tap to reveal all",
+    "wordByWord": "Word by Word",
+    "wordByWordDesc": "Reveal one word at a time as you recite",
+    "manual": "Manual",
+    "none": "None",
+    "sec2": "2 sec",
+    "sec5": "5 sec",
+    "slow": "Slow",
+    "medium": "Medium",
+    "normal": "Normal"
+  },
+  "calculationMethods": {
+    "shia": "Shia Ithna-Ansari",
+    "karachi": "University of Islamic Sciences, Karachi",
+    "isna": "Islamic Society of North America",
+    "mwl": "Muslim World League",
+    "ummAlQura": "Umm Al-Qura University, Makkah",
+    "egypt": "Egyptian General Authority of Survey",
+    "tehran": "Institute of Geophysics, University of Tehran",
+    "gulf": "Gulf Region",
+    "kuwait": "Kuwait",
+    "qatar": "Qatar",
+    "muis": "Majlis Ugama Islam Singapura, Singapore",
+    "uoif": "Union Organization Islamic de France",
+    "diyanet": "Diyanet İşleri Başkanlığı, Turkey",
+    "russia": "Spiritual Administration of Muslims of Russia",
+    "moonsighting": "Moonsighting Committee Worldwide",
+    "jordan": "Ministry of Awqaf, Islamic Affairs, Jordan"
+  },
+  "loopRange": {
+    "start": "Start",
+    "end": "End",
+    "notSet": "Not set",
+    "clear": "Clear",
+    "playLoop": "Play Loop",
+    "stopLoop": "Stop Loop",
+    "helpText": "Long-press a verse and tap \"Set Loop Start\" or \"Set Loop End\" to define the range"
+  },
+  "azkarCategories": {
+    "morning": "Morning Azkar",
+    "evening": "Evening Azkar",
+    "after-prayer": "After Prayer",
+    "sleep": "Sleep Azkar",
+    "waking": "Waking Up",
+    "general": "General Azkar"
+  },
+  "duaCategories": {
+    "travel": "Travel",
+    "eating": "Eating & Drinking",
+    "sleeping": "Sleeping & Waking",
+    "places": "Entering & Leaving",
+    "weather": "Weather & Nature",
+    "health": "Health & Healing",
+    "protection": "Protection",
+    "gratitude": "Gratitude",
+    "forgiveness": "Forgiveness",
+    "guidance": "Guidance",
+    "family": "Family & Children",
+    "general": "General"
+  },
+  "guideCategories": {
+    "worship": "Worship & Prayer",
+    "purification": "Purification",
+    "hajj": "Hajj & Umrah",
+    "charity": "Charity & Zakat",
+    "fasting": "Fasting",
+    "funeral": "Funeral Rites",
+    "character": "Character & Manners",
+    "knowledge": "Knowledge & Spirituality",
+    "finance": "Islamic Finance"
+  },
+  "guides": {
+    "how-to-perform-salah": {
+      "title": "How to Perform Salah (Prayer)",
+      "description": "Comprehensive guide for performing the five daily prayers according to the Prophetic tradition",
+      "steps": {
+        "0": {
+          "title": "1. Make Intention",
+          "content": "Make the intention in your heart for which prayer you are performing. The intention is in the heart and does not need to be spoken aloud."
+        },
+        "1": {
+          "title": "2. Takbir (Opening)",
+          "content": "Raise your hands to shoulder or ear level and say 'Allahu Akbar'. This marks the beginning of the prayer."
+        },
+        "2": {
+          "title": "3. Recite Opening Supplication",
+          "content": "Place your right hand over your left on your chest and recite: 'Subhanaka Allahumma wa bihamdika, wa tabarakasmuka, wa ta'ala jadduka, wa la ilaha ghayruk'."
+        },
+        "3": {
+          "title": "4. Recite Al-Fatiha",
+          "content": "Recite Surah Al-Fatiha. This is obligatory in every rak'ah. After finishing, say 'Ameen' quietly."
+        },
+        "4": {
+          "title": "5. Recite Additional Surah",
+          "content": "In the first two rak'ahs, recite another surah or verses from the Quran after Al-Fatiha."
+        },
+        "5": {
+          "title": "6. Perform Ruku (Bowing)",
+          "content": "Say 'Allahu Akbar' and bow down, placing your hands on your knees. Say 'Subhana Rabbiyal Adheem' three times."
+        },
+        "6": {
+          "title": "7. Stand Up from Ruku",
+          "content": "Rise from bowing while saying 'Sami'Allahu liman hamidah'. When standing, say 'Rabbana wa lakal hamd'."
+        },
+        "7": {
+          "title": "8. Perform Sujud",
+          "content": "Say 'Allahu Akbar' and prostrate. Say 'Subhana Rabbiyal A'la' three times. Perform two prostrations."
+        },
+        "8": {
+          "title": "9. Sit for Tashahhud",
+          "content": "After every two rak'ahs, sit and recite the Tashahhud. Point your right index finger while reciting."
+        },
+        "9": {
+          "title": "10. Give Tasleem",
+          "content": "Turn your head to the right and say 'As-salamu alaykum wa rahmatullah', then turn left and repeat."
+        }
+      }
+    },
+    "how-to-perform-istikhara": {
+      "title": "How to Perform Istikhara Prayer",
+      "description": "Guide for seeking Allah's guidance in making important decisions",
+      "steps": {
+        "0": {
+          "title": "1. Identify Your Decision",
+          "content": "Have a specific matter in mind that you need guidance on. Istikhara is for permissible matters where you're unsure which option is better."
+        },
+        "1": {
+          "title": "2. Perform Two Rak'ahs",
+          "content": "Pray two rak'ahs of voluntary prayer. In the first rak'ah after Al-Fatiha, recite Surah Al-Kafirun. In the second, recite Surah Al-Ikhlas."
+        },
+        "2": {
+          "title": "3. Recite the Istikhara Dua",
+          "content": "After completing the prayer, raise your hands and recite: 'Allahumma inni astakhiruka bi'ilmika, wa astaqdiruka bi-qudratika...' (O Allah, I seek Your guidance by Your knowledge...)."
+        },
+        "3": {
+          "title": "4. Mention Your Matter",
+          "content": "When you reach the part 'fee haadhal amr' (in this matter of mine), specify what you're seeking guidance about."
+        },
+        "4": {
+          "title": "5. Trust Allah's Plan",
+          "content": "After making the dua, proceed with your decision. Trust that Allah will make the better option easier for you and put barriers in the way of what's not good for you."
+        }
+      }
+    },
+    "how-to-perform-tahajjud": {
+      "title": "How to Perform Tahajjud Prayer",
+      "description": "Guide for performing the night prayer in the last third of the night",
+      "steps": {
+        "0": {
+          "title": "1. Wake Up in Last Third",
+          "content": "Wake up in the last third of the night (approximately 1-2 hours before Fajr). This is the most blessed time for Tahajjud."
+        },
+        "1": {
+          "title": "2. Make Wudu",
+          "content": "Perform ablution and prepare yourself mentally and spiritually for standing before Allah."
+        },
+        "2": {
+          "title": "3. Pray in Pairs",
+          "content": "Pray at least 2 rak'ahs, but you can pray more in pairs (2, 4, 6, 8, etc.). The Prophet (ﷺ) would pray 11 rak'ahs."
+        },
+        "3": {
+          "title": "4. Recite Long Portions",
+          "content": "Take your time in recitation, ruku, and sujud. Recite longer portions of the Quran than you would in regular prayers."
+        },
+        "4": {
+          "title": "5. Make Dua",
+          "content": "After completing your prayer, make sincere dua. This is a time when Allah descends to the lowest heaven and answers prayers."
+        },
+        "5": {
+          "title": "6. End with Witr",
+          "content": "Conclude your night prayer with Witr (odd number of rak'ahs, typically 1 or 3)."
+        }
+      }
+    },
+    "how-to-perform-eid-prayer": {
+      "title": "How to Perform Eid Prayer",
+      "description": "Guide for performing Eid al-Fitr and Eid al-Adha prayers",
+      "steps": {
+        "0": {
+          "title": "1. Prepare for Eid",
+          "content": "Take a bath, wear your best clothes, and apply perfume. For Eid al-Fitr, eat dates before going. For Eid al-Adha, wait until after the prayer."
+        },
+        "1": {
+          "title": "2. Go to Prayer Ground",
+          "content": "Go to the Eid prayer ground early. It's Sunnah to take one route to the prayer and return by a different route."
+        },
+        "2": {
+          "title": "3. First Rak'ah",
+          "content": "After the opening Takbir, there are 7 additional Takbirs. Raise your hands with each Takbir. Then recite Al-Fatiha and another Surah (commonly Al-A'la)."
+        },
+        "3": {
+          "title": "4. Second Rak'ah",
+          "content": "After standing from prostration, there are 5 additional Takbirs. Then recite Al-Fatiha and another Surah (commonly Al-Ghashiyah)."
+        },
+        "4": {
+          "title": "5. Listen to Khutbah",
+          "content": "After the prayer, the Imam delivers two khutbahs. It's recommended to stay and listen, though not obligatory."
+        },
+        "5": {
+          "title": "6. Exchange Greetings",
+          "content": "Greet fellow Muslims with 'Eid Mubarak' or 'Taqabbal Allahu minna wa minkum' (May Allah accept from us and from you)."
+        }
+      }
+    },
+    "morning-evening-adhkar": {
+      "title": "Morning and Evening Adhkar",
+      "description": "Essential remembrances to recite in the morning and evening",
+      "steps": {
+        "0": {
+          "title": "1. Ayat al-Kursi",
+          "content": "Recite Ayat al-Kursi (Quran 2:255). The Prophet (ﷺ) said whoever recites it in the morning will be protected until evening."
+        },
+        "1": {
+          "title": "2. Last Two Verses of Al-Baqarah",
+          "content": "Recite the last two verses of Surah Al-Baqarah (2:285-286). These are sufficient for protection."
+        },
+        "2": {
+          "title": "3. Surah Al-Ikhlas, Al-Falaq, An-Nas",
+          "content": "Recite these three surahs three times each. They provide complete protection."
+        },
+        "3": {
+          "title": "4. Tasbih, Tahmid, Takbir",
+          "content": "Say 'Subhan Allah' (33x), 'Alhamdulillah' (33x), 'Allahu Akbar' (34x)."
+        },
+        "4": {
+          "title": "5. Sayyid al-Istighfar",
+          "content": "Recite the master of seeking forgiveness: 'Allahumma anta Rabbi, la ilaha illa ant...'."
+        },
+        "5": {
+          "title": "6. Protection Dua",
+          "content": "Say: 'Bismillahil-ladhi la yadurru ma'asmihi shay'un fil-ardi wa la fis-sama' (three times)."
+        }
+      }
+    },
+    "how-to-perform-wudu": {
+      "title": "How to Perform Wudu (Ablution)",
+      "description": "Detailed guide for performing ablution correctly",
+      "steps": {
+        "0": {
+          "title": "1. Make Intention",
+          "content": "Make the intention in your heart to perform wudu. Say 'Bismillah'."
+        },
+        "1": {
+          "title": "2. Wash Hands",
+          "content": "Wash both hands up to the wrists three times."
+        },
+        "2": {
+          "title": "3. Rinse Mouth",
+          "content": "Rinse your mouth thoroughly three times."
+        },
+        "3": {
+          "title": "4. Rinse Nose",
+          "content": "Sniff water into your nostrils three times and blow it out."
+        },
+        "4": {
+          "title": "5. Wash Face",
+          "content": "Wash your entire face three times from hairline to chin and ear to ear."
+        },
+        "5": {
+          "title": "6. Wash Arms",
+          "content": "Wash your right arm to the elbow three times, then the left arm."
+        },
+        "6": {
+          "title": "7. Wipe Head",
+          "content": "Wet your hands and wipe over your head once."
+        },
+        "7": {
+          "title": "8. Wipe Ears",
+          "content": "Wipe inside your ears with index fingers and outside with thumbs."
+        },
+        "8": {
+          "title": "9. Wash Feet",
+          "content": "Wash your right foot to the ankle three times, then the left foot."
+        },
+        "9": {
+          "title": "10. Recite Dua",
+          "content": "Say: 'Ashhadu an la ilaha illallah wahdahu la sharika lah, wa ashhadu anna Muhammadan abduhu wa rasuluh'."
+        }
+      }
+    },
+    "how-to-perform-ghusl": {
+      "title": "How to Perform Ghusl (Full Ritual Purification)",
+      "description": "Comprehensive guide for performing full ritual bath",
+      "steps": {
+        "0": {
+          "title": "1. Make Intention",
+          "content": "Make the intention to purify yourself from major impurity. Say 'Bismillah'."
+        },
+        "1": {
+          "title": "2. Wash Hands",
+          "content": "Wash both hands up to the wrists three times."
+        },
+        "2": {
+          "title": "3. Wash Private Parts",
+          "content": "Wash the private parts thoroughly."
+        },
+        "3": {
+          "title": "4. Perform Wudu",
+          "content": "Perform complete wudu as you would for prayer."
+        },
+        "4": {
+          "title": "5. Pour Water Over Head",
+          "content": "Pour water over your head three times, ensuring it reaches the roots of your hair."
+        },
+        "5": {
+          "title": "6. Wash Right Side",
+          "content": "Pour water over your entire right side of the body."
+        },
+        "6": {
+          "title": "7. Wash Left Side",
+          "content": "Pour water over your entire left side of the body."
+        },
+        "7": {
+          "title": "8. Wash Entire Body",
+          "content": "Ensure water has reached every part of your body."
+        }
+      }
+    },
+    "how-to-perform-tayammum": {
+      "title": "How to Perform Tayammum (Dry Ablution)",
+      "description": "Guide for performing dry ablution when water is unavailable",
+      "steps": {
+        "0": {
+          "title": "1. Make Intention",
+          "content": "Make the intention to perform Tayammum as a substitute for wudu or ghusl."
+        },
+        "1": {
+          "title": "2. Say Bismillah",
+          "content": "Begin by saying 'Bismillah' (In the name of Allah)."
+        },
+        "2": {
+          "title": "3. Strike Clean Earth",
+          "content": "Strike your hands on clean earth, sand, or dust once."
+        },
+        "3": {
+          "title": "4. Wipe Face",
+          "content": "Wipe your entire face with both palms once."
+        },
+        "4": {
+          "title": "5. Wipe Hands",
+          "content": "Wipe your right hand with your left palm, then wipe your left hand with your right palm, up to the wrists."
+        },
+        "5": {
+          "title": "6. Complete",
+          "content": "Your Tayammum is now complete and valid for one prayer. Repeat for each prayer time."
+        }
+      }
+    },
+    "how-to-perform-umrah": {
+      "title": "How to Perform Umrah",
+      "description": "Complete guide for performing the lesser pilgrimage",
+      "steps": {
+        "0": {
+          "title": "1. Enter Ihram",
+          "content": "Before reaching the Miqat, make intention for Umrah, perform ghusl, and wear Ihram garments. Say the Talbiyah: 'Labbayk Allahumma Umrah'."
+        },
+        "1": {
+          "title": "2. Enter Masjid al-Haram",
+          "content": "Enter with your right foot and say the dua for entering the mosque."
+        },
+        "2": {
+          "title": "3. Perform Tawaf",
+          "content": "Circle the Ka'bah seven times counterclockwise, starting from the Black Stone. Men should uncover their right shoulder (Idtiba) and walk briskly in the first three circuits (Raml)."
+        },
+        "3": {
+          "title": "4. Pray Two Rak'ahs",
+          "content": "After Tawaf, pray two rak'ahs behind Maqam Ibrahim if possible, or anywhere in the Haram."
+        },
+        "4": {
+          "title": "5. Drink Zamzam",
+          "content": "Drink Zamzam water and make dua."
+        },
+        "5": {
+          "title": "6. Perform Sa'i",
+          "content": "Walk between Safa and Marwah seven times, starting at Safa. Men should jog between the green lights."
+        },
+        "6": {
+          "title": "7. Shave or Trim Hair",
+          "content": "Men should shave their heads or trim hair. Women should cut a fingertip's length from their hair. This completes your Umrah."
+        }
+      }
+    },
+    "how-to-perform-tawaf": {
+      "title": "How to Perform Tawaf",
+      "description": "Detailed guide for circling the Ka'bah",
+      "steps": {
+        "0": {
+          "title": "1. Face the Black Stone",
+          "content": "Stand facing the Black Stone (Hajar al-Aswad) with the Ka'bah on your left."
+        },
+        "1": {
+          "title": "2. Make Intention",
+          "content": "Make intention for Tawaf in your heart."
+        },
+        "2": {
+          "title": "3. Touch or Point",
+          "content": "If possible, touch and kiss the Black Stone. If not, point to it and say 'Bismillah, Allahu Akbar'."
+        },
+        "3": {
+          "title": "4. Begin Circling",
+          "content": "Walk counterclockwise around the Ka'bah, keeping it on your left. Men should uncover their right shoulder."
+        },
+        "4": {
+          "title": "5. Recite Dhikr and Dua",
+          "content": "There are no specific duas for Tawaf. Recite Quran, make dhikr, or make personal duas."
+        },
+        "5": {
+          "title": "6. Touch Yemeni Corner",
+          "content": "If possible, touch the Yemeni Corner (Rukn Yamani) with your right hand without kissing it."
+        },
+        "6": {
+          "title": "7. Complete Seven Circuits",
+          "content": "Complete seven full circuits. Each time you pass the Black Stone, point to it and say 'Allahu Akbar'."
+        },
+        "7": {
+          "title": "8. Pray Two Rak'ahs",
+          "content": "After completing Tawaf, pray two rak'ahs behind Maqam Ibrahim or anywhere in the Haram."
+        }
+      }
+    },
+    "how-to-calculate-zakat": {
+      "title": "How to Calculate and Pay Zakat",
+      "description": "Comprehensive guide for calculating and paying obligatory charity",
+      "steps": {
+        "0": {
+          "title": "1. Understand Nisab",
+          "content": "Nisab is the minimum amount of wealth one must have before Zakat is due. It's equivalent to 85 grams of gold or 595 grams of silver."
+        },
+        "1": {
+          "title": "2. Calculate Your Wealth",
+          "content": "Add up all your zakatable assets: cash, bank savings, gold, silver, business inventory, stocks, and money owed to you."
+        },
+        "2": {
+          "title": "3. Deduct Debts",
+          "content": "Subtract any debts you owe that are due within the year."
+        },
+        "3": {
+          "title": "4. Check if Above Nisab",
+          "content": "If your net zakatable wealth is above the Nisab threshold, Zakat is obligatory."
+        },
+        "4": {
+          "title": "5. Calculate 2.5%",
+          "content": "Multiply your zakatable wealth by 0.025 (2.5%). This is your Zakat amount."
+        },
+        "5": {
+          "title": "6. Pay to Eligible Recipients",
+          "content": "Distribute your Zakat to the eight categories mentioned in Quran 9:60: the poor, needy, Zakat collectors, those whose hearts are to be reconciled, slaves, debtors, in the cause of Allah, and travelers."
+        },
+        "6": {
+          "title": "7. Make Intention",
+          "content": "When paying, make the intention that this is your obligatory Zakat."
+        }
+      }
+    },
+    "how-to-pay-zakat-al-fitr": {
+      "title": "How to Pay Zakat al-Fitr",
+      "description": "Guide for paying the obligatory charity at the end of Ramadan",
+      "steps": {
+        "0": {
+          "title": "1. Understand the Purpose",
+          "content": "Zakat al-Fitr purifies the fasting person from idle talk and obscene speech, and provides food for the poor on Eid day."
+        },
+        "1": {
+          "title": "2. Who Must Pay",
+          "content": "Every Muslim who has food in excess of their needs for one day and night must pay Zakat al-Fitr for themselves and their dependents."
+        },
+        "2": {
+          "title": "3. Calculate the Amount",
+          "content": "The amount is one Sa' (approximately 3 kg or 2.5 liters) of staple food (wheat, barley, dates, raisins, or rice), or its monetary equivalent."
+        },
+        "3": {
+          "title": "4. Timing",
+          "content": "It must be paid before the Eid prayer. It's best to pay it 1-2 days before Eid. Paying after Eid prayer is considered late charity, not Zakat al-Fitr."
+        },
+        "4": {
+          "title": "5. Give to the Poor",
+          "content": "Give it directly to poor and needy Muslims in your community, or through a trusted organization."
+        }
+      }
+    },
+    "how-to-give-sadaqah": {
+      "title": "How to Give Sadaqah (Voluntary Charity)",
+      "description": "Guide for giving voluntary charity with sincerity",
+      "steps": {
+        "0": {
+          "title": "1. Make Pure Intention",
+          "content": "Give charity solely for Allah's pleasure, not for recognition or praise from people."
+        },
+        "1": {
+          "title": "2. Give from Halal Wealth",
+          "content": "Ensure your charity comes from lawfully earned money. Allah only accepts what is pure."
+        },
+        "2": {
+          "title": "3. Give Secretly When Possible",
+          "content": "The Prophet (ﷺ) said the best charity is that given secretly. However, public charity can inspire others."
+        },
+        "3": {
+          "title": "4. Give Regularly",
+          "content": "Even small amounts given regularly are better than large amounts given occasionally. The Prophet (ﷺ) said the most beloved deeds to Allah are those done consistently."
+        },
+        "4": {
+          "title": "5. Don't Remind Recipients",
+          "content": "Never remind people of your charity or hurt them with words. This nullifies the reward."
+        },
+        "5": {
+          "title": "6. Smile is Charity",
+          "content": "Remember that charity isn't just money. A smile, helping someone, removing harm from the road, and kind words are all forms of Sadaqah."
+        }
+      }
+    },
+    "how-to-fast-ramadan": {
+      "title": "How to Fast in Ramadan",
+      "description": "Complete guide for observing the obligatory fast",
+      "steps": {
+        "0": {
+          "title": "1. Make Intention at Night",
+          "content": "Make the intention to fast before Fajr. The Prophet (ﷺ) said: 'Whoever does not intend to fast before Fajr, there is no fast for him.'"
+        },
+        "1": {
+          "title": "2. Eat Suhoor",
+          "content": "Eat the pre-dawn meal (Suhoor). The Prophet (ﷺ) said: 'Eat Suhoor, for there is blessing in it.' Stop eating before Fajr begins."
+        },
+        "2": {
+          "title": "3. Abstain from Food, Drink, and Relations",
+          "content": "From Fajr until Maghrib, abstain from food, drink, smoking, and marital relations."
+        },
+        "3": {
+          "title": "4. Guard Your Tongue",
+          "content": "Avoid lying, backbiting, arguing, and foul language. The Prophet (ﷺ) said: 'Whoever does not give up false speech and acting upon it, Allah has no need for him to give up his food and drink.'"
+        },
+        "4": {
+          "title": "5. Increase Good Deeds",
+          "content": "Increase prayer, Quran recitation, dhikr, and charity. Ramadan is the month of the Quran and generosity."
+        },
+        "5": {
+          "title": "6. Break Fast at Maghrib",
+          "content": "Break your fast immediately when Maghrib enters. The Prophet (ﷺ) would break his fast with dates and water, then pray Maghrib."
+        },
+        "6": {
+          "title": "7. Make Dua Before Breaking",
+          "content": "The dua of the fasting person is accepted. Say: 'Allahumma laka sumtu wa 'ala rizqika aftartu' (O Allah, for You I have fasted and with Your provision I break my fast)."
+        }
+      }
+    },
+    "how-to-fast-voluntarily": {
+      "title": "How to Perform Voluntary Fasting",
+      "description": "Guide for recommended voluntary fasts throughout the year",
+      "steps": {
+        "0": {
+          "title": "1. Mondays and Thursdays",
+          "content": "The Prophet (ﷺ) used to fast Mondays and Thursdays. He said deeds are presented to Allah on these days."
+        },
+        "1": {
+          "title": "2. Three Days Each Month",
+          "content": "Fast the 13th, 14th, and 15th of each lunar month (the white days). This is equivalent to fasting the entire year."
+        },
+        "2": {
+          "title": "3. Day of Arafah",
+          "content": "Fast on the 9th of Dhul-Hijjah (for non-pilgrims). The Prophet (ﷺ) said it expiates sins of the previous and coming year."
+        },
+        "3": {
+          "title": "4. Day of Ashura",
+          "content": "Fast on the 10th of Muharram, and it's recommended to fast the 9th or 11th with it. It expiates sins of the previous year."
+        },
+        "4": {
+          "title": "5. Six Days of Shawwal",
+          "content": "Fast six days in Shawwal after Ramadan. The Prophet (ﷺ) said it's like fasting the entire year."
+        },
+        "5": {
+          "title": "6. Make Intention",
+          "content": "For voluntary fasts, you can make the intention even during the day, as long as you haven't eaten anything."
+        }
+      }
+    },
+    "how-to-perform-janazah-prayer": {
+      "title": "How to Perform Janazah Prayer",
+      "description": "Guide for performing the funeral prayer",
+      "steps": {
+        "0": {
+          "title": "1. Stand in Rows",
+          "content": "Form rows behind the Imam. The deceased is placed in front, with men standing closer to the Imam."
+        },
+        "1": {
+          "title": "2. First Takbir",
+          "content": "Raise your hands and say 'Allahu Akbar', then recite Al-Fatiha silently."
+        },
+        "2": {
+          "title": "3. Second Takbir",
+          "content": "Say 'Allahu Akbar' (without raising hands) and send blessings upon the Prophet: 'Allahumma salli 'ala Muhammad...'"
+        },
+        "3": {
+          "title": "4. Third Takbir",
+          "content": "Say 'Allahu Akbar' and make dua for the deceased: 'Allahumma ighfir lahu warhamhu...'"
+        },
+        "4": {
+          "title": "5. Fourth Takbir",
+          "content": "Say 'Allahu Akbar' and make a brief dua for yourself and all Muslims."
+        },
+        "5": {
+          "title": "6. Give Tasleem",
+          "content": "Turn your head to the right and say 'As-salamu alaykum', then to the left and repeat."
+        }
+      }
+    },
+    "how-to-offer-condolences": {
+      "title": "How to Offer Condolences",
+      "description": "Islamic etiquette for consoling the bereaved",
+      "steps": {
+        "0": {
+          "title": "1. Visit Promptly",
+          "content": "Visit the family soon after hearing the news, but be mindful of their need for space and privacy."
+        },
+        "1": {
+          "title": "2. Say Appropriate Words",
+          "content": "Say: 'Inna lillahi wa inna ilayhi raji'un' (To Allah we belong and to Him we return). Remind them that Allah will reward their patience."
+        },
+        "2": {
+          "title": "3. Make Dua",
+          "content": "Make dua for the deceased and for the family: 'May Allah forgive them, have mercy on them, and grant you patience and reward.'"
+        },
+        "3": {
+          "title": "4. Offer Practical Help",
+          "content": "Offer specific help like preparing food, running errands, or helping with funeral arrangements."
+        },
+        "4": {
+          "title": "5. Be Brief",
+          "content": "Keep your visit short unless the family specifically asks you to stay longer."
+        },
+        "5": {
+          "title": "6. Avoid Excessive Wailing",
+          "content": "Maintain composure and avoid loud wailing or excessive displays of grief, as this is discouraged in Islam."
+        }
+      }
+    },
+    "how-to-control-anger": {
+      "title": "How to Control Anger",
+      "description": "Islamic guidance for managing anger",
+      "steps": {
+        "0": {
+          "title": "1. Seek Refuge in Allah",
+          "content": "When you feel anger rising, say: 'A'udhu billahi min ash-shaytan ir-rajeem' (I seek refuge in Allah from Satan the accursed)."
+        },
+        "1": {
+          "title": "2. Stay Silent",
+          "content": "The Prophet (ﷺ) said: 'If one of you becomes angry, let him be silent.' Silence prevents you from saying things you'll regret."
+        },
+        "2": {
+          "title": "3. Change Position",
+          "content": "If standing, sit down. If sitting, lie down. The Prophet (ﷺ) taught this to change your physical state."
+        },
+        "3": {
+          "title": "4. Perform Wudu",
+          "content": "Make ablution with cold water. The Prophet (ﷺ) said anger is from Satan, and Satan is created from fire, which is extinguished by water."
+        },
+        "4": {
+          "title": "5. Remember Allah's Forgiveness",
+          "content": "Reflect on how Allah forgives you despite your mistakes. This should make you more forgiving of others."
+        },
+        "5": {
+          "title": "6. Think of Consequences",
+          "content": "Consider the negative consequences of acting on anger: broken relationships, regretful words, and loss of respect."
+        }
+      }
+    },
+    "how-to-practice-humility": {
+      "title": "How to Practice Humility",
+      "description": "Guide for developing humility in Islam",
+      "steps": {
+        "0": {
+          "title": "1. Remember Your Origin",
+          "content": "Reflect that you were created from dust and will return to dust. This reality should humble anyone."
+        },
+        "1": {
+          "title": "2. Acknowledge Allah's Favors",
+          "content": "Recognize that all your blessings, talents, and achievements are gifts from Allah, not your own doing."
+        },
+        "2": {
+          "title": "3. Serve Others",
+          "content": "The Prophet (ﷺ) served his family, mended his clothes, and helped with household chores despite being the leader of the Muslims."
+        },
+        "3": {
+          "title": "4. Avoid Boasting",
+          "content": "Don't boast about your wealth, knowledge, lineage, or accomplishments. The Prophet (ﷺ) said: 'Whoever has pride in his heart equal to an atom shall not enter Paradise.'"
+        },
+        "4": {
+          "title": "5. Accept Advice",
+          "content": "Be open to criticism and advice from others, regardless of their status. Truth can come from anyone."
+        },
+        "5": {
+          "title": "6. Treat Everyone Equally",
+          "content": "Show respect to the poor, elderly, and those of lower social status. The Prophet (ﷺ) said: 'The best of you are those who are best to their families.'"
+        }
+      }
+    },
+    "how-to-forgive-others": {
+      "title": "How to Forgive Others",
+      "description": "Islamic teachings on forgiveness and pardon",
+      "steps": {
+        "0": {
+          "title": "1. Remember Allah's Forgiveness",
+          "content": "Allah forgives you for countless sins. The Quran says: 'Let them pardon and overlook. Would you not like that Allah should forgive you?' (24:22)"
+        },
+        "1": {
+          "title": "2. Understand the Reward",
+          "content": "The Prophet (ﷺ) said: 'Charity does not decrease wealth, and Allah increases the honor of one who forgives.'"
+        },
+        "2": {
+          "title": "3. Put Yourself in Their Shoes",
+          "content": "Try to understand why the person wronged you. Perhaps they were going through difficulties or didn't realize the impact of their actions."
+        },
+        "3": {
+          "title": "4. Make Dua for Them",
+          "content": "Pray for the person who wronged you. This softens your heart and helps you let go of resentment."
+        },
+        "4": {
+          "title": "5. Let Go of Grudges",
+          "content": "Holding grudges only hurts you. The Prophet (ﷺ) said: 'Do not hate one another, do not envy one another, and be servants of Allah as brothers.'"
+        },
+        "5": {
+          "title": "6. Reconcile When Possible",
+          "content": "If appropriate, reach out to reconcile. The Prophet (ﷺ) said: 'It is not permissible for a Muslim to forsake his brother for more than three days.'"
+        }
+      }
+    },
+    "how-to-seek-knowledge": {
+      "title": "How to Seek Islamic Knowledge",
+      "description": "Guide for pursuing Islamic knowledge properly",
+      "steps": {
+        "0": {
+          "title": "1. Purify Your Intention",
+          "content": "Seek knowledge for Allah's sake, not for worldly gain or recognition. The Prophet (ﷺ) warned against seeking knowledge for show."
+        },
+        "1": {
+          "title": "2. Start with Basics",
+          "content": "Begin with fundamental knowledge: correct belief (Aqeedah), how to pray, basic Islamic rulings, and Quran recitation."
+        },
+        "2": {
+          "title": "3. Find Qualified Teachers",
+          "content": "Learn from knowledgeable, trustworthy scholars who follow the Quran and Sunnah. The Prophet (ﷺ) said: 'This knowledge will be carried by the trustworthy ones of every generation.'"
+        },
+        "3": {
+          "title": "4. Be Consistent",
+          "content": "Study regularly, even if it's just a little each day. The Prophet (ﷺ) said: 'The most beloved deeds to Allah are those done consistently.'"
+        },
+        "4": {
+          "title": "5. Practice What You Learn",
+          "content": "Apply your knowledge in your life. Knowledge without action is like a tree without fruit."
+        },
+        "5": {
+          "title": "6. Teach Others",
+          "content": "Share beneficial knowledge with others. The Prophet (ﷺ) said: 'The best of you are those who learn the Quran and teach it.'"
+        }
+      }
+    },
+    "how-to-make-tawbah": {
+      "title": "How to Make Tawbah (Repentance)",
+      "description": "Guide for sincere repentance from sins",
+      "steps": {
+        "0": {
+          "title": "1. Stop the Sin Immediately",
+          "content": "The first step is to stop committing the sin right away. You cannot repent while continuing the sin."
+        },
+        "1": {
+          "title": "2. Feel Genuine Remorse",
+          "content": "Feel sincere regret in your heart for having disobeyed Allah. The Prophet (ﷺ) said: 'Remorse is repentance.'"
+        },
+        "2": {
+          "title": "3. Seek Allah's Forgiveness",
+          "content": "Ask Allah to forgive you. Say: 'Astaghfirullah' (I seek Allah's forgiveness) and make sincere dua."
+        },
+        "3": {
+          "title": "4. Firmly Resolve Not to Return",
+          "content": "Make a firm intention never to return to that sin. This determination is essential for valid repentance."
+        },
+        "4": {
+          "title": "5. Make Amends if Needed",
+          "content": "If your sin involved wronging someone, seek their forgiveness and make amends. Return stolen property, apologize for harm caused, etc."
+        },
+        "5": {
+          "title": "6. Replace Bad with Good",
+          "content": "Follow up your sin with good deeds. Allah says: 'Indeed, good deeds do away with misdeeds' (Quran 11:114)."
+        },
+        "6": {
+          "title": "7. Never Despair",
+          "content": "No matter how great your sins, never lose hope in Allah's mercy. He says: 'Say, O My servants who have transgressed against themselves, do not despair of the mercy of Allah' (Quran 39:53)."
+        }
+      }
+    },
+    "understanding-riba": {
+      "title": "Understanding Riba (Interest)",
+      "description": "Learn about the prohibition of interest in Islam",
+      "steps": {
+        "0": {
+          "title": "1. What is Riba?",
+          "content": "Riba means 'increase' or 'excess'. In Islamic finance, it refers to any guaranteed interest on loaned money, regardless of the amount."
+        },
+        "1": {
+          "title": "2. Why is it Prohibited?",
+          "content": "Allah says: 'Allah has permitted trade and forbidden riba' (Quran 2:275). Riba exploits the needy and creates wealth without productive effort."
+        },
+        "2": {
+          "title": "3. Types of Riba",
+          "content": "Riba al-Nasiah: Interest on loans. Riba al-Fadl: Exchanging same commodities in unequal amounts (e.g., gold for gold with excess)."
+        },
+        "3": {
+          "title": "4. Severity of the Sin",
+          "content": "The Prophet (ﷺ) said riba has 73 types, the least of which is like committing adultery with one's own mother. Both the giver and taker are cursed."
+        },
+        "4": {
+          "title": "5. Alternatives",
+          "content": "Use Islamic banks, profit-sharing arrangements (Mudarabah), or interest-free loans (Qard Hasan) instead of conventional interest-based loans."
+        }
+      }
+    },
+    "halal-income": {
+      "title": "Earning Halal Income",
+      "description": "Guidelines for lawful earnings in Islam",
+      "steps": {
+        "0": {
+          "title": "1. Importance of Halal Income",
+          "content": "The Prophet (ﷺ) said: 'No one has ever eaten better food than what he earns from the work of his own hands.' Halal income is essential for accepted worship."
+        },
+        "1": {
+          "title": "2. Prohibited Industries",
+          "content": "Avoid income from: alcohol, gambling, pork, interest-based banking, adult entertainment, and anything harmful to society."
+        },
+        "2": {
+          "title": "3. Honest Dealings",
+          "content": "Be truthful in business. The Prophet (ﷺ) said: 'The truthful, trustworthy merchant will be with the prophets, truthful ones, and martyrs.'"
+        },
+        "3": {
+          "title": "4. Fair Pricing",
+          "content": "Don't exploit customers or hoard goods to raise prices. The Prophet (ﷺ) cursed those who hoard food to increase prices."
+        },
+        "4": {
+          "title": "5. Fulfill Contracts",
+          "content": "Honor all agreements and contracts. Allah says: 'O you who believe, fulfill your contracts' (Quran 5:1)."
+        },
+        "5": {
+          "title": "6. Pay Workers Promptly",
+          "content": "The Prophet (ﷺ) said: 'Give the worker his wages before his sweat dries.' Delaying payment is oppression."
+        }
+      }
+    },
+    "islamic-banking": {
+      "title": "Islamic Banking Basics",
+      "description": "Understanding Sharia-compliant banking",
+      "steps": {
+        "0": {
+          "title": "1. Core Principles",
+          "content": "Islamic banking prohibits interest (riba), excessive uncertainty (gharar), and gambling (maysir). Profits must come from real economic activity."
+        },
+        "1": {
+          "title": "2. Murabaha (Cost-Plus)",
+          "content": "The bank buys an asset and sells it to you at a disclosed profit margin. You pay in installments. The profit is fixed upfront, not interest."
+        },
+        "2": {
+          "title": "3. Mudarabah (Profit-Sharing)",
+          "content": "You provide capital, the bank manages it. Profits are shared according to agreed ratios; losses are borne by the capital provider."
+        },
+        "3": {
+          "title": "4. Musharakah (Partnership)",
+          "content": "Both parties contribute capital and share profits and losses according to their investment ratio."
+        },
+        "4": {
+          "title": "5. Ijara (Leasing)",
+          "content": "The bank buys an asset and leases it to you. You may have the option to purchase it at the end of the lease term."
+        },
+        "5": {
+          "title": "6. Choosing a Bank",
+          "content": "Look for banks with a Sharia supervisory board. Research their products and ensure they're genuinely compliant, not just rebranded conventional products."
+        }
+      }
+    },
+    "halal-investing": {
+      "title": "Halal Investing Guidelines",
+      "description": "How to invest in a Sharia-compliant manner",
+      "steps": {
+        "0": {
+          "title": "1. Screen for Prohibited Industries",
+          "content": "Avoid companies involved in: alcohol, tobacco, gambling, conventional banking/insurance, pork, weapons, and adult entertainment."
+        },
+        "1": {
+          "title": "2. Financial Ratios",
+          "content": "Many scholars require: debt-to-assets ratio below 33%, interest income below 5% of revenue, and cash/receivables below 50% of assets."
+        },
+        "2": {
+          "title": "3. Purification of Returns",
+          "content": "If a small portion of company income is from non-compliant sources, calculate and donate that percentage of your dividends to charity."
+        },
+        "3": {
+          "title": "4. Islamic Funds",
+          "content": "Consider Sharia-compliant mutual funds and ETFs that are pre-screened by Islamic scholars."
+        },
+        "4": {
+          "title": "5. Real Estate",
+          "content": "Property investment is generally halal. Avoid financing with conventional mortgages; use Islamic home financing instead."
+        },
+        "5": {
+          "title": "6. Consult Scholars",
+          "content": "When in doubt, consult knowledgeable scholars or use established Islamic finance screening services."
+        }
+      }
+    },
+    "debt-management": {
+      "title": "Islamic Debt Management",
+      "description": "Managing debt according to Islamic principles",
+      "steps": {
+        "0": {
+          "title": "1. Avoid Unnecessary Debt",
+          "content": "The Prophet (ﷺ) sought refuge from debt. Only borrow when truly necessary and have a clear plan to repay."
+        },
+        "1": {
+          "title": "2. Document All Debts",
+          "content": "Allah commands: 'When you contract a debt for a specified term, write it down' (Quran 2:282). This protects both parties."
+        },
+        "2": {
+          "title": "3. Intend to Repay",
+          "content": "The Prophet (ﷺ) said: 'Whoever takes people's money intending to repay it, Allah will help him repay. Whoever takes it intending to waste it, Allah will waste him.'"
+        },
+        "3": {
+          "title": "4. Repay Promptly",
+          "content": "Don't delay repayment if you have the means. The Prophet (ﷺ) said: 'Delay in payment by a wealthy person is injustice.'"
+        },
+        "4": {
+          "title": "5. Be Lenient as a Creditor",
+          "content": "If your debtor is struggling, give them time. Allah says: 'If someone is in hardship, then let there be postponement until ease' (Quran 2:280)."
+        },
+        "5": {
+          "title": "6. Forgive if Possible",
+          "content": "Forgiving a debt is highly rewarded. Allah says: 'And if you give charity, it is better for you' (Quran 2:280)."
+        }
+      }
+    }
+  },
+  "islamicEvents": {
+    "new_year": "Islamic New Year",
+    "ashura": "Day of Ashura",
+    "mawlid": "Mawlid al-Nabi",
+    "isra_miraj": "Isra' wal Mi'raj",
+    "mid_shaban": "Mid-Shaban",
+    "ramadan_start": "Start of Ramadan",
+    "laylat_qadr": "Laylat al-Qadr",
+    "eid_fitr": "Eid al-Fitr",
+    "arafah": "Day of Arafah",
+    "eid_adha": "Eid al-Adha",
+    "new_year_desc": "The first day of Muharram marks the beginning of the Islamic calendar year.",
+    "ashura_desc": "The 10th of Muharram. Fasting on this day expiates sins of the previous year.",
+    "mawlid_desc": "Commemorates the birthday of Prophet Muhammad ﷺ.",
+    "isra_miraj_desc": "The Night Journey and Ascension of Prophet Muhammad ﷺ.",
+    "mid_shaban_desc": "The night when Allah descends to the lowest heaven and forgives many.",
+    "ramadan_start_desc": "The blessed month of fasting begins.",
+    "laylat_qadr_desc": "The Night of Decree, better than a thousand months.",
+    "eid_fitr_desc": "The Festival of Breaking the Fast, celebrating the end of Ramadan.",
+    "arafah_desc": "Fasting on this day expiates sins of the previous and coming year.",
+    "eid_adha_desc": "The Festival of Sacrifice, commemorating Ibrahim's willingness to sacrifice his son."
+  },
+  "countdown": {
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "inDays": "In %{count} days",
+    "inWeek": "In %{count} week",
+    "inWeeks": "In %{count} weeks",
+    "inMonth": "In %{count} month",
+    "inMonths": "In %{count} months"
+  },
+  "fastingLabels": {
+    "monday": "Monday Fast",
+    "thursday": "Thursday Fast",
+    "white_day": "White Day",
+    "ashura": "Ashura Fast",
+    "arafah": "Arafah Fast",
+    "shawwal": "Shawwal Fast"
+  },
+  "prayerStatus": {
+    "prayed": "Prayed",
+    "late": "Late",
+    "missed": "Missed"
+  }
+}

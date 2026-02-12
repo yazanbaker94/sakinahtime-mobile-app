@@ -7,22 +7,22 @@ import { widgetDataService } from "../services/WidgetDataService";
 import { useNetworkStatus } from "./useNetworkStatus";
 
 export const CALCULATION_METHODS = [
-  { id: 0, name: "Shia Ithna-Ansari", shortName: "Shia" },
-  { id: 1, name: "University of Islamic Sciences, Karachi", shortName: "Karachi" },
-  { id: 2, name: "Islamic Society of North America", shortName: "ISNA" },
-  { id: 3, name: "Muslim World League", shortName: "MWL" },
-  { id: 4, name: "Umm Al-Qura University, Makkah", shortName: "Umm Al-Qura" },
-  { id: 5, name: "Egyptian General Authority of Survey", shortName: "Egypt" },
-  { id: 7, name: "Institute of Geophysics, University of Tehran", shortName: "Tehran" },
-  { id: 8, name: "Gulf Region", shortName: "Gulf" },
-  { id: 9, name: "Kuwait", shortName: "Kuwait" },
-  { id: 10, name: "Qatar", shortName: "Qatar" },
-  { id: 11, name: "Majlis Ugama Islam Singapura, Singapore", shortName: "MUIS" },
-  { id: 12, name: "Union Organization Islamic de France", shortName: "UOIF" },
-  { id: 13, name: "Diyanet İşleri Başkanlığı, Turkey", shortName: "Diyanet" },
-  { id: 14, name: "Spiritual Administration of Muslims of Russia", shortName: "Russia" },
-  { id: 15, name: "Moonsighting Committee Worldwide", shortName: "Moonsighting" },
-  { id: 16, name: "Ministry of Awqaf, Islamic Affairs, Jordan", shortName: "Jordan" },
+  { id: 0, localeKey: "shia", name: "Shia Ithna-Ansari", shortName: "Shia", nameAr: "الشيعة الاثنا عشرية", shortNameAr: "الشيعة" },
+  { id: 1, localeKey: "karachi", name: "University of Islamic Sciences, Karachi", shortName: "Karachi", nameAr: "جامعة العلوم الإسلامية، كراتشي", shortNameAr: "كراتشي" },
+  { id: 2, localeKey: "isna", name: "Islamic Society of North America", shortName: "ISNA", nameAr: "الجمعية الإسلامية لأمريكا الشمالية", shortNameAr: "ISNA" },
+  { id: 3, localeKey: "mwl", name: "Muslim World League", shortName: "MWL", nameAr: "رابطة العالم الإسلامي", shortNameAr: "رابطة العالم الإسلامي" },
+  { id: 4, localeKey: "ummAlQura", name: "Umm Al-Qura University, Makkah", shortName: "Umm Al-Qura", nameAr: "جامعة أم القرى، مكة المكرمة", shortNameAr: "أم القرى" },
+  { id: 5, localeKey: "egypt", name: "Egyptian General Authority of Survey", shortName: "Egypt", nameAr: "الهيئة المصرية العامة للمساحة", shortNameAr: "مصر" },
+  { id: 7, localeKey: "tehran", name: "Institute of Geophysics, University of Tehran", shortName: "Tehran", nameAr: "معهد الجيوفيزياء، جامعة طهران", shortNameAr: "طهران" },
+  { id: 8, localeKey: "gulf", name: "Gulf Region", shortName: "Gulf", nameAr: "منطقة الخليج", shortNameAr: "الخليج" },
+  { id: 9, localeKey: "kuwait", name: "Kuwait", shortName: "Kuwait", nameAr: "الكويت", shortNameAr: "الكويت" },
+  { id: 10, localeKey: "qatar", name: "Qatar", shortName: "Qatar", nameAr: "قطر", shortNameAr: "قطر" },
+  { id: 11, localeKey: "muis", name: "Majlis Ugama Islam Singapura, Singapore", shortName: "MUIS", nameAr: "مجلس الشؤون الدينية الإسلامية، سنغافورة", shortNameAr: "MUIS" },
+  { id: 12, localeKey: "uoif", name: "Union Organization Islamic de France", shortName: "UOIF", nameAr: "اتحاد المنظمات الإسلامية في فرنسا", shortNameAr: "UOIF" },
+  { id: 13, localeKey: "diyanet", name: "Diyanet İşleri Başkanlığı, Turkey", shortName: "Diyanet", nameAr: "رئاسة الشؤون الدينية، تركيا", shortNameAr: "ديانت" },
+  { id: 14, localeKey: "russia", name: "Spiritual Administration of Muslims of Russia", shortName: "Russia", nameAr: "الإدارة الروحية لمسلمي روسيا", shortNameAr: "روسيا" },
+  { id: 15, localeKey: "moonsighting", name: "Moonsighting Committee Worldwide", shortName: "Moonsighting", nameAr: "لجنة رؤية الهلال العالمية", shortNameAr: "رؤية الهلال" },
+  { id: 16, localeKey: "jordan", name: "Ministry of Awqaf, Islamic Affairs, Jordan", shortName: "Jordan", nameAr: "وزارة الأوقاف والشؤون الإسلامية، الأردن", shortNameAr: "الأردن" },
 ];
 
 const CALCULATION_METHOD_KEY = "@prayer_calculation_method";

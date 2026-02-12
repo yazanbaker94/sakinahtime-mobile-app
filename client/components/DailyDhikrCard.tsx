@@ -10,6 +10,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
 import { Spacing, BorderRadius } from '@/constants/theme';
+import { useTranslation } from '@/hooks/useTranslation';
 import { useDailyDhikr } from '@/hooks/useDailyDhikr';
 
 interface DailyDhikrCardProps {
@@ -18,6 +19,7 @@ interface DailyDhikrCardProps {
 
 export function DailyDhikrCard({ onPress }: DailyDhikrCardProps) {
   const { isDark, theme } = useTheme();
+  const { t } = useTranslation();
   const { dhikr } = useDailyDhikr();
 
   const bgColor = isDark
@@ -45,10 +47,10 @@ export function DailyDhikrCard({ onPress }: DailyDhikrCardProps) {
         </View>
         <View style={styles.headerText}>
           <ThemedText type="body" style={{ fontWeight: '600' }}>
-            Daily Dhikr
+            {t('dailyDhikr.title')}
           </ThemedText>
           <ThemedText type="caption" secondary>
-            Today's featured remembrance
+            {t('dailyDhikr.subtitle')}
           </ThemedText>
         </View>
         <Feather name="chevron-right" size={20} color={theme.textSecondary} />

@@ -12,6 +12,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { Card } from '@/components/Card';
 import { useTheme } from '@/hooks/useTheme';
+import { useTranslation } from '@/hooks/useTranslation';
 import { useTaraweehTracker } from '@/hooks/useTaraweehTracker';
 import { Spacing, BorderRadius } from '@/constants/theme';
 import type { RootStackParamList } from '@/navigation/RootStackNavigator';
@@ -21,6 +22,7 @@ type LogTaraweehRouteProp = RouteProp<RootStackParamList, 'LogTaraweeh'>;
 export default function LogTaraweehScreen() {
   const insets = useSafeAreaInsets();
   const { isDark, theme } = useTheme();
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const route = useRoute<LogTaraweehRouteProp>();
   const { entries, logTaraweeh, deleteEntry } = useTaraweehTracker();
@@ -61,7 +63,7 @@ export default function LogTaraweehScreen() {
         <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
           <Feather name="arrow-left" size={24} color={theme.text} />
         </Pressable>
-        <ThemedText type="h2" style={styles.title}>{entry ? 'Edit' : 'Log'} Night {day}</ThemedText>
+        <ThemedText type="h2" style={styles.title}>{entry ? t('logTaraweeh.editTitle') : t('logTaraweeh.logTitle')} {t('logTaraweeh.night')} {day}</ThemedText>
         <View style={{ width: 24 }} />
       </View>
 
@@ -72,7 +74,7 @@ export default function LogTaraweehScreen() {
         keyboardDismissMode="interactive"
       >
         <Card elevation={2} style={styles.card} onPress={Keyboard.dismiss}>
-          <ThemedText type="body" style={styles.label}>Rakaat</ThemedText>
+          <ThemedText type="body" style={styles.label}>{t('logTaraweeh.rakaat')}</ThemedText>
           <View style={styles.selectionButtons}>
             <Pressable style={[styles.selectionButton, rakaat === 8 && { backgroundColor: accentColor }]} onPress={() => setRakaat(8)}>
               <ThemedText type="body" style={{ color: rakaat === 8 ? '#fff' : undefined }}>8 Rakaat</ThemedText>
@@ -82,24 +84,24 @@ export default function LogTaraweehScreen() {
             </Pressable>
           </View>
 
-          <ThemedText type="body" style={styles.label}>Location</ThemedText>
+          <ThemedText type="body" style={styles.label}>{t('logTaraweeh.location')}</ThemedText>
           <View style={styles.selectionButtons}>
             <Pressable style={[styles.selectionButton, location === 'mosque' && { backgroundColor: theme.primary }]} onPress={() => setLocation('mosque')}>
               <Feather name="map-pin" size={16} color={location === 'mosque' ? '#fff' : undefined} />
-              <ThemedText type="body" style={{ marginLeft: Spacing.xs, color: location === 'mosque' ? '#fff' : undefined }}>Mosque</ThemedText>
+              <ThemedText type="body" style={{ marginLeft: Spacing.xs, color: location === 'mosque' ? '#fff' : undefined }}>{t('logTaraweeh.mosque')}</ThemedText>
             </Pressable>
             <Pressable style={[styles.selectionButton, location === 'home' && { backgroundColor: accentColor }]} onPress={() => setLocation('home')}>
               <Feather name="home" size={16} color={location === 'home' ? '#fff' : undefined} />
-              <ThemedText type="body" style={{ marginLeft: Spacing.xs, color: location === 'home' ? '#fff' : undefined }}>Home</ThemedText>
+              <ThemedText type="body" style={{ marginLeft: Spacing.xs, color: location === 'home' ? '#fff' : undefined }}>{t('logTaraweeh.home')}</ThemedText>
             </Pressable>
           </View>
 
-          <ThemedText type="body" style={styles.label}>Notes (optional)</ThemedText>
+          <ThemedText type="body" style={styles.label}>{t('logTaraweeh.notesOptional')}</ThemedText>
           <TextInput
             style={[styles.notesInput, { backgroundColor: theme.backgroundSecondary, color: theme.text }]}
             value={notes}
             onChangeText={setNotes}
-            placeholder="Add any notes..."
+            placeholder={t('logTaraweeh.notesPlaceholder')}
             placeholderTextColor={theme.textSecondary}
             multiline
             blurOnSubmit={true}
@@ -110,12 +112,12 @@ export default function LogTaraweehScreen() {
             {entry && (
               <Pressable style={[styles.deleteButton, { borderColor: '#EF4444' }]} onPress={handleDelete}>
                 <Feather name="trash-2" size={16} color="#EF4444" />
-                <ThemedText type="body" style={{ color: '#EF4444', marginLeft: Spacing.xs }}>Delete</ThemedText>
+                <ThemedText type="body" style={{ color: '#EF4444', marginLeft: Spacing.xs }}>{t('logTaraweeh.delete')}</ThemedText>
               </Pressable>
             )}
             <Pressable style={[styles.saveButton, { backgroundColor: accentColor }]} onPress={handleSave}>
               <Feather name="check" size={16} color="#fff" />
-              <ThemedText type="body" style={{ color: '#fff', marginLeft: Spacing.xs }}>Save</ThemedText>
+              <ThemedText type="body" style={{ color: '#fff', marginLeft: Spacing.xs }}>{t('logTaraweeh.save')}</ThemedText>
             </Pressable>
           </View>
         </Card>

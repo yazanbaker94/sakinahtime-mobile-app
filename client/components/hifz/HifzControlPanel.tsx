@@ -18,6 +18,7 @@ import { Feather } from '@expo/vector-icons';
 import Animated, { SlideInDown, SlideOutDown } from 'react-native-reanimated';
 import { useHifzMode } from '../../contexts/HifzModeContext';
 import { useTheme } from '../../hooks/useTheme';
+import { useTranslation } from '../../hooks/useTranslation';
 import { ThemedText } from '../ThemedText';
 import { RepeatControls } from './RepeatControls';
 import { LoopRangeSelector } from './LoopRangeSelector';
@@ -53,6 +54,7 @@ export function HifzControlPanel({
 }: HifzControlPanelProps) {
   const insets = useSafeAreaInsets();
   const { isDark, theme } = useTheme();
+  const { t } = useTranslation();
   const {
     settings,
     setHideMode,
@@ -64,10 +66,10 @@ export function HifzControlPanel({
 
   const [activeTab, setActiveTab] = useState<'hide' | 'repeat' | 'loop' | 'progress'>('hide');
   const activeColor = theme.primary;
-  
+
   // Audio state for repeat progress
   const [audioState, setAudioState] = useState<any>(null);
-  
+
   useEffect(() => {
     const unsubscribe = AudioService.subscribe((state) => {
       setAudioState(state);
@@ -95,17 +97,17 @@ export function HifzControlPanel({
       console.log('[HifzControlPanel] Missing currentPage or onMarkPage');
       return;
     }
-    
+
     const isClear = status === 'not_started';
     Alert.alert(
-      isClear ? 'Clear Page Markings' : 'Mark Entire Page',
-      isClear 
-        ? `Are you sure you want to clear all memorization markings on page ${currentPage}?`
-        : `Are you sure you want to mark all verses on page ${currentPage} as "${status.replace('_', ' ')}"?`,
+      isClear ? t('hifzControls.clearPageMarkings') : t('hifzControls.markEntirePage'),
+      isClear
+        ? `${t('hifzControls.clearPageMarkings')} ${currentPage}?`
+        : `${t('hifzControls.markEntirePage')} ${currentPage} - "${status.replace('_', ' ')}"?`,
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('hifzControls.cancel'), style: 'cancel' },
         {
-          text: 'Confirm',
+          text: t('hifzControls.confirm'),
           style: isClear ? 'destructive' : 'default',
           onPress: () => {
             console.log('[HifzControlPanel] Confirm pressed, calling onMarkPage');
@@ -118,17 +120,17 @@ export function HifzControlPanel({
 
   const handleMarkJuzStatus = useCallback((status: MemorizationStatus) => {
     if (!currentJuz || !onMarkJuz) return;
-    
+
     const isClear = status === 'not_started';
     Alert.alert(
-      isClear ? 'Clear Juz Markings' : 'Mark Entire Juz',
+      isClear ? t('hifzControls.clearJuzMarkings') : t('hifzControls.markEntireJuz'),
       isClear
-        ? `Are you sure you want to clear all memorization markings in Juz ${currentJuz}? This will affect many verses.`
-        : `Are you sure you want to mark all verses in Juz ${currentJuz} as "${status.replace('_', ' ')}"? This will affect many verses.`,
+        ? `${t('hifzControls.clearJuzMarkings')} ${currentJuz}?`
+        : `${t('hifzControls.markEntireJuz')} ${currentJuz} - "${status.replace('_', ' ')}"?`,
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('hifzControls.cancel'), style: 'cancel' },
         {
-          text: 'Confirm',
+          text: t('hifzControls.confirm'),
           style: isClear ? 'destructive' : 'default',
           onPress: () => onMarkJuz(currentJuz, status),
         },
@@ -157,6 +159,8 @@ export function HifzControlPanel({
         color={activeTab === tab ? '#FFFFFF' : theme.text}
       />
       <ThemedText
+        numberOfLines={1}
+        adjustsFontSizeToFit
         style={[
           styles.tabText,
           { color: activeTab === tab ? '#FFFFFF' : theme.text },
@@ -200,7 +204,7 @@ export function HifzControlPanel({
       <View style={styles.overlay}>
         {/* Backdrop - tap to close */}
         <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
-        
+
         <Animated.View
           entering={SlideInDown.duration(300)}
           exiting={SlideOutDown.duration(200)}
@@ -219,7 +223,7 @@ export function HifzControlPanel({
 
           {/* Header */}
           <View style={styles.header}>
-            <ThemedText style={styles.title}>Hifz Controls</ThemedText>
+            <ThemedText style={styles.title}>{t('hifzControls.title')}</ThemedText>
             <TouchableOpacity onPress={onClose} style={styles.closeButton}>
               <Feather name="x" size={24} color={theme.text} />
             </TouchableOpacity>
@@ -227,10 +231,10 @@ export function HifzControlPanel({
 
           {/* Tabs */}
           <View style={styles.tabs}>
-            {renderTabButton('hide', 'Hide', 'eye-off')}
-            {renderTabButton('repeat', 'Repeat', 'repeat')}
-            {renderTabButton('loop', 'Loop', 'refresh-cw')}
-            {renderTabButton('progress', 'Progress', 'check-circle')}
+            {renderTabButton('hide', t('hifzControls.hideTab'), 'eye-off')}
+            {renderTabButton('repeat', t('hifzControls.repeatTab'), 'repeat')}
+            {renderTabButton('loop', t('hifzControls.loopTab'), 'refresh-cw')}
+            {renderTabButton('progress', t('hifzControls.progressTab'), 'check-circle')}
           </View>
 
           <ScrollView
@@ -239,256 +243,256 @@ export function HifzControlPanel({
             nestedScrollEnabled={true}
             keyboardShouldPersistTaps="handled"
           >
-              {/* Hide Tab */}
-              {activeTab === 'hide' && (
-                <View style={styles.tabContent}>
-                  {/* Hide Mode Selection */}
-                  <ThemedText style={styles.sectionTitle}>Hide Mode</ThemedText>
-                  {HIDE_MODE_OPTIONS.map(option => (
-                    <TouchableOpacity
-                      key={option.value}
-                      onPress={() => setHideMode(option.value)}
-                      style={[
-                        styles.modeOption,
-                        {
-                          backgroundColor: settings.hideMode === option.value ? `${activeColor}20` : theme.cardBackground,
-                          borderColor: settings.hideMode === option.value ? activeColor : theme.border,
-                        },
-                      ]}
-                    >
-                      <View style={styles.modeOptionContent}>
-                        <ThemedText style={styles.modeLabel}>{option.label}</ThemedText>
-                        <ThemedText style={[styles.modeDescription, { color: theme.textSecondary }]}>
-                          {option.description}
-                        </ThemedText>
-                      </View>
-                      {settings.hideMode === option.value && (
-                        <Feather name="check" size={20} color={activeColor} />
-                      )}
-                    </TouchableOpacity>
-                  ))}
-
-                  {/* Word Audio Toggle - only show in word-by-word mode */}
-                  {settings.hideMode === 'word' && (
-                    <TouchableOpacity
-                      onPress={() => updateSettings({ playWordAudioOnReveal: !settings.playWordAudioOnReveal })}
-                      style={[
-                        styles.modeOption,
-                        {
-                          backgroundColor: settings.playWordAudioOnReveal ? `${activeColor}20` : theme.cardBackground,
-                          borderColor: settings.playWordAudioOnReveal ? activeColor : theme.border,
-                          marginTop: 4,
-                        },
-                      ]}
-                    >
-                      <View style={styles.modeOptionContent}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                          <ThemedText style={styles.modeLabel}>🔊 Word Audio</ThemedText>
-                          <View style={{ backgroundColor: theme.textSecondary + '30', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 }}>
-                            <ThemedText style={{ fontSize: 10, color: theme.textSecondary }}>requires internet</ThemedText>
-                          </View>
-                        </View>
-                        <ThemedText style={[styles.modeDescription, { color: theme.textSecondary }]}>
-                          Play pronunciation when revealing a word
-                        </ThemedText>
-                      </View>
-                      <View style={{ 
-                        width: 24, 
-                        height: 24, 
-                        borderRadius: 6, 
-                        backgroundColor: settings.playWordAudioOnReveal ? activeColor : 'transparent', 
-                        borderWidth: 2, 
-                        borderColor: settings.playWordAudioOnReveal ? activeColor : theme.border,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}>
-                        {settings.playWordAudioOnReveal && <Feather name="check" size={14} color="#FFFFFF" />}
-                      </View>
-                    </TouchableOpacity>
-                  )}
-
-                  {/* Quick Actions */}
-                  <ThemedText style={[styles.sectionTitle, { marginTop: 20 }]}>Quick Actions</ThemedText>
-                  <View style={styles.quickActions}>
-                    <TouchableOpacity
-                      onPress={revealAll}
-                      style={[styles.actionButton, { backgroundColor: theme.cardBackground, borderColor: theme.border }]}
-                    >
-                      <Feather name="eye" size={18} color={theme.text} />
-                      <ThemedText style={styles.actionText}>Reveal All</ThemedText>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={hideAll}
-                      style={[styles.actionButton, { backgroundColor: theme.cardBackground, borderColor: theme.border }]}
-                    >
-                      <Feather name="eye-off" size={18} color={theme.text} />
-                      <ThemedText style={styles.actionText}>
-                        Hide All
+            {/* Hide Tab */}
+            {activeTab === 'hide' && (
+              <View style={styles.tabContent}>
+                {/* Hide Mode Selection */}
+                <ThemedText style={styles.sectionTitle}>{t('hifzControls.hideMode')}</ThemedText>
+                {HIDE_MODE_OPTIONS.map(option => (
+                  <TouchableOpacity
+                    key={option.value}
+                    onPress={() => setHideMode(option.value)}
+                    style={[
+                      styles.modeOption,
+                      {
+                        backgroundColor: settings.hideMode === option.value ? `${activeColor}20` : theme.cardBackground,
+                        borderColor: settings.hideMode === option.value ? activeColor : theme.border,
+                      },
+                    ]}
+                  >
+                    <View style={styles.modeOptionContent}>
+                      <ThemedText style={styles.modeLabel}>{option.labelKey ? t(option.labelKey) : option.label}</ThemedText>
+                      <ThemedText style={[styles.modeDescription, { color: theme.textSecondary }]}>
+                        {option.descriptionKey ? t(option.descriptionKey) : option.description}
                       </ThemedText>
-                    </TouchableOpacity>
-                  </View>
-
-                  {/* Auto Hide Delay */}
-                  <ThemedText style={[styles.sectionTitle, { marginTop: 20 }]}>
-                    Auto-Hide Delay
-                  </ThemedText>
-                  <ThemedText style={[styles.modeDescription, { color: theme.textSecondary, marginBottom: 12 }]}>
-                    Automatically hide after revealing
-                  </ThemedText>
-                  <View style={styles.delayOptions}>
-                    {AUTO_HIDE_DELAY_OPTIONS.map(option =>
-                      renderAutoHideOption(option.value, option.label)
+                    </View>
+                    {settings.hideMode === option.value && (
+                      <Feather name="check" size={20} color={activeColor} />
                     )}
-                  </View>
-                </View>
-              )}
+                  </TouchableOpacity>
+                ))}
 
-              {/* Repeat Tab */}
-              {activeTab === 'repeat' && (
-                <RepeatControls 
-                  isRepeating={audioState?.isRepeating}
-                  currentRepeat={audioState?.currentRepeat}
-                  totalRepeats={audioState?.totalRepeats}
-                  onStop={handleStopRepeat}
-                />
-              )}
-
-              {/* Loop Tab */}
-              {activeTab === 'loop' && (
-                <View style={styles.tabContent}>
-                  <LoopRangeSelector
-                    currentVerseKey={currentVerseKey}
-                    currentPage={currentPage}
-                    currentJuz={currentJuz}
-                  />
-                  <View style={{ marginTop: 16 }}>
-                    <SavedLoopsList />
-                  </View>
-                </View>
-              )}
-
-              {/* Progress Tab */}
-              {activeTab === 'progress' && (
-                <View style={styles.tabContent}>
-                  <ThemedText style={styles.sectionTitle}>Mark Current Verse</ThemedText>
-                  
-                  {currentVerseKey ? (
-                    <>
-                      <ThemedText style={[styles.verseKeyText, { color: theme.textSecondary }]}>
-                        Verse: {currentVerseKey}
-                      </ThemedText>
-                      
-                      <View style={styles.statusButtons}>
-                        <TouchableOpacity
-                          onPress={() => handleMarkStatus('not_started')}
-                          style={[styles.statusButton, { backgroundColor: theme.cardBackground, borderColor: theme.border }]}
-                        >
-                          <MemorizationBadge status="not_started" size="large" />
-                          <ThemedText style={styles.statusText}>Not Started</ThemedText>
-                        </TouchableOpacity>
-                        
-                        <TouchableOpacity
-                          onPress={() => handleMarkStatus('in_progress')}
-                          style={[styles.statusButton, { backgroundColor: theme.cardBackground, borderColor: '#F59E0B' }]}
-                        >
-                          <MemorizationBadge status="in_progress" size="large" />
-                          <ThemedText style={styles.statusText}>In Progress</ThemedText>
-                        </TouchableOpacity>
-                        
-                        <TouchableOpacity
-                          onPress={() => handleMarkStatus('memorized')}
-                          style={[styles.statusButton, { backgroundColor: theme.cardBackground, borderColor: theme.primary }]}
-                        >
-                          <MemorizationBadge status="memorized" size="large" />
-                          <ThemedText style={styles.statusText}>Memorized</ThemedText>
-                        </TouchableOpacity>
+                {/* Word Audio Toggle - only show in word-by-word mode */}
+                {settings.hideMode === 'word' && (
+                  <TouchableOpacity
+                    onPress={() => updateSettings({ playWordAudioOnReveal: !settings.playWordAudioOnReveal })}
+                    style={[
+                      styles.modeOption,
+                      {
+                        backgroundColor: settings.playWordAudioOnReveal ? `${activeColor}20` : theme.cardBackground,
+                        borderColor: settings.playWordAudioOnReveal ? activeColor : theme.border,
+                        marginTop: 4,
+                      },
+                    ]}
+                  >
+                    <View style={styles.modeOptionContent}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                        <ThemedText style={styles.modeLabel}>🔊 {t('hifzControls.wordAudio')}</ThemedText>
+                        <View style={{ backgroundColor: theme.textSecondary + '30', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 }}>
+                          <ThemedText style={{ fontSize: 10, color: theme.textSecondary }}>{t('hifzControls.requiresInternet')}</ThemedText>
+                        </View>
                       </View>
-                    </>
-                  ) : (
-                    <ThemedText style={[styles.noVerseText, { color: theme.textSecondary }]}>
-                      Long press on a verse to mark its memorization status
-                    </ThemedText>
-                  )}
+                      <ThemedText style={[styles.modeDescription, { color: theme.textSecondary }]}>
+                        {t('hifzControls.playPronunciation')}
+                      </ThemedText>
+                    </View>
+                    <View style={{
+                      width: 24,
+                      height: 24,
+                      borderRadius: 6,
+                      backgroundColor: settings.playWordAudioOnReveal ? activeColor : 'transparent',
+                      borderWidth: 2,
+                      borderColor: settings.playWordAudioOnReveal ? activeColor : theme.border,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}>
+                      {settings.playWordAudioOnReveal && <Feather name="check" size={14} color="#FFFFFF" />}
+                    </View>
+                  </TouchableOpacity>
+                )}
 
-                  {/* Bulk Marking Section */}
-                  {(currentPage || currentJuz) && (
-                    <>
-                      <View style={[styles.divider, { backgroundColor: theme.border, marginVertical: 20 }]} />
-                      
-                      <ThemedText style={styles.sectionTitle}>Bulk Marking</ThemedText>
-                      
-                      {currentPage && onMarkPage && (
-                        <View style={styles.bulkSection}>
-                          <ThemedText style={[styles.bulkLabel, { color: theme.textSecondary }]}>
-                            Page {currentPage}
-                          </ThemedText>
-                          <View style={styles.bulkButtons}>
-                            <TouchableOpacity
-                              onPress={() => handleMarkPageStatus('in_progress')}
-                              style={[styles.bulkButton, { backgroundColor: '#F59E0B20', borderColor: '#F59E0B' }]}
-                            >
-                              <ThemedText style={[styles.bulkButtonText, { color: '#F59E0B' }]}>
-                                In Progress
-                              </ThemedText>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                              onPress={() => handleMarkPageStatus('memorized')}
-                              style={[styles.bulkButton, { backgroundColor: `${theme.primary}20`, borderColor: theme.primary }]}
-                            >
-                              <ThemedText style={[styles.bulkButtonText, { color: theme.primary }]}>
-                                Memorized
-                              </ThemedText>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                              onPress={() => handleMarkPageStatus('not_started')}
-                              style={[styles.bulkButton, { backgroundColor: '#EF444420', borderColor: '#EF4444' }]}
-                            >
-                              <ThemedText style={[styles.bulkButtonText, { color: '#EF4444' }]}>
-                                Clear
-                              </ThemedText>
-                            </TouchableOpacity>
-                          </View>
-                        </View>
-                      )}
-                      
-                      {currentJuz && onMarkJuz && (
-                        <View style={styles.bulkSection}>
-                          <ThemedText style={[styles.bulkLabel, { color: theme.textSecondary }]}>
-                            Juz {currentJuz}
-                          </ThemedText>
-                          <View style={styles.bulkButtons}>
-                            <TouchableOpacity
-                              onPress={() => handleMarkJuzStatus('in_progress')}
-                              style={[styles.bulkButton, { backgroundColor: '#F59E0B20', borderColor: '#F59E0B' }]}
-                            >
-                              <ThemedText style={[styles.bulkButtonText, { color: '#F59E0B' }]}>
-                                In Progress
-                              </ThemedText>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                              onPress={() => handleMarkJuzStatus('memorized')}
-                              style={[styles.bulkButton, { backgroundColor: `${theme.primary}20`, borderColor: theme.primary }]}
-                            >
-                              <ThemedText style={[styles.bulkButtonText, { color: theme.primary }]}>
-                                Memorized
-                              </ThemedText>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                              onPress={() => handleMarkJuzStatus('not_started')}
-                              style={[styles.bulkButton, { backgroundColor: '#EF444420', borderColor: '#EF4444' }]}
-                            >
-                              <ThemedText style={[styles.bulkButtonText, { color: '#EF4444' }]}>
-                                Clear
-                              </ThemedText>
-                            </TouchableOpacity>
-                          </View>
-                        </View>
-                      )}
-                    </>
+                {/* Quick Actions */}
+                <ThemedText style={[styles.sectionTitle, { marginTop: 20 }]}>{t('hifzControls.quickActions')}</ThemedText>
+                <View style={styles.quickActions}>
+                  <TouchableOpacity
+                    onPress={revealAll}
+                    style={[styles.actionButton, { backgroundColor: theme.cardBackground, borderColor: theme.border }]}
+                  >
+                    <Feather name="eye" size={18} color={theme.text} />
+                    <ThemedText style={styles.actionText}>{t('hifzControls.revealAll')}</ThemedText>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={hideAll}
+                    style={[styles.actionButton, { backgroundColor: theme.cardBackground, borderColor: theme.border }]}
+                  >
+                    <Feather name="eye-off" size={18} color={theme.text} />
+                    <ThemedText style={styles.actionText}>
+                      {t('hifzControls.hideAll')}
+                    </ThemedText>
+                  </TouchableOpacity>
+                </View>
+
+                {/* Auto Hide Delay */}
+                <ThemedText style={[styles.sectionTitle, { marginTop: 20 }]}>
+                  {t('hifzControls.autoHideDelay')}
+                </ThemedText>
+                <ThemedText style={[styles.modeDescription, { color: theme.textSecondary, marginBottom: 12 }]}>
+                  {t('hifzControls.autoHideAfter')}
+                </ThemedText>
+                <View style={styles.delayOptions}>
+                  {AUTO_HIDE_DELAY_OPTIONS.map(option =>
+                    renderAutoHideOption(option.value, option.labelKey ? t(option.labelKey) : option.label)
                   )}
                 </View>
-              )}
-            </ScrollView>
+              </View>
+            )}
+
+            {/* Repeat Tab */}
+            {activeTab === 'repeat' && (
+              <RepeatControls
+                isRepeating={audioState?.isRepeating}
+                currentRepeat={audioState?.currentRepeat}
+                totalRepeats={audioState?.totalRepeats}
+                onStop={handleStopRepeat}
+              />
+            )}
+
+            {/* Loop Tab */}
+            {activeTab === 'loop' && (
+              <View style={styles.tabContent}>
+                <LoopRangeSelector
+                  currentVerseKey={currentVerseKey}
+                  currentPage={currentPage}
+                  currentJuz={currentJuz}
+                />
+                <View style={{ marginTop: 16 }}>
+                  <SavedLoopsList />
+                </View>
+              </View>
+            )}
+
+            {/* Progress Tab */}
+            {activeTab === 'progress' && (
+              <View style={styles.tabContent}>
+                <ThemedText style={styles.sectionTitle}>{t('hifzControls.markCurrentVerse')}</ThemedText>
+
+                {currentVerseKey ? (
+                  <>
+                    <ThemedText style={[styles.verseKeyText, { color: theme.textSecondary }]}>
+                      {t('hifzControls.verse')}: {currentVerseKey}
+                    </ThemedText>
+
+                    <View style={styles.statusButtons}>
+                      <TouchableOpacity
+                        onPress={() => handleMarkStatus('not_started')}
+                        style={[styles.statusButton, { backgroundColor: theme.cardBackground, borderColor: theme.border }]}
+                      >
+                        <MemorizationBadge status="not_started" size="large" />
+                        <ThemedText style={styles.statusText}>{t('hifzControls.notStarted')}</ThemedText>
+                      </TouchableOpacity>
+
+                      <TouchableOpacity
+                        onPress={() => handleMarkStatus('in_progress')}
+                        style={[styles.statusButton, { backgroundColor: theme.cardBackground, borderColor: '#F59E0B' }]}
+                      >
+                        <MemorizationBadge status="in_progress" size="large" />
+                        <ThemedText style={styles.statusText}>{t('hifzControls.inProgress')}</ThemedText>
+                      </TouchableOpacity>
+
+                      <TouchableOpacity
+                        onPress={() => handleMarkStatus('memorized')}
+                        style={[styles.statusButton, { backgroundColor: theme.cardBackground, borderColor: theme.primary }]}
+                      >
+                        <MemorizationBadge status="memorized" size="large" />
+                        <ThemedText style={styles.statusText}>{t('hifzControls.memorized')}</ThemedText>
+                      </TouchableOpacity>
+                    </View>
+                  </>
+                ) : (
+                  <ThemedText style={[styles.noVerseText, { color: theme.textSecondary }]}>
+                    {t('hifzControls.longPressToMark')}
+                  </ThemedText>
+                )}
+
+                {/* Bulk Marking Section */}
+                {(currentPage || currentJuz) && (
+                  <>
+                    <View style={[styles.divider, { backgroundColor: theme.border, marginVertical: 20 }]} />
+
+                    <ThemedText style={styles.sectionTitle}>{t('hifzControls.bulkMarking')}</ThemedText>
+
+                    {currentPage && onMarkPage && (
+                      <View style={styles.bulkSection}>
+                        <ThemedText style={[styles.bulkLabel, { color: theme.textSecondary }]}>
+                          {t('hifzControls.page')} {currentPage}
+                        </ThemedText>
+                        <View style={styles.bulkButtons}>
+                          <TouchableOpacity
+                            onPress={() => handleMarkPageStatus('in_progress')}
+                            style={[styles.bulkButton, { backgroundColor: '#F59E0B20', borderColor: '#F59E0B' }]}
+                          >
+                            <ThemedText style={[styles.bulkButtonText, { color: '#F59E0B' }]}>
+                              {t('hifzControls.inProgress')}
+                            </ThemedText>
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            onPress={() => handleMarkPageStatus('memorized')}
+                            style={[styles.bulkButton, { backgroundColor: `${theme.primary}20`, borderColor: theme.primary }]}
+                          >
+                            <ThemedText style={[styles.bulkButtonText, { color: theme.primary }]}>
+                              {t('hifzControls.memorized')}
+                            </ThemedText>
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            onPress={() => handleMarkPageStatus('not_started')}
+                            style={[styles.bulkButton, { backgroundColor: '#EF444420', borderColor: '#EF4444' }]}
+                          >
+                            <ThemedText style={[styles.bulkButtonText, { color: '#EF4444' }]}>
+                              {t('hifzControls.clear')}
+                            </ThemedText>
+                          </TouchableOpacity>
+                        </View>
+                      </View>
+                    )}
+
+                    {currentJuz && onMarkJuz && (
+                      <View style={styles.bulkSection}>
+                        <ThemedText style={[styles.bulkLabel, { color: theme.textSecondary }]}>
+                          {t('hifzControls.juz')} {currentJuz}
+                        </ThemedText>
+                        <View style={styles.bulkButtons}>
+                          <TouchableOpacity
+                            onPress={() => handleMarkJuzStatus('in_progress')}
+                            style={[styles.bulkButton, { backgroundColor: '#F59E0B20', borderColor: '#F59E0B' }]}
+                          >
+                            <ThemedText style={[styles.bulkButtonText, { color: '#F59E0B' }]}>
+                              {t('hifzControls.inProgress')}
+                            </ThemedText>
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            onPress={() => handleMarkJuzStatus('memorized')}
+                            style={[styles.bulkButton, { backgroundColor: `${theme.primary}20`, borderColor: theme.primary }]}
+                          >
+                            <ThemedText style={[styles.bulkButtonText, { color: theme.primary }]}>
+                              {t('hifzControls.memorized')}
+                            </ThemedText>
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            onPress={() => handleMarkJuzStatus('not_started')}
+                            style={[styles.bulkButton, { backgroundColor: '#EF444420', borderColor: '#EF4444' }]}
+                          >
+                            <ThemedText style={[styles.bulkButtonText, { color: '#EF4444' }]}>
+                              {t('hifzControls.clear')}
+                            </ThemedText>
+                          </TouchableOpacity>
+                        </View>
+                      </View>
+                    )}
+                  </>
+                )}
+              </View>
+            )}
+          </ScrollView>
         </Animated.View>
       </View>
     </Modal>
@@ -541,14 +545,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 10,
-    paddingHorizontal: 8,
+    paddingHorizontal: 6,
     borderRadius: 12,
     borderWidth: 1,
-    gap: 4,
+    gap: 3,
+    minWidth: 0,
   },
   tabText: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '600',
+    flexShrink: 1,
   },
   content: {
     maxHeight: 400,
@@ -610,10 +616,12 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     gap: 8,
+    minWidth: 0,
   },
   actionText: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '600',
+    flexShrink: 1,
   },
   verseKeyText: {
     fontSize: 14,
@@ -652,6 +660,7 @@ const styles = StyleSheet.create({
   },
   bulkButtons: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 10,
   },
   bulkButton: {
@@ -662,8 +671,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   bulkButtonText: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '600',
+    textAlign: 'center',
   },
 });
 

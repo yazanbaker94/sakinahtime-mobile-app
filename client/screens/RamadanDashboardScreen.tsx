@@ -20,6 +20,7 @@ import {
   CharityCard,
 } from '@/components/ramadan';
 import { useTheme } from '@/hooks/useTheme';
+import { useTranslation } from '@/hooks/useTranslation';
 import { useRamadan } from '@/contexts/RamadanContext';
 import { Spacing } from '@/constants/theme';
 import { RootStackParamList } from '@/navigation/RootStackNavigator';
@@ -29,6 +30,7 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 export default function RamadanDashboardScreen() {
   const insets = useSafeAreaInsets();
   const { isDark, theme } = useTheme();
+  const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const { isRamadan } = useRamadan();
 
@@ -39,13 +41,13 @@ export default function RamadanDashboardScreen() {
         <View style={[styles.notRamadanContainer, { paddingTop: insets.top + Spacing.xl }]}>
           <Feather name="moon" size={64} color={isDark ? '#6B7280' : '#9CA3AF'} />
           <ThemedText type="h3" style={styles.notRamadanTitle}>
-            Ramadan Mode
+            {t('ramadan.ramadanMode')}
           </ThemedText>
           <ThemedText type="body" secondary style={styles.notRamadanText}>
-            Ramadan Mode will automatically activate during the blessed month of Ramadan.
+            {t('ramadan.activateMessage')}
           </ThemedText>
           <ThemedText type="small" secondary style={styles.notRamadanSubtext}>
-            Check back when Ramadan begins to access Suhoor/Iftar times, Quran reading schedules, Taraweeh tracking, and more.
+            {t('ramadan.checkBackMessage')}
           </ThemedText>
           <Pressable
             style={[styles.backButton, { backgroundColor: theme.primary }]}
@@ -53,7 +55,7 @@ export default function RamadanDashboardScreen() {
           >
             <Feather name="arrow-left" size={16} color="#fff" />
             <ThemedText type="body" style={{ color: '#fff', marginLeft: Spacing.xs }}>
-              Go Back
+              {t('common.goBack')}
             </ThemedText>
           </Pressable>
         </View>
@@ -63,9 +65,9 @@ export default function RamadanDashboardScreen() {
 
   const handleOpenMushaf = (page: number) => {
     // Navigate directly to the specific page in QuranTab
-    navigation.navigate('Main', { 
-      screen: 'QuranTab', 
-      params: { page } 
+    navigation.navigate('Main', {
+      screen: 'QuranTab',
+      params: { page }
     } as any);
   };
 
@@ -98,7 +100,7 @@ export default function RamadanDashboardScreen() {
           <Pressable onPress={() => navigation.goBack()} style={styles.backButtonSmall}>
             <Feather name="arrow-left" size={24} color={theme.text} />
           </Pressable>
-          <ThemedText type="h2" style={styles.title}>Ramadan</ThemedText>
+          <ThemedText type="h2" style={styles.title}>{t('ramadan.title')}</ThemedText>
           <View style={{ width: 24 }} />
         </View>
 
@@ -113,7 +115,7 @@ export default function RamadanDashboardScreen() {
 
         {/* Quran Progress Card */}
         <View style={styles.cardWrapper}>
-          <QuranProgressCard 
+          <QuranProgressCard
             onPress={handleNavigateToQuranSchedule}
             onOpenMushaf={handleOpenMushaf}
           />
@@ -126,7 +128,7 @@ export default function RamadanDashboardScreen() {
 
         {/* Charity Card */}
         <View style={styles.cardWrapper}>
-          <CharityCard 
+          <CharityCard
             onPress={handleNavigateToCharity}
             onAddEntry={handleNavigateToCharity}
           />

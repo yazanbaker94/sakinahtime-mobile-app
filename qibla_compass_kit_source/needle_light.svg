@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-155 -155 310 310" width="310" height="310">
+  <defs>
+    <linearGradient id="nd-gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#d4a030"/>
+      <stop offset="50%" stop-color="#c49228"/>
+      <stop offset="100%" stop-color="#a07820"/>
+    </linearGradient>
+    <linearGradient id="nd-tail" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#b8c4be"/>
+      <stop offset="100%" stop-color="#95a89c"/>
+    </linearGradient>
+    <filter id="nd-shadow">
+      <feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.15"/>
+    </filter>
+    <filter id="nd-glow">
+      <feGaussianBlur stdDeviation="1.5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <g filter="url(#nd-shadow)">
+    <!-- North half (gold) -->
+    <polygon points="0,-85 -5.5,0 0,-6 5.5,0" fill="url(#nd-gold)" filter="url(#nd-glow)"/>
+
+    <!-- South half (silver-green tail) -->
+    <polygon points="-5.5,0 0,28 5.5,0 0,-6" fill="url(#nd-tail)" opacity="0.8"/>
+
+    <!-- Center cap -->
+    <circle cx="0" cy="0" r="7" fill="#ffffff" stroke="#c49228" stroke-width="1.5"/>
+    <circle cx="0" cy="0" r="3" fill="#c49228"/>
+  </g>
+</svg>

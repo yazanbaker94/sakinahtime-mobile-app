@@ -13,6 +13,7 @@ import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
+import { useTranslation } from '@/hooks/useTranslation';
 import { Spacing, BorderRadius } from '@/constants/theme';
 import { useCustomDuas } from '@/hooks/useCustomDuas';
 import type { RootStackParamList } from '@/navigation/RootStackNavigator';
@@ -24,6 +25,7 @@ export function CustomDuaFormScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const route = useRoute<CustomDuaFormRouteProp>();
   const { isDark, theme } = useTheme();
+  const { t } = useTranslation();
 
   const { duaId } = route.params || {};
   const isEditing = !!duaId;
@@ -70,7 +72,7 @@ export function CustomDuaFormScreen() {
       }
       navigation.goBack();
     } catch (error) {
-      Alert.alert('Error', 'Failed to save dua. Please try again.');
+      Alert.alert(t('common.error'), t('customDuaForm.saveFailed'));
     } finally {
       setIsSaving(false);
     }
@@ -80,19 +82,19 @@ export function CustomDuaFormScreen() {
     if (!duaId) return;
 
     Alert.alert(
-      'Delete Dua',
-      'Are you sure you want to delete this dua? This action cannot be undone.',
+      t('duaCollection.deleteDua'),
+      t('customDuaForm.deleteConfirm'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Delete',
+          text: t('common.delete'),
           style: 'destructive',
           onPress: async () => {
             try {
               await deleteCustomDua(duaId);
               navigation.goBack();
             } catch (error) {
-              Alert.alert('Error', 'Failed to delete dua. Please try again.');
+              Alert.alert(t('common.error'), t('customDuaForm.deleteFailed'));
             }
           },
         },
@@ -116,7 +118,7 @@ export function CustomDuaFormScreen() {
           <Feather name="x" size={24} color={theme.text} />
         </Pressable>
         <ThemedText type="h3" style={{ flex: 1 }}>
-          {isEditing ? 'Edit Dua' : 'Add Custom Dua'}
+          {isEditing ? t('customDuaForm.editDua') : t('customDuaForm.addCustomDua')}
         </ThemedText>
         <Pressable
           onPress={handleSave}
@@ -130,7 +132,7 @@ export function CustomDuaFormScreen() {
           ]}
         >
           <ThemedText type="small" style={{ color: '#fff', fontWeight: '600' }}>
-            {isSaving ? 'Saving...' : 'Save'}
+            {isSaving ? t('customDuaForm.saving') : t('common.save')}
           </ThemedText>
         </Pressable>
       </View>
@@ -147,7 +149,7 @@ export function CustomDuaFormScreen() {
           {/* Arabic Text */}
           <View style={styles.fieldContainer}>
             <ThemedText type="small" style={styles.label}>
-              Arabic Text <ThemedText type="caption" secondary>(Optional)</ThemedText>
+              {t('customDuaForm.arabicText')} <ThemedText type="caption" secondary>({t('customDuaForm.optional')})</ThemedText>
             </ThemedText>
             <TextInput
               style={[inputStyle, styles.arabicInput, { fontFamily: 'AlMushafQuran', textAlign: 'right' }]}
@@ -163,13 +165,13 @@ export function CustomDuaFormScreen() {
           {/* Transliteration */}
           <View style={styles.fieldContainer}>
             <ThemedText type="small" style={styles.label}>
-              Transliteration <ThemedText type="caption" secondary>(Optional)</ThemedText>
+              {t('customDuaForm.transliteration')} <ThemedText type="caption" secondary>({t('customDuaForm.optional')})</ThemedText>
             </ThemedText>
             <TextInput
               style={inputStyle}
               value={transliteration}
               onChangeText={setTransliteration}
-              placeholder="Enter transliteration (e.g., Allahumma...)"
+              placeholder={t('customDuaForm.transliterationPlaceholder')}
               placeholderTextColor={theme.textSecondary}
               multiline
               numberOfLines={2}
@@ -179,13 +181,13 @@ export function CustomDuaFormScreen() {
           {/* Translation - Required */}
           <View style={styles.fieldContainer}>
             <ThemedText type="small" style={styles.label}>
-              Translation / Meaning <ThemedText type="caption" secondary>(Optional)</ThemedText>
+              {t('customDuaForm.translationMeaning')} <ThemedText type="caption" secondary>({t('customDuaForm.optional')})</ThemedText>
             </ThemedText>
             <TextInput
               style={[inputStyle, styles.translationInput]}
               value={translation}
               onChangeText={setTranslation}
-              placeholder="Enter the meaning or translation"
+              placeholder={t('customDuaForm.translationPlaceholder')}
               placeholderTextColor={theme.textSecondary}
               multiline
               numberOfLines={4}
@@ -195,13 +197,13 @@ export function CustomDuaFormScreen() {
           {/* Personal Notes */}
           <View style={styles.fieldContainer}>
             <ThemedText type="small" style={styles.label}>
-              Personal Notes <ThemedText type="caption" secondary>(Optional)</ThemedText>
+              {t('customDuaForm.personalNotes')} <ThemedText type="caption" secondary>({t('customDuaForm.optional')})</ThemedText>
             </ThemedText>
             <TextInput
               style={[inputStyle, styles.notesInput]}
               value={notes}
               onChangeText={setNotes}
-              placeholder="Add any personal notes or reminders"
+              placeholder={t('customDuaForm.notesPlaceholder')}
               placeholderTextColor={theme.textSecondary}
               multiline
               numberOfLines={3}
@@ -222,7 +224,7 @@ export function CustomDuaFormScreen() {
             >
               <Feather name="trash-2" size={18} color="#EF4444" />
               <ThemedText type="body" style={{ color: '#EF4444', marginLeft: Spacing.sm }}>
-                Delete This Dua
+                {t('customDuaForm.deleteThisDua')}
               </ThemedText>
             </Pressable>
           )}

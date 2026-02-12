@@ -7,6 +7,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
+import { useTranslation } from '../hooks/useTranslation';
 import { EventWithDate, islamicEventsService } from '../services/IslamicEventsService';
 
 interface UpcomingEventsListProps {
@@ -15,21 +16,42 @@ interface UpcomingEventsListProps {
   showDescriptions?: boolean;
 }
 
-function EventItem({ event, showDescription, isDark, theme }: { event: EventWithDate; showDescription: boolean; isDark: boolean; theme: any }) {
-  const countdownText = islamicEventsService.getCountdownText(event.daysUntil);
+function EventItem({ event, showDescription, isDark, theme, locale, t }: { event: EventWithDate; showDescription: boolean; isDark: boolean; theme: any; locale: string; t: (key: string, opts?: any) => string }) {
+  const isArabic = locale === 'ar';
+
+  // Locale-aware countdown text
+  const getCountdownTextLocale = (daysUntil: number): string => {
+    if (daysUntil === 0) return t('countdown.today');
+    if (daysUntil === 1) return t('countdown.tomorrow');
+    if (daysUntil < 7) return t('countdown.inDays', { count: daysUntil });
+    if (daysUntil < 30) {
+      const weeks = Math.floor(daysUntil / 7);
+      return t(weeks > 1 ? 'countdown.inWeeks' : 'countdown.inWeek', { count: weeks });
+    }
+    const months = Math.floor(daysUntil / 30);
+    return t(months > 1 ? 'countdown.inMonths' : 'countdown.inMonth', { count: months });
+  };
+
+  const countdownText = getCountdownTextLocale(event.daysUntil);
   const isToday = event.daysUntil === 0;
   const isTomorrow = event.daysUntil === 1;
-  
+
+  // Map app locale to BCP 47 locale tag for date formatting
+  const dateLocaleMap: Record<string, string> = {
+    en: 'en-US', ar: 'ar-SA', fr: 'fr-FR', de: 'de-DE', ru: 'ru-RU', zh: 'zh-CN',
+  };
+  const dateLocale = dateLocaleMap[locale] || 'en-US';
+
   return (
     <View style={[
-      styles.eventItem, 
+      styles.eventItem,
       isToday && { backgroundColor: `${theme.primary}15`, marginHorizontal: -8, paddingHorizontal: 8, borderRadius: 8 }
     ]}>
       <View style={[styles.indicator, { backgroundColor: event.color || theme.gold }]} />
       <View style={styles.eventContent}>
         <View style={styles.eventHeader}>
           <Text style={[styles.eventName, { color: isToday ? theme.primary : theme.text }]}>
-            {event.nameEn}
+            {t(`islamicEvents.${event.id}`) || (isArabic ? event.nameAr : event.nameEn)}
           </Text>
           <Text style={[
             styles.countdown,
@@ -41,12 +63,12 @@ function EventItem({ event, showDescription, isDark, theme }: { event: EventWith
           </Text>
         </View>
         <Text style={[styles.eventDate, { color: theme.textSecondary }]}>
-          {event.hijriDate.day} {event.hijriDate.monthNameEn} • {' '}
-          {event.gregorianDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+          {event.hijriDate.day} {isArabic ? event.hijriDate.monthNameAr : event.hijriDate.monthNameEn} • {' '}
+          {event.gregorianDate.toLocaleDateString(dateLocale, { month: 'short', day: 'numeric' })}
         </Text>
         {showDescription && event.description && (
           <Text style={[styles.description, { color: theme.textSecondary }]} numberOfLines={2}>
-            {event.description}
+            {t(`islamicEvents.${event.id}_desc`) || (isArabic ? event.descriptionAr : event.description)}
           </Text>
         )}
       </View>
@@ -60,24 +82,32 @@ export function UpcomingEventsList({
   showDescriptions = true,
 }: UpcomingEventsListProps) {
   const { isDark, theme } = useTheme();
+  const { t, locale } = useTranslation();
   const displayEvents = events.slice(0, limit);
-  
+
   if (displayEvents.length === 0) {
     return (
       <View style={[styles.emptyContainer, { backgroundColor: theme.cardBackground }]}>
-        <Text style={[styles.emptyText, { color: theme.textSecondary }]}>No upcoming events</Text>
+        <Text style={[styles.emptyText, { color: theme.textSecondary }]}>{t('upcomingEvents.noEvents')}</Text>
       </View>
     );
   }
-  
+
   return (
     <View style={[styles.container, { backgroundColor: theme.cardBackground }]}>
-      <Text style={[styles.title, { color: theme.text }]}>Upcoming Events</Text>
+      <Text style={[styles.title, { color: theme.text }]}>{t('upcomingEvents.title')}</Text>
       <FlatList
         data={displayEvents}
         keyExtractor={(item) => `${item.id}-${item.hijriDate.year}`}
         renderItem={({ item }) => (
-          <EventItem event={item} showDescription={showDescriptions} isDark={isDark} theme={theme} />
+          <EventItem
+            event={item}
+            showDescription={showDescriptions}
+            isDark={isDark}
+            theme={theme}
+            locale={locale}
+            t={t}
+          />
         )}
         scrollEnabled={false}
         ItemSeparatorComponent={() => <View style={[styles.separator, { backgroundColor: theme.border }]} />}

@@ -12,6 +12,7 @@ import {
 import { Feather } from '@expo/vector-icons';
 import { useHifzMode } from '../../contexts/HifzModeContext';
 import { useTheme } from '../../hooks/useTheme';
+import { useTranslation } from '../../hooks/useTranslation';
 import { ThemedText } from '../ThemedText';
 import {
   REPEAT_COUNT_OPTIONS,
@@ -38,9 +39,10 @@ export function RepeatControls({ onStop, isRepeating, currentRepeat: externalCur
     resetRepeat,
   } = useHifzMode();
   const { isDark, theme } = useTheme();
+  const { t } = useTranslation();
 
   const activeColor = theme.primary;
-  
+
   // Use external values if provided (from AudioService), otherwise use context
   const displayCurrentRepeat = externalCurrentRepeat ?? contextCurrentRepeat;
   const displayTotalRepeats = externalTotalRepeats ?? contextTotalRepeats;
@@ -89,10 +91,10 @@ export function RepeatControls({ onStop, isRepeating, currentRepeat: externalCur
       {/* Section Header */}
       <View style={styles.headerRow}>
         <ThemedText style={[styles.headerTitle, { color: theme.text }]}>
-          Audio Repeat Settings
+          {t('repeatControls.title')}
         </ThemedText>
         <ThemedText style={[styles.headerSubtitle, { color: theme.text, opacity: 0.6 }]}>
-          For memorization practice
+          {t('repeatControls.subtitle')}
         </ThemedText>
       </View>
 
@@ -100,9 +102,9 @@ export function RepeatControls({ onStop, isRepeating, currentRepeat: externalCur
       <View style={styles.section} accessible={true} accessibilityLabel="How many times to repeat the verse">
         <View style={styles.sectionHeader}>
           <View>
-            <ThemedText style={styles.sectionTitle}>Times to Repeat</ThemedText>
+            <ThemedText style={styles.sectionTitle}>{t('repeatControls.timesToRepeat')}</ThemedText>
             <ThemedText style={[styles.sectionHint, { color: theme.text, opacity: 0.5 }]}>
-              Verse plays this many times
+              {t('repeatControls.timesHint')}
             </ThemedText>
           </View>
           {showingProgress && (
@@ -129,19 +131,19 @@ export function RepeatControls({ onStop, isRepeating, currentRepeat: externalCur
       {/* Pause Duration */}
       <View style={styles.section} accessible={true} accessibilityLabel="Pause between repeats">
         <View>
-          <ThemedText style={styles.sectionTitle}>Gap Between Repeats</ThemedText>
+          <ThemedText style={styles.sectionTitle}>{t('repeatControls.gapBetween')}</ThemedText>
           <ThemedText style={[styles.sectionHint, { color: theme.text, opacity: 0.5 }]}>
-            Time to recite along before next play
+            {t('repeatControls.gapHint')}
           </ThemedText>
         </View>
         <View style={styles.optionsRow}>
           {PAUSE_DURATION_OPTIONS.map(option =>
             renderOptionButton(
               option.value,
-              option.label,
+              option.labelKey ? t(option.labelKey) : option.label,
               settings.pauseBetweenRepeats === option.value,
               () => setPauseBetweenRepeats(option.value),
-              `${option.label} pause between repeats`
+              `${option.labelKey ? t(option.labelKey) : option.label} pause between repeats`
             )
           )}
         </View>
@@ -150,19 +152,19 @@ export function RepeatControls({ onStop, isRepeating, currentRepeat: externalCur
       {/* Playback Speed */}
       <View style={styles.section} accessible={true} accessibilityLabel="Playback speed">
         <View>
-          <ThemedText style={styles.sectionTitle}>Recitation Speed</ThemedText>
+          <ThemedText style={styles.sectionTitle}>{t('repeatControls.recitationSpeed')}</ThemedText>
           <ThemedText style={[styles.sectionHint, { color: theme.text, opacity: 0.5 }]}>
-            Slower helps with learning pronunciation
+            {t('repeatControls.speedHint')}
           </ThemedText>
         </View>
         <View style={styles.optionsRow}>
           {PLAYBACK_SPEED_OPTIONS.map(option =>
             renderOptionButton(
               option.value,
-              option.label,
+              option.labelKey ? t(option.labelKey) : option.label,
               settings.playbackSpeed === option.value,
               () => setPlaybackSpeed(option.value),
-              `${option.label} playback speed`
+              `${option.labelKey ? t(option.labelKey) : option.label} playback speed`
             )
           )}
         </View>
@@ -178,7 +180,7 @@ export function RepeatControls({ onStop, isRepeating, currentRepeat: externalCur
           style={[styles.stopButton, { backgroundColor: '#EF4444' }]}
         >
           <Feather name="square" size={16} color="#FFFFFF" />
-          <ThemedText style={styles.stopText}>Stop Repeating</ThemedText>
+          <ThemedText style={styles.stopText}>{t('repeatControls.stopRepeating')}</ThemedText>
         </TouchableOpacity>
       )}
     </View>

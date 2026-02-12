@@ -19,6 +19,7 @@ export interface IslamicEvent {
   duration?: number;  // Days (e.g., Ramadan = 29/30)
   type: 'major' | 'minor' | 'fasting';
   description: string;
+  descriptionAr?: string;
   color: string;
 }
 
@@ -27,16 +28,17 @@ export interface FastingDay {
   hijriDate: HijriDate;
   gregorianDate: Date;
   label: string;
+  labelAr?: string;
 }
 
-export type MoonPhaseName = 
-  | 'new' 
-  | 'waxing_crescent' 
-  | 'first_quarter' 
-  | 'waxing_gibbous' 
-  | 'full' 
-  | 'waning_gibbous' 
-  | 'last_quarter' 
+export type MoonPhaseName =
+  | 'new'
+  | 'waxing_crescent'
+  | 'first_quarter'
+  | 'waxing_gibbous'
+  | 'full'
+  | 'waning_gibbous'
+  | 'last_quarter'
   | 'waning_crescent';
 
 export interface MoonPhase {

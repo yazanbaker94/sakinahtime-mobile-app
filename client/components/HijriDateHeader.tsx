@@ -12,6 +12,7 @@ import { HijriDate, MoonPhase, FastingDay } from '../types/hijri';
 import { EventWithDate } from '../services/IslamicEventsService';
 import { MoonPhaseIndicator } from './MoonPhaseIndicator';
 import { useTheme } from '../hooks/useTheme';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface HijriDateHeaderProps {
   hijriDate: HijriDate;
@@ -39,8 +40,16 @@ export function HijriDateHeader({
   nextEvent,
 }: HijriDateHeaderProps) {
   const { isDark, theme } = useTheme();
+  const { t, locale } = useTranslation();
+  const isArabic = locale === 'ar';
 
-  const gregorianFormatted = gregorianDate.toLocaleDateString('en-US', {
+  // Map app locale to BCP 47 locale tag for date formatting
+  const dateLocaleMap: Record<string, string> = {
+    en: 'en-US', ar: 'ar-SA', fr: 'fr-FR', de: 'de-DE', ru: 'ru-RU', zh: 'zh-CN',
+  };
+  const dateLocale = dateLocaleMap[locale] || 'en-US';
+
+  const gregorianFormatted = gregorianDate.toLocaleDateString(dateLocale, {
     weekday: compact ? 'short' : 'long',
     year: 'numeric',
     month: compact ? 'short' : 'long',
@@ -61,7 +70,7 @@ export function HijriDateHeader({
         )}
         <View style={styles.compactContent}>
           <Text style={styles.compactHijri}>
-            {hijriDate.day} {hijriDate.monthNameEn} {hijriDate.year}
+            {hijriDate.day} {isArabic ? hijriDate.monthNameAr : hijriDate.monthNameEn} {hijriDate.year}
           </Text>
           {showGregorian && (
             <Text style={[styles.compactGregorian, { color: secondaryTextColor }]}>{gregorianFormatted}</Text>
@@ -82,7 +91,7 @@ export function HijriDateHeader({
 
       {/* Hijri date centered */}
       <Text style={styles.hijriDate}>
-        {hijriDate.day} {hijriDate.monthNameEn} {hijriDate.year} AH
+        {hijriDate.day} {isArabic ? hijriDate.monthNameAr : hijriDate.monthNameEn} {hijriDate.year} {t('hijriCalendar.ah')}
       </Text>
 
       {/* Gregorian date */}
@@ -96,12 +105,12 @@ export function HijriDateHeader({
           {/* Fasting Status */}
           {fastingInfo?.isFastingProhibited && (
             <View style={[styles.infoBadge, styles.prohibitedBadge]}>
-              <Text style={styles.infoBadgeText}>⚠️ Fasting prohibited today</Text>
+              <Text style={styles.infoBadgeText}>⚠️ {t('hijriCalendar.fastingProhibited')}</Text>
             </View>
           )}
           {fastingInfo?.todayFasting && !fastingInfo.isFastingProhibited && (
             <View style={[styles.infoBadge, styles.fastingBadge]}>
-              <Text style={styles.infoBadgeText}>🌙 {fastingInfo.todayFasting.label}</Text>
+              <Text style={styles.infoBadgeText}>🌙 {t(`fastingLabels.${fastingInfo.todayFasting.type}`) || fastingInfo.todayFasting.label}</Text>
             </View>
           )}
 
@@ -109,7 +118,13 @@ export function HijriDateHeader({
           {nextEvent && nextEvent.daysUntil > 0 && (
             <View style={[styles.infoBadge, styles.eventBadge]}>
               <Text style={styles.infoBadgeText}>
-                ⭐ {nextEvent.nameEn} in {nextEvent.daysUntil} {nextEvent.daysUntil === 1 ? 'day' : 'days'}
+                ⭐ {t(`islamicEvents.${nextEvent.id}`) || (isArabic ? nextEvent.nameAr : nextEvent.nameEn)}{' '}
+                {nextEvent.daysUntil < 7
+                  ? t('countdown.inDays', { count: nextEvent.daysUntil })
+                  : nextEvent.daysUntil < 30
+                    ? t(Math.floor(nextEvent.daysUntil / 7) > 1 ? 'countdown.inWeeks' : 'countdown.inWeek', { count: Math.floor(nextEvent.daysUntil / 7) })
+                    : t(Math.floor(nextEvent.daysUntil / 30) > 1 ? 'countdown.inMonths' : 'countdown.inMonth', { count: Math.floor(nextEvent.daysUntil / 30) })
+                }
               </Text>
             </View>
           )}

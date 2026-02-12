@@ -9,6 +9,7 @@ import { View, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { ThemedText } from './ThemedText';
 import { useTheme } from '../hooks/useTheme';
+import { useTranslation } from '../hooks/useTranslation';
 import { PrayerStreakData } from '../types/prayerLog';
 import { Spacing, BorderRadius } from '../constants/theme';
 
@@ -17,24 +18,25 @@ interface StreakCardProps {
   compact?: boolean;
 }
 
-function getStreakMessage(currentStreak: number): string {
+function getStreakMessageKey(currentStreak: number): string {
   if (currentStreak === 0) {
-    return "Start your streak today!";
+    return 'streak.startToday';
   } else if (currentStreak === 1) {
-    return "Great start! Keep it going!";
+    return 'streak.greatStart';
   } else if (currentStreak < 7) {
-    return "You're building momentum!";
+    return 'streak.buildingMomentum';
   } else if (currentStreak < 30) {
-    return "Amazing consistency!";
+    return 'streak.amazingConsistency';
   } else if (currentStreak < 100) {
-    return "Incredible dedication!";
+    return 'streak.incredibleDedication';
   } else {
-    return "Mashallah! Truly inspiring!";
+    return 'streak.trulyInspiring';
   }
 }
 
 export function StreakCard({ streak, compact = false }: StreakCardProps) {
   const { isDark, theme } = useTheme();
+  const { t } = useTranslation();
 
   const currentStreak = streak?.currentStreak || 0;
   const longestStreak = streak?.longestStreak || 0;
@@ -47,7 +49,7 @@ export function StreakCard({ streak, compact = false }: StreakCardProps) {
       ]}>
         <Feather name="zap" size={16} color="#FBBF24" />
         <ThemedText type="body" style={styles.compactText}>
-          {currentStreak} day{currentStreak !== 1 ? 's' : ''}
+          {currentStreak} {currentStreak !== 1 ? t('streak.days') : t('streak.day')}
         </ThemedText>
       </View>
     );
@@ -69,7 +71,7 @@ export function StreakCard({ streak, compact = false }: StreakCardProps) {
         <View style={[styles.iconContainer, { backgroundColor: 'rgba(251, 191, 36, 0.15)' }]}>
           <Feather name="zap" size={24} color="#FBBF24" />
         </View>
-        <ThemedText type="h3" style={styles.title}>Prayer Streak</ThemedText>
+        <ThemedText type="h3" style={styles.title}>{t('streak.prayerStreak')}</ThemedText>
       </View>
 
       <View style={styles.streakRow}>
@@ -77,7 +79,7 @@ export function StreakCard({ streak, compact = false }: StreakCardProps) {
           <ThemedText type="h1" style={[styles.streakNumber, { color: '#FBBF24' }]}>
             {currentStreak}
           </ThemedText>
-          <ThemedText type="caption" secondary>Current Streak</ThemedText>
+          <ThemedText type="caption" secondary>{t('streak.currentStreak')}</ThemedText>
         </View>
 
         <View style={[styles.divider, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }]} />
@@ -86,14 +88,14 @@ export function StreakCard({ streak, compact = false }: StreakCardProps) {
           <ThemedText type="h1" style={[styles.streakNumber, { color: theme.primary }]}>
             {longestStreak}
           </ThemedText>
-          <ThemedText type="caption" secondary>Longest Streak</ThemedText>
+          <ThemedText type="caption" secondary>{t('streak.longestStreak')}</ThemedText>
         </View>
       </View>
 
       <View style={[styles.messageContainer, { backgroundColor: isDark ? 'rgba(251, 191, 36, 0.1)' : 'rgba(251, 191, 36, 0.08)' }]}>
         <Feather name="star" size={14} color="#FBBF24" />
         <ThemedText type="small" style={styles.message}>
-          {getStreakMessage(currentStreak)}
+          {t(getStreakMessageKey(currentStreak))}
         </ThemedText>
       </View>
     </View>

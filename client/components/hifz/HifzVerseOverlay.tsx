@@ -14,6 +14,7 @@ import {
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { useHifzMode } from '../../contexts/HifzModeContext';
 import { useTheme } from '../../hooks/useTheme';
+import { useTranslation } from '../../hooks/useTranslation';
 import { HIDDEN_TEXT_BG } from '../../constants/hifz';
 import type { VerseKey } from '../../types/hifz';
 
@@ -29,6 +30,7 @@ export function HifzVerseOverlay({
   children,
 }: HifzVerseOverlayProps) {
   const { isDark, theme } = useTheme();
+  const { t } = useTranslation();
   const {
     isActive,
     isVerseRevealed,
@@ -79,7 +81,7 @@ export function HifzVerseOverlay({
           <View style={[styles.hiddenLine, styles.shortLine, { backgroundColor: theme.border }]} />
         </View>
         <Text style={[styles.tapHint, { color: theme.textSecondary }]}>
-          Tap to reveal
+          {t('mushaf.tapToReveal')}
         </Text>
       </Animated.View>
     </Pressable>

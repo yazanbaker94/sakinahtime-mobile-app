@@ -9,6 +9,7 @@ import { View, StyleSheet, Pressable, ActivityIndicator } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
+import { useTranslation } from '@/hooks/useTranslation';
 import { Spacing, BorderRadius } from '@/constants/theme';
 import { DownloadItem } from '../types/offline';
 import { formatBytes, SURAH_INFO } from '../constants/offline';
@@ -22,6 +23,7 @@ interface DownloadProgressProps {
 
 export function DownloadProgress({ item, onPause, onResume, onCancel }: DownloadProgressProps) {
   const { isDark, theme } = useTheme();
+  const { t } = useTranslation();
   const [isCancelling, setIsCancelling] = React.useState(false);
 
   const surahInfo = SURAH_INFO.find(s => s.number === item.surahNumber);
@@ -50,20 +52,20 @@ export function DownloadProgress({ item, onPause, onResume, onCancel }: Download
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           {isDownloading ? (
-            <ActivityIndicator 
-              size="small" 
-              color={theme.primary} 
+            <ActivityIndicator
+              size="small"
+              color={theme.primary}
             />
           ) : (
-            <Feather 
-              name={isFailed ? 'alert-circle' : isPaused ? 'pause-circle' : 'download'} 
-              size={20} 
-              color={getStatusColor()} 
+            <Feather
+              name={isFailed ? 'alert-circle' : isPaused ? 'pause-circle' : 'download'}
+              size={20}
+              color={getStatusColor()}
             />
           )}
           <View style={styles.titleContainer}>
             <ThemedText type="small" style={{ fontWeight: '600' }}>
-              {isDownloading ? 'Downloading' : isPaused ? 'Paused' : isFailed ? 'Failed' : 'Pending'}
+              {isDownloading ? t('downloadProgress.downloading') : isPaused ? t('downloadProgress.paused') : isFailed ? t('downloadProgress.failed') : t('downloadProgress.pending')}
             </ThemedText>
             <ThemedText type="body" style={{ fontWeight: '500' }}>
               {surahName}
@@ -83,15 +85,15 @@ export function DownloadProgress({ item, onPause, onResume, onCancel }: Download
             </Pressable>
           )}
           {onCancel && (
-            <Pressable 
-              onPress={handleCancel} 
+            <Pressable
+              onPress={handleCancel}
               style={styles.controlButton}
               disabled={isCancelling}
             >
               {isCancelling ? (
-                <ActivityIndicator 
-                  size={18} 
-                  color={isDark ? '#F87171' : '#EF4444'} 
+                <ActivityIndicator
+                  size={18}
+                  color={isDark ? '#F87171' : '#EF4444'}
                 />
               ) : (
                 <Feather name="x" size={18} color={isDark ? '#F87171' : '#EF4444'} />
@@ -106,14 +108,14 @@ export function DownloadProgress({ item, onPause, onResume, onCancel }: Download
           styles.progressBar,
           { backgroundColor: isDark ? 'rgba(255, 255, 255, 0.1)' : '#E5E7EB' }
         ]}>
-          <View 
+          <View
             style={[
               styles.progressFill,
-              { 
+              {
                 width: `${item.progress}%`,
                 backgroundColor: getStatusColor(),
               }
-            ]} 
+            ]}
           />
         </View>
       </View>

@@ -14,6 +14,7 @@ import {
 import { Feather } from '@expo/vector-icons';
 import { useHifzMode } from '../../contexts/HifzModeContext';
 import { useTheme } from '../../hooks/useTheme';
+import { useTranslation } from '../../hooks/useTranslation';
 import { ThemedText } from '../ThemedText';
 import type { SavedLoop } from '../../types/hifz';
 
@@ -24,6 +25,7 @@ interface SavedLoopsListProps {
 
 export function SavedLoopsList({ onSelectLoop, style }: SavedLoopsListProps) {
   const { isDark, theme } = useTheme();
+  const { t } = useTranslation();
   const {
     savedLoops,
     loopRange,
@@ -39,12 +41,12 @@ export function SavedLoopsList({ onSelectLoop, style }: SavedLoopsListProps) {
 
   const handleSaveLoop = useCallback(async () => {
     if (!loopName.trim()) {
-      Alert.alert('Error', 'Please enter a name for the loop');
+      Alert.alert(t('savedLoops.error'), t('savedLoops.noName'));
       return;
     }
 
     if (!loopRange.start || !loopRange.end) {
-      Alert.alert('Error', 'Please set a loop range first');
+      Alert.alert(t('savedLoops.error'), t('savedLoops.noRange'));
       return;
     }
 
@@ -55,12 +57,12 @@ export function SavedLoopsList({ onSelectLoop, style }: SavedLoopsListProps) {
 
   const handleDeleteLoop = useCallback((loopId: string, loopName: string) => {
     Alert.alert(
-      'Delete Loop',
-      `Are you sure you want to delete "${loopName}"?`,
+      t('savedLoops.deleteLoop'),
+      `${t('savedLoops.deleteConfirm')} "${loopName}"?`,
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('savedLoops.cancel'), style: 'cancel' },
         {
-          text: 'Delete',
+          text: t('savedLoops.delete'),
           style: 'destructive',
           onPress: () => deleteLoop(loopId),
         },
@@ -79,7 +81,7 @@ export function SavedLoopsList({ onSelectLoop, style }: SavedLoopsListProps) {
     <View style={[styles.container, style]}>
       {/* Header */}
       <View style={styles.header}>
-        <ThemedText style={styles.title}>Saved Loops</ThemedText>
+        <ThemedText style={styles.title}>{t('savedLoops.title')}</ThemedText>
         <TouchableOpacity
           onPress={() => setShowSaveModal(true)}
           disabled={!canSave}
@@ -106,7 +108,7 @@ export function SavedLoopsList({ onSelectLoop, style }: SavedLoopsListProps) {
               { color: canSave ? '#FFFFFF' : theme.textSecondary },
             ]}
           >
-            Save Current
+            {t('savedLoops.saveCurrent')}
           </ThemedText>
         </TouchableOpacity>
       </View>
@@ -117,7 +119,7 @@ export function SavedLoopsList({ onSelectLoop, style }: SavedLoopsListProps) {
           <TextInput
             value={loopName}
             onChangeText={setLoopName}
-            placeholder="Enter loop name..."
+            placeholder={t('savedLoops.enterName')}
             placeholderTextColor={theme.textSecondary}
             style={[
               styles.nameInput,
@@ -137,13 +139,13 @@ export function SavedLoopsList({ onSelectLoop, style }: SavedLoopsListProps) {
               }}
               style={[styles.modalButton, { borderColor: theme.border }]}
             >
-              <ThemedText>Cancel</ThemedText>
+              <ThemedText>{t('savedLoops.cancel')}</ThemedText>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={handleSaveLoop}
               style={[styles.modalButton, { backgroundColor: activeColor }]}
             >
-              <ThemedText style={{ color: '#FFFFFF' }}>Save</ThemedText>
+              <ThemedText style={{ color: '#FFFFFF' }}>{t('savedLoops.save')}</ThemedText>
             </TouchableOpacity>
           </View>
         </View>
@@ -195,7 +197,7 @@ export function SavedLoopsList({ onSelectLoop, style }: SavedLoopsListProps) {
         <View style={styles.emptyState}>
           <Feather name="repeat" size={32} color={theme.textSecondary} />
           <ThemedText style={[styles.emptyText, { color: theme.textSecondary }]}>
-            No saved loops yet
+            {t('savedLoops.noLoops')}
           </ThemedText>
         </View>
       )}

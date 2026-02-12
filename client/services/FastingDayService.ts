@@ -14,7 +14,7 @@ export class FastingDayService {
    */
   isFastingDay(hijriDate: HijriDate, gregorianDate: Date): FastingDay | null {
     // Check special fasting days first (they take priority)
-    
+
     // Ashura (9th and 10th of Muharram)
     if (hijriDate.month === 1 && (hijriDate.day === 9 || hijriDate.day === 10)) {
       return {
@@ -22,9 +22,10 @@ export class FastingDayService {
         hijriDate,
         gregorianDate,
         label: FASTING_LABELS.ashura.en,
+        labelAr: FASTING_LABELS.ashura.ar,
       };
     }
-    
+
     // Day of Arafah (9th of Dhul Hijjah)
     if (hijriDate.month === 12 && hijriDate.day === 9) {
       return {
@@ -32,9 +33,10 @@ export class FastingDayService {
         hijriDate,
         gregorianDate,
         label: FASTING_LABELS.arafah.en,
+        labelAr: FASTING_LABELS.arafah.ar,
       };
     }
-    
+
     // Six days of Shawwal (2nd-7th of Shawwal, after Eid)
     if (hijriDate.month === 10 && hijriDate.day >= 2 && hijriDate.day <= 7) {
       return {
@@ -42,9 +44,10 @@ export class FastingDayService {
         hijriDate,
         gregorianDate,
         label: FASTING_LABELS.shawwal.en,
+        labelAr: FASTING_LABELS.shawwal.ar,
       };
     }
-    
+
     // White Days (13th, 14th, 15th of each Hijri month)
     if (this.isWhiteDay(hijriDate.day)) {
       return {
@@ -52,9 +55,10 @@ export class FastingDayService {
         hijriDate,
         gregorianDate,
         label: FASTING_LABELS.white_day.en,
+        labelAr: FASTING_LABELS.white_day.ar,
       };
     }
-    
+
     // Monday and Thursday (Sunnah fasting)
     const dayOfWeek = gregorianDate.getDay();
     if (dayOfWeek === 1) { // Monday
@@ -63,6 +67,7 @@ export class FastingDayService {
         hijriDate,
         gregorianDate,
         label: FASTING_LABELS.monday.en,
+        labelAr: FASTING_LABELS.monday.ar,
       };
     }
     if (dayOfWeek === 4) { // Thursday
@@ -71,9 +76,10 @@ export class FastingDayService {
         hijriDate,
         gregorianDate,
         label: FASTING_LABELS.thursday.en,
+        labelAr: FASTING_LABELS.thursday.ar,
       };
     }
-    
+
     return null;
   }
 
@@ -83,7 +89,7 @@ export class FastingDayService {
   getFastingDaysForMonth(month: number, year: number): FastingDay[] {
     const days = hijriDateService.getMonthDays(month, year);
     const fastingDays: FastingDay[] = [];
-    
+
     for (const hijriDate of days) {
       const gregorianDate = hijriDateService.toGregorian(hijriDate);
       const fastingDay = this.isFastingDay(hijriDate, gregorianDate);
@@ -91,7 +97,7 @@ export class FastingDayService {
         fastingDays.push(fastingDay);
       }
     }
-    
+
     return fastingDays;
   }
 
@@ -101,22 +107,22 @@ export class FastingDayService {
   getUpcomingFastingDays(limit: number = 10): FastingDay[] {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     const fastingDays: FastingDay[] = [];
     const currentDate = new Date(today);
-    
+
     // Look ahead up to 60 days
     for (let i = 0; i < 60 && fastingDays.length < limit; i++) {
       const hijriDate = hijriDateService.toHijri(currentDate);
       const fastingDay = this.isFastingDay(hijriDate, new Date(currentDate));
-      
+
       if (fastingDay) {
         fastingDays.push(fastingDay);
       }
-      
+
       currentDate.setDate(currentDate.getDate() + 1);
     }
-    
+
     return fastingDays;
   }
 
@@ -189,10 +195,10 @@ export class FastingDayService {
   isFastingProhibited(hijriDate: HijriDate): boolean {
     // Eid al-Fitr (1st Shawwal)
     if (hijriDate.month === 10 && hijriDate.day === 1) return true;
-    
+
     // Eid al-Adha and Tashreeq days (10th-13th Dhul Hijjah)
     if (hijriDate.month === 12 && hijriDate.day >= 10 && hijriDate.day <= 13) return true;
-    
+
     return false;
   }
 }

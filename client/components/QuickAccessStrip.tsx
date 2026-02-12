@@ -9,6 +9,7 @@ import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
+import { useTranslation } from '@/hooks/useTranslation';
 import { Spacing, BorderRadius } from '@/constants/theme';
 import { AzkarCategory } from '@/data/azkar';
 
@@ -38,6 +39,7 @@ interface QuickAccessStripProps {
 
 export function QuickAccessStrip({ categories, onCategoryPress }: QuickAccessStripProps) {
   const { theme } = useTheme();
+  const { t } = useTranslation();
 
   const getCategoryColor = (categoryId: string) => {
     return theme.primary;
@@ -50,7 +52,7 @@ export function QuickAccessStrip({ categories, onCategoryPress }: QuickAccessStr
   return (
     <View style={styles.container}>
       <ThemedText type="small" style={styles.sectionTitle} secondary>
-        Quick Access
+        {t('quickAccess.title')}
       </ThemedText>
       <ScrollView
         horizontal
@@ -89,7 +91,7 @@ export function QuickAccessStrip({ categories, onCategoryPress }: QuickAccessStr
                 { color: getCategoryColor(category.id) },
               ]}
             >
-              {SHORT_TITLES[category.id] || category.titleEn}
+              {t(`quickAccess.${category.id === 'after-prayer' ? 'prayer' : category.id === 'waking' ? 'wake' : category.id}`) || category.titleEn}
             </ThemedText>
           </Pressable>
         ))}

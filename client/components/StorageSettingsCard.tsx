@@ -9,6 +9,7 @@ import { View, StyleSheet, Switch, Pressable } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
+import { useTranslation } from '@/hooks/useTranslation';
 import { Spacing, BorderRadius } from '@/constants/theme';
 import { OfflineSettings } from '../types/offline';
 import { formatBytes, STORAGE_LIMITS } from '../constants/offline';
@@ -27,11 +28,12 @@ const STORAGE_PRESETS = [
 
 export function StorageSettingsCard({ settings, onSettingsChange }: StorageSettingsCardProps) {
   const { isDark, theme } = useTheme();
+  const { t } = useTranslation();
 
   return (
     <View style={[
       styles.container,
-      { 
+      {
         backgroundColor: isDark ? `${theme.primary}33` : theme.backgroundDefault,
         elevation: isDark ? 0 : 3,
         shadowOpacity: isDark ? 0 : 0.08,
@@ -42,14 +44,14 @@ export function StorageSettingsCard({ settings, onSettingsChange }: StorageSetti
           styles.iconCircle,
           { backgroundColor: `${theme.primary}26` }
         ]}>
-          <Feather 
-            name="settings" 
-            size={20} 
-            color={theme.primary} 
+          <Feather
+            name="settings"
+            size={20}
+            color={theme.primary}
           />
         </View>
         <ThemedText type="body" style={{ fontWeight: '600' }}>
-          Download Settings
+          {t('storageSettings.downloadSettings')}
         </ThemedText>
       </View>
 
@@ -57,14 +59,14 @@ export function StorageSettingsCard({ settings, onSettingsChange }: StorageSetti
       <View style={styles.settingRow}>
         <View style={styles.settingInfo}>
           <ThemedText type="small" style={{ fontWeight: '500' }}>
-            Storage Limit
+            {t('storageSettings.storageLimit')}
           </ThemedText>
           <ThemedText type="caption" secondary>
-            Maximum space for offline content
+            {t('storageSettings.maxSpace')}
           </ThemedText>
         </View>
       </View>
-      
+
       <View style={styles.presetContainer}>
         {STORAGE_PRESETS.map((preset) => (
           <Pressable
@@ -83,11 +85,11 @@ export function StorageSettingsCard({ settings, onSettingsChange }: StorageSetti
             ]}
             onPress={() => onSettingsChange({ storageLimit: preset.value })}
           >
-            <ThemedText 
-              type="small" 
-              style={{ 
+            <ThemedText
+              type="small"
+              style={{
                 fontWeight: settings.storageLimit === preset.value ? '600' : '400',
-                color: settings.storageLimit === preset.value 
+                color: settings.storageLimit === preset.value
                   ? theme.primary
                   : theme.text,
               }}
@@ -104,27 +106,27 @@ export function StorageSettingsCard({ settings, onSettingsChange }: StorageSetti
       <View style={styles.toggleRow}>
         <View style={styles.settingInfo}>
           <View style={styles.settingLabel}>
-            <Feather 
-              name="wifi" 
-              size={16} 
-              color={theme.textSecondary} 
+            <Feather
+              name="wifi"
+              size={16}
+              color={theme.textSecondary}
             />
             <ThemedText type="small" style={{ fontWeight: '500', marginLeft: Spacing.xs }}>
-              Download over WiFi only
+              {t('storageSettings.wifiOnly')}
             </ThemedText>
           </View>
           <ThemedText type="caption" secondary>
-            Save mobile data by downloading only on WiFi
+            {t('storageSettings.wifiOnlyDesc')}
           </ThemedText>
         </View>
         <Switch
           value={settings.wifiOnlyDownloads}
           onValueChange={(value) => onSettingsChange({ wifiOnlyDownloads: value })}
-          trackColor={{ 
+          trackColor={{
             false: isDark ? 'rgba(255, 255, 255, 0.2)' : '#E5E7EB',
             true: `${theme.primary}80`,
           }}
-          thumbColor={settings.wifiOnlyDownloads 
+          thumbColor={settings.wifiOnlyDownloads
             ? theme.primary
             : (isDark ? '#9CA3AF' : '#F3F4F6')
           }
@@ -137,27 +139,27 @@ export function StorageSettingsCard({ settings, onSettingsChange }: StorageSetti
       <View style={styles.toggleRow}>
         <View style={styles.settingInfo}>
           <View style={styles.settingLabel}>
-            <Feather 
-              name="trash-2" 
-              size={16} 
-              color={theme.textSecondary} 
+            <Feather
+              name="trash-2"
+              size={16}
+              color={theme.textSecondary}
             />
             <ThemedText type="small" style={{ fontWeight: '500', marginLeft: Spacing.xs }}>
-              Auto-delete old cache
+              {t('storageSettings.autoDelete')}
             </ThemedText>
           </View>
           <ThemedText type="caption" secondary>
-            Automatically remove old cached data when limit is reached
+            {t('storageSettings.autoDeleteDesc')}
           </ThemedText>
         </View>
         <Switch
           value={settings.autoDeleteOldCache}
           onValueChange={(value) => onSettingsChange({ autoDeleteOldCache: value })}
-          trackColor={{ 
+          trackColor={{
             false: isDark ? 'rgba(255, 255, 255, 0.2)' : '#E5E7EB',
             true: `${theme.primary}80`,
           }}
-          thumbColor={settings.autoDeleteOldCache 
+          thumbColor={settings.autoDeleteOldCache
             ? theme.primary
             : (isDark ? '#9CA3AF' : '#F3F4F6')
           }

@@ -52,6 +52,7 @@ export const ISLAMIC_EVENTS: IslamicEvent[] = [
     day: 1,
     type: 'major',
     description: 'The first day of Muharram marks the beginning of the Islamic calendar year.',
+    descriptionAr: 'أول يوم من محرم يمثل بداية السنة الهجرية الجديدة.',
     color: '#D4AF37',
   },
   {
@@ -62,6 +63,7 @@ export const ISLAMIC_EVENTS: IslamicEvent[] = [
     day: 10,
     type: 'fasting',
     description: 'The 10th of Muharram. Fasting on this day expiates sins of the previous year.',
+    descriptionAr: 'العاشر من محرم. صيام هذا اليوم يكفّر ذنوب السنة الماضية.',
     color: '#3B82F6',
   },
   {
@@ -72,6 +74,7 @@ export const ISLAMIC_EVENTS: IslamicEvent[] = [
     day: 12,
     type: 'major',
     description: 'Commemorates the birthday of Prophet Muhammad ﷺ.',
+    descriptionAr: 'إحياء ذكرى مولد النبي محمد ﷺ.',
     color: '#10B981',
   },
   {
@@ -82,6 +85,7 @@ export const ISLAMIC_EVENTS: IslamicEvent[] = [
     day: 27,
     type: 'major',
     description: "The Night Journey and Ascension of Prophet Muhammad ﷺ.",
+    descriptionAr: 'ليلة رحلة الإسراء والمعراج للنبي محمد ﷺ.',
     color: '#8B5CF6',
   },
   {
@@ -92,6 +96,7 @@ export const ISLAMIC_EVENTS: IslamicEvent[] = [
     day: 15,
     type: 'minor',
     description: 'The night when Allah descends to the lowest heaven and forgives many.',
+    descriptionAr: 'الليلة التي ينزل فيها الله إلى السماء الدنيا ويغفر لكثير من عباده.',
     color: '#6366F1',
   },
   {
@@ -103,6 +108,7 @@ export const ISLAMIC_EVENTS: IslamicEvent[] = [
     duration: 30,
     type: 'major',
     description: 'The blessed month of fasting begins.',
+    descriptionAr: 'بداية شهر الصيام المبارك.',
     color: '#059669',
   },
   {
@@ -113,6 +119,7 @@ export const ISLAMIC_EVENTS: IslamicEvent[] = [
     day: 27,
     type: 'major',
     description: 'The Night of Decree, better than a thousand months.',
+    descriptionAr: 'ليلة القدر خير من ألف شهر.',
     color: '#F59E0B',
   },
   {
@@ -124,6 +131,7 @@ export const ISLAMIC_EVENTS: IslamicEvent[] = [
     duration: 3,
     type: 'major',
     description: 'The Festival of Breaking the Fast, celebrating the end of Ramadan.',
+    descriptionAr: 'عيد الفطر، الاحتفال بنهاية شهر رمضان المبارك.',
     color: '#10B981',
   },
   {
@@ -134,6 +142,7 @@ export const ISLAMIC_EVENTS: IslamicEvent[] = [
     day: 9,
     type: 'fasting',
     description: 'Fasting on this day expiates sins of the previous and coming year.',
+    descriptionAr: 'صيام هذا اليوم يكفّر ذنوب السنة الماضية والقادمة.',
     color: '#3B82F6',
   },
   {
@@ -145,6 +154,7 @@ export const ISLAMIC_EVENTS: IslamicEvent[] = [
     duration: 4,
     type: 'major',
     description: 'The Festival of Sacrifice, commemorating Ibrahim\'s willingness to sacrifice his son.',
+    descriptionAr: 'عيد الأضحى، إحياء ذكرى استعداد إبراهيم عليه السلام للتضحية بابنه.',
     color: '#10B981',
   },
 ];

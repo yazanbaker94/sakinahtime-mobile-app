@@ -9,6 +9,7 @@ import { Feather } from '@expo/vector-icons';
 import { ThemedText } from '../ThemedText';
 import { Card } from '../Card';
 import { useTheme } from '../../hooks/useTheme';
+import { useTranslation } from '../../hooks/useTranslation';
 import { useCharityTracker } from '../../hooks/useCharityTracker';
 import { Spacing, BorderRadius } from '../../constants/theme';
 
@@ -28,6 +29,7 @@ function formatCurrency(amount: number, currency: string = 'USD'): string {
 
 export function CharityCard({ onPress, onAddEntry }: CharityCardProps) {
   const { isDark, theme } = useTheme();
+  const { t } = useTranslation();
   const { stats, goal, goalProgress } = useCharityTracker();
 
   const accentColor = theme.primary;
@@ -49,7 +51,7 @@ export function CharityCard({ onPress, onAddEntry }: CharityCardProps) {
 
       {/* Total Amount */}
       <View style={styles.totalSection}>
-        <ThemedText type="caption" secondary>Total Given</ThemedText>
+        <ThemedText type="caption" secondary>{t('charity.totalGiven')}</ThemedText>
         <ThemedText type="h2" style={[styles.totalAmount, { color: accentColor }]}>
           {formatCurrency(stats.totalAmount)}
         </ThemedText>
@@ -59,20 +61,20 @@ export function CharityCard({ onPress, onAddEntry }: CharityCardProps) {
       {goal && goal.amount > 0 && (
         <View style={styles.goalSection}>
           <View style={styles.goalHeader}>
-            <ThemedText type="small" secondary>Goal Progress</ThemedText>
+            <ThemedText type="small" secondary>{t('charity.goalProgress')}</ThemedText>
             <ThemedText type="small" style={{ color: accentColor }}>
               {formatCurrency(stats.totalAmount)} / {formatCurrency(goal.amount)}
             </ThemedText>
           </View>
           <View style={[styles.progressBar, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }]}>
-            <View 
+            <View
               style={[
-                styles.progressFill, 
-                { 
+                styles.progressFill,
+                {
                   width: `${goalProgress}%`,
                   backgroundColor: goalProgress >= 100 ? theme.primary : accentColor,
                 }
-              ]} 
+              ]}
             />
           </View>
           {goalProgress >= 100 && (
@@ -88,17 +90,18 @@ export function CharityCard({ onPress, onAddEntry }: CharityCardProps) {
 
       {/* Zakat Status */}
       <View style={[
-        styles.zakatSection, 
-        { backgroundColor: stats.zakatPaid 
-          ? `${theme.primary}1A` 
-          : 'rgba(245, 158, 11, 0.1)' 
+        styles.zakatSection,
+        {
+          backgroundColor: stats.zakatPaid
+            ? `${theme.primary}1A`
+            : 'rgba(245, 158, 11, 0.1)'
         }
       ]}>
         <View style={styles.zakatHeader}>
-          <Feather 
-            name={stats.zakatPaid ? 'check-circle' : 'alert-circle'} 
-            size={16} 
-            color={zakatColor} 
+          <Feather
+            name={stats.zakatPaid ? 'check-circle' : 'alert-circle'}
+            size={16}
+            color={zakatColor}
           />
           <ThemedText type="body" style={{ marginLeft: Spacing.sm, fontWeight: '600' }}>
             Zakat
@@ -136,7 +139,7 @@ export function CharityCard({ onPress, onAddEntry }: CharityCardProps) {
 
       {/* Quick Add Button */}
       {onAddEntry && (
-        <Pressable 
+        <Pressable
           style={[styles.addButton, { backgroundColor: accentColor }]}
           onPress={onAddEntry}
         >

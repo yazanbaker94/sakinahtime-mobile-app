@@ -1,0 +1,2269 @@
+{
+  "tabs": {
+    "qibla": "朝向",
+    "prayer": "礼拜",
+    "quran": "古兰经",
+    "azkar": "祈念",
+    "settings": "设置"
+  },
+  "settings": {
+    "title": "设置",
+    "appearance": "外观",
+    "customizeTheme": "自定义主题",
+    "language": "语言",
+    "chooseLanguage": "选择语言",
+    "prayerFasting": "礼拜与斋戒",
+    "notificationsAzanReminders": "通知、宣礼和提醒",
+    "storageDownloads": "存储和下载",
+    "manageOfflineContent": "管理离线内容",
+    "wordByWord": "逐词翻译",
+    "translationLanguage": "翻译语言",
+    "dhikrReminders": "赞念提醒",
+    "floatingOverlay": "浮动提醒",
+    "feedbackSuggestions": "反馈与建议",
+    "helpImprove": "帮助我们改进应用",
+    "colorMode": "颜色模式",
+    "theme": "主题",
+    "light": "浅色",
+    "dark": "深色",
+    "auto": "自动"
+  },
+  "prayer": {
+    "title": "礼拜时间",
+    "fajr": "晨礼",
+    "sunrise": "日出",
+    "dhuhr": "晌礼",
+    "asr": "晡礼",
+    "maghrib": "昏礼",
+    "isha": "宵礼",
+    "nextPrayer": "下一次礼拜",
+    "timeRemaining": "剩余时间",
+    "prayerCalendar": "礼拜日历",
+    "prayerStats": "礼拜统计",
+    "progress": "进度",
+    "hijriCalendar": "伊斯兰历",
+    "calculationMethod": "计算方法",
+    "prayed": "已礼拜",
+    "missed": "错过",
+    "late": "迟到",
+    "onTime": "准时",
+    "notLogged": "未记录",
+    "logPrayer": "记录礼拜",
+    "currentStreak": "当前连续",
+    "days": "天",
+    "day": "天",
+    "today": "今天",
+    "yesterday": "昨天",
+    "location": "位置",
+    "setLocation": "设置位置",
+    "tapToSetLocation": "点击设置位置以获取准确的礼拜时间",
+    "noLocation": "未设置位置",
+    "checkingPermission": "检查权限...",
+    "locationRequired": "需要位置访问权限",
+    "locationExplanation": "我们需要您的位置来计算准确的礼拜时间。",
+    "browserLocationHint": "请在浏览器设置中启用位置服务。",
+    "enableLocation": "启用位置",
+    "openSettings": "打开设置",
+    "loadingPrayerTimes": "加载礼拜时间...",
+    "failedToLoad": "加载失败",
+    "hours": "小时",
+    "minutes": "分钟",
+    "seconds": "秒",
+    "min": "分"
+  },
+  "qibla": {
+    "title": "朝向",
+    "direction": "方向",
+    "degrees": "度",
+    "compass": "指南针",
+    "distance": "距离",
+    "toKaaba": "到天房",
+    "facingQibla": "面向朝向",
+    "turnLeft": "向左转",
+    "turnRight": "向右转",
+    "directionLocked": "方向已锁定",
+    "tapToUnlock": "点击解锁",
+    "lockDirection": "锁定方向",
+    "compassNotAvailable": "指南针不可用",
+    "compassNotAvailableWeb": "网页版指南针不可用。请使用移动设备。",
+    "calibrate": "请以8字形移动手机来校准指南针",
+    "calibrateShort": "以8字形移动来校准",
+    "heading": "航向",
+    "qiblaLabel": "朝向",
+    "km": "公里",
+    "mosques": "清真寺",
+    "gettingLocation": "获取位置...",
+    "initializingCompass": "初始化指南针...",
+    "locationRequiredQibla": "我们需要您的位置来计算朝向方向。"
+  },
+  "quran": {
+    "title": "古兰经",
+    "surah": "章",
+    "juz": "卷",
+    "page": "页",
+    "verse": "节",
+    "verses": "节",
+    "search": "搜索",
+    "searchQuran": "搜索古兰经",
+    "bookmark": "书签",
+    "bookmarks": "书签",
+    "bookmarked": "已收藏",
+    "addNote": "添加笔记",
+    "notes": "笔记",
+    "highlight": "高亮",
+    "highlights": "高亮",
+    "copy": "复制",
+    "share": "分享",
+    "play": "播放",
+    "pause": "暂停",
+    "stop": "停止",
+    "continue": "继续",
+    "tafsir": "经注",
+    "translation": "翻译",
+    "translations": "翻译",
+    "transliteration": "音译",
+    "reciter": "诵读者",
+    "lastRead": "上次阅读",
+    "continueLast": "继续上次阅读",
+    "meccan": "麦加章",
+    "medinan": "麦地那章",
+    "save": "保存",
+    "delete": "删除",
+    "cancel": "取消",
+    "savedVerses": "保存的经文",
+    "all": "全部",
+    "recent": "最近",
+    "tafsirTranslations": "经注和翻译",
+    "download": "下载",
+    "downloaded": "已下载",
+    "downloading": "下载中",
+    "readMode": "阅读模式",
+    "mushafMode": "经本模式",
+    "surahReader": "章节阅读",
+    "goToPage": "跳转到页",
+    "goToSurah": "跳转到章",
+    "goToJuz": "跳转到卷",
+    "wordByWord": "逐词翻译",
+    "audio": "音频",
+    "settings": "设置"
+  },
+  "azkar": {
+    "title": "祈念与祈祷",
+    "morningAzkar": "晨间祈念",
+    "eveningAzkar": "晚间祈念",
+    "afterPrayer": "礼拜后",
+    "sleep": "睡前",
+    "wakeUp": "醒来",
+    "dailyTip": "每日提示",
+    "categories": "分类",
+    "duas": "祈祷",
+    "guides": "指南",
+    "all": "全部",
+    "favorites": "收藏",
+    "count": "计数",
+    "completed": "完成",
+    "repeat": "重复",
+    "times": "次",
+    "time": "次",
+    "remaining": "剩余",
+    "reset": "重置",
+    "duaOfTheDay": "今日祈祷",
+    "dailyDhikr": "每日赞念",
+    "dhikrGoal": "赞念目标",
+    "worship": "功修与礼拜",
+    "dailyLife": "日常生活",
+    "travel": "旅行",
+    "food": "饮食",
+    "protection": "保护",
+    "hadith": "圣训",
+    "islamicGuides": "伊斯兰指南",
+    "search": "搜索祈念和祈祷...",
+    "searchDuas": "搜索祈祷...",
+    "quranic": "古兰经",
+    "prophetic": "圣训",
+    "custom": "自定义",
+    "customDuas": "自定义祈祷",
+    "addCustomDua": "添加自定义祈祷",
+    "noDuasYet": "暂无自定义祈祷",
+    "noFavorites": "暂无收藏",
+    "noResults": "未找到结果",
+    "deleteConfirm": "确定要删除这条祈祷吗？",
+    "tapToStart": "点击开始",
+    "target": "目标",
+    "progress": "进度",
+    "allCategories": "所有分类",
+    "deleteDua": "删除祈祷",
+    "deleteDuaConfirm": "确定要删除吗？",
+    "myDuas": "我的祈祷",
+    "result": "条结果",
+    "results": "条结果",
+    "noDuasFound": "未找到",
+    "searchGuides": "搜索指南...",
+    "noGuidesFound": "未找到指南",
+    "back": "返回",
+    "addPersonalSupplications": "暂无自定义祈祷。\n添加您的个人祈祷词。",
+    "tapHeartTip": "暂无收藏。\n点击任意祈祷旁的心形图标。",
+    "noQuranicDuas": "无古兰经祈祷",
+    "noPropheticDuas": "无圣训祈祷",
+    "adhkarCount": "条祈念",
+    "dailyTips": [
+      {
+        "text": "The Prophet ﷺ said: \"The best remembrance is La ilaha illallah (There is no god but Allah).\"",
+        "source": "Tirmidhi"
+      },
+      {
+        "text": "The Prophet ﷺ said: \"Whoever says SubhanAllah wa bihamdihi 100 times, his sins will be forgiven even if they were like foam of the sea.\"",
+        "source": "Bukhari & Muslim"
+      },
+      {
+        "text": "The Prophet ﷺ said: \"Two words are light on the tongue, heavy on the scales, beloved to the Most Merciful: SubhanAllahi wa bihamdihi, SubhanAllahil Adheem.\"",
+        "source": "Bukhari & Muslim"
+      },
+      {
+        "text": "The Prophet ﷺ said: \"Whoever reads Ayat al-Kursi after every obligatory prayer, nothing prevents him from entering Paradise except death.\"",
+        "source": "An-Nasa'i"
+      },
+      {
+        "text": "The Prophet ﷺ said: \"The closest a servant is to his Lord is when he is in prostration, so increase your supplication.\"",
+        "source": "Muslim"
+      },
+      {
+        "text": "The Prophet ﷺ said: \"None of you truly believes until he loves for his brother what he loves for himself.\"",
+        "source": "Bukhari & Muslim"
+      },
+      {
+        "text": "The Prophet ﷺ said: \"Whoever believes in Allah and the Last Day, let him speak good or remain silent.\"",
+        "source": "Bukhari & Muslim"
+      },
+      {
+        "text": "The Prophet ﷺ said: \"The best of you are those who learn the Quran and teach it.\"",
+        "source": "Bukhari"
+      },
+      {
+        "text": "The Prophet ﷺ said: \"A smile in the face of your brother is charity.\"",
+        "source": "Tirmidhi"
+      },
+      {
+        "text": "The Prophet ﷺ said: \"Whoever treads a path seeking knowledge, Allah will make easy for him the path to Paradise.\"",
+        "source": "Muslim"
+      },
+      {
+        "text": "The Prophet ﷺ said: \"The supplication between the Adhan and Iqamah is not rejected.\"",
+        "source": "Abu Dawud & Tirmidhi"
+      }
+    ]
+  },
+  "azkarDetail": {
+    "quran": "古兰经",
+    "translit": "音译",
+    "english": "英文",
+    "counter": "计数"
+  },
+  "duaCollection": {
+    "title": "祈祷集",
+    "searchPlaceholder": "搜索祈祷...",
+    "categories": "分类",
+    "quranic": "古兰经",
+    "prophetic": "圣训",
+    "favorites": "收藏",
+    "myDuas": "我的祈祷",
+    "deleteDua": "删除祈祷",
+    "deleteConfirm": "确定要删除吗？",
+    "deleteFailed": "删除失败",
+    "duasCount": "条祈祷",
+    "noResultsFor": "未找到\"{{query}}\"的结果",
+    "results": "条结果",
+    "result": "条结果",
+    "forQuery": "关于",
+    "noQuranic": "无古兰经祈祷",
+    "noProphetic": "无圣训祈祷",
+    "noFavorites": "暂无收藏。\n点击心形图标添加。",
+    "noCustom": "暂无自定义祈祷。\n添加您的个人祈祷词。",
+    "addCustom": "添加自定义祈祷"
+  },
+  "progress": {
+    "title": "进度",
+    "readingProgress": "阅读进度",
+    "overallProgress": "总体进度",
+    "complete": "完成",
+    "pagesRead": "已读页数",
+    "juzComplete": "完成卷数",
+    "khatm": "通读",
+    "todaysProgress": "今日进度",
+    "versesRead": "已读经文",
+    "pagesReadToday": "今日已读页",
+    "readingStreak": "阅读连续",
+    "currentStreak": "当前连续",
+    "longestStreak": "最长连续",
+    "bestStreak": "最佳连续",
+    "thisWeek": "本周",
+    "average": "平均",
+    "pagesPerDay": "页/天",
+    "dailyGoalSettings": "每日目标设置",
+    "enableDailyGoal": "启用每日目标",
+    "goalType": "目标类型",
+    "pages": "页",
+    "verses": "节",
+    "target": "目标",
+    "saveGoal": "保存目标",
+    "readingReminder": "阅读提醒",
+    "enableReminder": "启用提醒",
+    "reminderTime": "提醒时间",
+    "resetAllProgress": "重置所有进度",
+    "resetConfirm": "确定要重置所有阅读进度吗？此操作不可撤销。",
+    "resetButton": "重置",
+    "noGoalSet": "未设置每日目标",
+    "invalidGoal": "无效目标",
+    "invalidGoalMessage": "请输入有效数字",
+    "goalRange": "目标应在",
+    "and": "到",
+    "permissionRequired": "需要权限",
+    "permissionMessage": "请在设备设置中开启通知权限。",
+    "errorSavingGoal": "保存失败",
+    "errorResetting": "重置失败",
+    "loadingProgress": "加载进度...",
+    "done": "完成",
+    "goal": "目标",
+    "weeklyOverview": "每周概览",
+    "monthlyOverview": "每月概览",
+    "streak": "连续",
+    "totalPrayers": "总礼拜数",
+    "completionRate": "完成率",
+    "prayerLog": "礼拜日志",
+    "weekly": "每周",
+    "monthly": "每月",
+    "allTime": "所有时间",
+    "exportStats": "导出统计",
+    "qadaTracker": "补拜追踪",
+    "qadaRemaining": "待补拜",
+    "taraweeh": "泰拉威赫",
+    "charity": "慈善",
+    "zakatCalculator": "天课计算器",
+    "hifzProgress": "背诵进度",
+    "quranSchedule": "古兰经计划"
+  },
+  "notifications": {
+    "title": "通知设置",
+    "prayerNotifications": "礼拜通知",
+    "getNotified": "礼拜时间到时获得通知",
+    "prayerAlarms": "礼拜闹钟",
+    "azanSettings": "宣礼设置",
+    "azan": "宣礼",
+    "azanSound": "宣礼声音",
+    "playHayaAlSalat": "礼拜前播放\"快来礼拜\"",
+    "silentMode": "静音模式",
+    "flipToSilence": "翻转静音",
+    "flipToSilenceDesc": "将手机翻转即可静音宣礼",
+    "testAzan": "测试宣礼",
+    "vibration": "振动",
+    "iqama": "成拜",
+    "iqamaReminder": "成拜提醒",
+    "iqamaWait": "成拜等待",
+    "iqamaDelay": "成拜延迟",
+    "minutesAfterAzan": "分钟后（宣礼后）",
+    "minutes": "分钟",
+    "enabled": "已启用",
+    "disabled": "已禁用",
+    "timeAdjustments": "时间调整",
+    "adjustPrayerTimes": "调整礼拜时间（分钟）",
+    "calculationMethod": "计算方法",
+    "highLatitude": "高纬度规则",
+    "asrCalculation": "晡礼计算",
+    "standard": "标准",
+    "hanafi": "哈纳菲",
+    "prayerTracking": "礼拜追踪",
+    "enableTracking": "启用追踪",
+    "trackDailyPrayers": "追踪您的每日礼拜",
+    "missedPrayerReminder": "错过礼拜提醒",
+    "reminderAfterPrayer": "礼拜时间结束后提醒",
+    "reminderDelay": "提醒延迟",
+    "minutesAfterPrayer": "分钟后（礼拜后）",
+    "fasting": "斋戒",
+    "suhoorReminder": "封斋饭提醒",
+    "iftarReminder": "开斋提醒",
+    "beforeSuhoor": "分钟前（封斋饭前）",
+    "beforeIftar": "分钟前（开斋前）",
+    "fastingReminders": "斋戒提醒",
+    "enableFastingReminders": "启用斋戒提醒",
+    "playAzanWhenPrayerTime": "礼拜时间到时播放宣礼",
+    "selectPrayersForAzan": "选择播放宣礼的礼拜",
+    "prayerSelection": "选择礼拜",
+    "choosePrayersForIqama": "选择成拜提醒的礼拜",
+    "testIqama": "测试成拜",
+    "testIqamaPlaying": "正在播放成拜声音。如未听到，请检查音量。",
+    "timeAdjustmentsFineTune": "微调礼拜时间（±30分钟）",
+    "min": "分",
+    "autoDetectByLocation": "按位置自动检测",
+    "recommended": "推荐",
+    "active": "活动",
+    "useAuto": "自动",
+    "autoDetectedFor": "已自动检测"
+  },
+  "qadaTracker": {
+    "title": "补拜追踪",
+    "totalRemaining": "总待补拜数",
+    "hint": "点击数字编辑。完成补拜后使用'记录'。"
+  },
+  "location": {
+    "title": "位置设置",
+    "searchCity": "搜索城市...",
+    "currentLocation": "当前位置",
+    "useCurrentLocation": "使用当前位置",
+    "manualEntry": "手动输入",
+    "latitude": "纬度",
+    "longitude": "经度",
+    "save": "保存",
+    "detectingLocation": "检测位置...",
+    "locationSaved": "位置已保存",
+    "invalidCoordinates": "无效坐标",
+    "detecting": "检测位置...",
+    "unavailable": "位置不可用",
+    "permissionRequired": "需要权限",
+    "manual": "手动",
+    "locationSource": "位置来源",
+    "useGPS": "使用GPS",
+    "setManually": "手动设置",
+    "searchWorldwide": "搜索全球城市",
+    "recentLocations": "最近位置",
+    "info": "您的位置用于计算准确的礼拜时间和朝向方向。"
+  },
+  "qada": {
+    "title": "补拜追踪",
+    "totalRemaining": "总剩余",
+    "addMissed": "添加错过",
+    "prayersMadeUp": "已补拜",
+    "prayersRemaining": "剩余",
+    "hint": "长按数字减少",
+    "noQada": "没有待补拜。马沙安拉！",
+    "fajr": "晨礼",
+    "dhuhr": "晌礼",
+    "asr": "晡礼",
+    "maghrib": "昏礼",
+    "isha": "宵礼",
+    "prayers": "拜"
+  },
+  "zakat": {
+    "title": "天课计算器",
+    "totalWealth": "总财产",
+    "enterWealth": "输入总财产",
+    "calculate": "计算",
+    "zakatDue": "应缴天课",
+    "nisab": "起征额",
+    "meetsNisab": "达到起征额",
+    "doesNotMeetNisab": "未达起征额",
+    "goldNisab": "黄金起征额",
+    "silverNisab": "白银起征额",
+    "info": "天课是总财产的2.5%，持有满一个伊斯兰历年。",
+    "gold": "黄金",
+    "silver": "白银",
+    "cash": "现金和银行存款",
+    "stocks": "股票和投资",
+    "property": "出租房产",
+    "totalAssets": "总资产",
+    "zakatPayable": "应缴天课",
+    "reset": "重置",
+    "currency": "货币"
+  },
+  "charity": {
+    "title": "慈善追踪",
+    "totalDonated": "总捐赠",
+    "addDonation": "添加捐赠",
+    "setGoal": "设定目标",
+    "goal": "目标",
+    "recentDonations": "最近捐赠",
+    "noDonations": "暂无捐赠",
+    "amount": "金额",
+    "type": "类型",
+    "category": "分类",
+    "date": "日期",
+    "deleteConfirm": "确定要删除这笔捐赠吗？",
+    "enterAmount": "输入金额",
+    "selectCategory": "选择分类",
+    "sadaqah": "自愿施舍",
+    "zakatPayment": "天课",
+    "waqf": "宗教基金",
+    "other": "其他",
+    "goalAmount": "目标金额",
+    "goalProgress": "目标进度",
+    "to": "给",
+    "totalGiven": "总计给出",
+    "editGoal": "编辑目标",
+    "zakatStatus": "天课状态",
+    "paid": "已缴",
+    "notYetPaid": "今年尚未缴纳",
+    "breakdownByType": "按类型分类"
+  },
+  "ramadan": {
+    "title": "斋月",
+    "daysRemaining": "剩余天数",
+    "fastingToday": "今日斋戒",
+    "taraweeh": "泰拉威赫",
+    "logTaraweeh": "记录泰拉威赫",
+    "suhoor": "封斋饭",
+    "iftar": "开斋",
+    "fastingDays": "斋戒天数",
+    "completed": "已完成",
+    "remaining": "剩余",
+    "ramadanMode": "斋月模式",
+    "activateMessage": "斋月模式将在斋月期间自动启用。",
+    "checkBackMessage": "斋月开始后请回来，获取封斋饭/开斋时间表、古兰经阅读计划和泰拉威赫追踪。"
+  },
+  "hifz": {
+    "title": "背诵进度",
+    "memorized": "已背",
+    "inProgress": "进行中",
+    "notStarted": "未开始",
+    "totalMemorized": "总已背",
+    "markMemorized": "标记为已背",
+    "markInProgress": "标记为进行中",
+    "resetSurah": "重置章",
+    "versesMemorized": "已背节数",
+    "dueToday": "今日任务",
+    "revisedToday": "今日复习",
+    "dailyGoal": "每日目标",
+    "overallProgress": "总进度",
+    "verses": "节",
+    "pages": "页",
+    "juz": "卷",
+    "dueForRevision": "待复习",
+    "last": "上次",
+    "ease": "难易度",
+    "moreVersesDue": "更多待复习节",
+    "statusLegend": "状态图例",
+    "notifications": "通知",
+    "dailyReminders": "每日提醒",
+    "reminderHint": "获取复习提醒",
+    "resetAllProgress": "重置所有进度"
+  },
+  "storage": {
+    "title": "存储和下载",
+    "totalUsed": "已使用",
+    "audioFiles": "音频文件",
+    "clearAllDownloads": "清除所有下载",
+    "clearConfirm": "确定要清除所有下载数据吗？",
+    "confirm": "确认",
+    "cancel": "取消",
+    "reciterAudio": "诵读者音频",
+    "mushafPages": "经本页面",
+    "totalSize": "总大小",
+    "noDownloads": "暂无下载",
+    "loadingInfo": "加载信息...",
+    "quickActions": "快捷操作",
+    "manageAudio": "管理音频",
+    "downloadQuran": "下载古兰经",
+    "clearAll": "全部清除",
+    "freeUpSpace": "释放空间",
+    "refreshInfo": "刷新信息"
+  },
+  "onboarding": {
+    "welcome": "欢迎来到SakinahTime",
+    "welcomeDesc": "您的精神之旅伴侣",
+    "skip": "跳过",
+    "next": "下一步",
+    "getStarted": "开始",
+    "done": "完成",
+    "prayerTimesTitle": "精确礼拜时间",
+    "prayerTimesDesc": "根据您的位置获取精确的礼拜时间和优美的宣礼通知",
+    "quranTitle": "优美的古兰经体验",
+    "quranDesc": "阅读古兰经，配有多种翻译、逐词解析和音频诵读",
+    "azkarTitle": "每日祈念和祈祷",
+    "azkarDesc": "获取晨昏祈念、各种场合的祈祷和赞念计数",
+    "notificationsDesc": "通过可自定义的通知和宣礼提醒，不再错过礼拜",
+    "widgetDesc": "在主屏幕添加小组件以快速查看礼拜时间",
+    "welcomeTitle": "赛俩目",
+    "welcomeSubtitle": "欢迎来到SakinahTime",
+    "welcomeDescription": "您的礼拜时间、古兰经阅读和精神成长伴侣。",
+    "locationTitle": "精确礼拜时间",
+    "locationSubtitle": "位置访问",
+    "locationDescription": "我们使用您的位置来计算准确的礼拜时间。",
+    "notificationsTitle": "不错过礼拜",
+    "notificationsSubtitle": "通知提醒",
+    "notificationsDescription": "礼拜时间到时，以优美的宣礼声通知您。",
+    "widgetTitle": "添加小组件",
+    "widgetSubtitle": "可靠的宣礼",
+    "widgetDescription": "添加礼拜时间小组件，即使重启后也能可靠地播放宣礼通知。",
+    "doneTitle": "一切就绪！",
+    "doneSubtitle": "准备开始",
+    "doneDescription": "开始您更用心的精神修行之旅。",
+    "locationEnabled": "位置已启用",
+    "notificationsEnabled": "通知已启用",
+    "enable": "启用",
+    "continue": "继续",
+    "notNow": "暂不",
+    "enableExactAlarms": "启用精确闹钟",
+    "exactAlarmsDescription": "SakinahTime需要权限来设置精确的礼拜闹钟。\n\n请在下一个界面启用'闹钟和提醒'。",
+    "openSettings": "打开设置",
+    "enableReliableAzan": "启用可靠宣礼",
+    "reliableAzanDescription": "为确保重启后宣礼正常播放，请点击：\n\n电池→不受限制\n\n这允许应用为礼拜时间唤醒手机。"
+  },
+  "mosque": {
+    "title": "附近清真寺",
+    "findMosques": "查找清真寺",
+    "distance": "距离",
+    "directions": "导航",
+    "noMosques": "附近未找到清真寺",
+    "searchMosques": "搜索清真寺...",
+    "openInMaps": "在地图中打开"
+  },
+  "hijri": {
+    "title": "伊斯兰历",
+    "today": "今天",
+    "months": {
+      "1": "穆哈兰姆",
+      "2": "萨法尔",
+      "3": "赖比尔·敖外鲁",
+      "4": "赖比尔·阿希尔",
+      "5": "主马达·乌拉",
+      "6": "主马达·阿希拉",
+      "7": "赖哲卜",
+      "8": "舍尔邦",
+      "9": "莱麦丹",
+      "10": "闪瓦鲁",
+      "11": "祖勒·嘎尔德",
+      "12": "祖勒·希哲"
+    }
+  },
+  "prayerStats": {
+    "title": "礼拜统计",
+    "overview": "概览",
+    "totalPrayed": "总已礼拜",
+    "totalMissed": "总错过",
+    "onTimeRate": "准时率",
+    "weeklyBreakdown": "每周统计",
+    "monthlyBreakdown": "每月统计",
+    "bestDay": "最佳日",
+    "prayerBreakdown": "礼拜分析",
+    "noData": "暂无数据。开始记录吧！",
+    "loadingStats": "加载统计...",
+    "prayerTracking": "礼拜追踪",
+    "tapToMark": "点击标记",
+    "enableToTrack": "启用追踪",
+    "tapToMarkStatus": "点击按钮标记状态：",
+    "prayed": "已礼拜",
+    "missed": "错过",
+    "late": "迟到",
+    "missedReminder": "错过提醒",
+    "remindAfter": "{{minutes}}分钟未标记后提醒",
+    "getReminded": "获取提醒",
+    "remindAfterLabel": "提醒延迟：",
+    "totalLogged": "总记录",
+    "qadaDue": "待补拜",
+    "weekly": "每周",
+    "monthly": "每月",
+    "exportFailed": "导出失败",
+    "exportError": "无法分享统计数据。"
+  },
+  "prayerCalendar": {
+    "title": "礼拜日历",
+    "monthlyView": "月视图",
+    "allPrayed": "全部完成",
+    "someMissed": "部分错过",
+    "notTracked": "未追踪",
+    "today": "今天",
+    "unableToLoad": "无法加载",
+    "selectMonthYear": "选择月份和年份",
+    "year": "年",
+    "month": "月"
+  },
+  "audioDownload": {
+    "title": "音频下载",
+    "downloadAll": "下载全部",
+    "deleteAll": "删除全部",
+    "downloading": "下载中...",
+    "downloaded": "已下载",
+    "notDownloaded": "未下载",
+    "surahAudio": "章节音频",
+    "offline": "离线",
+    "needInternet": "下载需要网络连接。",
+    "downloadAllSurahs": "下载所有章节",
+    "deleteAllAudio": "删除所有音频",
+    "download": "下载",
+    "delete": "删除",
+    "deleteAudio": "删除音频",
+    "cancelDownloads": "取消下载",
+    "cancelAllDesc": "取消所有下载？部分下载的章节将被删除。",
+    "keepDownloading": "继续下载",
+    "cancelAll": "全部取消",
+    "deleteConfirmMessage": "删除已下载的音频"
+  },
+  "reciter": {
+    "title": "选择诵读者",
+    "currentReciter": "当前诵读者",
+    "popular": "热门",
+    "allReciters": "所有诵读者"
+  },
+  "duaDetail": {
+    "reference": "来源",
+    "benefits": "益处",
+    "occasion": "场合",
+    "shareAsDua": "分享祈祷",
+    "notFound": "未找到祈祷",
+    "notFoundMessage": "找不到这条祈祷。",
+    "listenPronunciation": "听发音",
+    "viewInQuran": "在古兰经中查看",
+    "ayah": "经文",
+    "benefitsVirtues": "益处与美德"
+  },
+  "customDuaForm": {
+    "editDua": "编辑祈祷",
+    "addCustomDua": "添加自定义祈祷",
+    "saving": "保存中...",
+    "saveFailed": "保存失败。",
+    "deleteConfirm": "确定要删除吗？此操作不可撤销。",
+    "deleteFailed": "删除失败。",
+    "arabicText": "阿拉伯文",
+    "optional": "可选",
+    "transliteration": "音译",
+    "transliterationPlaceholder": "输入音译（如Allahumma...）",
+    "translationMeaning": "翻译/含义",
+    "translationPlaceholder": "输入含义或翻译",
+    "personalNotes": "个人笔记",
+    "notesPlaceholder": "添加笔记",
+    "deleteThisDua": "删除此祈祷"
+  },
+  "islamicGuide": {
+    "title": "伊斯兰指南",
+    "steps": "步骤",
+    "references": "参考"
+  },
+  "dhikrOverlay": {
+    "title": "赞念悬浮窗设置",
+    "enableOverlay": "启用悬浮窗",
+    "overlayDesc": "显示浮动的赞念提醒",
+    "frequency": "频率",
+    "everyMinutes": "每{{count}}分钟",
+    "style": "样式",
+    "position": "位置"
+  },
+  "wordByWordSettings": {
+    "title": "逐词设置",
+    "translationLang": "翻译语言",
+    "showTransliteration": "显示音译",
+    "fontSize": "字体大小"
+  },
+  "quranSchedule": {
+    "title": "古兰经计划",
+    "createSchedule": "创建计划",
+    "completionDate": "目标完成日期",
+    "pagesPerDay": "每日页数",
+    "startDate": "开始日期",
+    "daysDone": "已完成天数",
+    "day": "天",
+    "pages": "页",
+    "completed": "已完成",
+    "pending": "待完成",
+    "openInMushaf": "在经本中打开",
+    "today": "今天",
+    "juz": "卷",
+    "surahs": "章节：",
+    "openMushaf": "打开经本",
+    "markComplete": "标记完成",
+    "completedAt": "完成于：",
+    "remaining": "剩余",
+    "complete": "完成",
+    "behindSchedule": "落后于计划"
+  },
+  "zakatCalculator": {
+    "title": "天课计算器",
+    "totalWealth": "总财产（美元）",
+    "enterWealth": "输入您的总财产",
+    "calculate": "计算天课",
+    "results": "计算结果",
+    "nisabGold": "起征额（黄金）",
+    "nisabSilver": "起征额（白银）",
+    "meetsNisab": "达到起征额",
+    "zakatDue": "应缴天课（2.5%）",
+    "info": "天课是超过起征额并持有一年的财产的2.5%。"
+  },
+  "hijriCalendar": {
+    "title": "伊斯兰日历",
+    "event": "事件",
+    "fasting": "斋戒",
+    "ah": "伊历",
+    "fastingProhibited": "今日禁止斋戒",
+    "eventIn": "{{name}}还有{{count}}天",
+    "eventIn_plural": "{{name}}还有{{count}}天"
+  },
+  "common": {
+    "loading": "加载中...",
+    "error": "错误",
+    "retry": "重试",
+    "ok": "确定",
+    "cancel": "取消",
+    "save": "保存",
+    "delete": "删除",
+    "edit": "编辑",
+    "close": "关闭",
+    "back": "返回",
+    "done": "完成",
+    "search": "搜索",
+    "share": "分享",
+    "copy": "复制",
+    "copied": "已复制！",
+    "noResults": "未找到结果",
+    "offline": "您已离线",
+    "yes": "是",
+    "no": "否",
+    "confirm": "确认",
+    "reset": "重置",
+    "add": "添加",
+    "remove": "移除",
+    "enable": "启用",
+    "disable": "禁用",
+    "on": "开",
+    "off": "关",
+    "yourRegion": "您的地区",
+    "goBack": "返回",
+    "skip": "跳过"
+  },
+  "components": {
+    "streakDays": "天连续",
+    "streakDaysPlural": "天连续",
+    "perfectDay": "完美的一天",
+    "offlineMode": "离线模式",
+    "usingCachedData": "使用缓存数据",
+    "lastSynced": "上次同步",
+    "somethingWentWrong": "出了点问题",
+    "tryAgain": "重试"
+  },
+  "streak": {
+    "prayerStreak": "礼拜连续",
+    "currentStreak": "当前连续",
+    "longestStreak": "最长连续",
+    "days": "天",
+    "day": "天",
+    "startToday": "今天开始您的连续！",
+    "greatStart": "好的开始！继续加油！",
+    "buildingMomentum": "势头正好！",
+    "amazingConsistency": "惊人的坚持！",
+    "incredibleDedication": "令人难以置信的虔诚！",
+    "trulyInspiring": "马沙安拉！真正的激励！"
+  },
+  "fasting": {
+    "fastingReminders": "斋戒提醒",
+    "getNotifiedFasting": "获取斋戒日通知",
+    "receiveReminders": "接收推荐斋戒日的提醒",
+    "reminderTime": "提醒时间",
+    "eveningBefore": "前一晚",
+    "beforeFajr": "晨礼前",
+    "thirtyMinBefore": "30分钟前",
+    "fastingDays": "斋戒日",
+    "monday": "周一",
+    "thursday": "周四",
+    "whiteDays": "白昼",
+    "ashura": "阿舒拉",
+    "dayOfArafah": "阿拉法日",
+    "shawwal": "闪瓦鲁",
+    "weeklySunnahFast": "每周圣行斋",
+    "whiteDaysDesc": "每月13、14、15日",
+    "ashuraDesc": "穆哈兰姆10日",
+    "arafahDesc": "祖勒希哲9日",
+    "shawwalDesc": "斋月后6天",
+    "notificationPermissionRequired": "⚠️ 需要通知权限"
+  },
+  "storageAlerts": {
+    "quranAudio": "古兰经音频",
+    "tafsir": "经注",
+    "prayerTimesCache": "礼拜时间缓存",
+    "otherCache": "其他缓存",
+    "allCachedData": "所有缓存数据",
+    "clearConfirm": "清除{{category}}？",
+    "clearAllDesc": "这将删除所有下载的音频和经注文件。您需要重新下载。",
+    "clearCategoryDesc": "这将移除所有{{category}}。",
+    "cancel": "取消",
+    "clear": "清除",
+    "error": "错误",
+    "failedToClear": "清除缓存失败。"
+  },
+  "mushaf": {
+    "notes": "笔记和高亮",
+    "bookmarks": "书签",
+    "highlights": "高亮",
+    "addNote": "添加笔记",
+    "save": "保存",
+    "delete": "删除",
+    "noNotesYet": "暂无笔记",
+    "tapToAddNote": "长按经文添加笔记",
+    "noBookmarksYet": "暂无书签",
+    "tapToBookmark": "点击经文添加书签",
+    "editNote": "编辑笔记",
+    "writeNoteHere": "在此写笔记...",
+    "hifzModeActivated": "背诵模式已激活",
+    "hifzModeDesc": "点击经文显示。长按查看学习选项。",
+    "wordByWordHighlighting": "逐词高亮",
+    "wordByWordDesc": "长按并拖动以在音频中导航。",
+    "justNow": "刚刚",
+    "minutesAgo": "{{count}}分钟前",
+    "hoursAgo": "{{count}}小时前",
+    "daysAgo": "{{count}}天前",
+    "noBookmarks": "暂无书签",
+    "noResults": "无结果",
+    "tryDifferent": "尝试其他搜索词",
+    "search": "搜索...",
+    "writeNote": "在此写笔记...",
+    "quarterHizb": "四分之一希兹布",
+    "halfHizb": "二分之一希兹布",
+    "fullJuzOnly": "仅完整卷",
+    "copyVerse": "复制经文",
+    "shareVerse": "分享经文",
+    "chooseHighlight": "选择高亮颜色",
+    "removeHighlight": "移除高亮",
+    "highlight": "高亮",
+    "selectReciter": "选择诵读者",
+    "audioSettings": "音频设置",
+    "noTafsir": "经注不可用",
+    "noTafsirVerse": "此经文暂无经注",
+    "recently": "最近",
+    "earlier": "更早",
+    "deleteFailed": "删除失败。",
+    "quran": "古兰经",
+    "surahs114": "114章",
+    "juz30": "30卷",
+    "recentCount": "最近",
+    "surahTab": "章",
+    "juzTab": "卷",
+    "recentTab": "最近",
+    "searchPlaceholder": "搜索...",
+    "includeTafsir": "搜索中包含经注",
+    "notesSection": "笔记",
+    "highlightsSection": "高亮",
+    "tafsirTranslation": "经注/翻译",
+    "nowPlaying": "正在播放",
+    "paused": "已暂停",
+    "verse": "节",
+    "repeat": "重复",
+    "loop": "循环",
+    "remaining": "剩余",
+    "surah": "章",
+    "noTafsirAvailable": "此经文暂无经注",
+    "noteInputPlaceholder": "在此写...",
+    "juzLabel": "卷",
+    "hizbLabel": "希兹布",
+    "searching": "搜索中...",
+    "resultsCount": "结果",
+    "recentlyViewed": "最近查看",
+    "allSurahs": "所有章节",
+    "recentlyViewedLabel": "最近查看",
+    "quartersLabel": "四分之一",
+    "halvesLabel": "二分之一",
+    "pagesYouVisit": "您访问的页面将出现在此",
+    "noRecentPages": "暂无最近页面",
+    "verses": "节",
+    "pageNumber": "页",
+    "loadingVerses": "加载经文...",
+    "bookmark": "书签",
+    "removeBookmark": "移除书签",
+    "tafsirAndTranslations": "经注和翻译",
+    "downloadedCount": "已下载",
+    "playUntil": "播放到",
+    "page": "页",
+    "juz": "卷",
+    "reciterLabel": "诵读者",
+    "play": "播放",
+    "playCount": "播放{{count}}次",
+    "setLoopStart": "设置循环起点",
+    "setLoopEnd": "设置循环终点",
+    "playLoop": "播放循环",
+    "tapToReveal": "点击显示",
+    "notStarted": "未开始",
+    "inProgress": "进行中",
+    "memorized": "已背",
+    "all": "全部",
+    "tapToMinimize": "点击最小化",
+    "myTranslations": "我的翻译",
+    "myTafsirs": "我的塔夫西尔",
+    "tafsirBadge": "注释",
+    "translationBadge": "翻译",
+    "currentlyActive": "当前使用中",
+    "select": "选择",
+    "availableToDownload": "可下载",
+    "translationsCount": "翻译",
+    "tafsirsCount": "注释",
+    "tapToDownload": "点击下载",
+    "deleteTafsir": "删除注释",
+    "deleteTafsirConfirm": "删除 {{name}}？",
+    "storageFull": "存储空间已满。请释放设备空间后重试。",
+    "downloadFailed": "下载失败。请检查网络连接和存储空间。",
+    "tafsirNotAvailable": "暂无注释",
+    "tafsirNotAvailableVerse": "该经文暂无注释"
+  },
+  "mosqueFinder": {
+    "nearbyMosques": "附近清真寺",
+    "searchPlaceholder": "搜索清真寺...",
+    "radius1km": "1公里",
+    "radius5km": "5公里",
+    "radius10km": "10公里",
+    "radius25km": "25公里"
+  },
+  "calendar": {
+    "months": [
+      "1月",
+      "2月",
+      "3月",
+      "4月",
+      "5月",
+      "6月",
+      "7月",
+      "8月",
+      "9月",
+      "10月",
+      "11月",
+      "12月"
+    ],
+    "weekdays": [
+      "日",
+      "一",
+      "二",
+      "三",
+      "四",
+      "五",
+      "六"
+    ]
+  },
+  "themePicker": {
+    "colorMode": "颜色模式",
+    "theme": "主题",
+    "light": "浅色",
+    "dark": "深色",
+    "auto": "自动"
+  },
+  "storageOverview": {
+    "storageUsed": "已用存储",
+    "manage": "管理",
+    "storageFull": "存储空间即将用完。",
+    "availableOnDevice": "设备可用空间"
+  },
+  "storageBreakdown": {
+    "title": "存储分析",
+    "quranAudio": "古兰经音频",
+    "tafsir": "经注",
+    "prayerTimes": "礼拜时间",
+    "otherCache": "其他缓存"
+  },
+  "storageSettings": {
+    "downloadSettings": "下载设置",
+    "storageLimit": "存储限制",
+    "maxSpace": "离线内容最大空间",
+    "wifiOnly": "仅Wi-Fi下载",
+    "wifiOnlyDesc": "节省移动数据",
+    "autoDelete": "自动删除旧缓存",
+    "autoDeleteDesc": "达到限制时自动删除旧数据"
+  },
+  "dhikrReminders": {
+    "title": "赞念提醒",
+    "floatingReminders": "浮动提醒",
+    "dhikrNotifications": "赞念通知",
+    "showOverlay": "在其他应用上方显示赞念悬浮窗",
+    "receiveNotifications": "接收定期赞念通知",
+    "grantPermission": "授予权限",
+    "previewOverlay": "预览悬浮窗",
+    "reminderInterval": "提醒间隔",
+    "dhikrCategories": "赞念分类",
+    "chooseTypes": "选择赞念类型",
+    "quietHours": "免打扰时段",
+    "pauseSleep": "睡眠时暂停提醒",
+    "startAt": "开始于",
+    "endAt": "结束于",
+    "autoDismiss": "自动关闭",
+    "overlayDisappears": "悬浮窗在此时间后消失",
+    "iosNotice": "浮动悬浮窗仅在安卓可用。iOS将使用标准通知。",
+    "noCategories": "请启用至少一个赞念分类",
+    "previewFailed": "无法显示预览。",
+    "noDhikr": "未找到所选分类的赞念内容",
+    "error": "错误",
+    "serviceFailed": "无法启动赞念提醒服务",
+    "interval30min": "30分钟",
+    "interval1hour": "1小时",
+    "interval2hours": "2小时",
+    "interval3hours": "3小时",
+    "interval4hours": "4小时",
+    "autoDismiss5s": "5秒",
+    "autoDismiss10s": "10秒",
+    "autoDismiss15s": "15秒",
+    "autoDismiss20s": "20秒",
+    "autoDismiss30s": "30秒",
+    "quiet9pm": "21:00",
+    "quiet10pm": "22:00",
+    "quiet11pm": "23:00",
+    "quiet12am": "0:00",
+    "wake5am": "5:00",
+    "wake6am": "6:00",
+    "wake7am": "7:00",
+    "wake8am": "8:00"
+  },
+  "quickAccess": {
+    "title": "快捷访问",
+    "morning": "早晨",
+    "evening": "晚上",
+    "prayer": "礼拜",
+    "sleep": "睡眠",
+    "wake": "醒来",
+    "general": "通用"
+  },
+  "tasbih": {
+    "title": "泰斯比哈计数器",
+    "target": "目标",
+    "tapToCount": "点击计数 • 长按重置",
+    "targetReached": "目标已达成！",
+    "resetCounter": "重置计数",
+    "resetConfirm": "确定要将计数器重置为0吗？",
+    "cancel": "取消",
+    "reset": "重置"
+  },
+  "weeklyChart": {
+    "title": "本周",
+    "prayed": "已礼拜",
+    "missed": "错过",
+    "late": "迟到",
+    "noData": "无数据",
+    "sun": "日",
+    "mon": "一",
+    "tue": "二",
+    "wed": "三",
+    "thu": "四",
+    "fri": "五",
+    "sat": "六"
+  },
+  "citySearch": {
+    "selectCity": "选择城市",
+    "searchPlaceholder": "搜索全球城市...",
+    "recent": "最近",
+    "popularCities": "热门城市",
+    "noCities": "未找到城市",
+    "tryDifferent": "尝试不同的拼写",
+    "offline": "离线",
+    "offlineMessage": "当前离线。切换城市需要网络。",
+    "networkError": "网络错误。显示本地结果。"
+  },
+  "upcomingEvents": {
+    "title": "即将来临的事件",
+    "noEvents": "暂无即将来临的事件"
+  },
+  "hifzControls": {
+    "title": "背诵控制",
+    "hideTab": "隐藏",
+    "repeatTab": "重复",
+    "loopTab": "循环",
+    "progressTab": "进度",
+    "hideMode": "隐藏模式",
+    "wordAudio": "词语音频",
+    "requiresInternet": "需要网络",
+    "playPronunciation": "显示时播放发音",
+    "quickActions": "快捷操作",
+    "revealAll": "全部显示",
+    "hideAll": "全部隐藏",
+    "autoHideDelay": "自动隐藏延迟",
+    "autoHideAfter": "显示后自动隐藏",
+    "markCurrentVerse": "标记当前经文",
+    "verse": "节",
+    "notStarted": "未开始",
+    "inProgress": "进行中",
+    "memorized": "已背",
+    "longPressToMark": "长按标记学习状态",
+    "bulkMarking": "批量标记",
+    "page": "页",
+    "juz": "卷",
+    "clear": "清除",
+    "clearPageMarkings": "清除页面标记",
+    "markEntirePage": "标记整页",
+    "clearJuzMarkings": "清除卷标记",
+    "markEntireJuz": "标记整卷",
+    "cancel": "取消",
+    "confirm": "确认"
+  },
+  "taraweeh": {
+    "title": "泰拉威赫追踪",
+    "ramadanCalendar": "斋月日历",
+    "locationBreakdown": "按地点分类",
+    "completionRate": "完成率",
+    "logNight": "记录夜间",
+    "edit": "编辑",
+    "night": "夜",
+    "nights": "夜",
+    "streak": "连续",
+    "best": "最佳",
+    "atMosque": "在清真寺",
+    "atHome": "在家"
+  },
+  "mosqueDetail": {
+    "title": "清真寺详情",
+    "openingHours": "营业时间",
+    "directions": "导航",
+    "call": "电话",
+    "website": "网站",
+    "rating": "评分",
+    "reviews": "评论",
+    "failedToLoad": "加载失败",
+    "tryAgain": "重试",
+    "openNow": "营业中",
+    "closed": "已关闭",
+    "address": "地址",
+    "contact": "联系方式",
+    "getDirections": "导航",
+    "away": "远"
+  },
+  "donation": {
+    "addTitle": "添加捐赠",
+    "type": "类型",
+    "amount": "金额",
+    "recipientOptional": "接收方（可选）",
+    "recipientPlaceholder": "组织或个人",
+    "notesOptional": "备注（可选）",
+    "notesPlaceholder": "添加备注...",
+    "addButton": "添加捐赠",
+    "sadaqah": "施舍",
+    "zakat": "天课",
+    "fidya": "罚赎",
+    "kaffarah": "罚金",
+    "other": "其他"
+  },
+  "setGoal": {
+    "title": "设定目标",
+    "goalAmount": "目标金额（美元）",
+    "setButton": "设定目标",
+    "infoText": "慈善目标帮助您跟踪斋月期间的进度。"
+  },
+  "logTaraweeh": {
+    "editTitle": "编辑",
+    "logTitle": "记录",
+    "night": "夜",
+    "rakaat": "拜",
+    "location": "地点",
+    "mosque": "清真寺",
+    "home": "家",
+    "notesOptional": "备注（可选）",
+    "notesPlaceholder": "添加备注...",
+    "delete": "删除",
+    "save": "保存"
+  },
+  "suhoorIftar": {
+    "suhoorReminder": "封斋饭提醒",
+    "iftarReminder": "开斋提醒"
+  },
+  "ramadanCountdown": {
+    "daysLeft": "天剩余"
+  },
+  "quranProgress": {
+    "title": "古兰经进度"
+  },
+  "monthlyCalendar": {
+    "noData": "无数据"
+  },
+  "savedLoops": {
+    "title": "已保存循环",
+    "enterName": "输入循环名称...",
+    "noName": "请输入名称",
+    "noRange": "请先设置范围",
+    "saveLoop": "保存当前循环",
+    "saveCurrent": "保存当前",
+    "delete": "删除",
+    "deleteLoop": "删除循环",
+    "deleteConfirm": "确定要删除吗",
+    "cancel": "取消",
+    "save": "保存",
+    "noLoops": "暂无保存的循环",
+    "error": "错误",
+    "plays": "次播放"
+  },
+  "surahDownload": {
+    "downloading": "下载中...",
+    "downloaded": "已下载",
+    "download": "下载",
+    "delete": "删除"
+  },
+  "azkarCategories": {
+    "morning": "晨间祈念",
+    "evening": "晚间祈念",
+    "after-prayer": "拜后祈念",
+    "sleep": "睡前祈念",
+    "waking": "醒来祈念",
+    "general": "通用祈念"
+  },
+  "duaCategories": {
+    "travel": "旅行",
+    "eating": "饮食",
+    "sleeping": "睡眠与觉醒",
+    "places": "进出",
+    "weather": "天气与自然",
+    "health": "健康与康复",
+    "protection": "保护",
+    "gratitude": "感恩",
+    "forgiveness": "宽恕",
+    "guidance": "引导",
+    "family": "家庭与子女",
+    "general": "通用"
+  },
+  "guideCategories": {
+    "worship": "功修与礼拜",
+    "purification": "净化",
+    "hajj": "朝觐与副朝",
+    "charity": "慈善与天课",
+    "fasting": "斋戒",
+    "funeral": "殡葬礼仪",
+    "character": "品德与礼仪",
+    "knowledge": "知识与灵性",
+    "finance": "伊斯兰金融"
+  },
+  "guides": {
+    "how-to-perform-salah": {
+      "title": "如何礼拜（萨拉特）",
+      "description": "按照先知传统进行五番拜的完整指南",
+      "steps": {
+        "0": {
+          "title": "1. 举意（尼亚特）",
+          "content": "在心中为要礼的拜举意。举意是在心中的，不需要口头说出。"
+        },
+        "1": {
+          "title": "2. 入拜大赞词",
+          "content": "将双手举到肩膀或耳朵的高度，说'安拉胡·阿克巴尔'。这标志着礼拜的开始。"
+        },
+        "2": {
+          "title": "3. 开拜祈祷",
+          "content": "将右手放在左手上置于胸前，诵念：'赞美安拉，至纯至洁，赞颂安拉，你的尊名吉祥，你的权威崇高，除你之外再无神灵。'"
+        },
+        "3": {
+          "title": "4. 诵读开端章",
+          "content": "诵念开端章（法谛哈）。这在每一拜中都是必须的。结束后轻声说'阿敏'。"
+        },
+        "4": {
+          "title": "5. 诵读额外经文",
+          "content": "在前两拜中，开端章之后再诵读一段古兰经经文。"
+        },
+        "5": {
+          "title": "6. 鞠躬（鲁库）",
+          "content": "说'安拉胡·阿克巴尔'并鞠躬，双手放在膝盖上。说三次'赞颂我伟大的主'。"
+        },
+        "6": {
+          "title": "7. 从鞠躬起立",
+          "content": "直起身来，说'安拉听到了赞美他的人'。站立时说'我们的主，一切赞颂归于你'。"
+        },
+        "7": {
+          "title": "8. 叩头（苏朱德）",
+          "content": "说'安拉胡·阿克巴尔'并叩头。说三次'赞颂我至高的主'。进行两次叩头。"
+        },
+        "8": {
+          "title": "9. 坐念证词",
+          "content": "每两拜后坐下诵念证词。用右手食指指向前方。"
+        },
+        "9": {
+          "title": "10. 出拜祝安",
+          "content": "将头转向右边说'愿安拉的平安和慈悯降于你们'，再转向左边重复。"
+        }
+      }
+    },
+    "how-to-perform-istikhara": {
+      "title": "如何做伊斯提哈拉",
+      "description": "在重要决定中寻求真主引导的指南",
+      "steps": {
+        "0": {
+          "title": "1. 确定问题",
+          "content": "有一个需要引导的具体事项。伊斯提哈拉用于你不确定最佳选择的合法事务。"
+        },
+        "1": {
+          "title": "2. 礼两拜",
+          "content": "礼两拜副功拜。第一拜在开端章后诵念不信道者章，第二拜诵念忠诚章。"
+        },
+        "2": {
+          "title": "3. 诵念伊斯提哈拉祈祷词",
+          "content": "拜后举起双手，诵念：'主啊！我凭你的知识向你求取选择，凭你的大能向你求取力量...'"
+        },
+        "3": {
+          "title": "4. 说明你的事情",
+          "content": "当念到'关于这件事'时，说出你寻求引导的具体事项。"
+        },
+        "4": {
+          "title": "5. 信赖安拉的计划",
+          "content": "祈祷后继续做决定。相信安拉会为你促成最好的结果。"
+        }
+      }
+    },
+    "how-to-perform-tahajjud": {
+      "title": "如何礼夜间拜",
+      "description": "在夜晚最后三分之一礼夜间拜的指南",
+      "steps": {
+        "0": {
+          "title": "1. 在夜晚最后三分之一醒来",
+          "content": "在夜晚最后三分之一醒来（大约在晨礼前1-2小时）。这是最吉祥的时刻。"
+        },
+        "1": {
+          "title": "2. 做小净",
+          "content": "进行净化并在精神上和灵性上准备好站在安拉面前。"
+        },
+        "2": {
+          "title": "3. 成对礼拜",
+          "content": "至少礼两拜，可以成对增加。先知（愿主福安之）礼十一拜。"
+        },
+        "3": {
+          "title": "4. 诵读较长经文",
+          "content": "在诵读、鞠躬和叩头中从容不迫。比日常礼拜诵读更长的经文。"
+        },
+        "4": {
+          "title": "5. 做祈祷",
+          "content": "拜后真诚地祈祷。这是安拉降临到最近的天际、应答祈祷的时刻。"
+        },
+        "5": {
+          "title": "6. 以奇数拜结束",
+          "content": "以奇数拜（维特尔）结束夜间拜——通常是一拜或三拜。"
+        }
+      }
+    },
+    "how-to-perform-eid-prayer": {
+      "title": "如何礼开斋节和宰牲节拜",
+      "description": "开斋节和宰牲节礼拜指南",
+      "steps": {
+        "0": {
+          "title": "1. 准备过节",
+          "content": "沐浴，穿最好的衣服，使用香水。开斋节时先吃枣子。宰牲节时等拜后再吃。"
+        },
+        "1": {
+          "title": "2. 前往礼拜场所",
+          "content": "早些去节日礼拜的场所。去和回走不同的路是圣行。"
+        },
+        "2": {
+          "title": "3. 第一拜",
+          "content": "入拜大赞词后有七次额外的大赞词。每次举手。然后诵读开端章和一段经文。"
+        },
+        "3": {
+          "title": "4. 第二拜",
+          "content": "从叩头起立后有五次额外的大赞词。然后诵读开端章和一段经文。"
+        },
+        "4": {
+          "title": "5. 听演讲",
+          "content": "拜后伊玛目讲两段演讲。建议留下聆听。"
+        },
+        "5": {
+          "title": "6. 互相祝贺",
+          "content": "以'节日快乐'或'愿安拉接受我们和你们的善功'问候穆斯林兄弟姐妹。"
+        }
+      }
+    },
+    "morning-evening-adhkar": {
+      "title": "晨昏祈念",
+      "description": "重要的晨间和晚间记念",
+      "steps": {
+        "0": {
+          "title": "1. 宝座经",
+          "content": "诵念宝座经（古兰经2:255）。先知（愿主福安之）说，早晨诵念者将受到保护直到晚上。"
+        },
+        "1": {
+          "title": "2. 黄牛章最后两节",
+          "content": "诵念黄牛章最后两节（2:285-286）。它们足以提供保护。"
+        },
+        "2": {
+          "title": "3. 忠诚章、曙光章、人类章",
+          "content": "各诵念这三章三次。它们提供完全的保护。"
+        },
+        "3": {
+          "title": "4. 赞主、赞美、大赞",
+          "content": "说'赞美安拉'（33次），'一切赞颂归于安拉'（33次），'安拉至大'（34次）。"
+        },
+        "4": {
+          "title": "5. 求恕祷词",
+          "content": "诵念最尊贵的求恕词：'主啊！你是我的养主，除你之外再无神灵...'"
+        },
+        "5": {
+          "title": "6. 保护祈祷",
+          "content": "说：'以安拉之名——天地间无物能伤害以他之名庇护者'（三次）。"
+        }
+      }
+    },
+    "how-to-perform-wudu": {
+      "title": "如何做小净",
+      "description": "正确进行礼拜前净化的详细指南",
+      "steps": {
+        "0": {
+          "title": "1. 举意",
+          "content": "在心中举意做小净。说'以安拉之名'。"
+        },
+        "1": {
+          "title": "2. 洗手",
+          "content": "将双手洗到手腕三次。"
+        },
+        "2": {
+          "title": "3. 漱口",
+          "content": "漱口三次。"
+        },
+        "3": {
+          "title": "4. 清洗鼻腔",
+          "content": "将水吸入鼻中三次并擤出。"
+        },
+        "4": {
+          "title": "5. 洗脸",
+          "content": "从发际线到下巴洗整个脸三次。"
+        },
+        "5": {
+          "title": "6. 洗臂",
+          "content": "先洗右臂到肘三次，再洗左臂。"
+        },
+        "6": {
+          "title": "7. 抹头",
+          "content": "用湿手从前向后抹头一次。"
+        },
+        "7": {
+          "title": "8. 抹耳",
+          "content": "用食指抹耳内，用拇指抹耳外。"
+        },
+        "8": {
+          "title": "9. 洗脚",
+          "content": "先洗右脚到脚踝三次，再洗左脚。"
+        },
+        "9": {
+          "title": "10. 诵念祈祷词",
+          "content": "说：'我作证，除安拉外再无神灵，他独一无偶；我又作证，穆罕默德是他的仆人和使者。'"
+        }
+      }
+    },
+    "how-to-perform-ghusl": {
+      "title": "如何做大净",
+      "description": "全身净化仪式的完整指南",
+      "steps": {
+        "0": {
+          "title": "1. 举意",
+          "content": "举意从大不净中净化。说'以安拉之名'。"
+        },
+        "1": {
+          "title": "2. 洗手",
+          "content": "将双手洗到手腕三次。"
+        },
+        "2": {
+          "title": "3. 清洗私处",
+          "content": "彻底清洗私处。"
+        },
+        "3": {
+          "title": "4. 做小净",
+          "content": "进行完整的小净，如同为礼拜做净化一样。"
+        },
+        "4": {
+          "title": "5. 浇水于头",
+          "content": "将水浇在头上三次，确保水到达发根。"
+        },
+        "5": {
+          "title": "6. 洗右侧",
+          "content": "将水浇遍身体右侧。"
+        },
+        "6": {
+          "title": "7. 洗左侧",
+          "content": "将水浇遍身体左侧。"
+        },
+        "7": {
+          "title": "8. 全身清洗",
+          "content": "确保水到达身体每个部位。"
+        }
+      }
+    },
+    "how-to-perform-tayammum": {
+      "title": "如何做干净",
+      "description": "无水时进行干净的指南",
+      "steps": {
+        "0": {
+          "title": "1. 举意",
+          "content": "举意做干净以代替小净或大净。"
+        },
+        "1": {
+          "title": "2. 念太斯米",
+          "content": "以'以安拉之名'开始。"
+        },
+        "2": {
+          "title": "3. 拍打洁净土地",
+          "content": "将双手拍打洁净的土地、沙子或尘土一次。"
+        },
+        "3": {
+          "title": "4. 抹脸",
+          "content": "用双掌抹整个脸一次。"
+        },
+        "4": {
+          "title": "5. 抹手",
+          "content": "用左掌抹右手，再用右掌抹左手，到手腕。"
+        },
+        "5": {
+          "title": "6. 完成",
+          "content": "您的干净已完成，可用于一次礼拜。每次礼拜需重做。"
+        }
+      }
+    },
+    "how-to-perform-umrah": {
+      "title": "如何做副朝",
+      "description": "小朝觐的完整指南",
+      "steps": {
+        "0": {
+          "title": "1. 入戒",
+          "content": "在米格特之前举意副朝，沐浴并穿上戒衣。念应召词：'主啊！我响应你的副朝召唤。'"
+        },
+        "1": {
+          "title": "2. 进入禁寺",
+          "content": "以右脚进入，诵念进入清真寺的祈祷词。"
+        },
+        "2": {
+          "title": "3. 环游",
+          "content": "从黑石处开始，逆时针绕天房七圈。"
+        },
+        "3": {
+          "title": "4. 礼两拜",
+          "content": "环游后在伊卜拉欣站处或禁寺任何地方礼两拜。"
+        },
+        "4": {
+          "title": "5. 饮渗渗泉水",
+          "content": "饮渗渗泉水并祈祷。"
+        },
+        "5": {
+          "title": "6. 奔走",
+          "content": "在法和麦尔瓦之间奔走七次，从法开始。"
+        },
+        "6": {
+          "title": "7. 剃发或剪发",
+          "content": "男子应剃头或剪短头发。女子剪去一指尖长度。这样便完成了副朝。"
+        }
+      }
+    },
+    "how-to-perform-tawaf": {
+      "title": "如何做环游",
+      "description": "环绕天房的详细指南",
+      "steps": {
+        "0": {
+          "title": "1. 面向黑石",
+          "content": "面对黑石站立，天房在您的左侧。"
+        },
+        "1": {
+          "title": "2. 举意",
+          "content": "在心中举意进行环游。"
+        },
+        "2": {
+          "title": "3. 触摸或指向",
+          "content": "如果可能，触摸并亲吻黑石。否则指向它并说'以安拉之名，安拉至大'。"
+        },
+        "3": {
+          "title": "4. 开始环绕",
+          "content": "逆时针绕天房行走，保持天房在您的左侧。"
+        },
+        "4": {
+          "title": "5. 念赞词和祈祷",
+          "content": "环游没有特定的祈祷词。可以诵读古兰经、念赞词或做个人祈祷。"
+        },
+        "5": {
+          "title": "6. 触摸也门角",
+          "content": "如果可能，用右手触摸也门角，但不要亲吻。"
+        },
+        "6": {
+          "title": "7. 完成七圈",
+          "content": "完成七个完整的圈。每次经过黑石时指向它并说'安拉至大'。"
+        },
+        "7": {
+          "title": "8. 礼两拜",
+          "content": "环游结束后在伊卜拉欣站处或其他地方礼两拜。"
+        }
+      }
+    },
+    "how-to-calculate-zakat": {
+      "title": "如何计算和缴纳天课",
+      "description": "义务施舍的计算和缴纳指南",
+      "steps": {
+        "0": {
+          "title": "1. 理解起征额",
+          "content": "起征额是缴纳天课的最低财产标准。相当于85克黄金或595克白银。"
+        },
+        "1": {
+          "title": "2. 计算财产",
+          "content": "加总所有应缴天课的资产：现金、银行存款、黄金、白银、商品、股票和应收账款。"
+        },
+        "2": {
+          "title": "3. 扣除债务",
+          "content": "扣除年内到期的所有债务。"
+        },
+        "3": {
+          "title": "4. 与起征额比较",
+          "content": "如果您的净应缴天课财产超过起征额，则天课为义务。"
+        },
+        "4": {
+          "title": "5. 计算2.5%",
+          "content": "将应缴天课财产乘以0.025（2.5%），即为您的天课金额。"
+        },
+        "5": {
+          "title": "6. 交给有资格者",
+          "content": "将天课分配给古兰经9:60中提到的八类人：穷人、贫困者、管理者、心被团结者、释奴、负债者、为主道者和旅行者。"
+        },
+        "6": {
+          "title": "7. 举意",
+          "content": "缴纳时举意这是您的义务天课。"
+        }
+      }
+    },
+    "how-to-pay-zakat-al-fitr": {
+      "title": "如何缴纳开斋捐",
+      "description": "斋月末义务施舍的指南",
+      "steps": {
+        "0": {
+          "title": "1. 目的",
+          "content": "开斋捐净化斋戒者的闲言杂语，并在节日为贫困者提供食物。"
+        },
+        "1": {
+          "title": "2. 谁必须缴纳",
+          "content": "每个拥有超过日常所需食物的穆斯林都必须为自己和家属缴纳。"
+        },
+        "2": {
+          "title": "3. 金额",
+          "content": "一撒（约3公斤）主食（小麦、大麦、枣、葡萄干或大米）或其等值金额。"
+        },
+        "3": {
+          "title": "4. 时间",
+          "content": "必须在节日礼拜前缴纳。最好在节日前1-2天。拜后则算迟到的施舍。"
+        },
+        "4": {
+          "title": "5. 给予穷人",
+          "content": "直接交给社区的贫困穆斯林或通过可靠的组织。"
+        }
+      }
+    },
+    "how-to-give-sadaqah": {
+      "title": "如何施舍",
+      "description": "真诚行善的指南",
+      "steps": {
+        "0": {
+          "title": "1. 净化意图",
+          "content": "施舍纯粹是为了取悦安拉，不为获得赞誉。"
+        },
+        "1": {
+          "title": "2. 从合法财产中给予",
+          "content": "确保施舍来自合法收入。安拉只接受纯洁的。"
+        },
+        "2": {
+          "title": "3. 尽量秘密行善",
+          "content": "先知（愿主福安之）说最好的施舍是秘密的。但公开行善可以激励他人。"
+        },
+        "3": {
+          "title": "4. 定期行善",
+          "content": "即使少量的定期施舍也比偶尔的大额更好。安拉最喜爱持续的善行。"
+        },
+        "4": {
+          "title": "5. 不要提醒",
+          "content": "不要提醒受施者你的善行，也不要伤害他们。这会使回报无效。"
+        },
+        "5": {
+          "title": "6. 微笑也是施舍",
+          "content": "施舍不仅是金钱。微笑、帮助他人、清除道路上的障碍——都是施舍。"
+        }
+      }
+    },
+    "how-to-fast-ramadan": {
+      "title": "如何在斋月斋戒",
+      "description": "义务斋戒的完整指南",
+      "steps": {
+        "0": {
+          "title": "1. 夜间举意",
+          "content": "在晨礼前举意。先知（愿主福安之）说：'未在晨礼前举意者，其斋戒不成立。'"
+        },
+        "1": {
+          "title": "2. 吃封斋饭",
+          "content": "吃黎明前的餐食。先知（愿主福安之）说：'吃封斋饭，因为其中有吉庆。'在晨礼前停止进食。"
+        },
+        "2": {
+          "title": "3. 戒绝饮食和亲密关系",
+          "content": "从晨礼到昏礼戒绝饮食、吸烟和夫妻之事。"
+        },
+        "3": {
+          "title": "4. 守护口舌",
+          "content": "避免谎言、背谈、争吵和粗鲁的语言。"
+        },
+        "4": {
+          "title": "5. 增加善功",
+          "content": "增加礼拜、诵读古兰经、赞念和慈善。斋月是古兰经和慷慨的月份。"
+        },
+        "5": {
+          "title": "6. 昏礼时开斋",
+          "content": "昏礼时立即开斋。先知（愿主福安之）以枣子和水开斋。"
+        },
+        "6": {
+          "title": "7. 开斋时祈祷",
+          "content": "斋戒者的祈祷会被应答。说：'主啊！我为你而斋戒，以你的供给而开斋。'"
+        }
+      }
+    },
+    "how-to-fast-voluntarily": {
+      "title": "如何自愿斋戒",
+      "description": "推荐的自愿斋戒日指南",
+      "steps": {
+        "0": {
+          "title": "1. 周一和周四",
+          "content": "先知（愿主福安之）在周一和周四斋戒。他说善功在这两天被呈现给安拉。"
+        },
+        "1": {
+          "title": "2. 每月三天",
+          "content": "在每个伊斯兰历月的13、14、15日（白昼）斋戒。这等同于全年斋戒。"
+        },
+        "2": {
+          "title": "3. 阿拉法日",
+          "content": "在祖勒希哲9日斋戒（非朝觐者）。先知（愿主福安之）说它赎去前一年和后一年的罪过。"
+        },
+        "3": {
+          "title": "4. 阿舒拉日",
+          "content": "在穆哈兰姆10日连同9日或11日斋戒。赎去前一年的罪过。"
+        },
+        "4": {
+          "title": "5. 闪瓦鲁的六天",
+          "content": "斋月后在闪瓦鲁月斋戒六天。先知（愿主福安之）说这等同于全年斋戒。"
+        },
+        "5": {
+          "title": "6. 举意",
+          "content": "自愿斋戒可以在白天举意，只要你还没有吃过东西。"
+        }
+      }
+    },
+    "how-to-perform-janazah-prayer": {
+      "title": "如何礼殡礼拜",
+      "description": "丧葬祈祷的指南",
+      "steps": {
+        "0": {
+          "title": "1. 站成排",
+          "content": "在伊玛目后站成排。亡者放在前面。"
+        },
+        "1": {
+          "title": "2. 第一次大赞",
+          "content": "举手说'安拉至大'，然后默念开端章。"
+        },
+        "2": {
+          "title": "3. 第二次大赞",
+          "content": "说'安拉至大'，为先知诵念祝福词。"
+        },
+        "3": {
+          "title": "4. 第三次大赞",
+          "content": "说'安拉至大'，为亡者祈祷：'主啊！请你宽恕他并慈悯他...'"
+        },
+        "4": {
+          "title": "5. 第四次大赞",
+          "content": "说'安拉至大'，为自己和所有穆斯林做简短的祈祷。"
+        },
+        "5": {
+          "title": "6. 出拜祝安",
+          "content": "将头转向右边说'愿安拉的平安降于你们'，再转向左边重复。"
+        }
+      }
+    },
+    "how-to-offer-condolences": {
+      "title": "如何表达慰问",
+      "description": "安慰丧亲者的伊斯兰礼仪",
+      "steps": {
+        "0": {
+          "title": "1. 尽快探望",
+          "content": "得知消息后尽快探望家属，但尊重他们的隐私需求。"
+        },
+        "1": {
+          "title": "2. 说正确的话",
+          "content": "说：'我们属于安拉，我们终将回归于他。'提醒他们安拉会回报忍耐者。"
+        },
+        "2": {
+          "title": "3. 祈祷",
+          "content": "为亡者和家属祈祷。"
+        },
+        "3": {
+          "title": "4. 提供实际帮助",
+          "content": "提供具体帮助如准备饭菜、购物或协助安排事务。"
+        },
+        "4": {
+          "title": "5. 不要久留",
+          "content": "除非家属要求，否则简短停留。"
+        },
+        "5": {
+          "title": "6. 避免过度哭号",
+          "content": "保持镇定，避免大声哭号——这在伊斯兰中是不可取的。"
+        }
+      }
+    },
+    "how-to-control-anger": {
+      "title": "如何控制愤怒",
+      "description": "管理愤怒的伊斯兰指南",
+      "steps": {
+        "0": {
+          "title": "1. 向安拉求庇",
+          "content": "感到愤怒时说：'我求安拉庇护，免遭被驱逐的恶魔的侵扰。'"
+        },
+        "1": {
+          "title": "2. 沉默",
+          "content": "先知（愿主福安之）说：'当你们生气时，应当沉默。'沉默可以防止说出令你后悔的话。"
+        },
+        "2": {
+          "title": "3. 改变姿势",
+          "content": "如果站着就坐下。如果坐着就躺下。这是先知（愿主福安之）的教导。"
+        },
+        "3": {
+          "title": "4. 做小净",
+          "content": "用冷水做净化。先知（愿主福安之）说愤怒来自恶魔，恶魔由火创造。"
+        },
+        "4": {
+          "title": "5. 想想安拉的宽恕",
+          "content": "想想安拉如何不顾你的错误而宽恕你。这应该使你更宽容。"
+        },
+        "5": {
+          "title": "6. 想想后果",
+          "content": "想想愤怒行事的后果：破碎的关系、后悔的话语和失去的尊重。"
+        }
+      }
+    },
+    "how-to-practice-humility": {
+      "title": "如何践行谦逊",
+      "description": "在伊斯兰中培养谦逊的指南",
+      "steps": {
+        "0": {
+          "title": "1. 记住起源",
+          "content": "记住你是从泥土中创造的，终将回归泥土。"
+        },
+        "1": {
+          "title": "2. 承认安拉的恩赐",
+          "content": "认识到你所有的福分、才能和成就都是安拉的恩赐。"
+        },
+        "2": {
+          "title": "3. 服务他人",
+          "content": "先知（愿主福安之）服务家人并做家务，尽管他是穆斯林的领袖。"
+        },
+        "3": {
+          "title": "4. 避免炫耀",
+          "content": "不要炫耀财富、知识或成就。先知（愿主福安之）说：'心中有一粒原子般傲慢的人不会进入天堂。'"
+        },
+        "4": {
+          "title": "5. 接受建议",
+          "content": "无论对方身份如何，都要开放接受批评和建议。"
+        },
+        "5": {
+          "title": "6. 平等对待所有人",
+          "content": "对穷人、老人和弱势群体表示尊重。"
+        }
+      }
+    },
+    "how-to-forgive-others": {
+      "title": "如何宽恕他人",
+      "description": "关于宽恕的伊斯兰教导",
+      "steps": {
+        "0": {
+          "title": "1. 记住安拉的宽恕",
+          "content": "安拉宽恕了你无数的罪过。古兰经说：'难道你们不希望安拉宽恕你们吗？'（24:22）"
+        },
+        "1": {
+          "title": "2. 理解回报",
+          "content": "先知（愿主福安之）说：'施舍不会减少财富，安拉会增加宽恕者的荣耀。'"
+        },
+        "2": {
+          "title": "3. 设身处地",
+          "content": "试着理解那个人为什么对你不公。"
+        },
+        "3": {
+          "title": "4. 为他们祈祷",
+          "content": "为曾经不公对待你的人祈祷。这会软化你的心。"
+        },
+        "4": {
+          "title": "5. 放下怨恨",
+          "content": "怨恨只会伤害你自己。先知（愿主福安之）说：'不要互相仇恨，不要互相嫉妒，你们应当成为兄弟。'"
+        },
+        "5": {
+          "title": "6. 尽可能和解",
+          "content": "如果合适的话，主动走出和解的第一步。"
+        }
+      }
+    },
+    "how-to-seek-knowledge": {
+      "title": "如何寻求知识",
+      "description": "正确寻求伊斯兰知识的指南",
+      "steps": {
+        "0": {
+          "title": "1. 净化意图",
+          "content": "为了安拉而寻求知识，不为世俗利益。先知（愿主福安之）警告不要为了炫耀而追求知识。"
+        },
+        "1": {
+          "title": "2. 从基础开始",
+          "content": "从基本知识开始：正确的信仰、如何礼拜、基本的伊斯兰规则和古兰经诵读。"
+        },
+        "2": {
+          "title": "3. 找到合格的老师",
+          "content": "向有能力的、可信的学者学习，他们遵循古兰经和圣行。"
+        },
+        "3": {
+          "title": "4. 保持坚持",
+          "content": "定期学习，哪怕每天只学一点点。安拉最喜爱的善行是持续的。"
+        },
+        "4": {
+          "title": "5. 实践所学",
+          "content": "将知识应用到生活中。没有行动的知识就像没有果实的树。"
+        },
+        "5": {
+          "title": "6. 教导他人",
+          "content": "分享有益的知识。先知（愿主福安之）说：'你们中最优秀的是学习古兰经并教授它的人。'"
+        }
+      }
+    },
+    "how-to-make-tawbah": {
+      "title": "如何做讨白（忏悔）",
+      "description": "真诚悔过的指南",
+      "steps": {
+        "0": {
+          "title": "1. 立即停止犯罪",
+          "content": "第一步是立即停止犯罪。不能一边忏悔一边继续犯罪。"
+        },
+        "1": {
+          "title": "2. 真心悔恨",
+          "content": "对违抗安拉感到真心的悔恨。先知（愿主福安之）说：'悔恨就是忏悔。'"
+        },
+        "2": {
+          "title": "3. 向安拉求饶",
+          "content": "向安拉求饶。说'我求安拉宽恕'并真诚祈祷。"
+        },
+        "3": {
+          "title": "4. 下定决心",
+          "content": "坚定地决心不再重犯。这种决心对有效的忏悔至关重要。"
+        },
+        "4": {
+          "title": "5. 必要时补偿",
+          "content": "如果你的罪行伤害了他人，请求他们的宽恕并弥补。"
+        },
+        "5": {
+          "title": "6. 以善代恶",
+          "content": "用善行取代罪行。安拉说：'善行必能消除恶行'（古兰经11:114）。"
+        },
+        "6": {
+          "title": "7. 永不绝望",
+          "content": "无论罪行多么严重，永不对安拉的慈悯绝望。他说：'你们不要绝望于安拉的慈悯'（古兰经39:53）。"
+        }
+      }
+    },
+    "understanding-riba": {
+      "title": "理解利息",
+      "description": "理解伊斯兰中利息的禁令",
+      "steps": {
+        "0": {
+          "title": "1. 什么是利息？",
+          "content": "'利息'意为'增加'或'多余'。在伊斯兰金融中，它指借贷中任何有保证的利息。"
+        },
+        "1": {
+          "title": "2. 为什么被禁止？",
+          "content": "安拉说：'安拉允许贸易而禁止利息'（古兰经2:275）。利息剥削有需要的人。"
+        },
+        "2": {
+          "title": "3. 利息的种类",
+          "content": "延期利息：贷款利息。同类利息：相同商品不等量交换。"
+        },
+        "3": {
+          "title": "4. 罪行的严重性",
+          "content": "先知（愿主福安之）说利息有73种。给予者和接受者都受到诅咒。"
+        },
+        "4": {
+          "title": "5. 替代方案",
+          "content": "使用伊斯兰银行、利润分享协议或无息贷款。"
+        }
+      }
+    },
+    "halal-income": {
+      "title": "清真收入",
+      "description": "伊斯兰中合法收入的准则",
+      "steps": {
+        "0": {
+          "title": "1. 重要性",
+          "content": "先知（愿主福安之）说：'没有人吃过比自己双手劳作所得更好的食物。'"
+        },
+        "1": {
+          "title": "2. 禁止的行业",
+          "content": "避免来自以下行业的收入：酒精、赌博、猪肉、传统银行、成人娱乐和一切有害之物。"
+        },
+        "2": {
+          "title": "3. 诚实经营",
+          "content": "诚实经商。先知（愿主福安之）说：'诚实的商人将与先知和殉道者同在。'"
+        },
+        "3": {
+          "title": "4. 公平定价",
+          "content": "不要剥削顾客，不要囤货哄抬价格。"
+        },
+        "4": {
+          "title": "5. 遵守合同",
+          "content": "履行所有协议和合同。安拉说：'你们要履行合约'（古兰经5:1）。"
+        },
+        "5": {
+          "title": "6. 及时付工资",
+          "content": "先知（愿主福安之）说：'在工人的汗水干之前付给他工资。'"
+        }
+      }
+    },
+    "islamic-banking": {
+      "title": "伊斯兰银行基础",
+      "description": "理解符合伊斯兰教法的银行业务",
+      "steps": {
+        "0": {
+          "title": "1. 基本原则",
+          "content": "伊斯兰银行禁止利息、过度不确定性和赌博。利润必须来自实际经济活动。"
+        },
+        "1": {
+          "title": "2. 成本加成",
+          "content": "银行购买资产并以声明的利润率卖给你。你分期付款。"
+        },
+        "2": {
+          "title": "3. 利润分享",
+          "content": "你提供资本，银行管理。利润按约定比例分配。"
+        },
+        "3": {
+          "title": "4. 合伙经营",
+          "content": "双方都出资，按投资比例分享利润和亏损。"
+        },
+        "4": {
+          "title": "5. 租赁",
+          "content": "银行购买资产并租给你。期满后你可以购买。"
+        },
+        "5": {
+          "title": "6. 选择银行",
+          "content": "选择有伊斯兰教法监督委员会的银行。验证产品是否真正合规。"
+        }
+      }
+    },
+    "halal-investing": {
+      "title": "清真投资指南",
+      "description": "如何按照伊斯兰教法进行投资",
+      "steps": {
+        "0": {
+          "title": "1. 过滤禁止行业",
+          "content": "避免投资于：酒精、烟草、赌博、传统银行/保险、猪肉、武器。"
+        },
+        "1": {
+          "title": "2. 财务指标",
+          "content": "许多学者要求：负债率低于33%，利息收入低于营收的5%。"
+        },
+        "2": {
+          "title": "3. 利润净化",
+          "content": "如果公司少部分收入来自不合规来源，将该比例捐出。"
+        },
+        "3": {
+          "title": "4. 伊斯兰基金",
+          "content": "考虑经伊斯兰学者审核的符合教法的投资基金和ETF。"
+        },
+        "4": {
+          "title": "5. 房地产",
+          "content": "房地产投资基本上是清真的。避免传统抵押贷款；使用伊斯兰房地产融资。"
+        },
+        "5": {
+          "title": "6. 咨询学者",
+          "content": "有疑问时咨询合格的学者或使用伊斯兰金融筛选服务。"
+        }
+      }
+    },
+    "debt-management": {
+      "title": "伊斯兰债务管理",
+      "description": "按照伊斯兰原则管理债务",
+      "steps": {
+        "0": {
+          "title": "1. 避免不必要的债务",
+          "content": "先知（愿主福安之）祈求免于债务。只在真正需要时借贷，并有明确的还款计划。"
+        },
+        "1": {
+          "title": "2. 记录所有债务",
+          "content": "安拉命令：'当你们借贷时，应当记录'（古兰经2:282）。"
+        },
+        "2": {
+          "title": "3. 有还款意图",
+          "content": "先知（愿主福安之）说：'谁借人财物并有意偿还，安拉会帮助他。'"
+        },
+        "3": {
+          "title": "4. 尽快偿还",
+          "content": "有能力时不要拖延还款。先知（愿主福安之）说：'富人拖延还债是不义。'"
+        },
+        "4": {
+          "title": "5. 作为债权人要宽容",
+          "content": "如果债务人有困难，给予宽限。安拉说：'给予宽限直到他宽裕'（古兰经2:280）。"
+        },
+        "5": {
+          "title": "6. 可能的话免除",
+          "content": "免除债务有很大的回报。安拉说：'如果你们施舍，对你们是更好的'（古兰经2:280）。"
+        }
+      }
+    }
+  },
+  "islamicEvents": {
+    "new_year": "伊斯兰新年",
+    "ashura": "阿舒拉日",
+    "mawlid": "圣纪节",
+    "isra_miraj": "夜行登霄",
+    "mid_shaban": "舍尔邦月中旬",
+    "ramadan_start": "斋月开始",
+    "laylat_qadr": "盖德尔夜",
+    "eid_fitr": "开斋节",
+    "arafah": "阿拉法日",
+    "eid_adha": "宰牲节",
+    "new_year_desc": "穆哈兰月的第一天标志着伊斯兰历新年的开始。",
+    "ashura_desc": "穆哈兰月第十天。在这一天封斋可赎前一年的罪过。",
+    "mawlid_desc": "纪念先知穆罕默德ﷺ的诞辰。",
+    "isra_miraj_desc": "先知穆罕默德ﷺ的夜行和登霄。",
+    "mid_shaban_desc": "安拉降临到最低层天空并宽恕许多人的夜晚。",
+    "ramadan_start_desc": "吉祥的斋月开始了。",
+    "laylat_qadr_desc": "前定之夜，胜过一千个月。",
+    "eid_fitr_desc": "开斋节，庆祝斋月的结束。",
+    "arafah_desc": "在这一天封斋可赎前一年和来年的罪过。",
+    "eid_adha_desc": "宰牲节，纪念易卜拉欣愿意献祭其子。"
+  },
+  "countdown": {
+    "today": "今天",
+    "tomorrow": "明天",
+    "inDays": "%{count}天后",
+    "inWeek": "%{count}周后",
+    "inWeeks": "%{count}周后",
+    "inMonth": "%{count}个月后",
+    "inMonths": "%{count}个月后"
+  },
+  "fastingLabels": {
+    "monday": "周一斋",
+    "thursday": "周四斋",
+    "white_day": "白日斋",
+    "ashura": "阿舒拉斋",
+    "arafah": "阿拉法斋",
+    "shawwal": "闪瓦鲁斋"
+  },
+  "prayerStatus": {
+    "prayed": "已礼拜",
+    "late": "迟到",
+    "missed": "错过"
+  },
+  "hifzConstants": {
+    "fullVerse": "整节经文",
+    "fullVerseDesc": "隐藏整节经文，点击显示",
+    "wordByWord": "逐词",
+    "wordByWordDesc": "诵读时逐词显示",
+    "manual": "手动",
+    "none": "无",
+    "sec2": "2秒",
+    "sec5": "5秒",
+    "slow": "慢速",
+    "medium": "中速",
+    "normal": "正常"
+  },
+  "repeatControls": {
+    "title": "重复设置",
+    "subtitle": "配置记忆音频重复",
+    "timesToRepeat": "重复次数",
+    "timesHint": "重播经文的次数",
+    "gapBetween": "重复间隔",
+    "gapHint": "重复之间的暂停时间",
+    "recitationSpeed": "诵读速度",
+    "speedHint": "调整播放速度",
+    "stopRepeating": "停止重复"
+  },
+  "loopRange": {
+    "start": "开始",
+    "end": "结束",
+    "notSet": "未设定",
+    "helpText": "长按经文设置循环起止点",
+    "clear": "清除",
+    "playLoop": "播放循环",
+    "stopLoop": "停止循环"
+  },
+  "wordByWord": {
+    "title": "逐词翻译",
+    "infoHint": "长按古兰经中的任何单词查看其含义、音译和出现频率",
+    "translationLanguage": "翻译语言",
+    "tapToDownload": "点击下载",
+    "downloading": "下载中...",
+    "arabicMeanings": "来自غريب القرآن的阿拉伯语含义",
+    "audio": "音频",
+    "playPronunciation": "播放单词发音",
+    "audioHint": "抬起手指时听到每个单词的发音"
+  },
+  "calendarGrid": {
+    "event": "事件",
+    "fasting": "斋戒",
+    "whiteDay": "白天日"
+  },
+  "duaOfDay": {
+    "title": "今日祈祷",
+    "islamicSupplication": "伊斯兰祈祷词",
+    "tapToRead": "点击阅读完整祈祷"
+  }
+}

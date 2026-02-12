@@ -4,6 +4,7 @@ import { Feather } from "@expo/vector-icons";
 import { Themes, Spacing, BorderRadius, Typography } from "@/constants/theme";
 import { useThemeContext } from "@/contexts/ThemeContext";
 import { useTheme } from "@/hooks/useTheme";
+import { useTranslation } from "@/hooks/useTranslation";
 import type { ThemeId, ColorMode } from "@/types/theme";
 
 const themeOrder: ThemeId[] = ["default", "roseGold", "lavender", "sagePeach", "oceanBreeze"];
@@ -11,11 +12,12 @@ const themeOrder: ThemeId[] = ["default", "roseGold", "lavender", "sagePeach", "
 export function ThemePicker() {
   const { themeId, colorMode, setThemeId, setColorMode, isDark } = useThemeContext();
   const { theme } = useTheme();
+  const { t, locale } = useTranslation();
 
   return (
     <View style={styles.container}>
       {/* Color Mode Selector */}
-      <Text style={[styles.sectionLabel, { color: theme.textSecondary }]}>Color Mode</Text>
+      <Text style={[styles.sectionLabel, { color: theme.textSecondary }]}>{t('themePicker.colorMode')}</Text>
       <View style={[styles.modeSelector, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)' }]}>
         {(["light", "dark", "auto"] as ColorMode[]).map((mode) => {
           const isActive = colorMode === mode;
@@ -40,7 +42,7 @@ export function ThemePicker() {
                   { color: isActive ? "#FFFFFF" : theme.text },
                 ]}
               >
-                {mode === "auto" ? "Auto" : mode.charAt(0).toUpperCase() + mode.slice(1)}
+                {mode === "light" ? t('themePicker.light') : mode === "dark" ? t('themePicker.dark') : t('themePicker.auto')}
               </Text>
             </TouchableOpacity>
           );
@@ -49,10 +51,10 @@ export function ThemePicker() {
 
       {/* Theme Selector */}
       <Text style={[styles.sectionLabel, { color: theme.textSecondary, marginTop: Spacing.lg }]}>
-        Theme
+        {t('themePicker.theme')}
       </Text>
-      <ScrollView 
-        horizontal 
+      <ScrollView
+        horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.themeScroll}
       >
@@ -66,7 +68,7 @@ export function ThemePicker() {
               key={id}
               style={[
                 styles.themeCard,
-                { 
+                {
                   borderColor: isSelected ? themeColors.primary : (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)'),
                   borderWidth: isSelected ? 2 : 1,
                 },
@@ -83,7 +85,7 @@ export function ThemePicker() {
                     <View style={[styles.dot, { backgroundColor: 'rgba(255,255,255,0.5)' }]} />
                   </View>
                 </View>
-                
+
                 {/* Mini content */}
                 <View style={styles.previewContent}>
                   {/* Mini card */}
@@ -94,7 +96,7 @@ export function ThemePicker() {
                       <View style={[styles.previewLine, { backgroundColor: themeColors.textSecondary, width: '40%' }]} />
                     </View>
                   </View>
-                  
+
                   {/* Color dots */}
                   <View style={styles.previewDots}>
                     <View style={[styles.colorDot, { backgroundColor: themeColors.primary }]} />
@@ -103,14 +105,11 @@ export function ThemePicker() {
                   </View>
                 </View>
               </View>
-              
+
               {/* Theme Name */}
               <View style={styles.themeInfo}>
                 <Text style={[styles.themeName, { color: theme.text }]} numberOfLines={1}>
-                  {config.name}
-                </Text>
-                <Text style={[styles.themeNameAr, { color: theme.textSecondary }]} numberOfLines={1}>
-                  {config.nameAr}
+                  {locale === 'ar' ? config.nameAr : config.name}
                 </Text>
               </View>
 

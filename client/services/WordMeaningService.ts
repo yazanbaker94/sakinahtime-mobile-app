@@ -43,6 +43,25 @@ const WBW_LANGUAGES: Record<string, string> = {
   'tamil': 'tamil-wbw-translation.json',
   'french': 'french-wbw-translation.json',
   'persian': 'persian-wbw-translation.json',
+  'german': 'german-wbw-translation.json',
+  'russian': 'russian-wbw-translation.json',
+  'chinese': 'chinese-wbw-translation.json',
+};
+
+// Map app locale codes to WBW language names
+const LOCALE_TO_WBW: Record<string, string> = {
+  'en': 'english',
+  'ar': 'arabic-gharib',
+  'fr': 'french',
+  'de': 'german',
+  'ru': 'russian',
+  'zh': 'chinese',
+  'ur': 'urdu',
+  'id': 'indonesian',
+  'bn': 'bangla',
+  'tr': 'turkish',
+  'ta': 'tamil',
+  'fa': 'persian',
 };
 
 const STORAGE_KEY = '@wbw_language';
@@ -85,7 +104,7 @@ const wordsByVerse: Map<string, WordMeaning[]> = new Map();
 // Initialize the lookup index
 const initializeIndex = () => {
   if (wordsByVerse.size > 0) return; // Already initialized
-  
+
   const words = (quranWordsData as any).words as WordMeaning[];
   words.forEach(word => {
     const verseKey = `${word.surah_number}:${word.verse}`;
@@ -118,16 +137,16 @@ const splitVerseIntoWords = (verseText: string): string[] => {
     'ج', 'ز', 'ص', 'صل', 'صلى', 'قلى', 'م', 'لا', 'ق', 'سكتة', // Stop sign letters
     '٭', '؀', '؁', '؂', '؃',  // Other markers
   ];
-  
+
   // Split by whitespace and filter
   return verseText
     .split(/\s+/)
     .filter(w => {
       if (w.length === 0) return false;
-      
+
       // Filter out pure stop signs
       if (stopSigns.includes(w)) return false;
-      
+
       // Filter out single-character Quranic markers (Unicode range)
       if (w.length === 1) {
         const code = w.charCodeAt(0);
@@ -136,18 +155,38 @@ const splitVerseIntoWords = (verseText: string): string[] => {
         // Arabic extended marks
         if (code >= 0x0610 && code <= 0x061A) return false;
       }
-      
+
       return true;
     });
 };
 
 /**
  * Get the currently selected WBW language
+ * If no explicit selection, auto-detect from app locale
  */
 const getSelectedLanguage = async (): Promise<string> => {
   try {
     const saved = await AsyncStorage.getItem(STORAGE_KEY);
-    return saved || 'english';
+    if (saved) return saved;
+
+    // Auto-detect from device locale
+    try {
+      const { getLocales } = require('expo-localization');
+      const locales = getLocales();
+      if (locales && locales.length > 0) {
+        const langCode = locales[0].languageCode;
+        const wbwLang = LOCALE_TO_WBW[langCode];
+        if (wbwLang) {
+          // Save it so we don't re-detect every time
+          await AsyncStorage.setItem(STORAGE_KEY, wbwLang);
+          return wbwLang;
+        }
+      }
+    } catch (localeError) {
+      // expo-localization might not be available
+    }
+
+    return 'english';
   } catch (e) {
     return 'english';
   }
@@ -187,7 +226,7 @@ const loadWbwData = async (language: string): Promise<Record<string, string>> =>
   }
 
   const filePath = `${WBW_DIR}${filename}`;
-  
+
   try {
     const fileInfo = await FileSystem.getInfoAsync(filePath);
     if (fileInfo.exists) {
@@ -212,7 +251,7 @@ const loadWbwData = async (language: string): Promise<Record<string, string>> =>
 const getWbwTranslation = async (surah: number, ayah: number, wordIndex: number): Promise<string | null> => {
   const language = await getSelectedLanguage();
   const wbwData = await loadWbwData(language);
-  
+
   // Word index in the JSON is 1-based
   const key = `${surah}:${ayah}:${wordIndex + 1}`;
   return wbwData[key] || null;
@@ -239,8 +278,11 @@ export const getSelectedWbwLanguageName = async (): Promise<string> => {
     'tamil': 'Tamil',
     'french': 'French',
     'persian': 'Persian',
+    'german': 'German',
+    'russian': 'Russian',
+    'chinese': 'Chinese',
   };
-  
+
   const language = await getSelectedLanguage();
   return languageNames[language] || 'English';
 };
@@ -267,37 +309,37 @@ const getTransliteration = (surah: number, ayah: number, wordIndex: number): str
  * Find Arabic meaning (غريب القرآن) for a specific word by its index
  */
 const findArabicMeaning = (
-  surah: number, 
-  ayah: number, 
+  surah: number,
+  ayah: number,
   wordIndex: number,
   verseWords: string[]
 ): { word: string; meaning: string } | null => {
   initializeIndex();
-  
+
   const verseKey = `${surah}:${ayah}`;
   const meanings = wordsByVerse.get(verseKey);
-  
+
   if (!meanings || meanings.length === 0) return null;
   if (wordIndex < 0 || wordIndex >= verseWords.length) return null;
-  
+
   const tappedWord = verseWords[wordIndex];
   const normalizedTappedWord = normalizeArabic(tappedWord);
-  
+
   // Check each meaning entry to see if it contains the tapped word
   for (const meaning of meanings) {
     const normalizedMeaningWord = normalizeArabic(meaning.word);
     const meaningWords = meaning.word.split(/\s+/);
-    
+
     // Check if the tapped word matches any word in the phrase
     for (const mWord of meaningWords) {
       const normalizedMWord = normalizeArabic(mWord);
-      if (normalizedTappedWord === normalizedMWord || 
-          normalizedMWord.includes(normalizedTappedWord) ||
-          normalizedTappedWord.includes(normalizedMWord)) {
+      if (normalizedTappedWord === normalizedMWord ||
+        normalizedMWord.includes(normalizedTappedWord) ||
+        normalizedTappedWord.includes(normalizedMWord)) {
         return { word: meaning.word, meaning: meaning.meaning };
       }
     }
-    
+
     // Also check if the tapped word is part of a multi-word phrase
     if (meaningWords.length > 1) {
       for (let i = 0; i < meaningWords.length; i++) {
@@ -305,16 +347,16 @@ const findArabicMeaning = (
         if (startIdx >= 0 && startIdx + meaningWords.length <= verseWords.length) {
           const phraseFromVerse = verseWords.slice(startIdx, startIdx + meaningWords.length).join(' ');
           const normalizedPhrase = normalizeArabic(phraseFromVerse);
-          if (normalizedPhrase === normalizedMeaningWord || 
-              normalizedMeaningWord.includes(normalizedPhrase) ||
-              normalizedPhrase.includes(normalizedMeaningWord)) {
+          if (normalizedPhrase === normalizedMeaningWord ||
+            normalizedMeaningWord.includes(normalizedPhrase) ||
+            normalizedPhrase.includes(normalizedMeaningWord)) {
             return { word: meaning.word, meaning: meaning.meaning };
           }
         }
       }
     }
   }
-  
+
   return null;
 };
 
@@ -323,10 +365,10 @@ const findArabicMeaning = (
  */
 export const getWordMeaningsForVerse = (surah: number, ayah: number): { word: string; meaning: string; verseKey: string }[] => {
   initializeIndex();
-  
+
   const verseKey = `${surah}:${ayah}`;
   const meanings = wordsByVerse.get(verseKey) || [];
-  
+
   return meanings.map(m => ({
     word: m.word,
     meaning: m.meaning,
@@ -347,25 +389,25 @@ const getWordFrequency = (arabicWord: string): number => {
  * Returns translation in selected language (always) and Arabic meaning (if in غريب القرآن)
  */
 export const findWordMeaningByIndex = async (
-  surah: number, 
-  ayah: number, 
+  surah: number,
+  ayah: number,
   wordIndex: number // 0-based index
 ): Promise<WordMeaningResult | null> => {
   const verseKey = `${surah}:${ayah}`;
-  
+
   // Get the verse text and split into words
   const verseText = getVerseText(surah, ayah);
   if (!verseText) return null;
-  
+
   const words = splitVerseIntoWords(verseText);
   if (wordIndex < 0 || wordIndex >= words.length) return null;
-  
+
   const arabicWord = words[wordIndex];
   const selectedLang = await getSelectedLanguage();
   const transliteration = getTransliteration(surah, ayah, wordIndex);
   const arabicMeaningData = findArabicMeaning(surah, ayah, wordIndex, words);
   const frequency = getWordFrequency(arabicWord);
-  
+
   // If arabic-gharib is selected, use Arabic meaning as the main translation
   if (selectedLang === 'arabic-gharib') {
     // Return Arabic meaning as the englishMeaning field (it's the main translation display)
@@ -382,10 +424,10 @@ export const findWordMeaningByIndex = async (
     }
     return null;
   }
-  
+
   // For other languages, get the WBW translation
   const wbwMeaning = await getWbwTranslation(surah, ayah, wordIndex);
-  
+
   // Return result if we have at least translation, transliteration, or frequency
   if (wbwMeaning || transliteration || arabicMeaningData || frequency > 0) {
     return {
@@ -398,7 +440,7 @@ export const findWordMeaningByIndex = async (
       verseKey
     };
   }
-  
+
   return null;
 };
 

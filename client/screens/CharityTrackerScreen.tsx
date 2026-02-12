@@ -16,6 +16,7 @@ import { useTheme } from '@/hooks/useTheme';
 import { useCharityTracker } from '@/hooks/useCharityTracker';
 import { CharityEntry, CharityType } from '@/types/ramadan';
 import { Spacing, BorderRadius } from '@/constants/theme';
+import { useTranslation } from '@/hooks/useTranslation';
 import type { RootStackParamList } from '@/navigation/RootStackNavigator';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -41,13 +42,14 @@ export default function CharityTrackerScreen() {
   const insets = useSafeAreaInsets();
   const { isDark, theme } = useTheme();
   const navigation = useNavigation<NavigationProp>();
+  const { t } = useTranslation();
   const { entries, stats, goal, goalProgress, deleteEntry } = useCharityTracker();
 
   const accentColor = theme.primary;
 
   const renderEntryItem = ({ item }: { item: CharityEntry }) => {
     const typeInfo = CHARITY_TYPES.find(t => t.value === item.type);
-    
+
     return (
       <View style={[
         styles.entryItem,
@@ -64,7 +66,7 @@ export default function CharityTrackerScreen() {
             {typeInfo?.label} • {new Date(item.date).toLocaleDateString()}
           </ThemedText>
           {item.recipient && (
-            <ThemedText type="small" secondary>To: {item.recipient}</ThemedText>
+            <ThemedText type="small" secondary>{t('charity.to')}: {item.recipient}</ThemedText>
           )}
         </View>
         <Pressable onPress={() => deleteEntry(item.id)} style={styles.deleteButton}>
@@ -91,7 +93,7 @@ export default function CharityTrackerScreen() {
           <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
             <Feather name="arrow-left" size={24} color={theme.text} />
           </Pressable>
-          <ThemedText type="h2" style={styles.title}>Charity Tracker</ThemedText>
+          <ThemedText type="h2" style={styles.title}>{t('charity.title')}</ThemedText>
           <Pressable onPress={() => navigation.navigate('AddDonation')}>
             <Feather name="plus" size={24} color={accentColor} />
           </Pressable>
@@ -99,16 +101,16 @@ export default function CharityTrackerScreen() {
 
         {/* Total Card */}
         <Card elevation={2} style={styles.totalCard}>
-          <ThemedText type="caption" secondary>Total Given This Ramadan</ThemedText>
+          <ThemedText type="caption" secondary>{t('charity.totalGiven')}</ThemedText>
           <ThemedText type="h1" style={[styles.totalAmount, { color: accentColor }]}>
             {formatCurrency(stats.totalAmount)}
           </ThemedText>
-          
+
           {/* Goal Progress */}
           {goal && goal.amount > 0 ? (
             <View style={styles.goalSection}>
               <View style={styles.goalHeader}>
-                <ThemedText type="small" secondary>Goal: {formatCurrency(goal.amount)}</ThemedText>
+                <ThemedText type="small" secondary>{t('charity.goal')}: {formatCurrency(goal.amount)}</ThemedText>
                 <ThemedText type="small" style={{ color: accentColor }}>{goalProgress}%</ThemedText>
               </View>
               <View style={[styles.progressBar, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }]}>
@@ -127,7 +129,7 @@ export default function CharityTrackerScreen() {
             >
               <Feather name="target" size={16} color={accentColor} />
               <ThemedText type="small" style={{ color: accentColor, marginLeft: Spacing.xs }}>
-                Set a Goal
+                {t('charity.setGoal')}
               </ThemedText>
             </Pressable>
           )}
@@ -140,14 +142,14 @@ export default function CharityTrackerScreen() {
             onPress={() => navigation.navigate('ZakatCalculator')}
           >
             <Feather name="percent" size={20} color={accentColor} />
-            <ThemedText type="small">Zakat Calculator</ThemedText>
+            <ThemedText type="small">{t('zakatCalculator.title')}</ThemedText>
           </Pressable>
           <Pressable
             style={[styles.quickAction, { backgroundColor: theme.backgroundSecondary }]}
             onPress={() => navigation.navigate('SetCharityGoal')}
           >
             <Feather name="target" size={20} color={accentColor} />
-            <ThemedText type="small">Edit Goal</ThemedText>
+            <ThemedText type="small">{t('charity.editGoal')}</ThemedText>
           </Pressable>
         </View>
 
@@ -159,26 +161,26 @@ export default function CharityTrackerScreen() {
               size={20}
               color={stats.zakatPaid ? theme.primary : '#F59E0B'}
             />
-            <ThemedText type="h4" style={{ marginLeft: Spacing.sm }}>Zakat Status</ThemedText>
+            <ThemedText type="h4" style={{ marginLeft: Spacing.sm }}>{t('charity.zakatStatus')}</ThemedText>
           </View>
           {stats.zakatPaid ? (
             <ThemedText type="body" style={{ color: theme.primary }}>
-              Paid: {formatCurrency(stats.zakatAmount)}
+              {t('charity.paid')}: {formatCurrency(stats.zakatAmount)}
             </ThemedText>
           ) : (
             <ThemedText type="body" secondary>
-              Not yet paid this year
+              {t('charity.notYetPaid')}
             </ThemedText>
           )}
         </Card>
 
         {/* Breakdown by Type */}
         <Card elevation={2}>
-          <ThemedText type="h4" style={styles.sectionTitle}>Breakdown by Type</ThemedText>
+          <ThemedText type="h4" style={styles.sectionTitle}>{t('charity.breakdownByType')}</ThemedText>
           {CHARITY_TYPES.map(({ value, label, icon }) => {
             const amount = stats.byType[value];
             const percentage = stats.totalAmount > 0 ? (amount / stats.totalAmount) * 100 : 0;
-            
+
             return (
               <View key={value} style={styles.breakdownRow}>
                 <View style={styles.breakdownLabel}>
@@ -203,7 +205,7 @@ export default function CharityTrackerScreen() {
         {/* Recent Entries */}
         {entries.length > 0 && (
           <View style={styles.entriesSection}>
-            <ThemedText type="h4" style={styles.sectionTitle}>Recent Donations</ThemedText>
+            <ThemedText type="h4" style={styles.sectionTitle}>{t('charity.recentDonations')}</ThemedText>
             {entries.slice(0, 10).map((entry) => (
               <View key={entry.id}>
                 {renderEntryItem({ item: entry })}

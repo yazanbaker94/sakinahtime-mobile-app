@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-20 -20 40 40" width="40" height="40">
+  <!-- Kaaba body -->
+  <rect x="-13" y="-13" width="26" height="26" rx="3" fill="#2a3d34" stroke="#c49228" stroke-width="1.2"/>
+
+  <!-- Gold kiswa band -->
+  <line x1="-13" y1="-3" x2="13" y2="-3" stroke="#c49228" stroke-width="1.8"/>
+
+  <!-- Band detail lines -->
+  <line x1="-13" y1="-5.5" x2="13" y2="-5.5" stroke="#c49228" stroke-width="0.4" opacity="0.5"/>
+  <line x1="-13" y1="-0.5" x2="13" y2="-0.5" stroke="#c49228" stroke-width="0.4" opacity="0.5"/>
+
+  <!-- Door -->
+  <rect x="-3.5" y="1" width="7" height="10" rx="1.5" fill="none" stroke="#c49228" stroke-width="0.9"/>
+
+  <!-- Black Stone corner -->
+  <circle cx="10" cy="8" r="2" fill="#4a5a50" stroke="#c49228" stroke-width="0.6"/>
+
+  <!-- Roof highlight -->
+  <line x1="-13" y1="-13" x2="13" y2="-13" stroke="#d4a853" stroke-width="0.5" opacity="0.4"/>
+</svg>

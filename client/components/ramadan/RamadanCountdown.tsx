@@ -8,6 +8,7 @@ import { View, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { ThemedText } from '../ThemedText';
 import { useTheme } from '../../hooks/useTheme';
+import { useTranslation } from '../../hooks/useTranslation';
 import { useRamadan } from '../../contexts/RamadanContext';
 import { Spacing, BorderRadius } from '../../constants/theme';
 
@@ -17,6 +18,7 @@ interface RamadanCountdownProps {
 
 export function RamadanCountdown({ compact = false }: RamadanCountdownProps) {
   const { isDark, theme } = useTheme();
+  const { t } = useTranslation();
   const { isRamadan, currentDay, daysRemaining, isLastTenNights } = useRamadan();
 
   if (!isRamadan || currentDay === null) {
@@ -47,8 +49,8 @@ export function RamadanCountdown({ compact = false }: RamadanCountdownProps) {
   return (
     <View style={[
       styles.container,
-      { 
-        backgroundColor: isLastTenNights 
+      {
+        backgroundColor: isLastTenNights
           ? (isDark ? 'rgba(251, 191, 36, 0.15)' : 'rgba(251, 191, 36, 0.1)')
           : `${theme.primary}26`
       }
@@ -85,7 +87,7 @@ export function RamadanCountdown({ compact = false }: RamadanCountdownProps) {
           <ThemedText type="h1" style={[styles.statNumber, { color: isDark ? '#9CA3AF' : '#6B7280' }]}>
             {daysRemaining ?? 0}
           </ThemedText>
-          <ThemedText type="caption" secondary>Days Left</ThemedText>
+          <ThemedText type="caption" secondary>{t('ramadanCountdown.daysLeft')}</ThemedText>
         </View>
 
         {/* Days Until Last 10 (if applicable) */}
@@ -105,14 +107,14 @@ export function RamadanCountdown({ compact = false }: RamadanCountdownProps) {
       {/* Progress Bar */}
       <View style={styles.progressSection}>
         <View style={[styles.progressBar, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }]}>
-          <View 
+          <View
             style={[
-              styles.progressFill, 
-              { 
+              styles.progressFill,
+              {
                 width: `${(currentDay / 30) * 100}%`,
                 backgroundColor: accentColor,
               }
-            ]} 
+            ]}
           />
           {/* Last 10 nights marker */}
           <View style={[styles.lastTenMarker, { left: '70%' }]}>

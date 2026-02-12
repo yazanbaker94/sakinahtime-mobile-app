@@ -11,6 +11,74 @@ const { NotificationSoundModule, PrayerAlarmModule } = NativeModules;
 
 const NOTIFICATION_SETTINGS_KEY = "@prayer_notification_settings";
 
+/**
+ * Check if the app can schedule exact alarms.
+ * On Android 12+, this requires explicit SCHEDULE_EXACT_ALARM permission.
+ * Returns true if permission is granted, false otherwise.
+ */
+export async function canScheduleExactAlarms(): Promise<boolean> {
+  if (Platform.OS !== 'android' || !PrayerAlarmModule) {
+    return true; // iOS doesn't need this, assume ok
+  }
+  try {
+    return await PrayerAlarmModule.canScheduleExactAlarms();
+  } catch (e) {
+    console.warn('Failed to check exact alarm permission:', e);
+    return true; // Assume ok on error to not block scheduling attempts
+  }
+}
+
+/**
+ * Request exact alarm permission.
+ * Opens system settings page where user grants the permission.
+ * Returns: 'opened' | 'already_granted' | 'not_needed' | null (on error)
+ */
+export async function requestExactAlarmPermission(): Promise<string | null> {
+  if (Platform.OS !== 'android' || !PrayerAlarmModule) {
+    return 'not_needed';
+  }
+  try {
+    return await PrayerAlarmModule.requestExactAlarmPermission();
+  } catch (e) {
+    console.warn('Failed to request exact alarm permission:', e);
+    return null;
+  }
+}
+
+/**
+ * Check if battery optimization is active (blocking background work).
+ * Returns true if optimization is ON (bad for alarms), false if exempt (good).
+ * On iOS or if unavailable, returns false (no action needed).
+ */
+export async function checkBatteryOptimization(): Promise<boolean> {
+  if (Platform.OS !== 'android' || !PrayerAlarmModule) {
+    return false;
+  }
+  try {
+    return await PrayerAlarmModule.isBatteryOptimized();
+  } catch (e) {
+    console.warn('Failed to check battery optimization:', e);
+    return false;
+  }
+}
+
+/**
+ * Request battery optimization exemption.
+ * Opens system dialog asking user to allow background work.
+ * Returns: 'opened' | 'already_exempt' | 'not_needed' | null (on error)
+ */
+export async function requestBatteryOptimizationExemption(): Promise<string | null> {
+  if (Platform.OS !== 'android' || !PrayerAlarmModule) {
+    return 'not_needed';
+  }
+  try {
+    return await PrayerAlarmModule.requestBatteryOptimizationExemption();
+  } catch (e) {
+    console.warn('Failed to request battery optimization exemption:', e);
+    return null;
+  }
+}
+
 export interface NotificationSettings {
   enabled: boolean;
   prayers: {
@@ -316,32 +384,55 @@ export function useNotifications() {
           const now = new Date();
           const prayerAlarms: Array<{ name: string; timestamp: number }> = [];
 
-          for (const prayer of prayers) {
-            if (!settings.prayers[prayer.key]) continue;
+          // Schedule 7 days of alarms for persistence even if app is never opened
+          const DAYS_TO_SCHEDULE = 7;
 
-            const parsedTime = parseTimeString(prayer.time);
-            if (!parsedTime) {
-              console.warn(`Invalid time format for ${prayer.key}: ${prayer.time}`);
-              continue;
+          for (let dayOffset = 0; dayOffset < DAYS_TO_SCHEDULE; dayOffset++) {
+            for (const prayer of prayers) {
+              if (!settings.prayers[prayer.key]) continue;
+
+              const parsedTime = parseTimeString(prayer.time);
+              if (!parsedTime) {
+                console.warn(`Invalid time format for ${prayer.key}: ${prayer.time}`);
+                continue;
+              }
+
+              const { hours, minutes } = parsedTime;
+              const prayerDate = new Date(now);
+              prayerDate.setDate(prayerDate.getDate() + dayOffset);
+              prayerDate.setHours(hours, minutes, 0, 0);
+
+              // Skip if this alarm is in the past (for day 0)
+              if (prayerDate <= now) {
+                continue;
+              }
+
+              // Use unique name with day offset to allow multiple alarms per prayer
+              const alarmName = dayOffset === 0 ? prayer.key : `${prayer.key}_day${dayOffset}`;
+
+              prayerAlarms.push({
+                name: alarmName,
+                timestamp: prayerDate.getTime(),
+              });
             }
-
-            const { hours, minutes } = parsedTime;
-            const prayerDate = new Date(now);
-            prayerDate.setHours(hours, minutes, 0, 0);
-
-            if (prayerDate <= now) {
-              prayerDate.setDate(prayerDate.getDate() + 1);
-            }
-
-            prayerAlarms.push({
-              name: prayer.key,
-              timestamp: prayerDate.getTime(),
-            });
           }
 
           const result = await PrayerAlarmModule.schedulePrayerAlarms(prayerAlarms, azanEnabled);
           console.log('✅ Native alarms scheduled:', result);
-          console.log('🔔 Scheduled alarms:', prayerAlarms.map(a => `${a.name} at ${new Date(a.timestamp).toLocaleString()}`));
+          console.log(`🔔 Scheduled ${prayerAlarms.length} alarms for next ${DAYS_TO_SCHEDULE} days`);
+
+          // Save prayer times for WorkManager to generate infinite alarms
+          // Only if the native method is implemented (future feature)
+          if (typeof PrayerAlarmModule.savePrayerTimes === 'function') {
+            const enabledPrayersList = Object.entries(settings.prayers)
+              .filter(([_, enabled]) => enabled)
+              .map(([name]) => name);
+            await PrayerAlarmModule.savePrayerTimes(
+              { Fajr: timings.Fajr, Dhuhr: timings.Dhuhr, Asr: timings.Asr, Maghrib: timings.Maghrib, Isha: timings.Isha },
+              enabledPrayersList
+            );
+            console.log('💾 Prayer times saved for native WorkManager scheduling');
+          }
 
           // Native alarm will show notification, no need for expo notifications
         } catch (error) {
@@ -359,6 +450,7 @@ export function useNotifications() {
       await scheduleExpoNotifications(timings, azanEnabled);
     }
   }, [settings, permission]);
+
 
   const scheduleExpoNotifications = async (timings: PrayerTimes, azanEnabled: boolean) => {
     await cancelAllNotifications();

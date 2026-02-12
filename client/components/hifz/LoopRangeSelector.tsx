@@ -13,6 +13,7 @@ import {
 import { Feather } from '@expo/vector-icons';
 import { useHifzMode } from '../../contexts/HifzModeContext';
 import { useTheme } from '../../hooks/useTheme';
+import { useTranslation } from '../../hooks/useTranslation';
 import { ThemedText } from '../ThemedText';
 import AudioService from '../../services/AudioService';
 
@@ -32,6 +33,7 @@ export function LoopRangeSelector({
   style,
 }: LoopRangeSelectorProps) {
   const { isDark, theme } = useTheme();
+  const { t } = useTranslation();
   const {
     loopRange,
     clearLoop,
@@ -45,7 +47,7 @@ export function LoopRangeSelector({
     if (loopRange.start && loopRange.end) {
       const [startSurah, startAyah] = loopRange.start.split(':').map(Number);
       const [endSurah, endAyah] = loopRange.end.split(':').map(Number);
-      
+
       if (isLooping) {
         await AudioService.stopLoop();
         setIsLooping(false);
@@ -68,10 +70,10 @@ export function LoopRangeSelector({
             <ThemedText style={styles.rangeBadgeText}>A</ThemedText>
           </View>
           <ThemedText style={[styles.rangeLabel, { color: theme.textSecondary }]}>
-            Start
+            {t('loopRange.start')}
           </ThemedText>
           <ThemedText style={styles.rangeValue}>
-            {loopRange.start || 'Not set'}
+            {loopRange.start || t('loopRange.notSet')}
           </ThemedText>
         </View>
         <Feather name="arrow-right" size={20} color={theme.textSecondary} />
@@ -80,10 +82,10 @@ export function LoopRangeSelector({
             <ThemedText style={styles.rangeBadgeText}>B</ThemedText>
           </View>
           <ThemedText style={[styles.rangeLabel, { color: theme.textSecondary }]}>
-            End
+            {t('loopRange.end')}
           </ThemedText>
           <ThemedText style={styles.rangeValue}>
-            {loopRange.end || 'Not set'}
+            {loopRange.end || t('loopRange.notSet')}
           </ThemedText>
         </View>
       </View>
@@ -93,7 +95,7 @@ export function LoopRangeSelector({
         <View style={[styles.helpBox, { backgroundColor: theme.backgroundSecondary }]}>
           <Feather name="info" size={16} color={theme.textSecondary} />
           <ThemedText style={[styles.helpText, { color: theme.textSecondary }]}>
-            Long-press a verse and tap "Set Loop Start" or "Set Loop End" to define the range
+            {t('loopRange.helpText')}
           </ThemedText>
         </View>
       )}
@@ -110,7 +112,7 @@ export function LoopRangeSelector({
           >
             <Feather name="x" size={16} color="#EF4444" />
             <ThemedText style={[styles.clearText, { color: '#EF4444' }]}>
-              Clear
+              {t('loopRange.clear')}
             </ThemedText>
           </TouchableOpacity>
         )}
@@ -125,8 +127,8 @@ export function LoopRangeSelector({
           style={[
             styles.startLoopButton,
             {
-              backgroundColor: hasValidRange 
-                ? (isLooping ? '#EF4444' : activeColor) 
+              backgroundColor: hasValidRange
+                ? (isLooping ? '#EF4444' : activeColor)
                 : theme.backgroundSecondary,
               flex: 1,
             },
@@ -143,7 +145,7 @@ export function LoopRangeSelector({
               { color: hasValidRange ? '#FFFFFF' : theme.textSecondary },
             ]}
           >
-            {isLooping ? 'Stop Loop' : 'Play Loop'}
+            {isLooping ? t('loopRange.stopLoop') : t('loopRange.playLoop')}
           </ThemedText>
         </TouchableOpacity>
       </View>

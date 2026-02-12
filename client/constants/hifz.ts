@@ -30,17 +30,17 @@ export const DEFAULT_HIFZ_SETTINGS: HifzSettings = {
 
 // Hide mode is fixed to 'solid' for image-based Mushaf
 // Word-level hiding not possible with image coordinates
-export const HIDE_MODE_OPTIONS: { value: HideMode; label: string; description: string }[] = [
-  { value: 'solid', label: 'Full Verse', description: 'Hide entire verse, tap to reveal all' },
-  { value: 'word', label: 'Word by Word', description: 'Reveal one word at a time as you recite' },
+export const HIDE_MODE_OPTIONS: { value: HideMode; label: string; description: string; labelKey: string; descriptionKey: string }[] = [
+  { value: 'solid', label: 'Full Verse', description: 'Hide entire verse, tap to reveal all', labelKey: 'hifzConstants.fullVerse', descriptionKey: 'hifzConstants.fullVerseDesc' },
+  { value: 'word', label: 'Word by Word', description: 'Reveal one word at a time as you recite', labelKey: 'hifzConstants.wordByWord', descriptionKey: 'hifzConstants.wordByWordDesc' },
 ];
 
 // Auto-hide delay options (in milliseconds)
 export const AUTO_HIDE_DELAY_OPTIONS = [
-  { value: 0, label: 'Manual' },
-  { value: 2000, label: '2s' },
-  { value: 5000, label: '5s' },
-  { value: 10000, label: '10s' },
+  { value: 0, label: 'Manual', labelKey: 'hifzConstants.manual' },
+  { value: 2000, label: '2s', labelKey: '' },
+  { value: 5000, label: '5s', labelKey: '' },
+  { value: 10000, label: '10s', labelKey: '' },
 ];
 
 // Repeat count options
@@ -55,16 +55,16 @@ export const REPEAT_COUNT_OPTIONS = [
 
 // Pause between repeats options (in milliseconds)
 export const PAUSE_DURATION_OPTIONS = [
-  { value: 0, label: 'None' },
-  { value: 2000, label: '2 sec' },
-  { value: 5000, label: '5 sec' },
+  { value: 0, label: 'None', labelKey: 'hifzConstants.none' },
+  { value: 2000, label: '2 sec', labelKey: 'hifzConstants.sec2' },
+  { value: 5000, label: '5 sec', labelKey: 'hifzConstants.sec5' },
 ];
 
 // Playback speed options
 export const PLAYBACK_SPEED_OPTIONS = [
-  { value: 0.5, label: 'Slow' },
-  { value: 0.75, label: 'Medium' },
-  { value: 1.0, label: 'Normal' },
+  { value: 0.5, label: 'Slow', labelKey: 'hifzConstants.slow' },
+  { value: 0.75, label: 'Medium', labelKey: 'hifzConstants.medium' },
+  { value: 1.0, label: 'Normal', labelKey: 'hifzConstants.normal' },
 ];
 
 // Spaced repetition intervals (in days) - SM-2 inspired

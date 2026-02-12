@@ -1,0 +1,54 @@
+<!--
+  COMPASS NEEDLE - Qibla Compass Component
+  ==========================================
+  Coordinate system: centered at (0,0), same as compass_ring
+  ViewBox: -155 -155 310 310  (matches compass_ring exactly)
+  
+  INTEGRATION GUIDE:
+  - Layer this ON TOP of compass_ring, BELOW kaaba_icon? No — on top of everything
+  - The needle points UP (north / 0°) by default
+  - To show user heading: rotate(heading_degrees) where heading = device compass heading
+  - The needle pivot is at (0,0) — the exact center of the compass
+  - Needle tip reaches y=-85, tail reaches y=28
+  
+  ROTATION EXAMPLE (React Native):
+    <SvgXml xml={needleSvg} style={{ transform: [{ rotate: `${heading}deg` }] }} />
+  
+  Or if composing inside one SVG:
+    <g transform="rotate(HEADING_DEGREES)">
+      ...needle paths...
+    </g>
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-155 -155 310 310" width="310" height="310">
+  <defs>
+    <linearGradient id="nd-gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#d4a030"/>
+      <stop offset="50%" stop-color="#c49228"/>
+      <stop offset="100%" stop-color="#a07820"/>
+    </linearGradient>
+    <linearGradient id="nd-tail" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3a3020"/>
+      <stop offset="100%" stop-color="#2a2018"/>
+    </linearGradient>
+    <filter id="nd-shadow">
+      <feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+    <filter id="nd-glow">
+      <feGaussianBlur stdDeviation="1.5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Needle group — rotate this entire group by heading degrees -->
+  <g filter="url(#nd-shadow)">
+    <!-- North half (gold, points up) -->
+    <polygon points="0,-85 -5.5,0 0,-6 5.5,0" fill="url(#nd-gold)" filter="url(#nd-glow)"/>
+    
+    <!-- South half (dark tail) -->
+    <polygon points="-5.5,0 0,28 5.5,0 0,-6" fill="url(#nd-tail)" opacity="0.8"/>
+    
+    <!-- Center pivot cap -->
+    <circle cx="0" cy="0" r="7" fill="#1a1a1a" stroke="#d4a853" stroke-width="1.5"/>
+    <circle cx="0" cy="0" r="3" fill="#d4a853"/>
+  </g>
+</svg>

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { View, StyleSheet, ScrollView, Pressable, Platform, useWindowDimensions, ImageBackground } from "react-native";
 
 // Prayer card background
-const mosqueBackground = require('../../assets/images/mosque-silhouette.png');
+const mosqueBackground = require('../../assets/images/mosque-silhouette.jpg');
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -35,6 +35,7 @@ import { StreakCard } from "@/components/StreakCard";
 import { LocationIndicator } from "@/components/LocationIndicator";
 import { Feather } from "@expo/vector-icons";
 import { PrayerName, PrayerStatus } from "@/types/prayerLog";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const PRAYERS = [
   { key: "Fajr", nameEn: "Fajr", nameAr: "الفجر", icon: "sunrise" },
@@ -65,6 +66,7 @@ function toArabicNumerals(num: number): string {
 }
 
 export default function PrayerTimesScreen() {
+  const { t, locale } = useTranslation();
   const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
   const insets = useSafeAreaInsets();
@@ -289,7 +291,7 @@ export default function PrayerTimesScreen() {
           ]}
         >
           <ThemedText type="body" secondary>
-            Checking location permission...
+            {t('prayer.checkingPermission')}
           </ThemedText>
         </View>
       </ThemedView>
@@ -318,14 +320,14 @@ export default function PrayerTimesScreen() {
               <Feather name="map-pin" size={48} color={theme.primary} />
             </View>
             <ThemedText type="h3" style={styles.permissionTitle}>
-              Location Access Required
+              {t('prayer.locationRequired')}
             </ThemedText>
             <ThemedText type="body" secondary style={styles.permissionText}>
-              We need your location to calculate accurate prayer times for your area.
+              {t('prayer.locationExplanation')}
             </ThemedText>
             {Platform.OS === "web" ? (
               <ThemedText type="small" secondary style={styles.permissionText}>
-                Please enable location in your browser settings.
+                {t('prayer.browserLocationHint')}
               </ThemedText>
             ) : canAskAgain || permission?.status === 'undetermined' ? (
               <Pressable
@@ -333,7 +335,7 @@ export default function PrayerTimesScreen() {
                 style={[styles.permissionButton, { backgroundColor: theme.primary }]}
               >
                 <ThemedText type="body" style={{ color: "#FFFFFF" }}>
-                  Enable Location
+                  {t('prayer.enableLocation')}
                 </ThemedText>
               </Pressable>
             ) : (
@@ -342,7 +344,7 @@ export default function PrayerTimesScreen() {
                 style={[styles.permissionButton, { backgroundColor: theme.primary }]}
               >
                 <ThemedText type="body" style={{ color: "#FFFFFF" }}>
-                  Open Settings
+                  {t('prayer.openSettings')}
                 </ThemedText>
               </Pressable>
             )}
@@ -366,7 +368,7 @@ export default function PrayerTimesScreen() {
           ]}
         >
           <ThemedText type="body" secondary>
-            Loading prayer times...
+            {t('prayer.loadingPrayerTimes')}
           </ThemedText>
         </View>
       </ThemedView>
@@ -387,14 +389,14 @@ export default function PrayerTimesScreen() {
         >
           <Feather name="alert-circle" size={48} color={theme.muted} />
           <ThemedText type="body" secondary style={styles.errorText}>
-            Failed to load prayer times
+            {t('prayer.failedToLoad')}
           </ThemedText>
           <Pressable
             onPress={() => refetch()}
             style={[styles.retryButton, { backgroundColor: theme.primary }]}
           >
             <ThemedText type="small" style={{ color: "#FFFFFF" }}>
-              Retry
+              {t('common.retry')}
             </ThemedText>
           </Pressable>
         </View>
@@ -461,14 +463,14 @@ export default function PrayerTimesScreen() {
                   <View style={styles.nextPrayerBadge}>
                     <Feather name="clock" size={12} color="#FFFFFF" />
                     <ThemedText type="caption" style={{ color: "#FFFFFF", marginLeft: 5, fontWeight: '700', letterSpacing: 0.5, fontSize: 10 }}>
-                      NEXT PRAYER
+                      {t('prayer.nextPrayer')}
                     </ThemedText>
                   </View>
                   {trackingEnabled && streak && streak.currentStreak > 0 && (
                     <View style={[styles.nextPrayerBadge, { backgroundColor: 'rgba(251, 191, 36, 0.25)' }]}>
                       <Feather name="zap" size={12} color="#FBBF24" />
                       <ThemedText type="caption" style={{ color: "#FBBF24", marginLeft: 4, fontWeight: '700', fontSize: 10 }}>
-                        {streak.currentStreak} DAY{streak.currentStreak > 1 ? 'S' : ''}
+                        {streak.currentStreak} {streak.currentStreak > 1 ? t('prayer.days') : t('prayer.day')}
                       </ThemedText>
                     </View>
                   )}
@@ -503,7 +505,7 @@ export default function PrayerTimesScreen() {
                 >
                   <Feather name="book" size={14} color="#FFFFFF" />
                   <ThemedText type="caption" style={styles.compactButtonText} numberOfLines={1}>
-                    {CALCULATION_METHODS.find(m => m.id === calculationMethod)?.shortName || 'ISNA'}
+                    {(() => { const m = CALCULATION_METHODS.find(m => m.id === calculationMethod); return m?.shortName || 'ISNA'; })()}
                   </ThemedText>
                 </Pressable>
                 {/* Location button */}
@@ -518,7 +520,7 @@ export default function PrayerTimesScreen() {
                   {String(countdown.hours).padStart(2, "0")}
                 </ThemedText>
                 <ThemedText type="caption" style={{ color: "rgba(255,255,255,0.75)", fontSize: 9, marginTop: 2, fontWeight: '700', letterSpacing: 0.5 }}>
-                  HOURS
+                  {t('prayer.hours')}
                 </ThemedText>
               </View>
               <ThemedText type="h1" style={{ color: "rgba(255,255,255,0.4)", fontSize: 32, marginHorizontal: 6, marginTop: -8 }}>
@@ -529,7 +531,7 @@ export default function PrayerTimesScreen() {
                   {String(countdown.minutes).padStart(2, "0")}
                 </ThemedText>
                 <ThemedText type="caption" style={{ color: "rgba(255,255,255,0.75)", fontSize: 9, marginTop: 2, fontWeight: '700', letterSpacing: 0.5 }}>
-                  MINUTES
+                  {t('prayer.minutes')}
                 </ThemedText>
               </View>
               <ThemedText type="h1" style={{ color: "rgba(255,255,255,0.4)", fontSize: 32, marginHorizontal: 6, marginTop: -8 }}>
@@ -540,7 +542,7 @@ export default function PrayerTimesScreen() {
                   {String(countdown.seconds).padStart(2, "0")}
                 </ThemedText>
                 <ThemedText type="caption" style={{ color: "rgba(255,255,255,0.75)", fontSize: 9, marginTop: 2, fontWeight: '700', letterSpacing: 0.5 }}>
-                  SECONDS
+                  {t('prayer.seconds')}
                 </ThemedText>
               </View>
             </View>
@@ -605,10 +607,7 @@ export default function PrayerTimesScreen() {
 
                   <View style={styles.prayerNames}>
                     <ThemedText type="body" style={{ fontWeight: isNext ? "700" : "500", fontSize: prayerNameFontSize }}>
-                      {prayer.nameEn}
-                    </ThemedText>
-                    <ThemedText type="arabic" secondary style={{ fontFamily: 'AlMushafQuran', fontSize: prayerNameFontSize * 0.88, textAlign: "left", marginTop: 1 }}>
-                      {prayer.nameAr}
+                      {t(`prayer.${prayer.key.toLowerCase()}`)}
                     </ThemedText>
                   </View>
                 </View>

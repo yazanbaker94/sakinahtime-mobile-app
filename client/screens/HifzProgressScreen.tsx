@@ -26,6 +26,7 @@ import { useHifzProgress } from '../hooks/useHifzProgress';
 import { useRevisionSchedule } from '../hooks/useRevisionSchedule';
 import { hifzNotificationService } from '../services/HifzNotificationService';
 import { QURAN_STATS } from '../constants/hifz';
+import { useTranslation } from '@/hooks/useTranslation';
 import type { MemorizationStatus } from '../types/hifz';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -34,6 +35,7 @@ export default function HifzProgressScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const { isDark, theme } = useTheme();
+  const { t } = useTranslation();
   const {
     stats,
     isLoading: progressLoading,
@@ -51,7 +53,7 @@ export default function HifzProgressScreen() {
 
   const [refreshing, setRefreshing] = useState(false);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  
+
   // Load notification settings
   useEffect(() => {
     const loadNotificationSettings = async () => {
@@ -74,28 +76,28 @@ export default function HifzProgressScreen() {
       const data = await exportProgress();
       await Share.share({
         message: data,
-        title: 'Hifz Progress Export',
+        title: t('hifzProgress.title'),
       });
     } catch (err) {
-      Alert.alert('Export Failed', 'Could not export progress data');
+      Alert.alert(t('hifzProgress.exportFailed'), t('hifzProgress.exportError'));
     }
   }, [exportProgress]);
 
   const handleReset = useCallback(() => {
     Alert.alert(
-      'Reset Progress',
-      'Are you sure you want to reset all memorization progress? This cannot be undone.',
+      t('hifzProgress.resetProgress'),
+      t('hifzProgress.resetConfirm'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('hifzProgress.cancel'), style: 'cancel' },
         {
-          text: 'Reset',
+          text: t('hifzProgress.reset'),
           style: 'destructive',
           onPress: async () => {
             try {
               await resetProgress();
-              Alert.alert('Success', 'Progress has been reset');
+              Alert.alert(t('hifzProgress.success'), t('hifzProgress.resetSuccess'));
             } catch (err) {
-              Alert.alert('Error', 'Failed to reset progress');
+              Alert.alert(t('hifzProgress.error'), t('hifzProgress.resetError'));
             }
           },
         },
@@ -156,23 +158,23 @@ export default function HifzProgressScreen() {
 
   // Memoize expensive calculations
   const progressPercentages = useMemo(() => ({
-    verses: QURAN_STATS.totalVerses > 0 
-      ? ((stats?.memorizedVerses || 0) / QURAN_STATS.totalVerses) * 100 
+    verses: QURAN_STATS.totalVerses > 0
+      ? ((stats?.memorizedVerses || 0) / QURAN_STATS.totalVerses) * 100
       : 0,
-    pages: QURAN_STATS.totalPages > 0 
-      ? ((stats?.memorizedPages || 0) / QURAN_STATS.totalPages) * 100 
+    pages: QURAN_STATS.totalPages > 0
+      ? ((stats?.memorizedPages || 0) / QURAN_STATS.totalPages) * 100
       : 0,
-    juz: QURAN_STATS.totalJuz > 0 
-      ? ((stats?.memorizedJuz || 0) / QURAN_STATS.totalJuz) * 100 
+    juz: QURAN_STATS.totalJuz > 0
+      ? ((stats?.memorizedJuz || 0) / QURAN_STATS.totalJuz) * 100
       : 0,
   }), [stats?.memorizedVerses, stats?.memorizedPages, stats?.memorizedJuz]);
 
-  const dailyGoalProgress = useMemo(() => 
+  const dailyGoalProgress = useMemo(() =>
     Math.min((todayCompleted / dailyGoal) * 100, 100),
     [todayCompleted, dailyGoal]
   );
 
-  const displayedRevisions = useMemo(() => 
+  const displayedRevisions = useMemo(() =>
     dueRevisions.slice(0, 5),
     [dueRevisions]
   );
@@ -187,7 +189,7 @@ export default function HifzProgressScreen() {
         >
           <Feather name="arrow-left" size={24} color={theme.text} />
         </TouchableOpacity>
-        <ThemedText style={styles.headerTitle}>Hifz Progress</ThemedText>
+        <ThemedText style={styles.headerTitle}>{t('hifz.title')}</ThemedText>
         <TouchableOpacity onPress={handleExport} style={styles.exportButton}>
           <Feather name="share" size={20} color={theme.text} />
         </TouchableOpacity>
@@ -205,25 +207,25 @@ export default function HifzProgressScreen() {
         <View style={styles.statsGrid}>
           {renderStatCard(
             'book-open',
-            'Verses Memorized',
+            t('hifz.versesMemorized'),
             stats?.memorizedVerses || 0,
             theme.primary
           )}
           {renderStatCard(
             'loader',
-            'In Progress',
+            t('hifz.inProgress'),
             stats?.inProgressVerses || 0,
             '#F59E0B'
           )}
           {renderStatCard(
             'calendar',
-            'Due Today',
+            t('hifz.dueToday'),
             dueRevisions.length,
             '#EF4444'
           )}
           {renderStatCard(
             'check-circle',
-            'Revised Today',
+            t('hifz.revisedToday'),
             todayCompleted,
             activeColor
           )}
@@ -232,7 +234,7 @@ export default function HifzProgressScreen() {
         {/* Daily Goal Progress */}
         <View style={[styles.section, { backgroundColor: theme.cardBackground }]}>
           <View style={styles.sectionHeader}>
-            <ThemedText style={styles.sectionTitle}>Daily Goal</ThemedText>
+            <ThemedText style={styles.sectionTitle}>{t('hifz.dailyGoal')}</ThemedText>
             <ThemedText style={[styles.goalText, { color: activeColor }]}>
               {todayCompleted} / {dailyGoal}
             </ThemedText>
@@ -252,21 +254,21 @@ export default function HifzProgressScreen() {
 
         {/* Overall Progress */}
         <View style={[styles.section, { backgroundColor: theme.cardBackground }]}>
-          <ThemedText style={styles.sectionTitle}>Overall Progress</ThemedText>
+          <ThemedText style={styles.sectionTitle}>{t('hifz.overallProgress')}</ThemedText>
           {renderProgressBar(
-            'Verses',
+            t('hifz.verses'),
             stats?.memorizedVerses || 0,
             QURAN_STATS.totalVerses,
             theme.primary
           )}
           {renderProgressBar(
-            'Pages',
+            t('hifz.pages'),
             stats?.memorizedPages || 0,
             QURAN_STATS.totalPages,
             '#3B82F6'
           )}
           {renderProgressBar(
-            'Juz',
+            t('hifz.juz'),
             stats?.memorizedJuz || 0,
             QURAN_STATS.totalJuz,
             '#8B5CF6'
@@ -277,7 +279,7 @@ export default function HifzProgressScreen() {
         {dueRevisions.length > 0 && (
           <View style={[styles.section, { backgroundColor: theme.cardBackground }]}>
             <View style={styles.sectionHeader}>
-              <ThemedText style={styles.sectionTitle}>Due for Revision</ThemedText>
+              <ThemedText style={styles.sectionTitle}>{t('hifz.dueForRevision')}</ThemedText>
               <View style={[styles.badge, { backgroundColor: '#EF444420' }]}>
                 <ThemedText style={[styles.badgeText, { color: '#EF4444' }]}>
                   {dueRevisions.length}
@@ -298,19 +300,19 @@ export default function HifzProgressScreen() {
                     {revision.verseKey}
                   </ThemedText>
                   <ThemedText style={[styles.revisionDate, { color: theme.textSecondary }]}>
-                    Last: {new Date(revision.lastRevision).toLocaleDateString()}
+                    {t('hifz.last')}: {new Date(revision.lastRevision).toLocaleDateString()}
                   </ThemedText>
                 </View>
                 <View style={[styles.easeBadge, { backgroundColor: `${activeColor}20` }]}>
                   <ThemedText style={[styles.easeText, { color: activeColor }]}>
-                    Ease: {(revision.easeFactor * 100).toFixed(0)}%
+                    {t('hifz.ease')}: {(revision.easeFactor * 100).toFixed(0)}%
                   </ThemedText>
                 </View>
               </View>
             ))}
             {dueRevisions.length > 5 && (
               <ThemedText style={[styles.moreText, { color: theme.textSecondary }]}>
-                +{dueRevisions.length - 5} more verses due
+                +{dueRevisions.length - 5} {t('hifz.moreVersesDue')}
               </ThemedText>
             )}
           </View>
@@ -318,33 +320,33 @@ export default function HifzProgressScreen() {
 
         {/* Status Legend */}
         <View style={[styles.section, { backgroundColor: theme.cardBackground }]}>
-          <ThemedText style={styles.sectionTitle}>Status Legend</ThemedText>
+          <ThemedText style={styles.sectionTitle}>{t('hifz.statusLegend')}</ThemedText>
           <View style={styles.legendGrid}>
             <View style={styles.legendItem}>
               <MemorizationBadge status="not_started" size="large" />
-              <ThemedText style={styles.legendText}>Not Started</ThemedText>
+              <ThemedText style={styles.legendText}>{t('hifz.notStarted')}</ThemedText>
             </View>
             <View style={styles.legendItem}>
               <MemorizationBadge status="in_progress" size="large" />
-              <ThemedText style={styles.legendText}>In Progress</ThemedText>
+              <ThemedText style={styles.legendText}>{t('hifz.inProgress')}</ThemedText>
             </View>
             <View style={styles.legendItem}>
               <MemorizationBadge status="memorized" size="large" />
-              <ThemedText style={styles.legendText}>Memorized</ThemedText>
+              <ThemedText style={styles.legendText}>{t('hifz.memorized')}</ThemedText>
             </View>
           </View>
         </View>
 
         {/* Notification Settings */}
         <View style={[styles.section, { backgroundColor: theme.cardBackground }]}>
-          <ThemedText style={styles.sectionTitle}>Notifications</ThemedText>
+          <ThemedText style={styles.sectionTitle}>{t('hifz.notifications')}</ThemedText>
           <View style={styles.notificationRow}>
             <View style={styles.notificationInfo}>
               <Feather name="bell" size={20} color={activeColor} />
               <View style={styles.notificationText}>
-                <ThemedText style={styles.notificationLabel}>Daily Reminders</ThemedText>
+                <ThemedText style={styles.notificationLabel}>{t('hifz.dailyReminders')}</ThemedText>
                 <ThemedText style={[styles.notificationHint, { color: theme.textSecondary }]}>
-                  Get reminded to review your memorization
+                  {t('hifz.reminderHint')}
                 </ThemedText>
               </View>
             </View>
@@ -370,7 +372,7 @@ export default function HifzProgressScreen() {
         >
           <Feather name="trash-2" size={18} color="#EF4444" />
           <ThemedText style={[styles.resetText, { color: '#EF4444' }]}>
-            Reset All Progress
+            {t('hifz.resetAllProgress')}
           </ThemedText>
         </TouchableOpacity>
 

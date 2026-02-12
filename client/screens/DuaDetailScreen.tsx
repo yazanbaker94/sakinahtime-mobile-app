@@ -13,6 +13,7 @@ import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
+import { useTranslation } from '@/hooks/useTranslation';
 import { Spacing } from '@/constants/theme';
 import { useDuaCollection } from '@/hooks/useDuaCollection';
 import { useDuaFavorites } from '@/hooks/useDuaFavorites';
@@ -70,6 +71,7 @@ export function DuaDetailScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const route = useRoute<DuaDetailRouteProp>();
   const { isDark, theme } = useTheme();
+  const { t } = useTranslation();
 
   const { duaId } = route.params;
   const { getDuaById } = useDuaCollection();
@@ -120,12 +122,12 @@ export function DuaDetailScreen() {
           <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
             <Feather name="arrow-left" size={24} color={theme.text} />
           </Pressable>
-          <ThemedText type="h3">Dua Not Found</ThemedText>
+          <ThemedText type="h3">{t('duaDetail.notFound')}</ThemedText>
         </View>
         <View style={styles.errorContainer}>
           <Feather name="alert-circle" size={48} color={theme.textSecondary} />
           <ThemedText type="body" secondary style={{ marginTop: Spacing.md }}>
-            This dua could not be found.
+            {t('duaDetail.notFoundMessage')}
           </ThemedText>
         </View>
       </ThemedView>
@@ -177,7 +179,7 @@ export function DuaDetailScreen() {
         {dua.hasAudio && dua.audioUrl && (
           <View style={styles.audioSection}>
             <ThemedText type="small" style={{ marginBottom: Spacing.sm, fontWeight: '600' }}>
-              Listen to Pronunciation
+              {t('duaDetail.listenPronunciation')}
             </ThemedText>
             <DuaAudioPlayer
               isPlaying={isCurrentlyPlaying}
@@ -210,10 +212,10 @@ export function DuaDetailScreen() {
             />
             <View style={styles.quranLinkText}>
               <ThemedText type="body" style={{ fontWeight: '600' }}>
-                View in Quran
+                {t('duaDetail.viewInQuran')}
               </ThemedText>
               <ThemedText type="caption" secondary>
-                {dua.surahName} - Ayah {dua.ayahNumber}
+                {dua.surahName} - {t('duaDetail.ayah')} {dua.ayahNumber}
               </ThemedText>
             </View>
             <Feather
@@ -228,7 +230,7 @@ export function DuaDetailScreen() {
         {dua.benefits && (
           <View style={styles.benefitsSection}>
             <ThemedText type="small" style={{ fontWeight: '600', marginBottom: Spacing.sm }}>
-              Benefits & Virtues
+              {t('duaDetail.benefitsVirtues')}
             </ThemedText>
             <ThemedText type="body" secondary>
               {dua.benefits}

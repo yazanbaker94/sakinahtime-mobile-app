@@ -15,6 +15,7 @@ import { Feather } from '@expo/vector-icons';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { useTheme } from '@/hooks/useTheme';
+import { useTranslation } from '@/hooks/useTranslation';
 import { Spacing, BorderRadius } from '@/constants/theme';
 import { searchCitiesAsync, searchCities } from '@/utils/citySearch';
 import { useNetworkStatus } from '@/hooks/useNetworkStatus';
@@ -57,6 +58,7 @@ export function CitySearchModal({
   recentLocations,
 }: CitySearchModalProps) {
   const { theme, isDark } = useTheme();
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const { isOnline } = useNetworkStatus();
   const [searchQuery, setSearchQuery] = useState('');
@@ -101,7 +103,7 @@ export function CitySearchModal({
         setError(null);
       } catch (err) {
         console.error('Search error:', err);
-        setError('Network error. Showing local results.');
+        setError(t('citySearch.networkError'));
         // Keep local results that are already shown
       } finally {
         setIsSearching(false);
@@ -138,8 +140,8 @@ export function CitySearchModal({
     // If offline and city is not in recent locations, show warning
     if (!isOnline && !isInRecentLocations(city)) {
       Alert.alert(
-        'Offline',
-        'You are currently offline. Switching to a new city requires internet to fetch prayer times. Please use a recently visited city or try again when online.',
+        t('citySearch.offline'),
+        t('citySearch.offlineMessage'),
         [{ text: 'OK' }]
       );
       return;
@@ -228,7 +230,7 @@ export function CitySearchModal({
     return (
       <View>
         <ThemedText type="caption" style={styles.sectionHeader}>
-          RECENT
+          {t('citySearch.recent')}
         </ThemedText>
         {recentLocations.map((loc, index) => (
           <View key={`recent-${loc.latitude}-${loc.longitude}-${index}`}>
@@ -236,7 +238,7 @@ export function CitySearchModal({
           </View>
         ))}
         <ThemedText type="caption" style={[styles.sectionHeader, { marginTop: Spacing.lg }]}>
-          POPULAR CITIES
+          {t('citySearch.popularCities')}
         </ThemedText>
       </View>
     );
@@ -265,7 +267,7 @@ export function CitySearchModal({
             <Feather name="arrow-left" size={24} color={theme.text} />
           </Pressable>
           <ThemedText type="h3" style={{ fontWeight: '700', fontSize: 20 }}>
-            Select City
+            {t('citySearch.selectCity')}
           </ThemedText>
         </View>
 
@@ -274,7 +276,7 @@ export function CitySearchModal({
           <Feather name="search" size={18} color={theme.textSecondary} />
           <TextInput
             style={[styles.searchInput, { color: theme.text }]}
-            placeholder="Search any city worldwide..."
+            placeholder={t('citySearch.searchPlaceholder')}
             placeholderTextColor={theme.textSecondary}
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -312,10 +314,10 @@ export function CitySearchModal({
               <View style={styles.emptyContainer}>
                 <Feather name="map-pin" size={48} color={theme.textSecondary} style={{ opacity: 0.3 }} />
                 <ThemedText type="body" style={{ opacity: 0.5, marginTop: 16 }}>
-                  No cities found
+                  {t('citySearch.noCities')}
                 </ThemedText>
                 <ThemedText type="caption" style={{ opacity: 0.4, marginTop: 4, textAlign: 'center', paddingHorizontal: 40 }}>
-                  Try a different spelling or search for a nearby larger city
+                  {t('citySearch.tryDifferent')}
                 </ThemedText>
               </View>
             )

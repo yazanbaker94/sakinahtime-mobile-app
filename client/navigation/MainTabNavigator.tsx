@@ -10,6 +10,7 @@ import AzkarScreen from "@/screens/AzkarScreen";
 import SettingsScreen from "@/screens/SettingsScreen";
 import { useTheme } from "@/hooks/useTheme";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export type MainTabParamList = {
   QiblaTab: undefined;
@@ -24,6 +25,7 @@ const Tab = createBottomTabNavigator<MainTabParamList>();
 export default function MainTabNavigator() {
   const { theme, isDark } = useTheme();
   const screenOptions = useScreenOptions();
+  const { t } = useTranslation();
 
   return (
     <Tab.Navigator
@@ -32,6 +34,7 @@ export default function MainTabNavigator() {
         ...screenOptions,
         tabBarActiveTintColor: theme.tabIconSelected,
         tabBarInactiveTintColor: theme.tabIconDefault,
+        tabBarHideOnKeyboard: true,
         tabBarStyle: {
           position: "absolute",
           backgroundColor: Platform.select({
@@ -55,7 +58,7 @@ export default function MainTabNavigator() {
         name="QiblaTab"
         component={QiblaScreen}
         options={{
-          title: "Qibla",
+          title: t('tabs.qibla'),
           headerTitle: "",
           tabBarIcon: ({ color, size }) => (
             <Feather name="compass" size={size} color={color} />
@@ -66,7 +69,7 @@ export default function MainTabNavigator() {
         name="PrayerTimesTab"
         component={PrayerTimesScreen}
         options={{
-          title: "Prayer",
+          title: t('tabs.prayer'),
           headerTitle: "",
           headerShown: false,
           lazy: false, // Pre-render this screen so it's ready instantly
@@ -79,7 +82,7 @@ export default function MainTabNavigator() {
         name="QuranTab"
         component={MushafScreen}
         options={{
-          title: "Quran",
+          title: t('tabs.quran'),
           headerTitle: "",
           headerShown: false,
           lazy: false, // Pre-render this screen so it's ready instantly
@@ -92,7 +95,7 @@ export default function MainTabNavigator() {
         name="AzkarTab"
         component={AzkarScreen}
         options={{
-          title: "Azkar",
+          title: t('tabs.azkar'),
           headerTitle: "",
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
@@ -104,7 +107,7 @@ export default function MainTabNavigator() {
         name="SettingsTab"
         component={SettingsScreen}
         options={{
-          title: "Settings",
+          title: t('tabs.settings'),
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Feather name="settings" size={size} color={color} />

@@ -9,6 +9,7 @@ import { Feather } from '@expo/vector-icons';
 import { ThemedText } from '../ThemedText';
 import { Card } from '../Card';
 import { useTheme } from '../../hooks/useTheme';
+import { useTranslation } from '../../hooks/useTranslation';
 import { useQuranSchedule } from '../../hooks/useQuranSchedule';
 import { Spacing, BorderRadius } from '../../constants/theme';
 
@@ -19,6 +20,7 @@ interface QuranProgressCardProps {
 
 export function QuranProgressCard({ onPress, onOpenMushaf }: QuranProgressCardProps) {
   const { isDark, theme } = useTheme();
+  const { t } = useTranslation();
   const { todayReading, progress, markDayComplete } = useQuranSchedule();
 
   const progressColor = progress.onTrack ? theme.primary : '#F59E0B';
@@ -31,7 +33,7 @@ export function QuranProgressCard({ onPress, onOpenMushaf }: QuranProgressCardPr
           <Feather name="book-open" size={20} color={accentColor} />
         </View>
         <View style={styles.headerText}>
-          <ThemedText type="h4">Quran Progress</ThemedText>
+          <ThemedText type="h4">{t('quranProgress.title')}</ThemedText>
           <ThemedText type="caption" secondary>
             {progress.daysCompleted}/{progress.totalDays} days completed
           </ThemedText>
@@ -41,14 +43,14 @@ export function QuranProgressCard({ onPress, onOpenMushaf }: QuranProgressCardPr
       {/* Progress Bar */}
       <View style={styles.progressContainer}>
         <View style={[styles.progressBar, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }]}>
-          <View 
+          <View
             style={[
-              styles.progressFill, 
-              { 
+              styles.progressFill,
+              {
                 width: `${progress.percentComplete}%`,
                 backgroundColor: progressColor,
               }
-            ]} 
+            ]}
           />
         </View>
         <ThemedText type="small" style={[styles.progressText, { color: progressColor }]}>
@@ -77,7 +79,7 @@ export function QuranProgressCard({ onPress, onOpenMushaf }: QuranProgressCardPr
               </View>
             )}
           </View>
-          
+
           <View style={styles.readingDetails}>
             <View style={styles.readingItem}>
               <ThemedText type="caption" secondary>Juz</ThemedText>
@@ -101,7 +103,7 @@ export function QuranProgressCard({ onPress, onOpenMushaf }: QuranProgressCardPr
           {/* Action Buttons */}
           <View style={styles.actionButtons}>
             {onOpenMushaf && (
-              <Pressable 
+              <Pressable
                 style={[styles.actionButton, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }]}
                 onPress={() => onOpenMushaf(todayReading.startPage)}
               >
@@ -111,9 +113,9 @@ export function QuranProgressCard({ onPress, onOpenMushaf }: QuranProgressCardPr
                 </ThemedText>
               </Pressable>
             )}
-            
+
             {!todayReading.completed && (
-              <Pressable 
+              <Pressable
                 style={[styles.actionButton, { backgroundColor: accentColor }]}
                 onPress={() => markDayComplete(todayReading.day)}
               >

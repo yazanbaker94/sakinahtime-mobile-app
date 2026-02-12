@@ -8,6 +8,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { Spacing, BorderRadius } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
+import { useTranslation } from "@/hooks/useTranslation";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import * as FileSystem from "expo-file-system/legacy";
@@ -28,6 +29,9 @@ const WBW_LANGUAGES = [
   { id: 'tamil', name: 'Tamil', file: 'tamil-wbw-translation.json', flag: '🇮🇳', bundled: false },
   { id: 'french', name: 'French', file: 'french-wbw-translation.json', flag: '🇫🇷', bundled: false },
   { id: 'persian', name: 'Persian', file: 'persian-wbw-translation.json', flag: '🇮🇷', bundled: false },
+  { id: 'german', name: 'Deutsch', file: 'german-wbw-translation.json', flag: '🇩🇪', bundled: false },
+  { id: 'russian', name: 'Русский', file: 'russian-wbw-translation.json', flag: '🇷🇺', bundled: false },
+  { id: 'chinese', name: '中文', file: 'chinese-wbw-translation.json', flag: '🇨🇳', bundled: false },
 ];
 
 const WBW_CDN_BASE = 'https://sakinahtime.com/translations/wbw';
@@ -38,6 +42,7 @@ const WBW_DIR = `${FileSystem.documentDirectory}wbw/`;
 export default function WordByWordSettingsScreen() {
   const insets = useSafeAreaInsets();
   const { theme, isDark } = useTheme();
+  const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const [selectedLanguage, setSelectedLanguage] = useState('english');
   const [downloadedLanguages, setDownloadedLanguages] = useState<Set<string>>(new Set(['english', 'arabic-gharib']));
@@ -94,7 +99,7 @@ export default function WordByWordSettingsScreen() {
       }
 
       const downloaded = new Set<string>(['english', 'arabic-gharib']); // English and Arabic meanings are always available (bundled)
-      
+
       for (const lang of WBW_LANGUAGES) {
         if (!lang.bundled) {
           const filePath = `${WBW_DIR}${lang.file}`;
@@ -104,7 +109,7 @@ export default function WordByWordSettingsScreen() {
           }
         }
       }
-      
+
       setDownloadedLanguages(downloaded);
     } catch (e) {
       console.error('Failed to check downloaded languages:', e);
@@ -133,7 +138,7 @@ export default function WordByWordSettingsScreen() {
       );
 
       const result = await downloadResumable.downloadAsync();
-      
+
       if (result?.uri) {
         setDownloadedLanguages(prev => new Set([...prev, langId]));
         // Auto-select after download
@@ -163,7 +168,7 @@ export default function WordByWordSettingsScreen() {
 
   const handleLanguagePress = (lang: typeof WBW_LANGUAGES[0]) => {
     if (downloadingLanguage) return; // Don't allow actions while downloading
-    
+
     if (downloadedLanguages.has(lang.id)) {
       selectLanguage(lang.id);
     } else {
@@ -183,7 +188,7 @@ export default function WordByWordSettingsScreen() {
           <Feather name="arrow-left" size={24} color={theme.text} />
         </Pressable>
         <ThemedText type="h3" style={{ fontWeight: '700' }}>
-          Word by Word
+          {t('wordByWord.title')}
         </ThemedText>
         <View style={{ width: 24 }} />
       </View>
@@ -201,18 +206,18 @@ export default function WordByWordSettingsScreen() {
         <View style={[styles.infoBox, { backgroundColor: isDark ? 'rgba(212,175,55,0.1)' : 'rgba(212,175,55,0.08)', marginBottom: Spacing.lg }]}>
           <Feather name="info" size={16} color={theme.gold} style={{ marginRight: 10 }} />
           <ThemedText type="caption" style={{ flex: 1, color: theme.textSecondary }}>
-            Long-press any word in the Mushaf to see its meaning and hear pronunciation.
+            {t('wordByWord.infoHint')}
           </ThemedText>
         </View>
 
         {/* Subtitle */}
         <ThemedText type="caption" secondary style={{ marginBottom: Spacing.sm }}>
-          Translation Language
+          {t('wordByWord.translationLanguage')}
         </ThemedText>
 
         {/* Language Options */}
         <View style={styles.section}>
-          <View style={[styles.card, { 
+          <View style={[styles.card, {
             backgroundColor: isDark ? `${theme.primary}33` : theme.cardBackground,
             elevation: isDark ? 0 : 3,
             shadowOpacity: isDark ? 0 : 0.08,
@@ -223,7 +228,7 @@ export default function WordByWordSettingsScreen() {
               const isDownloading = downloadingLanguage === lang.id;
               const isLast = index === WBW_LANGUAGES.length - 1;
               const isArabicGharib = (lang as any).isArabicMeaning;
-              
+
               return (
                 <Pressable
                   key={lang.id}
@@ -231,9 +236,9 @@ export default function WordByWordSettingsScreen() {
                   disabled={isDownloading}
                   style={({ pressed }) => [
                     styles.languageRow,
-                    !isLast && { 
-                      borderBottomWidth: 1, 
-                      borderBottomColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)' 
+                    !isLast && {
+                      borderBottomWidth: 1,
+                      borderBottomColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)'
                     },
                     { opacity: pressed && !isDownloading ? 0.7 : 1 },
                   ]}
@@ -248,22 +253,22 @@ export default function WordByWordSettingsScreen() {
                       </ThemedText>
                       {isArabicGharib && (
                         <ThemedText type="caption" secondary style={{ fontSize: 11 }}>
-                          Arabic meanings of difficult words
+                          {t('wordByWord.arabicMeanings')}
                         </ThemedText>
                       )}
                       {!isDownloaded && !isDownloading && !isArabicGharib && (
                         <ThemedText type="caption" secondary style={{ fontSize: 11 }}>
-                          Tap to download
+                          {t('wordByWord.tapToDownload')}
                         </ThemedText>
                       )}
                       {isDownloading && (
                         <ThemedText type="caption" style={{ fontSize: 11, color: theme.primary }}>
-                          Downloading... {Math.round(downloadProgress * 100)}%
+                          {t('wordByWord.downloading')} {Math.round(downloadProgress * 100)}%
                         </ThemedText>
                       )}
                     </View>
                   </View>
-                  
+
                   {isDownloading ? (
                     <ActivityIndicator size="small" color={theme.primary} />
                   ) : isSelected ? (
@@ -283,9 +288,9 @@ export default function WordByWordSettingsScreen() {
 
         {/* Audio Settings */}
         <ThemedText type="caption" secondary style={{ marginTop: Spacing.xl, marginBottom: Spacing.sm }}>
-          Audio
+          {t('wordByWord.audio')}
         </ThemedText>
-        <View style={[styles.card, { 
+        <View style={[styles.card, {
           backgroundColor: isDark ? `${theme.primary}33` : theme.cardBackground,
           elevation: isDark ? 0 : 3,
           shadowOpacity: isDark ? 0 : 0.08,
@@ -293,10 +298,10 @@ export default function WordByWordSettingsScreen() {
           <View style={styles.audioRow}>
             <View style={{ flex: 1 }}>
               <ThemedText type="body" style={{ fontWeight: '500' }}>
-                Play word pronunciation
+                {t('wordByWord.playPronunciation')}
               </ThemedText>
               <ThemedText type="caption" secondary style={{ fontSize: 11, marginTop: 2 }}>
-                Hear the word when you lift your finger
+                {t('wordByWord.audioHint')}
               </ThemedText>
             </View>
             <Switch

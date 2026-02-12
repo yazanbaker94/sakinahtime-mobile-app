@@ -1,0 +1,2342 @@
+{
+  "tabs": {
+    "qibla": "القبلة",
+    "prayer": "الصلاة",
+    "quran": "القرآن",
+    "azkar": "الأذكار",
+    "settings": "الإعدادات"
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "appearance": "المظهر",
+    "customizeTheme": "تخصيص المظهر الخاص بك",
+    "language": "اللغة",
+    "chooseLanguage": "اختر لغتك",
+    "prayerFasting": "الصلاة والصيام",
+    "notificationsAzanReminders": "الإشعارات والأذان والتذكيرات",
+    "storageDownloads": "التخزين والتنزيلات",
+    "manageOfflineContent": "إدارة المحتوى غير المتصل",
+    "wordByWord": "كلمة بكلمة",
+    "translationLanguage": "لغة الترجمة",
+    "dhikrReminders": "تذكيرات الذكر",
+    "floatingOverlay": "تذكيرات عائمة",
+    "feedbackSuggestions": "الملاحظات والاقتراحات",
+    "helpImprove": "ساعدنا في تحسين التطبيق",
+    "colorMode": "وضع الألوان",
+    "theme": "المظهر",
+    "light": "فاتح",
+    "dark": "داكن",
+    "auto": "تلقائي"
+  },
+  "prayer": {
+    "title": "مواقيت الصلاة",
+    "fajr": "الفجر",
+    "sunrise": "الشروق",
+    "dhuhr": "الظهر",
+    "asr": "العصر",
+    "maghrib": "المغرب",
+    "isha": "العشاء",
+    "nextPrayer": "الصلاة القادمة",
+    "timeRemaining": "الوقت المتبقي",
+    "prayerCalendar": "تقويم الصلاة",
+    "prayerStats": "إحصائيات الصلاة",
+    "progress": "التقدم",
+    "hijriCalendar": "التقويم الهجري",
+    "calculationMethod": "طريقة الحساب",
+    "prayed": "تمت الصلاة",
+    "missed": "فائتة",
+    "late": "متأخرة",
+    "onTime": "في الوقت",
+    "notLogged": "غير مسجلة",
+    "logPrayer": "تسجيل الصلاة",
+    "currentStreak": "السلسلة الحالية",
+    "days": "أيام",
+    "day": "يوم",
+    "today": "اليوم",
+    "yesterday": "أمس",
+    "location": "الموقع",
+    "setLocation": "حدد موقعك",
+    "tapToSetLocation": "اضغط لتحديد موقعك للحصول على مواقيت صلاة دقيقة",
+    "noLocation": "لم يتم تحديد الموقع",
+    "checkingPermission": "جاري التحقق من إذن الموقع...",
+    "locationRequired": "يلزم الوصول إلى الموقع",
+    "locationExplanation": "نحتاج إلى موقعك لحساب مواقيت الصلاة الدقيقة لمنطقتك.",
+    "browserLocationHint": "يرجى تفعيل الموقع في إعدادات المتصفح.",
+    "enableLocation": "تفعيل الموقع",
+    "openSettings": "فتح الإعدادات",
+    "loadingPrayerTimes": "جاري تحميل مواقيت الصلاة...",
+    "failedToLoad": "فشل تحميل مواقيت الصلاة",
+    "hours": "ساعات",
+    "minutes": "دقائق",
+    "seconds": "ثواني",
+    "min": "د"
+  },
+  "qibla": {
+    "title": "القبلة",
+    "direction": "الاتجاه",
+    "degrees": "درجة",
+    "compass": "البوصلة",
+    "distance": "المسافة",
+    "toKaaba": "إلى الكعبة",
+    "facingQibla": "باتجاه القبلة",
+    "turnLeft": "استدر يساراً",
+    "turnRight": "استدر يميناً",
+    "directionLocked": "الاتجاه مُثبّت",
+    "tapToUnlock": "اضغط لإلغاء التثبيت",
+    "lockDirection": "تثبيت الاتجاه",
+    "compassNotAvailable": "البوصلة غير متوفرة",
+    "compassNotAvailableWeb": "البوصلة غير متوفرة على الويب. استخدم جهازاً محمولاً.",
+    "calibrate": "قم بمعايرة البوصلة بتحريك هاتفك على شكل رقم ٨",
+    "calibrateShort": "حرّك الهاتف على شكل رقم ٨ للمعايرة",
+    "heading": "الاتجاه",
+    "qiblaLabel": "القبلة",
+    "km": "كم",
+    "mosques": "المساجد",
+    "gettingLocation": "جاري تحديد موقعك...",
+    "initializingCompass": "جاري تهيئة البوصلة...",
+    "locationRequiredQibla": "نحتاج إلى موقعك لحساب اتجاه القبلة من موقعك الحالي."
+  },
+  "quran": {
+    "title": "القرآن",
+    "surah": "سورة",
+    "juz": "جزء",
+    "page": "صفحة",
+    "verse": "آية",
+    "verses": "آيات",
+    "search": "بحث",
+    "searchQuran": "البحث في القرآن",
+    "bookmark": "إشارة مرجعية",
+    "bookmarks": "الإشارات المرجعية",
+    "bookmarked": "تم الحفظ",
+    "addNote": "إضافة ملاحظة",
+    "notes": "الملاحظات",
+    "highlight": "تمييز",
+    "highlights": "التمييزات",
+    "copy": "نسخ",
+    "share": "مشاركة",
+    "play": "تشغيل",
+    "pause": "إيقاف مؤقت",
+    "stop": "إيقاف",
+    "continue": "متابعة",
+    "tafsir": "تفسير",
+    "translation": "ترجمة",
+    "translations": "الترجمات",
+    "transliteration": "النطق",
+    "reciter": "القارئ",
+    "lastRead": "آخر قراءة",
+    "continueLast": "أكمل من حيث توقفت",
+    "meccan": "مكية",
+    "medinan": "مدنية",
+    "save": "حفظ",
+    "delete": "حذف",
+    "cancel": "إلغاء",
+    "savedVerses": "الآيات المحفوظة",
+    "all": "الكل",
+    "recent": "الأخيرة",
+    "tafsirTranslations": "التفسير والترجمات",
+    "download": "تنزيل",
+    "downloaded": "تم التنزيل",
+    "downloading": "جاري التنزيل",
+    "readMode": "وضع القراءة",
+    "mushafMode": "وضع المصحف",
+    "surahReader": "قارئ السور",
+    "goToPage": "انتقل إلى الصفحة",
+    "goToSurah": "انتقل إلى السورة",
+    "goToJuz": "انتقل إلى الجزء",
+    "wordByWord": "كلمة بكلمة",
+    "audio": "صوت",
+    "settings": "الإعدادات"
+  },
+  "azkar": {
+    "title": "الأذكار والأدعية",
+    "morningAzkar": "أذكار الصباح",
+    "eveningAzkar": "أذكار المساء",
+    "afterPrayer": "بعد الصلاة",
+    "sleep": "النوم",
+    "wakeUp": "الاستيقاظ",
+    "dailyTip": "نصيحة اليوم",
+    "categories": "الأقسام",
+    "duas": "الأدعية",
+    "guides": "الأدلة",
+    "all": "الكل",
+    "favorites": "المفضلة",
+    "count": "العدد",
+    "completed": "مكتمل",
+    "repeat": "تكرار",
+    "times": "مرات",
+    "time": "مرة",
+    "remaining": "متبقي",
+    "reset": "إعادة تعيين",
+    "duaOfTheDay": "دعاء اليوم",
+    "dailyDhikr": "ذكر اليوم",
+    "dhikrGoal": "هدف الذكر",
+    "worship": "العبادة والصلاة",
+    "dailyLife": "الحياة اليومية",
+    "travel": "السفر",
+    "food": "الطعام والشراب",
+    "protection": "الحماية",
+    "hadith": "حديث",
+    "islamicGuides": "الأدلة الإسلامية",
+    "search": "البحث في الأذكار والأدعية...",
+    "searchDuas": "البحث في الأدعية...",
+    "quranic": "قرآنية",
+    "prophetic": "نبوية",
+    "custom": "مخصصة",
+    "customDuas": "أدعية مخصصة",
+    "addCustomDua": "إضافة دعاء مخصص",
+    "noDuasYet": "لا توجد أدعية مخصصة بعد",
+    "noFavorites": "لا توجد مفضلات بعد",
+    "noResults": "لا توجد نتائج",
+    "deleteConfirm": "هل أنت متأكد من حذف هذا الدعاء؟",
+    "tapToStart": "اضغط للبدء",
+    "target": "الهدف",
+    "progress": "التقدم",
+    "allCategories": "جميع الفئات",
+    "deleteDua": "حذف الدعاء",
+    "deleteDuaConfirm": "هل أنت متأكد من حذف هذا الدعاء؟",
+    "myDuas": "أدعيتي",
+    "result": "نتيجة",
+    "results": "نتائج",
+    "noDuasFound": "لم يتم العثور على أدعية لـ",
+    "searchGuides": "ابحث في الأدلة...",
+    "noGuidesFound": "لم يتم العثور على أدلة لـ",
+    "back": "رجوع",
+    "addPersonalSupplications": "لا توجد أدعية مخصصة بعد.\nأضف أدعيتك الشخصية.",
+    "tapHeartTip": "لا توجد أدعية مفضلة بعد.\nاضغط على أيقونة القلب على أي دعاء.",
+    "noQuranicDuas": "لا توجد أدعية قرآنية متاحة",
+    "noPropheticDuas": "لا توجد أدعية نبوية متاحة",
+    "adhkarCount": "أذكار",
+    "dailyTips": [
+      {
+        "text": "قال رسول الله ﷺ: \"أفضل الذكر لا إله إلا الله.\"",
+        "source": "الترمذي"
+      },
+      {
+        "text": "قال رسول الله ﷺ: \"من قال سبحان الله وبحمده مائة مرة حُطت خطاياه ولو كانت مثل زبد البحر.\"",
+        "source": "البخاري ومسلم"
+      },
+      {
+        "text": "قال رسول الله ﷺ: \"كلمتان خفيفتان على اللسان، ثقيلتان في الميزان، حبيبتان إلى الرحمن: سبحان الله وبحمده، سبحان الله العظيم.\"",
+        "source": "البخاري ومسلم"
+      },
+      {
+        "text": "قال رسول الله ﷺ: \"من قرأ آية الكرسي دبر كل صلاة مكتوبة لم يمنعه من دخول الجنة إلا أن يموت.\"",
+        "source": "النسائي"
+      },
+      {
+        "text": "قال رسول الله ﷺ: \"أقرب ما يكون العبد من ربه وهو ساجد، فأكثروا الدعاء.\"",
+        "source": "مسلم"
+      },
+      {
+        "text": "قال رسول الله ﷺ: \"لا يؤمن أحدكم حتى يحب لأخيه ما يحب لنفسه.\"",
+        "source": "البخاري ومسلم"
+      },
+      {
+        "text": "قال رسول الله ﷺ: \"من كان يؤمن بالله واليوم الآخر فليقل خيراً أو ليصمت.\"",
+        "source": "البخاري ومسلم"
+      },
+      {
+        "text": "قال رسول الله ﷺ: \"خيركم من تعلم القرآن وعلمه.\"",
+        "source": "البخاري"
+      },
+      {
+        "text": "قال رسول الله ﷺ: \"تبسمك في وجه أخيك صدقة.\"",
+        "source": "الترمذي"
+      },
+      {
+        "text": "قال رسول الله ﷺ: \"من سلك طريقاً يلتمس فيه علماً سهل الله له به طريقاً إلى الجنة.\"",
+        "source": "مسلم"
+      },
+      {
+        "text": "قال رسول الله ﷺ: \"الدعاء بين الأذان والإقامة لا يُرد.\"",
+        "source": "أبو داود والترمذي"
+      }
+    ]
+  },
+  "azkarDetail": {
+    "quran": "قرآن",
+    "translit": "نطق",
+    "english": "ترجمة",
+    "counter": "عداد"
+  },
+  "duaCollection": {
+    "title": "الأدعية",
+    "searchPlaceholder": "ابحث في الأدعية...",
+    "categories": "الأقسام",
+    "quranic": "قرآنية",
+    "prophetic": "نبوية",
+    "favorites": "المفضلة",
+    "myDuas": "أدعيتي",
+    "deleteDua": "حذف الدعاء",
+    "deleteConfirm": "هل أنت متأكد من حذف هذا الدعاء؟",
+    "deleteFailed": "فشل حذف الدعاء",
+    "duasCount": "أدعية",
+    "noResultsFor": "لم يتم العثور على أدعية لـ \"{{query}}\"",
+    "results": "نتائج",
+    "result": "نتيجة",
+    "forQuery": "عن",
+    "noQuranic": "لا توجد أدعية قرآنية متاحة",
+    "noProphetic": "لا توجد أدعية نبوية متاحة",
+    "noFavorites": "لا توجد أدعية مفضلة بعد.\nاضغط على أيقونة القلب على أي دعاء لإضافته هنا.",
+    "noCustom": "لا توجد أدعية مخصصة بعد.\nأضف أدعيتك الشخصية هنا.",
+    "addCustom": "إضافة دعاء مخصص"
+  },
+  "progress": {
+    "title": "التقدم",
+    "readingProgress": "تقدم القراءة",
+    "overallProgress": "التقدم الإجمالي",
+    "complete": "مكتمل",
+    "pagesRead": "صفحة مقروءة",
+    "juzComplete": "جزء مكتمل",
+    "khatm": "ختمة",
+    "todaysProgress": "تقدم اليوم",
+    "versesRead": "آية مقروءة",
+    "pagesReadToday": "صفحة مقروءة",
+    "readingStreak": "سلسلة القراءة",
+    "currentStreak": "السلسلة الحالية",
+    "longestStreak": "أطول سلسلة",
+    "bestStreak": "أفضل سلسلة",
+    "thisWeek": "هذا الأسبوع",
+    "average": "المعدل",
+    "pagesPerDay": "صفحة/يوم",
+    "dailyGoalSettings": "إعدادات الهدف اليومي",
+    "enableDailyGoal": "تفعيل الهدف اليومي",
+    "goalType": "نوع الهدف",
+    "pages": "صفحات",
+    "verses": "آيات",
+    "target": "الهدف",
+    "saveGoal": "حفظ الهدف",
+    "readingReminder": "تذكير القراءة",
+    "enableReminder": "تفعيل التذكير",
+    "reminderTime": "وقت التذكير",
+    "resetAllProgress": "إعادة تعيين كل التقدم",
+    "resetConfirm": "هل أنت متأكد من إعادة تعيين كل تقدم القراءة؟ لا يمكن التراجع عن ذلك.",
+    "resetButton": "إعادة تعيين",
+    "noGoalSet": "لم يتم تحديد هدف يومي",
+    "invalidGoal": "هدف غير صالح",
+    "invalidGoalMessage": "يرجى إدخال رقم صالح",
+    "goalRange": "يجب أن يكون الهدف بين",
+    "and": "و",
+    "permissionRequired": "إذن مطلوب",
+    "permissionMessage": "يرجى تفعيل الإشعارات في إعدادات جهازك لاستخدام تذكيرات القراءة.",
+    "errorSavingGoal": "فشل حفظ إعدادات الهدف",
+    "errorResetting": "فشل إعادة تعيين التقدم",
+    "loadingProgress": "جاري تحميل التقدم...",
+    "done": "تم",
+    "goal": "الهدف",
+    "weeklyOverview": "النظرة الأسبوعية",
+    "monthlyOverview": "النظرة الشهرية",
+    "streak": "السلسلة",
+    "totalPrayers": "إجمالي الصلوات",
+    "completionRate": "نسبة الإكمال",
+    "prayerLog": "سجل الصلاة",
+    "weekly": "أسبوعي",
+    "monthly": "شهري",
+    "allTime": "الكل",
+    "exportStats": "تصدير الإحصائيات",
+    "qadaTracker": "متتبع القضاء",
+    "qadaRemaining": "القضاء المتبقي",
+    "taraweeh": "التراويح",
+    "charity": "الصدقة",
+    "zakatCalculator": "حاسبة الزكاة",
+    "hifzProgress": "تقدم الحفظ",
+    "quranSchedule": "جدول القرآن"
+  },
+  "notifications": {
+    "title": "إعدادات الإشعارات",
+    "prayerNotifications": "إشعارات الصلاة",
+    "getNotified": "احصل على إشعار عند حلول وقت الصلاة",
+    "prayerAlarms": "تنبيهات الصلاة",
+    "azanSettings": "إعدادات الأذان",
+    "azan": "الأذان",
+    "azanSound": "صوت الأذان",
+    "playHayaAlSalat": "تشغيل \"حي على الصلاة\" قبل الصلاة",
+    "silentMode": "الوضع الصامت",
+    "flipToSilence": "قلب للإسكات",
+    "flipToSilenceDesc": "اقلب هاتفك للأسفل لإسكات الأذان",
+    "testAzan": "اختبار الأذان",
+    "vibration": "الاهتزاز",
+    "iqama": "الإقامة",
+    "iqamaReminder": "تذكير الإقامة",
+    "iqamaWait": "انتظار الإقامة",
+    "iqamaDelay": "تأخير الإقامة",
+    "minutesAfterAzan": "دقائق بعد الأذان",
+    "minutes": "دقائق",
+    "enabled": "مفعّل",
+    "disabled": "معطّل",
+    "timeAdjustments": "تعديل الأوقات",
+    "adjustPrayerTimes": "تعديل أوقات الصلاة (بالدقائق)",
+    "calculationMethod": "طريقة الحساب",
+    "highLatitude": "قاعدة خطوط العرض العالية",
+    "asrCalculation": "حساب العصر",
+    "standard": "قياسي",
+    "hanafi": "حنفي",
+    "prayerTracking": "تتبع الصلاة",
+    "enableTracking": "تفعيل التتبع",
+    "trackDailyPrayers": "تتبع صلواتك اليومية",
+    "missedPrayerReminder": "تذكير الصلاة الفائتة",
+    "reminderAfterPrayer": "تذكير بعد مرور وقت الصلاة",
+    "reminderDelay": "تأخير التذكير",
+    "minutesAfterPrayer": "دقائق بعد الصلاة",
+    "fasting": "الصيام",
+    "suhoorReminder": "تذكير السحور",
+    "iftarReminder": "تذكير الإفطار",
+    "beforeSuhoor": "دقائق قبل السحور",
+    "beforeIftar": "دقائق قبل الإفطار",
+    "fastingReminders": "تذكيرات الصيام",
+    "enableFastingReminders": "تفعيل تذكيرات الصيام",
+    "playAzanWhenPrayerTime": "تشغيل الأذان عند حلول وقت الصلاة",
+    "selectPrayersForAzan": "اختر الصلوات التي يُشغّل لها الأذان",
+    "prayerSelection": "اختيار الصلوات",
+    "choosePrayersForIqama": "اختر الصلوات التي تحصل على إقامة",
+    "testIqama": "اختبار الإقامة",
+    "testIqamaPlaying": "صوت الإقامة يعمل الآن. إذا لم تسمعه، تحقق من مستوى الصوت.",
+    "timeAdjustmentsFineTune": "تعديل دقيق لأوقات الصلاة (±30 دقيقة)",
+    "min": "د",
+    "autoDetectByLocation": "كشف تلقائي حسب الموقع",
+    "recommended": "الموصى به",
+    "active": "نشط",
+    "useAuto": "استخدام التلقائي",
+    "autoDetectedFor": "مكتشف تلقائياً لـ"
+  },
+  "qadaTracker": {
+    "title": "متتبع القضاء",
+    "totalRemaining": "إجمالي صلوات القضاء المتبقية",
+    "hint": "اضغط على الرقم للتعديل مباشرة. استخدم 'تسجيل' بعد أداء صلاة القضاء."
+  },
+  "location": {
+    "title": "إعدادات الموقع",
+    "searchCity": "البحث عن مدينة...",
+    "currentLocation": "الموقع الحالي",
+    "useCurrentLocation": "استخدام الموقع الحالي",
+    "manualEntry": "إدخال يدوي",
+    "latitude": "خط العرض",
+    "longitude": "خط الطول",
+    "save": "حفظ",
+    "detectingLocation": "جاري تحديد الموقع...",
+    "locationSaved": "تم حفظ الموقع",
+    "invalidCoordinates": "إحداثيات غير صالحة",
+    "detecting": "جاري تحديد الموقع...",
+    "unavailable": "الموقع غير متاح",
+    "permissionRequired": "الإذن مطلوب",
+    "manual": "يدوي",
+    "locationSource": "مصدر الموقع",
+    "useGPS": "استخدام موقع GPS",
+    "setManually": "تحديد الموقع يدوياً",
+    "searchWorldwide": "ابحث عن أي مدينة حول العالم",
+    "recentLocations": "المواقع الأخيرة",
+    "info": "يُستخدم موقعك لحساب أوقات الصلاة واتجاه القبلة بدقة. الموقع اليدوي مفيد عندما يكون GPS غير متاح أو غير دقيق."
+  },
+  "qada": {
+    "title": "متتبع القضاء",
+    "totalRemaining": "المتبقي الإجمالي",
+    "addMissed": "إضافة فائتة",
+    "prayersMadeUp": "صلوات تم قضاؤها",
+    "prayersRemaining": "المتبقي",
+    "hint": "اضغط مطولاً على عدد الصلاة للإنقاص",
+    "noQada": "لا توجد صلوات قضاء متبقية. ما شاء الله!",
+    "fajr": "الفجر",
+    "dhuhr": "الظهر",
+    "asr": "العصر",
+    "maghrib": "المغرب",
+    "isha": "العشاء",
+    "prayers": "صلوات"
+  },
+  "zakat": {
+    "title": "حاسبة الزكاة",
+    "totalWealth": "إجمالي الثروة",
+    "enterWealth": "أدخل إجمالي مبلغ الثروة",
+    "calculate": "احسب",
+    "zakatDue": "الزكاة المستحقة",
+    "nisab": "النصاب",
+    "meetsNisab": "بلغ النصاب",
+    "doesNotMeetNisab": "لم يبلغ النصاب",
+    "goldNisab": "نصاب الذهب",
+    "silverNisab": "نصاب الفضة",
+    "info": "الزكاة هي ٢.٥٪ من إجمالي ثروتك المؤهلة المحتفظ بها لمدة سنة قمرية.",
+    "gold": "الذهب",
+    "silver": "الفضة",
+    "cash": "النقد والأرصدة البنكية",
+    "stocks": "الأسهم والاستثمارات",
+    "property": "العقارات المؤجرة",
+    "totalAssets": "إجمالي الأصول",
+    "zakatPayable": "الزكاة المستحقة للدفع",
+    "reset": "إعادة تعيين",
+    "currency": "العملة"
+  },
+  "charity": {
+    "title": "متتبع الصدقات",
+    "totalDonated": "إجمالي التبرعات",
+    "addDonation": "إضافة تبرع",
+    "setGoal": "تحديد هدف",
+    "goal": "الهدف",
+    "recentDonations": "التبرعات الأخيرة",
+    "noDonations": "لا توجد تبرعات بعد",
+    "amount": "المبلغ",
+    "type": "النوع",
+    "category": "الفئة",
+    "date": "التاريخ",
+    "deleteConfirm": "هل أنت متأكد من حذف هذا التبرع؟",
+    "enterAmount": "أدخل المبلغ",
+    "selectCategory": "اختر الفئة",
+    "sadaqah": "صدقة",
+    "zakatPayment": "زكاة",
+    "waqf": "وقف",
+    "other": "أخرى",
+    "goalAmount": "مبلغ الهدف",
+    "goalProgress": "تقدم الهدف",
+    "to": "إلى",
+    "totalGiven": "إجمالي التبرعات",
+    "editGoal": "تعديل الهدف",
+    "zakatStatus": "حالة الزكاة",
+    "paid": "مدفوع",
+    "notYetPaid": "لم تُدفع بعد هذا العام",
+    "breakdownByType": "تفصيل حسب النوع"
+  },
+  "ramadan": {
+    "title": "لوحة رمضان",
+    "daysRemaining": "الأيام المتبقية",
+    "fastingToday": "صيام اليوم",
+    "taraweeh": "التراويح",
+    "logTaraweeh": "تسجيل التراويح",
+    "suhoor": "السحور",
+    "iftar": "الإفطار",
+    "fastingDays": "أيام الصيام",
+    "completed": "مكتمل",
+    "remaining": "متبقي",
+    "ramadanMode": "وضع رمضان",
+    "activateMessage": "سيتم تفعيل وضع رمضان تلقائياً خلال شهر رمضان المبارك.",
+    "checkBackMessage": "عد عند حلول رمضان للوصول إلى مواعيد السحور والإفطار وجدول قراءة القرآن ومتابعة التراويح والمزيد."
+  },
+  "hifz": {
+    "title": "تقدم الحفظ",
+    "memorized": "محفوظة",
+    "inProgress": "قيد الحفظ",
+    "notStarted": "لم تبدأ",
+    "totalMemorized": "إجمالي المحفوظ",
+    "markMemorized": "تحديد كمحفوظة",
+    "markInProgress": "تحديد كقيد الحفظ",
+    "resetSurah": "إعادة تعيين السورة",
+    "versesMemorized": "آيات محفوظة",
+    "dueToday": "مستحقة اليوم",
+    "revisedToday": "تمت مراجعتها اليوم",
+    "dailyGoal": "الهدف اليومي",
+    "overallProgress": "التقدم العام",
+    "verses": "آيات",
+    "pages": "صفحات",
+    "juz": "أجزاء",
+    "dueForRevision": "مستحقة للمراجعة",
+    "last": "آخر",
+    "ease": "السهولة",
+    "moreVersesDue": "آية أخرى مستحقة",
+    "statusLegend": "دليل الحالة",
+    "notifications": "الإشعارات",
+    "dailyReminders": "التذكيرات اليومية",
+    "reminderHint": "تذكير بمراجعة الحفظ",
+    "resetAllProgress": "إعادة تعيين كل التقدم"
+  },
+  "storage": {
+    "title": "التخزين والتنزيلات",
+    "totalUsed": "إجمالي التخزين المستخدم",
+    "audioFiles": "الملفات الصوتية",
+    "clearAllDownloads": "مسح جميع التنزيلات",
+    "clearConfirm": "هل أنت متأكد من حذف جميع المحتوى المنزّل؟",
+    "confirm": "تأكيد",
+    "cancel": "إلغاء",
+    "reciterAudio": "تسجيلات القارئ",
+    "mushafPages": "صفحات المصحف",
+    "totalSize": "الحجم الإجمالي",
+    "noDownloads": "لا توجد تنزيلات بعد",
+    "loadingInfo": "جاري تحميل معلومات التخزين...",
+    "quickActions": "إجراءات سريعة",
+    "manageAudio": "إدارة الصوت",
+    "downloadQuran": "تنزيل القرآن",
+    "clearAll": "مسح الكل",
+    "freeUpSpace": "تحرير مساحة",
+    "refreshInfo": "تحديث معلومات التخزين"
+  },
+  "onboarding": {
+    "welcome": "مرحباً بك في سكينة تايم",
+    "welcomeDesc": "رفيقك في رحلة روحانية واعية",
+    "skip": "تخطي",
+    "next": "التالي",
+    "getStarted": "ابدأ الآن",
+    "done": "تم",
+    "prayerTimesTitle": "مواقيت صلاة دقيقة",
+    "prayerTimesDesc": "احصل على مواقيت صلاة دقيقة بناءً على موقعك مع إشعارات أذان جميلة",
+    "quranTitle": "تجربة قرآنية رائعة",
+    "quranDesc": "اقرأ القرآن مع ترجمات متعددة وكلمة بكلمة وتلاوة صوتية",
+    "azkarTitle": "أذكار وأدعية يومية",
+    "azkarDesc": "الوصول إلى أذكار الصباح والمساء وأدعية لكل مناسبة وعداد الذكر",
+    "notificationsDesc": "لا تفوت أي صلاة مع إشعارات قابلة للتخصيص وتنبيهات الأذان",
+    "widgetDesc": "أضف ودجت على شاشتك الرئيسية للوصول السريع لمواقيت الصلاة",
+    "welcomeTitle": "السلام عليكم",
+    "welcomeSubtitle": "مرحباً بك في سكينة تايم",
+    "welcomeDescription": "رفيقك لمواقيت الصلاة وقراءة القرآن والنمو الروحاني.",
+    "locationTitle": "مواقيت صلاة دقيقة",
+    "locationSubtitle": "الوصول إلى الموقع",
+    "locationDescription": "نستخدم موقعك لحساب مواقيت الصلاة الدقيقة لمنطقتك.",
+    "notificationsTitle": "لا تفوت أي صلاة",
+    "notificationsSubtitle": "تذكيرات الإشعارات",
+    "notificationsDescription": "احصل على إشعار بأصوات أذان جميلة عند حلول وقت الصلاة.",
+    "widgetTitle": "إضافة ودجت",
+    "widgetSubtitle": "أذان موثوق",
+    "widgetDescription": "أضف ودجت مواقيت الصلاة على شاشتك الرئيسية لإشعارات أذان موثوقة، حتى بعد إعادة تشغيل الهاتف.",
+    "doneTitle": "كل شيء جاهز!",
+    "doneSubtitle": "جاهز للبدء",
+    "doneDescription": "ابدأ رحلتك نحو ممارسة روحانية أكثر وعياً.",
+    "locationEnabled": "تم تفعيل الموقع",
+    "notificationsEnabled": "تم تفعيل الإشعارات",
+    "enable": "تفعيل",
+    "continue": "متابعة",
+    "notNow": "ليس الآن",
+    "enableExactAlarms": "تفعيل التنبيهات الدقيقة",
+    "exactAlarmsDescription": "يحتاج سكينة تايم إلى إذن لجدولة تنبيهات مواقيت الصلاة الدقيقة.\n\nيرجى تفعيل \"التنبيهات والتذكيرات\" في الشاشة التالية.",
+    "openSettings": "فتح الإعدادات",
+    "enableReliableAzan": "تفعيل الأذان الموثوق",
+    "reliableAzanDescription": "لضمان تشغيل الأذان بعد إعادة تشغيل الهاتف، يرجى الضغط على:\n\nالبطارية ← غير مقيد\n\nهذا يسمح للتطبيق بتنبيهك لمواقيت الصلاة."
+  },
+  "mosque": {
+    "title": "المساجد القريبة",
+    "findMosques": "البحث عن مساجد",
+    "distance": "المسافة",
+    "directions": "الاتجاهات",
+    "noMosques": "لم يتم العثور على مساجد قريبة",
+    "searchMosques": "البحث عن مساجد...",
+    "openInMaps": "فتح في الخرائط"
+  },
+  "hijri": {
+    "title": "التقويم الهجري",
+    "today": "اليوم",
+    "months": {
+      "1": "محرم",
+      "2": "صفر",
+      "3": "ربيع الأول",
+      "4": "ربيع الثاني",
+      "5": "جمادى الأولى",
+      "6": "جمادى الآخرة",
+      "7": "رجب",
+      "8": "شعبان",
+      "9": "رمضان",
+      "10": "شوال",
+      "11": "ذو القعدة",
+      "12": "ذو الحجة"
+    }
+  },
+  "prayerStats": {
+    "title": "إحصائيات الصلاة",
+    "overview": "نظرة عامة",
+    "totalPrayed": "إجمالي الصلوات المؤداة",
+    "totalMissed": "إجمالي الصلوات الفائتة",
+    "onTimeRate": "نسبة الأداء في الوقت",
+    "weeklyBreakdown": "التوزيع الأسبوعي",
+    "monthlyBreakdown": "التوزيع الشهري",
+    "bestDay": "أفضل يوم",
+    "prayerBreakdown": "توزيع الصلوات",
+    "noData": "لا توجد بيانات صلاة بعد. ابدأ بتتبع صلواتك!",
+    "loadingStats": "جاري تحميل الإحصائيات...",
+    "prayerTracking": "تتبع الصلاة",
+    "tapToMark": "انقر على الصلوات لتحديدها كمؤداة",
+    "enableToTrack": "فعّل لتتبع صلواتك",
+    "tapToMarkStatus": "انقر على الزر لتحديد حالة الصلاة:",
+    "prayed": "مؤداة",
+    "missed": "فائتة",
+    "late": "متأخرة",
+    "missedReminder": "تذكير الصلاة الفائتة",
+    "remindAfter": "تذكير بعد {{minutes}} دقيقة إذا لم تُحدد",
+    "getReminded": "احصل على تذكير لتحديد صلواتك",
+    "remindAfterLabel": "ذكرني بعد:",
+    "totalLogged": "إجمالي المسجلة",
+    "qadaDue": "قضاء مستحق",
+    "weekly": "أسبوعي",
+    "monthly": "شهري",
+    "exportFailed": "فشل التصدير",
+    "exportError": "تعذر مشاركة إحصائيات الصلاة."
+  },
+  "prayerCalendar": {
+    "title": "تقويم الصلاة",
+    "monthlyView": "العرض الشهري",
+    "allPrayed": "جميعها مؤداة",
+    "someMissed": "بعضها فائت",
+    "notTracked": "غير متتبعة",
+    "today": "اليوم",
+    "unableToLoad": "تعذر تحميل أوقات الصلاة",
+    "selectMonthYear": "اختر الشهر والسنة",
+    "year": "السنة",
+    "month": "الشهر"
+  },
+  "audioDownload": {
+    "title": "التنزيلات الصوتية",
+    "downloadAll": "تنزيل الكل",
+    "deleteAll": "حذف الكل",
+    "downloading": "جاري التنزيل...",
+    "downloaded": "تم التنزيل",
+    "notDownloaded": "غير منزّل",
+    "surahAudio": "تسجيل السورة",
+    "offline": "غير متصل",
+    "needInternet": "تحتاج إلى اتصال بالإنترنت لتحميل الصوتيات.",
+    "downloadAllSurahs": "تحميل جميع السور",
+    "deleteAllAudio": "حذف جميع الصوتيات",
+    "download": "تحميل",
+    "delete": "حذف",
+    "deleteAudio": "حذف الصوت",
+    "cancelDownloads": "إلغاء التحميلات",
+    "cancelAllDesc": "إلغاء جميع التحميلات المعلقة؟ السور المحملة جزئياً ستتم إزالتها.",
+    "keepDownloading": "متابعة التحميل",
+    "cancelAll": "إلغاء الكل",
+    "deleteConfirmMessage": "حذف الصوت المحمل لـ"
+  },
+  "reciter": {
+    "title": "اختيار القارئ",
+    "currentReciter": "القارئ الحالي",
+    "popular": "الأكثر شعبية",
+    "allReciters": "جميع القراء"
+  },
+  "duaDetail": {
+    "reference": "المرجع",
+    "benefits": "الفوائد",
+    "occasion": "المناسبة",
+    "shareAsDua": "مشاركة الدعاء",
+    "notFound": "الدعاء غير موجود",
+    "notFoundMessage": "لم يتم العثور على هذا الدعاء.",
+    "listenPronunciation": "استمع للنطق",
+    "viewInQuran": "عرض في القرآن",
+    "ayah": "آية",
+    "benefitsVirtues": "الفوائد والفضائل"
+  },
+  "customDuaForm": {
+    "editDua": "تعديل الدعاء",
+    "addCustomDua": "إضافة دعاء مخصص",
+    "saving": "جاري الحفظ...",
+    "saveFailed": "فشل حفظ الدعاء. يرجى المحاولة مرة أخرى.",
+    "deleteConfirm": "هل أنت متأكد من حذف هذا الدعاء؟ لا يمكن التراجع عن هذا الإجراء.",
+    "deleteFailed": "فشل حذف الدعاء. يرجى المحاولة مرة أخرى.",
+    "arabicText": "النص العربي",
+    "optional": "اختياري",
+    "transliteration": "النطق",
+    "transliterationPlaceholder": "أدخل النطق (مثال: اللهم...)",
+    "translationMeaning": "الترجمة / المعنى",
+    "translationPlaceholder": "أدخل المعنى أو الترجمة",
+    "personalNotes": "ملاحظات شخصية",
+    "notesPlaceholder": "أضف أي ملاحظات أو تذكيرات شخصية",
+    "deleteThisDua": "حذف هذا الدعاء"
+  },
+  "islamicGuide": {
+    "title": "الدليل الإسلامي",
+    "steps": "الخطوات",
+    "references": "المراجع"
+  },
+  "dhikrOverlay": {
+    "title": "إعدادات تذكيرات الذكر",
+    "enableOverlay": "تفعيل التذكيرات العائمة",
+    "overlayDesc": "عرض تذكيرات ذكر عائمة",
+    "frequency": "التكرار",
+    "everyMinutes": "كل {{count}} دقائق",
+    "style": "النمط",
+    "position": "الموضع"
+  },
+  "wordByWordSettings": {
+    "title": "إعدادات كلمة بكلمة",
+    "translationLang": "لغة الترجمة",
+    "showTransliteration": "عرض النطق",
+    "fontSize": "حجم الخط"
+  },
+  "quranSchedule": {
+    "title": "جدول القرآن",
+    "createSchedule": "إنشاء جدول",
+    "completionDate": "تاريخ الإتمام المستهدف",
+    "pagesPerDay": "صفحات في اليوم",
+    "startDate": "تاريخ البدء",
+    "daysDone": "الأيام المكتملة",
+    "day": "اليوم",
+    "pages": "الصفحات",
+    "completed": "مكتمل",
+    "pending": "قيد الانتظار",
+    "openInMushaf": "فتح في المصحف",
+    "today": "اليوم",
+    "juz": "جزء",
+    "surahs": "السور:",
+    "openMushaf": "فتح المصحف",
+    "markComplete": "تعليم كمكتمل",
+    "completedAt": "تم الإنجاز:",
+    "remaining": "المتبقي",
+    "complete": "مكتمل",
+    "behindSchedule": "متأخر عن الجدول"
+  },
+  "zakatCalculator": {
+    "title": "حاسبة الزكاة",
+    "totalWealth": "إجمالي الثروة (دولار)",
+    "enterWealth": "أدخل إجمالي ثروتك",
+    "calculate": "احسب الزكاة",
+    "results": "نتائج الحساب",
+    "nisabGold": "نصاب (ذهب)",
+    "nisabSilver": "نصاب (فضة)",
+    "meetsNisab": "يبلغ النصاب",
+    "zakatDue": "الزكاة المستحقة (2.5%)",
+    "info": "الزكاة هي 2.5% من الثروة المحتفظ بها لمدة سنة قمرية فوق حد النصاب. النصاب يعتمد على قيمة 87.48 غرام من الذهب أو 612.36 غرام من الفضة."
+  },
+  "hijriCalendar": {
+    "title": "التقويم الإسلامي",
+    "event": "حدث",
+    "fasting": "الصيام",
+    "ah": "هـ",
+    "fastingProhibited": "الصيام محرّم اليوم",
+    "eventIn": "{{name}} بعد {{count}} يوم",
+    "eventIn_plural": "{{name}} بعد {{count}} أيام"
+  },
+  "common": {
+    "loading": "جاري التحميل...",
+    "error": "خطأ",
+    "retry": "إعادة المحاولة",
+    "ok": "حسناً",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "close": "إغلاق",
+    "back": "رجوع",
+    "done": "تم",
+    "search": "بحث",
+    "share": "مشاركة",
+    "copy": "نسخ",
+    "copied": "تم النسخ!",
+    "noResults": "لا توجد نتائج",
+    "offline": "أنت غير متصل بالإنترنت",
+    "yes": "نعم",
+    "no": "لا",
+    "confirm": "تأكيد",
+    "reset": "إعادة تعيين",
+    "add": "إضافة",
+    "remove": "إزالة",
+    "enable": "تفعيل",
+    "disable": "تعطيل",
+    "on": "مفعّل",
+    "off": "معطّل",
+    "yourRegion": "منطقتك",
+    "goBack": "رجوع",
+    "skip": "تخطي"
+  },
+  "components": {
+    "streakDays": "يوم متتالي",
+    "streakDaysPlural": "أيام متتالية",
+    "perfectDay": "يوم مثالي",
+    "offlineMode": "وضع عدم الاتصال",
+    "usingCachedData": "استخدام البيانات المخزنة",
+    "lastSynced": "آخر مزامنة",
+    "somethingWentWrong": "حدث خطأ ما",
+    "tryAgain": "حاول مرة أخرى"
+  },
+  "streak": {
+    "prayerStreak": "سلسلة الصلاة",
+    "currentStreak": "السلسلة الحالية",
+    "longestStreak": "أطول سلسلة",
+    "days": "أيام",
+    "day": "يوم",
+    "startToday": "ابدأ سلسلتك اليوم!",
+    "greatStart": "بداية رائعة! استمر!",
+    "buildingMomentum": "أنت تبني زخماً!",
+    "amazingConsistency": "ثبات مذهل!",
+    "incredibleDedication": "تفانٍ لا يُصدّق!",
+    "trulyInspiring": "ما شاء الله! ملهم حقاً!"
+  },
+  "fasting": {
+    "fastingReminders": "تذكيرات الصيام",
+    "getNotifiedFasting": "احصل على إشعارات عن أيام الصيام القادمة",
+    "receiveReminders": "تلقّ تذكيرات بأيام الصيام المستحبة",
+    "reminderTime": "وقت التذكير",
+    "eveningBefore": "مساء اليوم السابق",
+    "beforeFajr": "قبل الفجر",
+    "thirtyMinBefore": "٣٠ دقيقة قبل",
+    "fastingDays": "أيام الصيام",
+    "monday": "الاثنين",
+    "thursday": "الخميس",
+    "whiteDays": "الأيام البيض",
+    "ashura": "عاشوراء",
+    "dayOfArafah": "يوم عرفة",
+    "shawwal": "شوال",
+    "weeklySunnahFast": "صوم سنة أسبوعي",
+    "whiteDaysDesc": "١٣، ١٤، ١٥ من كل شهر",
+    "ashuraDesc": "١٠ محرم",
+    "arafahDesc": "٩ ذو الحجة",
+    "shawwalDesc": "٦ أيام بعد رمضان",
+    "notificationPermissionRequired": "⚠️ إذن الإشعارات مطلوب"
+  },
+  "storageAlerts": {
+    "quranAudio": "صوتيات القرآن",
+    "tafsir": "التفسير",
+    "prayerTimesCache": "ذاكرة أوقات الصلاة",
+    "otherCache": "ذاكرة أخرى",
+    "allCachedData": "جميع البيانات المخزنة",
+    "clearConfirm": "مسح {{category}}؟",
+    "clearAllDesc": "سيؤدي هذا إلى إزالة جميع صوتيات القرآن والتفسير المحملة. ستحتاج إلى إعادة التحميل للاستخدام بدون إنترنت.",
+    "clearCategoryDesc": "سيؤدي هذا إلى إزالة جميع {{category}}. قد تحتاج إلى إعادة التحميل للاستخدام بدون إنترنت.",
+    "cancel": "إلغاء",
+    "clear": "مسح",
+    "error": "خطأ",
+    "failedToClear": "فشل في مسح الذاكرة. يرجى المحاولة مرة أخرى."
+  },
+  "mushaf": {
+    "notes": "الملاحظات والتظليلات",
+    "bookmarks": "العلامات المرجعية",
+    "highlights": "التمييزات",
+    "addNote": "إضافة ملاحظة",
+    "save": "حفظ",
+    "delete": "حذف",
+    "noNotesYet": "لا توجد ملاحظات أو تظليلات بعد",
+    "tapToAddNote": "اضغط مطولاً على أي آية لإضافة ملاحظة أو تظليل",
+    "noBookmarksYet": "لا توجد علامات مرجعية بعد",
+    "tapToBookmark": "اضغط على أي آية لإضافة علامة مرجعية",
+    "editNote": "تعديل الملاحظة",
+    "writeNoteHere": "اكتب ملاحظتك هنا...",
+    "hifzModeActivated": "تم تفعيل وضع الحفظ",
+    "hifzModeDesc": "اضغط على أي آية لكشفها. اضغط مطولاً على آية لخيارات الحفظ. أمسك زر الحفظ للإعدادات.",
+    "wordByWordHighlighting": "تمييز كلمة بكلمة",
+    "wordByWordDesc": "اضغط مطولاً في أي مكان على الصفحة واسحب للتنقل في الصوت. الكلمة المميزة ستتبع إصبعك.",
+    "justNow": "الآن",
+    "minutesAgo": "منذ {{count}} د",
+    "hoursAgo": "منذ {{count}} س",
+    "daysAgo": "منذ {{count}} ي",
+    "noBookmarks": "لا توجد إشارات مرجعية بعد",
+    "noResults": "لم يتم العثور على نتائج",
+    "tryDifferent": "جرّب كلمات بحث مختلفة",
+    "search": "بحث...",
+    "writeNote": "اكتب ملاحظتك هنا...",
+    "quarterHizb": "ربع حزب",
+    "halfHizb": "نصف حزب",
+    "fullJuzOnly": "جزء كامل فقط",
+    "copyVerse": "نسخ الآية",
+    "shareVerse": "مشاركة الآية",
+    "chooseHighlight": "اختر لون التمييز",
+    "removeHighlight": "إزالة التظليل",
+    "highlight": "تظليل",
+    "selectReciter": "اختر القارئ",
+    "audioSettings": "إعدادات الصوت",
+    "noTafsir": "لا يوجد تفسير متاح",
+    "noTafsirVerse": "لا يوجد تفسير متاح لهذه الآية",
+    "recently": "مؤخراً",
+    "earlier": "سابقاً",
+    "deleteFailed": "فشل الحذف. يرجى المحاولة مرة أخرى.",
+    "quran": "القرآن",
+    "surahs114": "١١٤ سورة",
+    "juz30": "٣٠ جزء",
+    "recentCount": "الأخيرة",
+    "surahTab": "سورة",
+    "juzTab": "جزء",
+    "recentTab": "الأخيرة",
+    "searchPlaceholder": "بحث...",
+    "includeTafsir": "تضمين التفسير/الترجمة في البحث",
+    "notesSection": "الملاحظات",
+    "highlightsSection": "التظليلات",
+    "tafsirTranslation": "التفسير/الترجمة",
+    "nowPlaying": "قيد التشغيل",
+    "paused": "متوقف مؤقتاً",
+    "verse": "الآية",
+    "repeat": "تكرار",
+    "loop": "تكرار متواصل",
+    "remaining": "متبقية",
+    "surah": "سورة",
+    "noTafsirAvailable": "لا يوجد تفسير متاح لهذه الآية",
+    "noteInputPlaceholder": "اكتب ملاحظتك هنا...",
+    "juzLabel": "جزء",
+    "hizbLabel": "حزب",
+    "searching": "جارٍ البحث...",
+    "resultsCount": "نتيجة",
+    "recentlyViewed": "شوهد مؤخراً",
+    "allSurahs": "جميع السور",
+    "recentlyViewedLabel": "شوهد مؤخراً",
+    "quartersLabel": "أرباع",
+    "halvesLabel": "أنصاف",
+    "pagesYouVisit": "الصفحات التي تزورها ستظهر هنا",
+    "noRecentPages": "لا توجد صفحات حديثة",
+    "verses": "آيات",
+    "pageNumber": "صفحة",
+    "loadingVerses": "جارٍ تحميل الآيات...",
+    "bookmark": "إشارة مرجعية",
+    "removeBookmark": "إزالة الإشارة المرجعية",
+    "tafsirAndTranslations": "التفسير والترجمات",
+    "downloadedCount": "محمّل",
+    "playUntil": "تشغيل حتى",
+    "page": "صفحة",
+    "juz": "جزء",
+    "reciterLabel": "القارئ",
+    "play": "تشغيل",
+    "playCount": "تشغيل {{count}}×",
+    "setLoopStart": "تحديد بداية التكرار",
+    "setLoopEnd": "تحديد نهاية التكرار",
+    "playLoop": "تشغيل التكرار",
+    "tapToReveal": "اضغط للكشف",
+    "notStarted": "لم يبدأ",
+    "inProgress": "قيد الحفظ",
+    "memorized": "محفوظ",
+    "all": "الكل",
+    "tapToMinimize": "اضغط للتصغير",
+    "myTranslations": "ترجماتي",
+    "myTafsirs": "تفاسيري",
+    "tafsirBadge": "تفسير",
+    "translationBadge": "ترجمة",
+    "currentlyActive": "مُفعّل حالياً",
+    "select": "اختيار",
+    "availableToDownload": "متاح للتحميل",
+    "translationsCount": "الترجمات",
+    "tafsirsCount": "التفاسير",
+    "tapToDownload": "اضغط للتحميل",
+    "deleteTafsir": "حذف التفسير",
+    "deleteTafsirConfirm": "حذف {{name}}؟",
+    "storageFull": "المساحة ممتلئة. يرجى تحرير مساحة على جهازك والمحاولة مرة أخرى.",
+    "downloadFailed": "فشل التحميل. يرجى التحقق من الاتصال ومساحة التخزين.",
+    "tafsirNotAvailable": "لا يتوفر تفسير",
+    "tafsirNotAvailableVerse": "لا يتوفر تفسير لهذه الآية"
+  },
+  "mosqueFinder": {
+    "nearbyMosques": "المساجد القريبة",
+    "searchPlaceholder": "البحث عن مساجد...",
+    "radius1km": "١ كم",
+    "radius5km": "٥ كم",
+    "radius10km": "١٠ كم",
+    "radius25km": "٢٥ كم"
+  },
+  "calendar": {
+    "months": [
+      "يناير",
+      "فبراير",
+      "مارس",
+      "أبريل",
+      "مايو",
+      "يونيو",
+      "يوليو",
+      "أغسطس",
+      "سبتمبر",
+      "أكتوبر",
+      "نوفمبر",
+      "ديسمبر"
+    ],
+    "weekdays": [
+      "أ",
+      "إ",
+      "ث",
+      "أ",
+      "خ",
+      "ج",
+      "س"
+    ]
+  },
+  "themePicker": {
+    "colorMode": "وضع الألوان",
+    "theme": "السمة",
+    "light": "فاتح",
+    "dark": "داكن",
+    "auto": "تلقائي"
+  },
+  "storageOverview": {
+    "storageUsed": "التخزين المستخدم",
+    "manage": "إدارة",
+    "storageFull": "التخزين ممتلئ تقريباً. قم بمسح بعض البيانات لمتابعة التحميل.",
+    "availableOnDevice": "متاح على الجهاز"
+  },
+  "storageBreakdown": {
+    "title": "تفاصيل التخزين",
+    "quranAudio": "صوتيات القرآن",
+    "tafsir": "التفسير",
+    "prayerTimes": "أوقات الصلاة",
+    "otherCache": "ذاكرة مؤقتة أخرى"
+  },
+  "storageSettings": {
+    "downloadSettings": "إعدادات التحميل",
+    "storageLimit": "حد التخزين",
+    "maxSpace": "الحد الأقصى للمساحة للمحتوى بدون إنترنت",
+    "wifiOnly": "التحميل عبر WiFi فقط",
+    "wifiOnlyDesc": "وفّر بيانات الهاتف بالتحميل عبر WiFi فقط",
+    "autoDelete": "حذف الذاكرة المؤقتة القديمة تلقائياً",
+    "autoDeleteDesc": "حذف البيانات المؤقتة القديمة تلقائياً عند الوصول للحد الأقصى"
+  },
+  "dhikrReminders": {
+    "title": "تذكيرات الذكر",
+    "floatingReminders": "تذكيرات عائمة",
+    "dhikrNotifications": "إشعارات الذكر",
+    "showOverlay": "عرض الذكر فوق التطبيقات الأخرى",
+    "receiveNotifications": "استلام إشعارات ذكر دورية",
+    "grantPermission": "منح إذن العرض",
+    "previewOverlay": "معاينة العرض",
+    "reminderInterval": "فترة التذكير",
+    "dhikrCategories": "فئات الذكر",
+    "chooseTypes": "اختر أنواع الأذكار المراد تضمينها",
+    "quietHours": "ساعات الهدوء",
+    "pauseSleep": "إيقاف التذكيرات أثناء النوم",
+    "startAt": "تبدأ من",
+    "endAt": "تنتهي عند",
+    "autoDismiss": "إخفاء تلقائي",
+    "overlayDisappears": "يختفي العرض بعد هذا الوقت",
+    "iosNotice": "العرض العائم متاح فقط على Android. على iOS ستستلم إشعارات عادية بدلاً من ذلك.",
+    "noCategories": "يرجى تفعيل فئة ذكر واحدة على الأقل",
+    "previewFailed": "تعذرت المعاينة. يرجى المحاولة مرة أخرى.",
+    "noDhikr": "تعذر العثور على محتوى ذكر للفئات المحددة",
+    "error": "خطأ",
+    "serviceFailed": "فشل تشغيل خدمة تذكير الذكر",
+    "interval30min": "٣٠ دقيقة",
+    "interval1hour": "ساعة",
+    "interval2hours": "ساعتان",
+    "interval3hours": "٣ ساعات",
+    "interval4hours": "٤ ساعات",
+    "autoDismiss5s": "٥ ث",
+    "autoDismiss10s": "١٠ ث",
+    "autoDismiss15s": "١٥ ث",
+    "autoDismiss20s": "٢٠ ث",
+    "autoDismiss30s": "٣٠ ث",
+    "quiet9pm": "٩ مساءً",
+    "quiet10pm": "١٠ مساءً",
+    "quiet11pm": "١١ مساءً",
+    "quiet12am": "١٢ صباحاً",
+    "wake5am": "٥ صباحاً",
+    "wake6am": "٦ صباحاً",
+    "wake7am": "٧ صباحاً",
+    "wake8am": "٨ صباحاً"
+  },
+  "quickAccess": {
+    "title": "وصول سريع",
+    "morning": "الصباح",
+    "evening": "المساء",
+    "prayer": "الصلاة",
+    "sleep": "النوم",
+    "wake": "الاستيقاظ",
+    "general": "عام"
+  },
+  "tasbih": {
+    "title": "عداد التسبيح",
+    "target": "الهدف",
+    "tapToCount": "اضغط للعد • اضغط مطولاً للإعادة",
+    "targetReached": "تم بلوغ الهدف!",
+    "resetCounter": "إعادة تعيين العداد",
+    "resetConfirm": "هل أنت متأكد من إعادة تعيين العداد إلى 0؟",
+    "cancel": "إلغاء",
+    "reset": "إعادة تعيين"
+  },
+  "weeklyChart": {
+    "title": "هذا الأسبوع",
+    "prayed": "صُلِّيت",
+    "missed": "فائتة",
+    "late": "متأخرة",
+    "noData": "لا توجد بيانات",
+    "sun": "أحد",
+    "mon": "إثنين",
+    "tue": "ثلاثاء",
+    "wed": "أربعاء",
+    "thu": "خميس",
+    "fri": "جمعة",
+    "sat": "سبت"
+  },
+  "citySearch": {
+    "selectCity": "اختر المدينة",
+    "searchPlaceholder": "ابحث عن أي مدينة في العالم...",
+    "recent": "الأخيرة",
+    "popularCities": "المدن الشائعة",
+    "noCities": "لم يتم العثور على مدن",
+    "tryDifferent": "جرّب إملاءً مختلفاً أو ابحث عن مدينة أكبر قريبة",
+    "offline": "غير متصل",
+    "offlineMessage": "أنت غير متصل حالياً. الانتقال لمدينة جديدة يتطلب إنترنت لجلب أوقات الصلاة. استخدم مدينة زرتها مؤخراً أو حاول عند الاتصال.",
+    "networkError": "خطأ في الشبكة. عرض النتائج المحلية."
+  },
+  "upcomingEvents": {
+    "title": "الأحداث القادمة",
+    "noEvents": "لا توجد أحداث قادمة"
+  },
+  "hifzControls": {
+    "title": "أدوات الحفظ",
+    "hideTab": "إخفاء",
+    "repeatTab": "تكرار",
+    "loopTab": "تكرار مقطع",
+    "progressTab": "التقدم",
+    "hideMode": "وضع الإخفاء",
+    "wordAudio": "صوت الكلمة",
+    "requiresInternet": "يتطلب إنترنت",
+    "playPronunciation": "تشغيل النطق عند كشف الكلمة",
+    "quickActions": "إجراءات سريعة",
+    "revealAll": "كشف الكل",
+    "hideAll": "إخفاء الكل",
+    "autoHideDelay": "تأخير الإخفاء التلقائي",
+    "autoHideAfter": "إخفاء تلقائي بعد الكشف",
+    "markCurrentVerse": "تحديد الآية الحالية",
+    "verse": "آية",
+    "notStarted": "لم يبدأ",
+    "inProgress": "قيد الحفظ",
+    "memorized": "محفوظ",
+    "longPressToMark": "اضغط مطولاً على آية لتحديد حالة حفظها",
+    "bulkMarking": "تحديد جماعي",
+    "page": "صفحة",
+    "juz": "جزء",
+    "clear": "مسح",
+    "clearPageMarkings": "مسح تحديدات الصفحة",
+    "markEntirePage": "تحديد الصفحة بالكامل",
+    "clearJuzMarkings": "مسح تحديدات الجزء",
+    "markEntireJuz": "تحديد الجزء بالكامل",
+    "cancel": "إلغاء",
+    "confirm": "تأكيد"
+  },
+  "taraweeh": {
+    "title": "متتبع التراويح",
+    "ramadanCalendar": "تقويم رمضان",
+    "locationBreakdown": "توزيع المواقع",
+    "completionRate": "نسبة الإنجاز",
+    "logNight": "تسجيل الليلة",
+    "edit": "تعديل",
+    "night": "الليلة",
+    "nights": "ليالي",
+    "streak": "متتالية",
+    "best": "أفضل",
+    "atMosque": "في المسجد",
+    "atHome": "في المنزل"
+  },
+  "mosqueDetail": {
+    "title": "تفاصيل المسجد",
+    "openingHours": "ساعات العمل",
+    "directions": "الاتجاهات",
+    "call": "اتصال",
+    "website": "الموقع",
+    "rating": "التقييم",
+    "reviews": "تقييمات",
+    "failedToLoad": "فشل تحميل التفاصيل",
+    "tryAgain": "حاول مرة أخرى",
+    "openNow": "مفتوح الآن",
+    "closed": "مغلق",
+    "address": "العنوان",
+    "contact": "التواصل",
+    "getDirections": "الحصول على الاتجاهات",
+    "away": "بعيد"
+  },
+  "donation": {
+    "addTitle": "إضافة تبرع",
+    "type": "النوع",
+    "amount": "المبلغ",
+    "recipientOptional": "المتلقي (اختياري)",
+    "recipientPlaceholder": "المنظمة أو الشخص",
+    "notesOptional": "ملاحظات (اختياري)",
+    "notesPlaceholder": "أضف أي ملاحظات...",
+    "addButton": "إضافة تبرع",
+    "sadaqah": "صدقة",
+    "zakat": "زكاة",
+    "fidya": "فدية",
+    "kaffarah": "كفارة",
+    "other": "أخرى"
+  },
+  "setGoal": {
+    "title": "تحديد الهدف",
+    "goalAmount": "مبلغ الهدف (دولار)",
+    "setButton": "تحديد الهدف",
+    "infoText": "تحديد هدف للصداقات يساعدك على تتبع تقدمك خلال رمضان. يمكنك تحديث هذا الهدف في أي وقت."
+  },
+  "logTaraweeh": {
+    "editTitle": "تعديل",
+    "logTitle": "تسجيل",
+    "night": "الليلة",
+    "rakaat": "ركعات",
+    "location": "الموقع",
+    "mosque": "المسجد",
+    "home": "المنزل",
+    "notesOptional": "ملاحظات (اختياري)",
+    "notesPlaceholder": "أضف أي ملاحظات...",
+    "delete": "حذف",
+    "save": "حفظ"
+  },
+  "suhoorIftar": {
+    "suhoorReminder": "تذكير السحور",
+    "iftarReminder": "تذكير الإفطار"
+  },
+  "ramadanCountdown": {
+    "daysLeft": "أيام متبقية"
+  },
+  "quranProgress": {
+    "title": "تقدم القرآن"
+  },
+  "monthlyCalendar": {
+    "noData": "لا توجد بيانات متاحة"
+  },
+  "savedLoops": {
+    "title": "التكرارات المحفوظة",
+    "enterName": "أدخل اسم التكرار...",
+    "noName": "يرجى إدخال اسم للتكرار",
+    "noRange": "يرجى تحديد نطاق التكرار أولاً",
+    "saveLoop": "حفظ التكرار الحالي",
+    "saveCurrent": "حفظ الحالي",
+    "delete": "حذف",
+    "deleteLoop": "حذف التكرار",
+    "deleteConfirm": "هل أنت متأكد من حذف",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "noLoops": "لا توجد تكرارات محفوظة بعد",
+    "error": "خطأ",
+    "plays": "تشغيلات"
+  },
+  "revision": {
+    "title": "المراجعة اليومية",
+    "dueNow": "مطلوب الآن",
+    "noRevision": "لا توجد مراجعة مطلوبة",
+    "startReview": "بدء المراجعة",
+    "markReviewed": "تحديد كمراجع",
+    "versesDue": "آيات مطلوب مراجعتها",
+    "todayProgress": "تقدم اليوم",
+    "overdue": "متأخر",
+    "due": "مطلوب",
+    "allCaughtUp": "انتهيت من الكل!",
+    "noVersesDue": "لا توجد آيات مطلوب مراجعتها الآن",
+    "completedToday": "مكتمل اليوم",
+    "startSession": "بدء جلسة المراجعة",
+    "howWell": "ما مدى تذكرك",
+    "forgot": "نسيت",
+    "hard": "صعب",
+    "okay": "مقبول",
+    "good": "جيد",
+    "easy": "سهل",
+    "perfect": "ممتاز",
+    "dAgo": "يوم مضى"
+  },
+  "repeatControls": {
+    "title": "إعدادات تكرار الصوت",
+    "subtitle": "لممارسة الحفظ",
+    "timesToRepeat": "عدد التكرارات",
+    "timesHint": "الآية تُشغّل هذا العدد من المرات",
+    "gapBetween": "الفاصل بين التكرارات",
+    "gapHint": "وقت للتلاوة قبل التشغيل التالي",
+    "recitationSpeed": "سرعة التلاوة",
+    "speedHint": "الأبطأ يساعد في تعلم النطق",
+    "stopRepeating": "إيقاف التكرار"
+  },
+  "calendarGrid": {
+    "whiteDay": "يوم أبيض",
+    "event": "حدث",
+    "fasting": "صيام"
+  },
+  "hifzProgress": {
+    "title": "تقدم الحفظ",
+    "exportFailed": "فشل التصدير",
+    "exportError": "تعذر تصدير بيانات التقدم",
+    "resetProgress": "إعادة تعيين التقدم",
+    "resetConfirm": "هل أنت متأكد أنك تريد إعادة تعيين كل تقدم الحفظ؟",
+    "resetSuccess": "تم إعادة تعيين التقدم",
+    "resetError": "فشل إعادة تعيين التقدم",
+    "cancel": "إلغاء",
+    "reset": "إعادة تعيين",
+    "success": "نجاح",
+    "error": "خطأ"
+  },
+  "reciterSelection": {
+    "title": "اختر القارئ",
+    "recitersAvailable": "قارئ متاح",
+    "downloaded": "تم التحميل",
+    "infoBanner": "القراء الذين لديهم شارة التحميل لديهم ملفات صوتية محفوظة على جهازك"
+  },
+  "wordByWord": {
+    "title": "كلمة بكلمة",
+    "infoHint": "اضغط مطولاً على أي كلمة في المصحف لرؤية معناها وسماع النطق.",
+    "translationLanguage": "لغة الترجمة",
+    "arabicMeanings": "معاني الكلمات الصعبة بالعربية",
+    "tapToDownload": "اضغط للتحميل",
+    "downloading": "جارٍ التحميل...",
+    "audio": "الصوت",
+    "playPronunciation": "تشغيل نطق الكلمة",
+    "audioHint": "اسمع الكلمة عندما ترفع إصبعك"
+  },
+  "errorFallback": {
+    "title": "حدث خطأ ما",
+    "message": "يرجى إعادة تحميل التطبيق للمتابعة.",
+    "tryAgain": "حاول مرة أخرى",
+    "errorDetails": "تفاصيل الخطأ"
+  },
+  "downloadProgress": {
+    "downloading": "جارٍ التحميل",
+    "paused": "متوقف مؤقتاً",
+    "failed": "فشل",
+    "pending": "في الانتظار"
+  },
+  "duaOfDay": {
+    "title": "دعاء اليوم",
+    "islamicSupplication": "دعاء إسلامي",
+    "tapToRead": "اضغط لقراءة الدعاء كاملاً"
+  },
+  "dailyDhikr": {
+    "title": "ذكر اليوم",
+    "subtitle": "الذكر المميز لهذا اليوم"
+  },
+  "surahDownload": {
+    "queued": "في قائمة الانتظار"
+  },
+  "hifzConstants": {
+    "fullVerse": "الآية كاملة",
+    "fullVerseDesc": "إخفاء الآية كاملة، اضغط للكشف",
+    "wordByWord": "كلمة بكلمة",
+    "wordByWordDesc": "كشف كلمة واحدة تلو الأخرى أثناء التلاوة",
+    "manual": "يدوي",
+    "none": "بدون",
+    "sec2": "٢ ثانية",
+    "sec5": "٥ ثوانٍ",
+    "slow": "بطيء",
+    "medium": "متوسط",
+    "normal": "عادي"
+  },
+  "calculationMethods": {
+    "shia": "الشيعة الاثنا عشرية",
+    "karachi": "جامعة العلوم الإسلامية، كراتشي",
+    "isna": "الجمعية الإسلامية لأمريكا الشمالية",
+    "mwl": "رابطة العالم الإسلامي",
+    "ummAlQura": "جامعة أم القرى، مكة المكرمة",
+    "egypt": "الهيئة المصرية العامة للمساحة",
+    "tehran": "معهد الجيوفيزياء، جامعة طهران",
+    "gulf": "منطقة الخليج",
+    "kuwait": "الكويت",
+    "qatar": "قطر",
+    "muis": "مجلس الشؤون الدينية الإسلامية، سنغافورة",
+    "uoif": "اتحاد المنظمات الإسلامية في فرنسا",
+    "diyanet": "رئاسة الشؤون الدينية، تركيا",
+    "russia": "الإدارة الروحية لمسلمي روسيا",
+    "moonsighting": "لجنة رؤية الهلال العالمية",
+    "jordan": "وزارة الأوقاف والشؤون الإسلامية، الأردن"
+  },
+  "loopRange": {
+    "start": "البداية",
+    "end": "النهاية",
+    "notSet": "غير محدد",
+    "clear": "مسح",
+    "playLoop": "تشغيل التكرار",
+    "stopLoop": "إيقاف التكرار",
+    "helpText": "اضغط مطولاً على آية واختر \"تعيين بداية التكرار\" أو \"تعيين نهاية التكرار\" لتحديد النطاق"
+  },
+  "azkarCategories": {
+    "morning": "أذكار الصباح",
+    "evening": "أذكار المساء",
+    "after-prayer": "أذكار بعد الصلاة",
+    "sleep": "أذكار النوم",
+    "waking": "أذكار الاستيقاظ",
+    "general": "أذكار عامة"
+  },
+  "duaCategories": {
+    "travel": "السفر",
+    "eating": "الطعام والشراب",
+    "sleeping": "النوم والاستيقاظ",
+    "places": "الدخول والخروج",
+    "weather": "الطقس والطبيعة",
+    "health": "الصحة والشفاء",
+    "protection": "الحماية",
+    "gratitude": "الشكر",
+    "forgiveness": "الاستغفار",
+    "guidance": "الهداية",
+    "family": "الأسرة والأولاد",
+    "general": "عامة"
+  },
+  "guideCategories": {
+    "worship": "العبادة والصلاة",
+    "purification": "الطهارة",
+    "hajj": "الحج والعمرة",
+    "charity": "الصدقة والزكاة",
+    "fasting": "الصيام",
+    "funeral": "الجنائز",
+    "character": "الأخلاق والآداب",
+    "knowledge": "العلم والروحانية",
+    "finance": "المعاملات المالية"
+  },
+  "guides": {
+    "how-to-perform-salah": {
+      "title": "كيفية أداء الصلاة",
+      "description": "دليل شامل لأداء الصلوات الخمس وفقاً للسنة النبوية",
+      "steps": {
+        "0": {
+          "title": "١. النية",
+          "content": "انوِ في قلبك أي صلاة تؤديها. النية محلها القلب ولا يُشترط التلفظ بها."
+        },
+        "1": {
+          "title": "٢. تكبيرة الإحرام",
+          "content": "ارفع يديك حذو منكبيك أو أذنيك وقل 'الله أكبر'. هذا يمثل بداية الصلاة."
+        },
+        "2": {
+          "title": "٣. دعاء الاستفتاح",
+          "content": "ضع يدك اليمنى على اليسرى فوق صدرك واقرأ: 'سبحانك اللهم وبحمدك، وتبارك اسمك، وتعالى جدك، ولا إله غيرك'."
+        },
+        "3": {
+          "title": "٤. قراءة الفاتحة",
+          "content": "اقرأ سورة الفاتحة. وهي واجبة في كل ركعة. بعد الانتهاء قل 'آمين' بصوت خفيض."
+        },
+        "4": {
+          "title": "٥. قراءة سورة إضافية",
+          "content": "في الركعتين الأوليين، اقرأ سورة أخرى أو آيات من القرآن بعد الفاتحة."
+        },
+        "5": {
+          "title": "٦. الركوع",
+          "content": "قل 'الله أكبر' واركع واضعاً يديك على ركبتيك. قل 'سبحان ربي العظيم' ثلاث مرات."
+        },
+        "6": {
+          "title": "٧. الرفع من الركوع",
+          "content": "ارفع من الركوع قائلاً 'سمع الله لمن حمده'. وعند الاعتدال قل 'ربنا ولك الحمد'."
+        },
+        "7": {
+          "title": "٨. السجود",
+          "content": "قل 'الله أكبر' واسجد. قل 'سبحان ربي الأعلى' ثلاث مرات. أدِّ سجدتين."
+        },
+        "8": {
+          "title": "٩. الجلوس للتشهد",
+          "content": "بعد كل ركعتين، اجلس واقرأ التشهد. أشر بسبابتك اليمنى أثناء القراءة."
+        },
+        "9": {
+          "title": "١٠. التسليم",
+          "content": "التفت يميناً وقل 'السلام عليكم ورحمة الله'، ثم التفت يساراً وكرر."
+        }
+      }
+    },
+    "how-to-perform-istikhara": {
+      "title": "كيفية صلاة الاستخارة",
+      "description": "دليل لطلب هداية الله في اتخاذ القرارات المهمة",
+      "steps": {
+        "0": {
+          "title": "١. حدد قرارك",
+          "content": "حدد الأمر الذي تحتاج فيه إلى استشارة الله. الاستخارة للأمور المباحة التي تحتار فيها."
+        },
+        "1": {
+          "title": "٢. صلِّ ركعتين",
+          "content": "صلِّ ركعتين نافلة. اقرأ في الأولى بعد الفاتحة سورة الكافرون، وفي الثانية سورة الإخلاص."
+        },
+        "2": {
+          "title": "٣. اقرأ دعاء الاستخارة",
+          "content": "بعد الانتهاء من الصلاة، ارفع يديك وادعُ: 'اللهم إني أستخيرك بعلمك، وأستقدرك بقدرتك...'."
+        },
+        "3": {
+          "title": "٤. اذكر حاجتك",
+          "content": "عندما تصل إلى 'في هذا الأمر'، حدد الأمر الذي تستخير الله فيه."
+        },
+        "4": {
+          "title": "٥. توكل على الله",
+          "content": "بعد الدعاء، امضِ في قرارك. توكل على الله أنه سييسر لك الخير ويصرف عنك ما فيه شر."
+        }
+      }
+    },
+    "how-to-perform-tahajjud": {
+      "title": "كيفية صلاة التهجد",
+      "description": "دليل لأداء صلاة الليل في الثلث الأخير من الليل",
+      "steps": {
+        "0": {
+          "title": "١. الاستيقاظ في الثلث الأخير",
+          "content": "استيقظ في الثلث الأخير من الليل (قبل الفجر بساعة أو ساعتين تقريباً). هذا أفضل وقت للتهجد."
+        },
+        "1": {
+          "title": "٢. الوضوء",
+          "content": "توضأ واستعد نفسياً وروحياً للوقوف بين يدي الله."
+        },
+        "2": {
+          "title": "٣. الصلاة مثنى مثنى",
+          "content": "صلِّ ركعتين على الأقل، ويمكنك الزيادة مثنى مثنى. كان النبي ﷺ يصلي إحدى عشرة ركعة."
+        },
+        "3": {
+          "title": "٤. أطل القراءة",
+          "content": "خذ وقتك في القراءة والركوع والسجود. اقرأ أجزاء أطول من القرآن مما تقرأه في الصلوات العادية."
+        },
+        "4": {
+          "title": "٥. الدعاء",
+          "content": "بعد الانتهاء من الصلاة، ادعُ الله بإخلاص. هذا وقت ينزل فيه الله إلى السماء الدنيا ويستجيب الدعاء."
+        },
+        "5": {
+          "title": "٦. ختم بالوتر",
+          "content": "اختم صلاة الليل بالوتر (عدد فردي من الركعات، عادة ركعة أو ثلاث)."
+        }
+      }
+    },
+    "how-to-perform-eid-prayer": {
+      "title": "كيفية صلاة العيد",
+      "description": "دليل لأداء صلاة عيد الفطر وعيد الأضحى",
+      "steps": {
+        "0": {
+          "title": "١. الاستعداد للعيد",
+          "content": "اغتسل، والبس أفضل ثيابك، وتطيب. في عيد الفطر، كُل تمرات قبل الذهاب. في عيد الأضحى، انتظر حتى بعد الصلاة."
+        },
+        "1": {
+          "title": "٢. الذهاب إلى المصلى",
+          "content": "اذهب إلى مصلى العيد مبكراً. من السنة أن تذهب من طريق وتعود من طريق آخر."
+        },
+        "2": {
+          "title": "٣. الركعة الأولى",
+          "content": "بعد تكبيرة الإحرام، هناك سبع تكبيرات إضافية. ارفع يديك مع كل تكبيرة. ثم اقرأ الفاتحة وسورة أخرى (عادة الأعلى)."
+        },
+        "3": {
+          "title": "٤. الركعة الثانية",
+          "content": "بعد القيام من السجود، هناك خمس تكبيرات إضافية. ثم اقرأ الفاتحة وسورة أخرى (عادة الغاشية)."
+        },
+        "4": {
+          "title": "٥. استمع إلى الخطبة",
+          "content": "بعد الصلاة، يلقي الإمام خطبتين. يُستحب البقاء والاستماع، وإن لم يكن واجباً."
+        },
+        "5": {
+          "title": "٦. تبادل التهاني",
+          "content": "هنّئ إخوانك المسلمين بـ 'عيد مبارك' أو 'تقبل الله منا ومنكم'."
+        }
+      }
+    },
+    "morning-evening-adhkar": {
+      "title": "أذكار الصباح والمساء",
+      "description": "الأذكار الأساسية التي تُقرأ في الصباح والمساء",
+      "steps": {
+        "0": {
+          "title": "١. آية الكرسي",
+          "content": "اقرأ آية الكرسي (البقرة ٢٥٥). قال النبي ﷺ من قرأها في الصباح يُحفظ حتى المساء."
+        },
+        "1": {
+          "title": "٢. خواتيم سورة البقرة",
+          "content": "اقرأ آخر آيتين من سورة البقرة (٢٨٥-٢٨٦). وهما كافيتان لحماية قارئهما."
+        },
+        "2": {
+          "title": "٣. الإخلاص والفلق والناس",
+          "content": "اقرأ هذه السور الثلاث ثلاث مرات لكل سورة. تمنح حماية كاملة."
+        },
+        "3": {
+          "title": "٤. التسبيح والتحميد والتكبير",
+          "content": "قل 'سبحان الله' (٣٣ مرة)، 'الحمد لله' (٣٣ مرة)، 'الله أكبر' (٣٤ مرة)."
+        },
+        "4": {
+          "title": "٥. سيد الاستغفار",
+          "content": "اقرأ سيد الاستغفار: 'اللهم أنت ربي، لا إله إلا أنت...'."
+        },
+        "5": {
+          "title": "٦. دعاء الحفظ",
+          "content": "قل: 'بسم الله الذي لا يضر مع اسمه شيء في الأرض ولا في السماء' (ثلاث مرات)."
+        }
+      }
+    },
+    "how-to-perform-wudu": {
+      "title": "كيفية الوضوء",
+      "description": "دليل مفصل لأداء الوضوء بشكل صحيح",
+      "steps": {
+        "0": {
+          "title": "١. النية",
+          "content": "انوِ في قلبك أداء الوضوء. قل 'بسم الله'."
+        },
+        "1": {
+          "title": "٢. غسل اليدين",
+          "content": "اغسل كلتا يديك إلى الرسغين ثلاث مرات."
+        },
+        "2": {
+          "title": "٣. المضمضة",
+          "content": "تمضمض جيداً ثلاث مرات."
+        },
+        "3": {
+          "title": "٤. الاستنشاق",
+          "content": "استنشق الماء في أنفك ثلاث مرات ثم استنثر."
+        },
+        "4": {
+          "title": "٥. غسل الوجه",
+          "content": "اغسل وجهك كاملاً ثلاث مرات من منبت الشعر إلى الذقن ومن الأذن إلى الأذن."
+        },
+        "5": {
+          "title": "٦. غسل الذراعين",
+          "content": "اغسل ذراعك اليمنى إلى المرفق ثلاث مرات، ثم اليسرى."
+        },
+        "6": {
+          "title": "٧. مسح الرأس",
+          "content": "بلل يديك وامسح رأسك مرة واحدة."
+        },
+        "7": {
+          "title": "٨. مسح الأذنين",
+          "content": "امسح داخل أذنيك بالسبابتين وخارجهما بالإبهامين."
+        },
+        "8": {
+          "title": "٩. غسل القدمين",
+          "content": "اغسل قدمك اليمنى إلى الكعب ثلاث مرات، ثم اليسرى."
+        },
+        "9": {
+          "title": "١٠. الدعاء",
+          "content": "قل: 'أشهد أن لا إله إلا الله وحده لا شريك له، وأشهد أن محمداً عبده ورسوله'."
+        }
+      }
+    },
+    "how-to-perform-ghusl": {
+      "title": "كيفية الغسل",
+      "description": "دليل شامل لأداء الغسل الكامل",
+      "steps": {
+        "0": {
+          "title": "١. النية",
+          "content": "انوِ تطهير نفسك من الحدث الأكبر. قل 'بسم الله'."
+        },
+        "1": {
+          "title": "٢. غسل اليدين",
+          "content": "اغسل كلتا يديك إلى الرسغين ثلاث مرات."
+        },
+        "2": {
+          "title": "٣. غسل الفرج",
+          "content": "اغسل الفرج جيداً."
+        },
+        "3": {
+          "title": "٤. الوضوء",
+          "content": "توضأ وضوءاً كاملاً كما للصلاة."
+        },
+        "4": {
+          "title": "٥. إفاضة الماء على الرأس",
+          "content": "أفض الماء على رأسك ثلاث مرات حتى يصل إلى أصول الشعر."
+        },
+        "5": {
+          "title": "٦. غسل الجانب الأيمن",
+          "content": "أفض الماء على جانبك الأيمن بالكامل."
+        },
+        "6": {
+          "title": "٧. غسل الجانب الأيسر",
+          "content": "أفض الماء على جانبك الأيسر بالكامل."
+        },
+        "7": {
+          "title": "٨. غسل الجسم كاملاً",
+          "content": "تأكد من وصول الماء إلى جميع أجزاء جسمك."
+        }
+      }
+    },
+    "how-to-perform-tayammum": {
+      "title": "كيفية التيمم",
+      "description": "دليل لأداء التيمم عند عدم توفر الماء",
+      "steps": {
+        "0": {
+          "title": "١. النية",
+          "content": "انوِ أداء التيمم بدلاً من الوضوء أو الغسل."
+        },
+        "1": {
+          "title": "٢. التسمية",
+          "content": "ابدأ بقول 'بسم الله'."
+        },
+        "2": {
+          "title": "٣. الضرب على التراب",
+          "content": "اضرب بيديك على تراب طاهر أو رمل أو غبار مرة واحدة."
+        },
+        "3": {
+          "title": "٤. مسح الوجه",
+          "content": "امسح وجهك كاملاً بكلتا راحتيك مرة واحدة."
+        },
+        "4": {
+          "title": "٥. مسح اليدين",
+          "content": "امسح يدك اليمنى بكفك الأيسر، ثم امسح يدك اليسرى بكفك الأيمن إلى الرسغين."
+        },
+        "5": {
+          "title": "٦. الإتمام",
+          "content": "تيممك الآن تام وصالح لصلاة واحدة. أعد التيمم لكل صلاة."
+        }
+      }
+    },
+    "how-to-perform-umrah": {
+      "title": "كيفية أداء العمرة",
+      "description": "دليل كامل لأداء العمرة",
+      "steps": {
+        "0": {
+          "title": "١. الإحرام",
+          "content": "قبل الوصول إلى الميقات، انوِ العمرة واغتسل والبس ملابس الإحرام. قل التلبية: 'لبيك اللهم عمرة'."
+        },
+        "1": {
+          "title": "٢. دخول المسجد الحرام",
+          "content": "ادخل برجلك اليمنى وقل دعاء دخول المسجد."
+        },
+        "2": {
+          "title": "٣. الطواف",
+          "content": "طُف حول الكعبة سبع مرات عكس عقارب الساعة بدءاً من الحجر الأسود. على الرجال كشف الكتف الأيمن (الاضطباع) والرمل في الأشواط الثلاثة الأولى."
+        },
+        "3": {
+          "title": "٤. صلاة ركعتين",
+          "content": "بعد الطواف، صلِّ ركعتين خلف مقام إبراهيم إن أمكن، أو في أي مكان في الحرم."
+        },
+        "4": {
+          "title": "٥. شرب ماء زمزم",
+          "content": "اشرب من ماء زمزم وادعُ الله."
+        },
+        "5": {
+          "title": "٦. السعي",
+          "content": "اسعَ بين الصفا والمروة سبعة أشواط بدءاً من الصفا. على الرجال الهرولة بين العلمين الأخضرين."
+        },
+        "6": {
+          "title": "٧. الحلق أو التقصير",
+          "content": "على الرجال حلق الرأس أو تقصير الشعر. وعلى النساء قص قدر أنملة من شعرهن. بهذا تكتمل العمرة."
+        }
+      }
+    },
+    "how-to-perform-tawaf": {
+      "title": "كيفية الطواف",
+      "description": "دليل مفصل للطواف حول الكعبة",
+      "steps": {
+        "0": {
+          "title": "١. استقبل الحجر الأسود",
+          "content": "قف مستقبلاً الحجر الأسود والكعبة عن يسارك."
+        },
+        "1": {
+          "title": "٢. النية",
+          "content": "انوِ الطواف في قلبك."
+        },
+        "2": {
+          "title": "٣. الاستلام أو الإشارة",
+          "content": "إن أمكن، استلم الحجر الأسود وقبّله. وإلا أشر إليه وقل 'بسم الله، الله أكبر'."
+        },
+        "3": {
+          "title": "٤. ابدأ الطواف",
+          "content": "امشِ عكس عقارب الساعة حول الكعبة وهي عن يسارك. على الرجال كشف الكتف الأيمن."
+        },
+        "4": {
+          "title": "٥. الذكر والدعاء",
+          "content": "لا يوجد أدعية محددة للطواف. اقرأ القرآن أو اذكر الله أو ادعُ بما شئت."
+        },
+        "5": {
+          "title": "٦. استلام الركن اليماني",
+          "content": "إن أمكن، استلم الركن اليماني بيدك اليمنى دون تقبيله."
+        },
+        "6": {
+          "title": "٧. أتمّ سبعة أشواط",
+          "content": "أتمّ سبعة أشواط كاملة. كلما مررت بالحجر الأسود أشر إليه وقل 'الله أكبر'."
+        },
+        "7": {
+          "title": "٨. صلاة ركعتين",
+          "content": "بعد إتمام الطواف، صلِّ ركعتين خلف مقام إبراهيم أو في أي مكان في الحرم."
+        }
+      }
+    },
+    "how-to-calculate-zakat": {
+      "title": "كيفية حساب ودفع الزكاة",
+      "description": "دليل شامل لحساب ودفع الزكاة الواجبة",
+      "steps": {
+        "0": {
+          "title": "١. فهم النصاب",
+          "content": "النصاب هو الحد الأدنى من المال الذي يجب أن تملكه قبل وجوب الزكاة. ويعادل ٨٥ غراماً من الذهب أو ٥٩٥ غراماً من الفضة."
+        },
+        "1": {
+          "title": "٢. احسب ثروتك",
+          "content": "اجمع كل أموالك الزكوية: النقد، المدخرات البنكية، الذهب، الفضة، بضائع التجارة، الأسهم، والديون المستحقة لك."
+        },
+        "2": {
+          "title": "٣. اخصم الديون",
+          "content": "اطرح أي ديون عليك مستحقة خلال السنة."
+        },
+        "3": {
+          "title": "٤. تحقق من بلوغ النصاب",
+          "content": "إذا كانت ثروتك الصافية فوق حد النصاب، فالزكاة واجبة."
+        },
+        "4": {
+          "title": "٥. احسب ٢.٥٪",
+          "content": "اضرب ثروتك الزكوية في ٠.٠٢٥ (٢.٥٪). هذا مقدار زكاتك."
+        },
+        "5": {
+          "title": "٦. ادفع للمستحقين",
+          "content": "وزّع زكاتك على الأصناف الثمانية المذكورة في سورة التوبة ٦٠: الفقراء، والمساكين، والعاملين عليها، والمؤلفة قلوبهم، وفي الرقاب، والغارمين، وفي سبيل الله، وابن السبيل."
+        },
+        "6": {
+          "title": "٧. النية",
+          "content": "عند الدفع، انوِ أن هذه زكاتك الواجبة."
+        }
+      }
+    },
+    "how-to-pay-zakat-al-fitr": {
+      "title": "كيفية دفع زكاة الفطر",
+      "description": "دليل لدفع الزكاة الواجبة في نهاية رمضان",
+      "steps": {
+        "0": {
+          "title": "١. فهم الغرض",
+          "content": "زكاة الفطر تطهّر الصائم من اللغو والرفث، وتوفر الطعام للفقراء يوم العيد."
+        },
+        "1": {
+          "title": "٢. من يجب عليه الدفع",
+          "content": "كل مسلم يملك طعاماً يزيد عن حاجته ليوم وليلة يجب عليه إخراج زكاة الفطر عن نفسه ومن يعولهم."
+        },
+        "2": {
+          "title": "٣. حساب المقدار",
+          "content": "المقدار صاع واحد (حوالي ٣ كغ أو ٢.٥ لتر) من قوت البلد (قمح أو شعير أو تمر أو زبيب أو أرز)، أو ما يعادله نقداً."
+        },
+        "3": {
+          "title": "٤. التوقيت",
+          "content": "يجب إخراجها قبل صلاة العيد. الأفضل دفعها قبل العيد بيوم أو يومين. الدفع بعد صلاة العيد يعتبر صدقة متأخرة وليست زكاة فطر."
+        },
+        "4": {
+          "title": "٥. أعطها للفقراء",
+          "content": "أعطها مباشرة للفقراء والمحتاجين من المسلمين في مجتمعك، أو من خلال مؤسسة موثوقة."
+        }
+      }
+    },
+    "how-to-give-sadaqah": {
+      "title": "كيفية التصدق",
+      "description": "دليل للتصدق الطوعي بإخلاص",
+      "steps": {
+        "0": {
+          "title": "١. أخلص النية",
+          "content": "تصدق لوجه الله فقط، لا لأجل السمعة أو الثناء من الناس."
+        },
+        "1": {
+          "title": "٢. تصدق من مال حلال",
+          "content": "تأكد أن صدقتك من مال مكتسب حلالاً. الله لا يقبل إلا الطيب."
+        },
+        "2": {
+          "title": "٣. أسرّ بالصدقة",
+          "content": "قال النبي ﷺ إن أفضل الصدقة ما كانت في السر. لكن صدقة العلانية قد تحفز الآخرين."
+        },
+        "3": {
+          "title": "٤. تصدق بانتظام",
+          "content": "القليل الدائم خير من الكثير المنقطع. قال النبي ﷺ أحب الأعمال إلى الله أدومها وإن قلّ."
+        },
+        "4": {
+          "title": "٥. لا تمنّ بالصدقة",
+          "content": "لا تذكّر الناس بصدقتك ولا تؤذهم بالكلام. هذا يبطل الأجر."
+        },
+        "5": {
+          "title": "٦. الابتسامة صدقة",
+          "content": "تذكر أن الصدقة ليست مالاً فقط. الابتسامة ومساعدة الآخرين وإماطة الأذى عن الطريق والكلمة الطيبة كلها صدقة."
+        }
+      }
+    },
+    "how-to-fast-ramadan": {
+      "title": "كيفية صيام رمضان",
+      "description": "دليل كامل لأداء الصيام الواجب",
+      "steps": {
+        "0": {
+          "title": "١. بيّت النية ليلاً",
+          "content": "انوِ الصيام قبل الفجر. قال النبي ﷺ: 'من لم يبيّت الصيام قبل الفجر فلا صيام له'."
+        },
+        "1": {
+          "title": "٢. تناول السحور",
+          "content": "تناول وجبة السحور. قال النبي ﷺ: 'تسحروا فإن في السحور بركة'. توقف عن الأكل قبل أذان الفجر."
+        },
+        "2": {
+          "title": "٣. الامتناع عن الطعام والشراب",
+          "content": "من الفجر حتى المغرب، امتنع عن الطعام والشراب والتدخين والعلاقة الزوجية."
+        },
+        "3": {
+          "title": "٤. احفظ لسانك",
+          "content": "تجنب الكذب والغيبة والجدال والكلام البذيء. قال النبي ﷺ: 'من لم يدع قول الزور والعمل به فليس لله حاجة في أن يدع طعامه وشرابه'."
+        },
+        "4": {
+          "title": "٥. أكثر من العبادات",
+          "content": "أكثر من الصلاة وتلاوة القرآن والذكر والصدقة. رمضان شهر القرآن والجود."
+        },
+        "5": {
+          "title": "٦. أفطر عند المغرب",
+          "content": "أفطر فور دخول المغرب. كان النبي ﷺ يفطر على تمرات وماء ثم يصلي المغرب."
+        },
+        "6": {
+          "title": "٧. ادعُ قبل الإفطار",
+          "content": "دعوة الصائم مستجابة. قل: 'اللهم لك صمت وعلى رزقك أفطرت'."
+        }
+      }
+    },
+    "how-to-fast-voluntarily": {
+      "title": "كيفية الصيام التطوعي",
+      "description": "دليل للصيام التطوعي الموصى به خلال السنة",
+      "steps": {
+        "0": {
+          "title": "١. الإثنين والخميس",
+          "content": "كان النبي ﷺ يصوم الإثنين والخميس. قال: تُعرض الأعمال على الله في هذين اليومين."
+        },
+        "1": {
+          "title": "٢. ثلاثة أيام كل شهر",
+          "content": "صم الثالث عشر والرابع عشر والخامس عشر من كل شهر هجري (الأيام البيض). وهذا يعادل صيام السنة كلها."
+        },
+        "2": {
+          "title": "٣. يوم عرفة",
+          "content": "صم التاسع من ذي الحجة (لغير الحاج). قال النبي ﷺ يكفّر ذنوب سنة ماضية وسنة قادمة."
+        },
+        "3": {
+          "title": "٤. يوم عاشوراء",
+          "content": "صم العاشر من محرم، ويُستحب صيام التاسع أو الحادي عشر معه. يكفّر ذنوب سنة ماضية."
+        },
+        "4": {
+          "title": "٥. ست من شوال",
+          "content": "صم ستة أيام من شوال بعد رمضان. قال النبي ﷺ كأنما صام الدهر كله."
+        },
+        "5": {
+          "title": "٦. النية",
+          "content": "للصيام التطوعي، يمكنك النية حتى أثناء النهار ما لم تكن أكلت شيئاً."
+        }
+      }
+    },
+    "how-to-perform-janazah-prayer": {
+      "title": "كيفية صلاة الجنازة",
+      "description": "دليل لأداء صلاة الجنازة",
+      "steps": {
+        "0": {
+          "title": "١. قف في الصفوف",
+          "content": "اصطف خلف الإمام. يُوضع الميت أمام الإمام والرجال أقرب إلى الإمام."
+        },
+        "1": {
+          "title": "٢. التكبيرة الأولى",
+          "content": "ارفع يديك وقل 'الله أكبر'، ثم اقرأ الفاتحة سراً."
+        },
+        "2": {
+          "title": "٣. التكبيرة الثانية",
+          "content": "قل 'الله أكبر' (بدون رفع اليدين) وصلِّ على النبي: 'اللهم صلِّ على محمد...'."
+        },
+        "3": {
+          "title": "٤. التكبيرة الثالثة",
+          "content": "قل 'الله أكبر' وادعُ للميت: 'اللهم اغفر له وارحمه...'."
+        },
+        "4": {
+          "title": "٥. التكبيرة الرابعة",
+          "content": "قل 'الله أكبر' وادعُ دعاءً قصيراً لنفسك وجميع المسلمين."
+        },
+        "5": {
+          "title": "٦. التسليم",
+          "content": "التفت يميناً وقل 'السلام عليكم'، ثم يساراً وكرر."
+        }
+      }
+    },
+    "how-to-offer-condolences": {
+      "title": "كيفية التعزية",
+      "description": "آداب التعزية الإسلامية",
+      "steps": {
+        "0": {
+          "title": "١. زر سريعاً",
+          "content": "زر الأهل بعد سماع الخبر بوقت قريب، مع مراعاة حاجتهم للخصوصية."
+        },
+        "1": {
+          "title": "٢. قل الكلمات المناسبة",
+          "content": "قل: 'إنا لله وإنا إليه راجعون'. ذكّرهم أن الله يأجر الصابرين."
+        },
+        "2": {
+          "title": "٣. ادعُ لهم",
+          "content": "ادعُ للميت ولأهله: 'غفر الله له ورحمه وألهمكم الصبر والأجر'."
+        },
+        "3": {
+          "title": "٤. قدّم مساعدة عملية",
+          "content": "قدّم مساعدة محددة كإعداد الطعام أو قضاء الحوائج أو المساعدة في ترتيبات الجنازة."
+        },
+        "4": {
+          "title": "٥. اجعل زيارتك قصيرة",
+          "content": "اجعل زيارتك قصيرة إلا إذا طلب منك الأهل البقاء أطول."
+        },
+        "5": {
+          "title": "٦. تجنب النياحة",
+          "content": "حافظ على رباطة جأشك وتجنب النياحة والإفراط في إظهار الحزن، فهذا منهي عنه في الإسلام."
+        }
+      }
+    },
+    "how-to-control-anger": {
+      "title": "كيفية السيطرة على الغضب",
+      "description": "التوجيه الإسلامي للسيطرة على الغضب",
+      "steps": {
+        "0": {
+          "title": "١. استعذ بالله",
+          "content": "عندما تشعر بالغضب، قل: 'أعوذ بالله من الشيطان الرجيم'."
+        },
+        "1": {
+          "title": "٢. التزم الصمت",
+          "content": "قال النبي ﷺ: 'إذا غضب أحدكم فليسكت'. الصمت يمنعك من قول ما تندم عليه."
+        },
+        "2": {
+          "title": "٣. غيّر وضعيتك",
+          "content": "إن كنت واقفاً فاجلس، وإن كنت جالساً فاضطجع. علّم النبي ﷺ هذا لتغيير الحالة الجسدية."
+        },
+        "3": {
+          "title": "٤. توضأ",
+          "content": "توضأ بالماء البارد. قال النبي ﷺ الغضب من الشيطان، والشيطان خُلق من نار، والنار تُطفأ بالماء."
+        },
+        "4": {
+          "title": "٥. تذكر عفو الله",
+          "content": "تأمل كيف يغفر الله لك رغم أخطائك. هذا يجعلك أكثر تسامحاً مع الآخرين."
+        },
+        "5": {
+          "title": "٦. فكر في العواقب",
+          "content": "فكر في العواقب السلبية للتصرف بغضب: علاقات مكسورة، كلمات نادمة، وفقدان الاحترام."
+        }
+      }
+    },
+    "how-to-practice-humility": {
+      "title": "كيفية التواضع",
+      "description": "دليل لتطوير التواضع في الإسلام",
+      "steps": {
+        "0": {
+          "title": "١. تذكر أصلك",
+          "content": "تأمل أنك خُلقت من تراب وإلى التراب تعود. هذه الحقيقة كفيلة بتواضع أي شخص."
+        },
+        "1": {
+          "title": "٢. اعترف بنعم الله",
+          "content": "اعلم أن كل نعمك ومواهبك وإنجازاتك هبات من الله وليست من صنعك."
+        },
+        "2": {
+          "title": "٣. اخدم الآخرين",
+          "content": "كان النبي ﷺ يخدم أهله ويخصف نعله ويساعد في أعمال المنزل رغم أنه قائد المسلمين."
+        },
+        "3": {
+          "title": "٤. تجنب التفاخر",
+          "content": "لا تتفاخر بمالك أو علمك أو نسبك أو إنجازاتك. قال النبي ﷺ: 'لا يدخل الجنة من كان في قلبه مثقال ذرة من كِبر'."
+        },
+        "4": {
+          "title": "٥. تقبل النصيحة",
+          "content": "كن منفتحاً للنقد والنصيحة من الآخرين بغض النظر عن مكانتهم. الحق قد يأتي من أي شخص."
+        },
+        "5": {
+          "title": "٦. عامل الجميع بالمساواة",
+          "content": "أظهر الاحترام للفقراء وكبار السن وذوي المكانة الأدنى. قال النبي ﷺ: 'خيركم خيركم لأهله'."
+        }
+      }
+    },
+    "how-to-forgive-others": {
+      "title": "كيفية مسامحة الآخرين",
+      "description": "التعاليم الإسلامية عن المغفرة والعفو",
+      "steps": {
+        "0": {
+          "title": "١. تذكر مغفرة الله",
+          "content": "الله يغفر لك ذنوباً لا تُحصى. قال تعالى: 'وَلْيَعْفُوا وَلْيَصْفَحُوا أَلَا تُحِبُّونَ أَن يَغْفِرَ اللَّهُ لَكُمْ' (النور:٢٢)."
+        },
+        "1": {
+          "title": "٢. اعرف الأجر",
+          "content": "قال النبي ﷺ: 'ما نقصت صدقة من مال، وما زاد الله عبداً بعفو إلا عزاً'."
+        },
+        "2": {
+          "title": "٣. ضع نفسك مكانهم",
+          "content": "حاول فهم لماذا أساء إليك الشخص. ربما كان يمر بظروف صعبة أو لم يدرك أثر تصرفاته."
+        },
+        "3": {
+          "title": "٤. ادعُ لهم",
+          "content": "ادعُ الله للشخص الذي أساء إليك. هذا يلين قلبك ويساعدك على ترك الحقد."
+        },
+        "4": {
+          "title": "٥. تخلَّ عن الأحقاد",
+          "content": "الحقد لا يؤذي إلا صاحبه. قال النبي ﷺ: 'لا تباغضوا ولا تحاسدوا وكونوا عباد الله إخواناً'."
+        },
+        "5": {
+          "title": "٦. أصلح ذات البين",
+          "content": "إن أمكن، بادر بالمصالحة. قال النبي ﷺ: 'لا يحل لمسلم أن يهجر أخاه فوق ثلاث ليال'."
+        }
+      }
+    },
+    "how-to-seek-knowledge": {
+      "title": "كيفية طلب العلم الشرعي",
+      "description": "دليل لطلب العلم الشرعي بشكل صحيح",
+      "steps": {
+        "0": {
+          "title": "١. أخلص النية",
+          "content": "اطلب العلم لوجه الله، لا لمكسب دنيوي أو شهرة. حذّر النبي ﷺ من طلب العلم رياءً."
+        },
+        "1": {
+          "title": "٢. ابدأ بالأساسيات",
+          "content": "ابدأ بالعلوم الأساسية: العقيدة الصحيحة، كيفية الصلاة، الأحكام الشرعية الأساسية، وتلاوة القرآن."
+        },
+        "2": {
+          "title": "٣. اختر معلمين مؤهلين",
+          "content": "تعلم من العلماء الموثوقين المتبعين للقرآن والسنة. قال النبي ﷺ: 'يحمل هذا العلم من كل خلف عدوله'."
+        },
+        "3": {
+          "title": "٤. داوم على التعلم",
+          "content": "ادرس بانتظام ولو قليلاً كل يوم. قال النبي ﷺ: 'أحب الأعمال إلى الله أدومها وإن قلّ'."
+        },
+        "4": {
+          "title": "٥. اعمل بما تعلم",
+          "content": "طبّق ما تعلمته في حياتك. العلم بلا عمل كالشجر بلا ثمر."
+        },
+        "5": {
+          "title": "٦. علّم غيرك",
+          "content": "شارك العلم النافع مع غيرك. قال النبي ﷺ: 'خيركم من تعلم القرآن وعلّمه'."
+        }
+      }
+    },
+    "how-to-make-tawbah": {
+      "title": "كيفية التوبة",
+      "description": "دليل للتوبة الصادقة من الذنوب",
+      "steps": {
+        "0": {
+          "title": "١. توقف عن الذنب فوراً",
+          "content": "الخطوة الأولى التوقف عن الذنب فوراً. لا يمكنك التوبة وأنت مستمر في المعصية."
+        },
+        "1": {
+          "title": "٢. اشعر بالندم الصادق",
+          "content": "اشعر بندم صادق في قلبك على معصية الله. قال النبي ﷺ: 'الندم توبة'."
+        },
+        "2": {
+          "title": "٣. استغفر الله",
+          "content": "اطلب المغفرة من الله. قل: 'أستغفر الله' وادعُ بإخلاص."
+        },
+        "3": {
+          "title": "٤. اعزم على عدم العودة",
+          "content": "اعزم عزماً أكيداً ألا تعود إلى ذلك الذنب. هذا العزم ضروري لصحة التوبة."
+        },
+        "4": {
+          "title": "٥. أصلح ما أفسدت",
+          "content": "إذا كان ذنبك يتعلق بظلم أحد، فاطلب مسامحته وأصلح ما أفسدت. أعد المال المسروق، اعتذر عن الأذى، إلخ."
+        },
+        "5": {
+          "title": "٦. أتبع السيئة الحسنة",
+          "content": "أتبع الذنب بالحسنات. قال تعالى: 'إِنَّ الْحَسَنَاتِ يُذْهِبْنَ السَّيِّئَاتِ' (هود:١١٤)."
+        },
+        "6": {
+          "title": "٧. لا تيأس",
+          "content": "مهما عظمت ذنوبك، لا تفقد الأمل في رحمة الله. قال تعالى: 'قُلْ يَا عِبَادِيَ الَّذِينَ أَسْرَفُوا عَلَىٰ أَنفُسِهِمْ لَا تَقْنَطُوا مِن رَّحْمَةِ اللَّهِ' (الزمر:٥٣)."
+        }
+      }
+    },
+    "understanding-riba": {
+      "title": "فهم الربا",
+      "description": "تعرف على تحريم الربا في الإسلام",
+      "steps": {
+        "0": {
+          "title": "١. ما هو الربا؟",
+          "content": "الربا يعني 'الزيادة'. في المعاملات الإسلامية، يشير إلى أي فائدة مضمونة على المال المُقرض مهما كان المبلغ."
+        },
+        "1": {
+          "title": "٢. لماذا هو محرّم؟",
+          "content": "قال تعالى: 'وَأَحَلَّ اللَّهُ الْبَيْعَ وَحَرَّمَ الرِّبَا' (البقرة:٢٧٥). الربا يستغل المحتاجين ويخلق ثروة بدون جهد إنتاجي."
+        },
+        "2": {
+          "title": "٣. أنواع الربا",
+          "content": "ربا النسيئة: الفائدة على القروض. ربا الفضل: تبادل نفس السلع بكميات مختلفة (مثل: ذهب بذهب مع زيادة)."
+        },
+        "3": {
+          "title": "٤. شدة الذنب",
+          "content": "قال النبي ﷺ إن للربا ثلاثة وسبعين باباً، أيسرها كأن ينكح الرجل أمه. ملعون آكل الربا ومؤكله."
+        },
+        "4": {
+          "title": "٥. البدائل",
+          "content": "استخدم البنوك الإسلامية أو المضاربة أو القرض الحسن بدلاً من القروض الربوية التقليدية."
+        }
+      }
+    },
+    "halal-income": {
+      "title": "كسب الرزق الحلال",
+      "description": "إرشادات للكسب الحلال في الإسلام",
+      "steps": {
+        "0": {
+          "title": "١. أهمية الكسب الحلال",
+          "content": "قال النبي ﷺ: 'ما أكل أحد طعاماً قط خيراً من أن يأكل من عمل يده'. الكسب الحلال ضروري لقبول العبادة."
+        },
+        "1": {
+          "title": "٢. الصناعات المحرمة",
+          "content": "تجنب الكسب من: الخمر والقمار ولحم الخنزير والمصارف الربوية والترفيه المحرم وكل ما يضر المجتمع."
+        },
+        "2": {
+          "title": "٣. الصدق في المعاملات",
+          "content": "كن صادقاً في التجارة. قال النبي ﷺ: 'التاجر الصدوق الأمين مع النبيين والصديقين والشهداء'."
+        },
+        "3": {
+          "title": "٤. التسعير العادل",
+          "content": "لا تستغل الزبائن ولا تحتكر البضائع لرفع الأسعار. لعن النبي ﷺ المحتكرين."
+        },
+        "4": {
+          "title": "٥. الوفاء بالعقود",
+          "content": "أوفِ بجميع الاتفاقيات والعقود. قال تعالى: 'يَا أَيُّهَا الَّذِينَ آمَنُوا أَوْفُوا بِالْعُقُودِ' (المائدة:١)."
+        },
+        "5": {
+          "title": "٦. ادفع للعمال فوراً",
+          "content": "قال النبي ﷺ: 'أعطوا الأجير أجره قبل أن يجف عرقه'. تأخير الدفع ظلم."
+        }
+      }
+    },
+    "islamic-banking": {
+      "title": "أساسيات المصرفية الإسلامية",
+      "description": "فهم المصرفية المتوافقة مع الشريعة",
+      "steps": {
+        "0": {
+          "title": "١. المبادئ الأساسية",
+          "content": "تحظر المصرفية الإسلامية الربا والغرر المفرط والميسر. يجب أن تأتي الأرباح من نشاط اقتصادي حقيقي."
+        },
+        "1": {
+          "title": "٢. المرابحة",
+          "content": "يشتري البنك الأصل ويبيعه لك بهامش ربح معلوم. تدفع بالأقساط. الربح محدد مسبقاً وليس فائدة."
+        },
+        "2": {
+          "title": "٣. المضاربة",
+          "content": "أنت تقدم رأس المال والبنك يديره. تُقسم الأرباح حسب نسب متفق عليها؛ والخسائر يتحملها صاحب المال."
+        },
+        "3": {
+          "title": "٤. المشاركة",
+          "content": "يساهم الطرفان برأس المال ويتشاركان الأرباح والخسائر حسب نسبة استثمارهما."
+        },
+        "4": {
+          "title": "٥. الإجارة",
+          "content": "يشتري البنك الأصل ويؤجره لك. قد يكون لك خيار شرائه في نهاية مدة الإيجار."
+        },
+        "5": {
+          "title": "٦. اختيار البنك",
+          "content": "ابحث عن بنوك لديها هيئة رقابة شرعية. تأكد أن منتجاتها متوافقة فعلاً مع الشريعة وليست مجرد إعادة تسمية لمنتجات تقليدية."
+        }
+      }
+    },
+    "halal-investing": {
+      "title": "إرشادات الاستثمار الحلال",
+      "description": "كيفية الاستثمار بطريقة متوافقة مع الشريعة",
+      "steps": {
+        "0": {
+          "title": "١. فحص الصناعات المحرمة",
+          "content": "تجنب الشركات المتورطة في: الخمر والتبغ والقمار والمصارف/التأمين التقليدي ولحم الخنزير والأسلحة والترفيه المحرم."
+        },
+        "1": {
+          "title": "٢. النسب المالية",
+          "content": "يشترط كثير من العلماء: نسبة الدين للأصول أقل من ٣٣٪، دخل الفوائد أقل من ٥٪ من الإيرادات، والنقد/المستحقات أقل من ٥٠٪ من الأصول."
+        },
+        "2": {
+          "title": "٣. تطهير العوائد",
+          "content": "إذا كان جزء صغير من دخل الشركة من مصادر غير متوافقة، احسب تلك النسبة من أرباحك وتصدق بها."
+        },
+        "3": {
+          "title": "٤. الصناديق الإسلامية",
+          "content": "فكر في صناديق الاستثمار المشتركة وصناديق المؤشرات المتوافقة مع الشريعة والمفحوصة من علماء إسلاميين."
+        },
+        "4": {
+          "title": "٥. العقارات",
+          "content": "الاستثمار العقاري حلال بشكل عام. تجنب التمويل بالرهن العقاري التقليدي واستخدم التمويل الإسلامي بدلاً منه."
+        },
+        "5": {
+          "title": "٦. استشر العلماء",
+          "content": "عند الشك، استشر العلماء المتخصصين أو استخدم خدمات الفحص المالي الإسلامي المعتمدة."
+        }
+      }
+    },
+    "debt-management": {
+      "title": "إدارة الديون في الإسلام",
+      "description": "إدارة الديون وفقاً للمبادئ الإسلامية",
+      "steps": {
+        "0": {
+          "title": "١. تجنب الديون غير الضرورية",
+          "content": "تعوّذ النبي ﷺ من الدين. لا تقترض إلا عند الضرورة الحقيقية ولديك خطة واضحة للسداد."
+        },
+        "1": {
+          "title": "٢. وثّق جميع الديون",
+          "content": "أمر الله: 'إِذَا تَدَايَنتُم بِدَيْنٍ إِلَىٰ أَجَلٍ مُّسَمًّى فَاكْتُبُوهُ' (البقرة:٢٨٢). هذا يحمي الطرفين."
+        },
+        "2": {
+          "title": "٣. انوِ السداد",
+          "content": "قال النبي ﷺ: 'من أخذ أموال الناس يريد أداءها أدّى الله عنه، ومن أخذها يريد إتلافها أتلفه الله'."
+        },
+        "3": {
+          "title": "٤. سدّد فوراً",
+          "content": "لا تؤخر السداد إن كنت قادراً. قال النبي ﷺ: 'مطل الغني ظلم'."
+        },
+        "4": {
+          "title": "٥. كن متسامحاً كدائن",
+          "content": "إذا كان مدينك يعاني، أمهله. قال تعالى: 'وَإِن كَانَ ذُو عُسْرَةٍ فَنَظِرَةٌ إِلَىٰ مَيْسَرَةٍ' (البقرة:٢٨٠)."
+        },
+        "5": {
+          "title": "٦. اعفُ إن استطعت",
+          "content": "العفو عن الدين أجره عظيم. قال تعالى: 'وَأَن تَصَدَّقُوا خَيْرٌ لَّكُمْ' (البقرة:٢٨٠)."
+        }
+      }
+    }
+  },
+  "islamicEvents": {
+    "new_year": "رأس السنة الهجرية",
+    "ashura": "يوم عاشوراء",
+    "mawlid": "المولد النبوي",
+    "isra_miraj": "الإسراء والمعراج",
+    "mid_shaban": "ليلة النصف من شعبان",
+    "ramadan_start": "بداية رمضان",
+    "laylat_qadr": "ليلة القدر",
+    "eid_fitr": "عيد الفطر",
+    "arafah": "يوم عرفة",
+    "eid_adha": "عيد الأضحى",
+    "new_year_desc": "أول يوم من محرم يمثل بداية السنة الهجرية الجديدة.",
+    "ashura_desc": "العاشر من محرم. صيام هذا اليوم يكفّر ذنوب السنة الماضية.",
+    "mawlid_desc": "إحياء ذكرى مولد النبي محمد ﷺ.",
+    "isra_miraj_desc": "ليلة رحلة الإسراء والمعراج للنبي محمد ﷺ.",
+    "mid_shaban_desc": "الليلة التي ينزل فيها الله إلى السماء الدنيا ويغفر لكثير من عباده.",
+    "ramadan_start_desc": "بداية شهر الصيام المبارك.",
+    "laylat_qadr_desc": "ليلة القدر خير من ألف شهر.",
+    "eid_fitr_desc": "عيد الفطر، الاحتفال بنهاية شهر رمضان المبارك.",
+    "arafah_desc": "صيام هذا اليوم يكفّر ذنوب السنة الماضية والقادمة.",
+    "eid_adha_desc": "عيد الأضحى، إحياء ذكرى استعداد إبراهيم عليه السلام للتضحية بابنه."
+  },
+  "countdown": {
+    "today": "اليوم",
+    "tomorrow": "غداً",
+    "inDays": "بعد %{count} أيام",
+    "inWeek": "بعد %{count} أسبوع",
+    "inWeeks": "بعد %{count} أسابيع",
+    "inMonth": "بعد %{count} شهر",
+    "inMonths": "بعد %{count} أشهر"
+  },
+  "fastingLabels": {
+    "monday": "صيام الإثنين",
+    "thursday": "صيام الخميس",
+    "white_day": "الأيام البيض",
+    "ashura": "صيام عاشوراء",
+    "arafah": "صيام عرفة",
+    "shawwal": "صيام شوال"
+  },
+  "prayerStatus": {
+    "prayed": "صُلّيت",
+    "late": "متأخرة",
+    "missed": "فائتة"
+  }
+}

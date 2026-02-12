@@ -21,10 +21,12 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { Spacing, BorderRadius } from '@/constants/theme';
 import { useTheme } from '@/hooks/useTheme';
+import { useTranslation } from '@/hooks/useTranslation';
 import { Feather } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import * as Notifications from 'expo-notifications';
 import * as Haptics from 'expo-haptics';
+import { checkBatteryOptimization, requestBatteryOptimizationExemption, canScheduleExactAlarms, requestExactAlarmPermission } from '@/hooks/useNotifications';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -34,39 +36,49 @@ interface OnboardingSlide {
     title: string;
     subtitle: string;
     description: string;
-    action?: 'location' | 'notifications';
+    action?: 'location' | 'notifications' | 'widget';
+    image?: any; // For widget preview image
 }
 
 const SLIDES: OnboardingSlide[] = [
     {
         id: 'welcome',
         icon: 'sun',
-        title: 'Assalamu Alaikum',
-        subtitle: 'Welcome to SakinahTime',
-        description: 'Your companion for prayer times, Quran reading, and spiritual growth.',
+        title: 'onboarding.welcomeTitle',
+        subtitle: 'onboarding.welcomeSubtitle',
+        description: 'onboarding.welcomeDescription',
     },
     {
         id: 'location',
         icon: 'map-pin',
-        title: 'Accurate Prayer Times',
-        subtitle: 'Location Access',
-        description: 'We use your location to calculate precise prayer times for your area.',
+        title: 'onboarding.locationTitle',
+        subtitle: 'onboarding.locationSubtitle',
+        description: 'onboarding.locationDescription',
         action: 'location',
     },
     {
         id: 'notifications',
         icon: 'bell',
-        title: 'Never Miss a Prayer',
-        subtitle: 'Notification Reminders',
-        description: 'Get notified with beautiful Azan sounds when prayer time arrives.',
+        title: 'onboarding.notificationsTitle',
+        subtitle: 'onboarding.notificationsSubtitle',
+        description: 'onboarding.notificationsDescription',
         action: 'notifications',
+    },
+    {
+        id: 'widget',
+        icon: 'layout',
+        title: 'onboarding.widgetTitle',
+        subtitle: 'onboarding.widgetSubtitle',
+        description: 'onboarding.widgetDescription',
+        action: 'widget',
+        image: require('@/../assets/images/widget-image.png'),
     },
     {
         id: 'done',
         icon: 'check-circle',
-        title: "You're All Set!",
-        subtitle: 'Ready to Begin',
-        description: 'Start your journey towards a more mindful spiritual practice.',
+        title: 'onboarding.doneTitle',
+        subtitle: 'onboarding.doneSubtitle',
+        description: 'onboarding.doneDescription',
     },
 ];
 
@@ -76,6 +88,7 @@ interface OnboardingScreenProps {
 
 export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) {
     const { theme, isDark } = useTheme();
+    const { t } = useTranslation();
     const insets = useSafeAreaInsets();
     const navigation = useNavigation();
     const flatListRef = useRef<FlatList>(null);
@@ -137,12 +150,76 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
     const requestNotificationPermission = async () => {
         try {
             const { status } = await Notifications.requestPermissionsAsync();
+            console.log('[Onboarding] Notification permission status:', status);
             setNotificationsGranted(status === 'granted');
             Haptics.notificationAsync(
                 status === 'granted'
                     ? Haptics.NotificationFeedbackType.Success
                     : Haptics.NotificationFeedbackType.Warning
             );
+
+            // On Android, if notifications are granted, also request battery optimization exemption
+            // This ensures Azan alarms work reliably after device reboot
+            if (status === 'granted' && Platform.OS === 'android') {
+                const { Alert } = require('react-native');
+
+                // Step 1: Check and request SCHEDULE_EXACT_ALARM permission (Android 12+)
+                // This is CRITICAL - without it, alarms fail silently!
+                console.log('[Onboarding] Checking exact alarm permission...');
+                try {
+                    const canSchedule = await canScheduleExactAlarms();
+                    console.log('[Onboarding] Can schedule exact alarms:', canSchedule);
+
+                    if (!canSchedule) {
+                        console.log('[Onboarding] Requesting exact alarm permission');
+                        Alert.alert(
+                            t('onboarding.enableExactAlarms'),
+                            t('onboarding.exactAlarmsDescription'),
+                            [
+                                {
+                                    text: t('onboarding.openSettings'),
+                                    onPress: async () => {
+                                        const result = await requestExactAlarmPermission();
+                                        console.log('[Onboarding] Exact alarm result:', result);
+                                    }
+                                },
+                                { text: t('common.skip'), style: 'cancel' }
+                            ]
+                        );
+                    }
+                } catch (alarmError) {
+                    console.error('[Onboarding] Exact alarm check failed:', alarmError);
+                }
+
+                // Step 2: Check and request battery optimization exemption
+                console.log('[Onboarding] Checking battery optimization status...');
+                try {
+                    const isBatteryOptimized = await checkBatteryOptimization();
+                    console.log('[Onboarding] Battery optimized:', isBatteryOptimized);
+                    if (isBatteryOptimized) {
+                        console.log('[Onboarding] Requesting battery optimization exemption for reliable alarms');
+                        Alert.alert(
+                            t('onboarding.enableReliableAzan'),
+                            t('onboarding.reliableAzanDescription'),
+                            [
+                                {
+                                    text: t('onboarding.openSettings'),
+                                    onPress: async () => {
+                                        const result = await requestBatteryOptimizationExemption();
+                                        console.log('[Onboarding] Battery exemption result:', result);
+                                    }
+                                },
+                                { text: t('common.skip'), style: 'cancel' }
+                            ]
+                        );
+                    } else {
+                        console.log('[Onboarding] App already exempt from battery optimization');
+                    }
+                } catch (batteryError) {
+                    console.error('[Onboarding] Battery optimization check failed:', batteryError);
+                }
+            }
+
             goToNext();
         } catch (error) {
             console.warn('[Onboarding] Notification permission error:', error);
@@ -150,11 +227,15 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
         }
     };
 
-    const handleAction = (action?: 'location' | 'notifications') => {
+    const handleAction = (action?: 'location' | 'notifications' | 'widget') => {
         if (action === 'location') {
             requestLocationPermission();
         } else if (action === 'notifications') {
             requestNotificationPermission();
+        } else if (action === 'widget') {
+            // For widget slide, just go to next - user will add widget manually
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            goToNext();
         } else {
             goToNext();
         }
@@ -164,11 +245,12 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
         const isLastSlide = index === SLIDES.length - 1;
         const isLocationSlide = item.action === 'location';
         const isNotificationSlide = item.action === 'notifications';
+        const isWidgetSlide = item.action === 'widget';
 
         return (
             <View style={[styles.slide, { width: SCREEN_WIDTH }]}>
                 <View style={styles.slideContent}>
-                    {/* Icon or App Logo */}
+                    {/* Icon, App Logo, or Widget Image */}
                     {index === 0 ? (
                         // Welcome slide: show app logo
                         <Image
@@ -176,6 +258,15 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
                             style={styles.appLogo}
                             resizeMode="contain"
                         />
+                    ) : isWidgetSlide && item.image ? (
+                        // Widget slide: show widget preview image
+                        <View style={styles.widgetImageContainer}>
+                            <Image
+                                source={item.image}
+                                style={styles.widgetImage}
+                                resizeMode="contain"
+                            />
+                        </View>
                     ) : (
                         // Other slides: show icon
                         <View
@@ -193,13 +284,13 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
 
                     {/* Text */}
                     <ThemedText type="caption" style={[styles.subtitle, { color: theme.primary }]}>
-                        {item.subtitle}
+                        {t(item.subtitle)}
                     </ThemedText>
                     <ThemedText type="h2" style={styles.title}>
-                        {item.title}
+                        {t(item.title)}
                     </ThemedText>
                     <ThemedText type="body" secondary style={styles.description}>
-                        {item.description}
+                        {t(item.description)}
                     </ThemedText>
 
                     {/* Permission status indicator */}
@@ -207,7 +298,7 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
                         <View style={[styles.statusBadge, { backgroundColor: `${theme.primary}20` }]}>
                             <Feather name="check" size={16} color={theme.primary} />
                             <ThemedText type="small" style={{ color: theme.primary, marginLeft: 6 }}>
-                                Location enabled
+                                {t('onboarding.locationEnabled')}
                             </ThemedText>
                         </View>
                     )}
@@ -215,7 +306,7 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
                         <View style={[styles.statusBadge, { backgroundColor: `${theme.primary}20` }]}>
                             <Feather name="check" size={16} color={theme.primary} />
                             <ThemedText type="small" style={{ color: theme.primary, marginLeft: 6 }}>
-                                Notifications enabled
+                                {t('onboarding.notificationsEnabled')}
                             </ThemedText>
                         </View>
                     )}
@@ -232,7 +323,7 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
                             ]}
                         >
                             <ThemedText type="body" style={styles.buttonText}>
-                                Get Started
+                                {t('onboarding.getStarted')}
                             </ThemedText>
                             <Feather name="arrow-right" size={20} color="#FFFFFF" />
                         </Pressable>
@@ -246,7 +337,7 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
                                 ]}
                             >
                                 <ThemedText type="body" style={styles.buttonText}>
-                                    {item.action ? 'Enable' : 'Continue'}
+                                    {item.action ? t('onboarding.enable') : t('onboarding.continue')}
                                 </ThemedText>
                                 <Feather name="arrow-right" size={20} color="#FFFFFF" />
                             </Pressable>
@@ -254,7 +345,7 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
                             {item.action && (
                                 <Pressable onPress={goToNext} style={styles.skipActionButton}>
                                     <ThemedText type="small" secondary>
-                                        Not now
+                                        {t('onboarding.notNow')}
                                     </ThemedText>
                                 </Pressable>
                             )}
@@ -274,7 +365,7 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
                     style={[styles.skipButton, { top: insets.top + Spacing.md }]}
                 >
                     <ThemedText type="small" secondary>
-                        Skip
+                        {t('common.skip')}
                     </ThemedText>
                 </Pressable>
             )}
@@ -406,5 +497,22 @@ const styles = StyleSheet.create({
     dot: {
         height: 8,
         borderRadius: 4,
+    },
+    widgetImageContainer: {
+        marginBottom: Spacing['2xl'],
+        borderRadius: 24,
+        overflow: 'hidden',
+        backgroundColor: 'rgba(255,255,255,0.05)',
+        padding: 4,
+        shadowColor: '#6366F1',
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.4,
+        shadowRadius: 20,
+        elevation: 12,
+    },
+    widgetImage: {
+        width: SCREEN_WIDTH - 88,
+        height: 116,
+        borderRadius: 20,
     },
 });

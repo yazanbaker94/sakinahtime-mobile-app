@@ -9,6 +9,7 @@ import { View, StyleSheet, Pressable } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
+import { useTranslation } from '@/hooks/useTranslation';
 import { Spacing, BorderRadius } from '@/constants/theme';
 import { AzkarCategory } from '@/data/azkar';
 
@@ -28,6 +29,7 @@ interface CompactCategoryCardProps {
 
 export function CompactCategoryCard({ category, onPress }: CompactCategoryCardProps) {
   const { isDark, theme } = useTheme();
+  const { t, locale } = useTranslation();
 
   const getIconColor = () => {
     return theme.primary;
@@ -62,23 +64,18 @@ export function CompactCategoryCard({ category, onPress }: CompactCategoryCardPr
         />
       </View>
 
-      {/* Titles */}
-      <ThemedText type="body" style={styles.titleEn} numberOfLines={1}>
-        {category.titleEn}
-      </ThemedText>
-      <ThemedText
-        type="arabic"
-        secondary
-        style={[styles.titleAr, { fontFamily: 'AlMushafQuran' }]}
+      {/* Title - locale aware via i18n */}
+      <ThemedText type={locale === 'ar' ? 'arabic' : 'body'}
+        style={[locale === 'ar' ? styles.titleAr : styles.titleEn, locale === 'ar' && { fontFamily: 'AlMushafQuran' }]}
         numberOfLines={1}
       >
-        {category.titleAr}
+        {t(`azkarCategories.${category.id}`)}
       </ThemedText>
 
       {/* Count Badge */}
       <View style={styles.countContainer}>
         <ThemedText type="caption" secondary>
-          {category.count} adhkar
+          {category.count} {t('azkar.adhkarCount')}
         </ThemedText>
       </View>
     </Pressable>

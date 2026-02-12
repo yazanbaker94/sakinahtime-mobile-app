@@ -10,10 +10,12 @@ import { useTheme } from '@/hooks/useTheme';
 import { useLocation } from '@/contexts/LocationContext';
 import { CitySearchModal } from '@/components/CitySearchModal';
 import { Spacing, BorderRadius } from '@/constants/theme';
+import { useTranslation } from '@/hooks/useTranslation';
 import type { ManualLocation } from '@/types/location';
 
 export default function LocationSettingsScreen() {
   const { theme, isDark } = useTheme();
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const [showCitySearch, setShowCitySearch] = useState(false);
@@ -36,11 +38,11 @@ export default function LocationSettingsScreen() {
   const isManual = locationMode === 'manual';
   const locationText = city && country
     ? `${city}, ${country}`
-    : city || (loading ? 'Detecting location...' : 'Location unavailable');
+    : city || (loading ? t('location.detecting') : t('location.unavailable'));
 
   const gpsLocationText = gpsCity && gpsCountry
     ? `${gpsCity}, ${gpsCountry}`
-    : gpsCity || (permission?.granted ? 'Detecting...' : 'Permission required');
+    : gpsCity || (permission?.granted ? t('location.detecting') : t('location.permissionRequired'));
 
   const handleSelectCity = async (location: ManualLocation) => {
     await setManualLocation(location);
@@ -50,7 +52,7 @@ export default function LocationSettingsScreen() {
     if (Platform.OS !== 'web') {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
-    
+
     if (!permission?.granted) {
       await requestPermission();
     }
@@ -88,7 +90,7 @@ export default function LocationSettingsScreen() {
           <Feather name="arrow-left" size={24} color={theme.text} />
         </Pressable>
         <ThemedText type="h3" style={{ fontWeight: '700' }}>
-          Location
+          {t('location.title')}
         </ThemedText>
         <View style={{ width: 40 }} />
       </View>
@@ -105,7 +107,7 @@ export default function LocationSettingsScreen() {
           </View>
           <View style={{ flex: 1 }}>
             <ThemedText type="caption" secondary>
-              Current location
+              {t('location.currentLocation')}
             </ThemedText>
             <ThemedText type="h4" style={{ fontWeight: '600', marginTop: 4 }}>
               {locationText}
@@ -114,7 +116,7 @@ export default function LocationSettingsScreen() {
           {isManual && (
             <View style={[styles.modeBadge, { backgroundColor: `${theme.primary}20` }]}>
               <ThemedText type="caption" style={{ color: theme.primary, fontWeight: '600' }}>
-                Manual
+                {t('location.manual')}
               </ThemedText>
             </View>
           )}
@@ -122,7 +124,7 @@ export default function LocationSettingsScreen() {
 
         {/* Location Options */}
         <ThemedText type="caption" style={styles.sectionHeader}>
-          LOCATION SOURCE
+          {t('location.locationSource')}
         </ThemedText>
 
         {/* GPS Option */}
@@ -143,7 +145,7 @@ export default function LocationSettingsScreen() {
           </View>
           <View style={{ flex: 1 }}>
             <ThemedText type="body" style={{ fontWeight: '600' }}>
-              Use GPS Location
+              {t('location.useGPS')}
             </ThemedText>
             <ThemedText type="caption" secondary style={{ marginTop: 2 }}>
               {gpsLocationText}
@@ -172,10 +174,10 @@ export default function LocationSettingsScreen() {
           </View>
           <View style={{ flex: 1 }}>
             <ThemedText type="body" style={{ fontWeight: '600' }}>
-              Set Location Manually
+              {t('location.setManually')}
             </ThemedText>
             <ThemedText type="caption" secondary style={{ marginTop: 2 }}>
-              Search for any city worldwide
+              {t('location.searchWorldwide')}
             </ThemedText>
           </View>
           <Feather name="chevron-right" size={20} color={theme.textSecondary} />
@@ -185,13 +187,13 @@ export default function LocationSettingsScreen() {
         {recentLocations.length > 0 && (
           <>
             <ThemedText type="caption" style={styles.sectionHeader}>
-              RECENT LOCATIONS
+              {t('location.recentLocations')}
             </ThemedText>
             <View style={[styles.recentContainer, { backgroundColor: theme.cardBackground }]}>
               {recentLocations.map((loc, index) => {
-                const isSelected = manualLocation?.latitude === loc.latitude && 
-                                   manualLocation?.longitude === loc.longitude && 
-                                   locationMode === 'manual';
+                const isSelected = manualLocation?.latitude === loc.latitude &&
+                  manualLocation?.longitude === loc.longitude &&
+                  locationMode === 'manual';
                 return (
                   <Pressable
                     key={`${loc.latitude}-${loc.longitude}-${index}`}
@@ -230,7 +232,7 @@ export default function LocationSettingsScreen() {
         <View style={[styles.infoBox, { backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)' }]}>
           <Feather name="info" size={16} color={theme.textSecondary} />
           <ThemedText type="caption" secondary style={{ flex: 1, marginLeft: Spacing.sm }}>
-            Your location is used to calculate accurate prayer times and Qibla direction. Manual location is useful when GPS is unavailable or inaccurate.
+            {t('location.info')}
           </ThemedText>
         </View>
       </ScrollView>

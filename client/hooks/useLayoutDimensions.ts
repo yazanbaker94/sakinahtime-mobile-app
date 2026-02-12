@@ -37,29 +37,28 @@ export interface LayoutDimensions {
 export function useLayoutDimensions(tabBarHeight?: number): LayoutDimensions {
   const insets = useSafeAreaInsets();
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
-  
+
   // Use provided tab bar height or fallback
   const effectiveTabBarHeight = tabBarHeight ?? DEFAULT_TAB_BAR_HEIGHT;
-  
+
   const safeAreaTop = insets.top;
   const safeAreaBottom = insets.bottom;
-  
+
   // Calculate available height for content zone
-  // Total screen - safe areas - header - footer - tab bar
-  const contentZoneHeight = screenHeight 
-    - safeAreaTop 
-    - HEADER_ZONE_HEIGHT 
-    - FOOTER_ZONE_HEIGHT 
+  // Total screen - safe area top - header - tab bar
+  // Footer overlays on content zone, so not subtracted
+  const contentZoneHeight = screenHeight
+    - safeAreaTop
+    - HEADER_ZONE_HEIGHT
     - effectiveTabBarHeight;
-  
+
   // Calculate image scaling to fit screen width
   const imageScale = screenWidth / MUSHAF_IMAGE_WIDTH;
   const imageHeight = MUSHAF_IMAGE_HEIGHT * imageScale;
-  
+
   // Center image vertically within content zone
-  // If image is taller than content zone, offset will be negative (image extends beyond)
   const imageOffsetY = Math.max(0, (contentZoneHeight - imageHeight) / 2);
-  
+
   return {
     screenWidth,
     screenHeight,
@@ -85,16 +84,15 @@ export function calculateLayoutDimensions(
   safeAreaBottom: number,
   tabBarHeight: number
 ): LayoutDimensions {
-  const contentZoneHeight = screenHeight 
-    - safeAreaTop 
-    - HEADER_ZONE_HEIGHT 
-    - FOOTER_ZONE_HEIGHT 
+  const contentZoneHeight = screenHeight
+    - safeAreaTop
+    - HEADER_ZONE_HEIGHT
     - tabBarHeight;
-  
+
   const imageScale = screenWidth / MUSHAF_IMAGE_WIDTH;
   const imageHeight = MUSHAF_IMAGE_HEIGHT * imageScale;
   const imageOffsetY = Math.max(0, (contentZoneHeight - imageHeight) / 2);
-  
+
   return {
     screenWidth,
     screenHeight,

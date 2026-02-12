@@ -11,6 +11,7 @@ import * as Notifications from "expo-notifications";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { widgetDataService } from "./services/WidgetDataService";
 import audioService from "./services/AudioService";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 
 import { hijriDateService } from "./services/HijriDateService";
 import { moonPhaseService } from "./services/MoonPhaseService";
@@ -130,12 +131,7 @@ export default function App() {
         // Pre-load prayer card backgrounds for instant rendering
         // Using Asset.loadAsync ensures images are decoded before navigation
         const prayerBackgrounds = [
-          require('../assets/images/mosque-silhouette.png'),
-          require('../assets/images/fajr-mosque.jpg'),
-          require('../assets/images/dhuhr-mosque.jpg'),
-          require('../assets/images/asr-mosque.jpg'),
-          require('../assets/images/maghrib-mosque.jpg'),
-          require('../assets/images/isha-mosque.jpg'),
+          require('../assets/images/mosque-silhouette.jpg'),
         ];
         await Asset.loadAsync(prayerBackgrounds);
         console.log('[App] Prayer backgrounds loaded');
@@ -230,27 +226,29 @@ export default function App() {
 
   return (
     <ThemeProvider>
-      <ErrorBoundary>
-        <PrayerAdjustmentsProvider>
-          <QueryClientProvider client={queryClient}>
-            <CoordinatesProvider>
-              <LocationProvider>
-                <RamadanProvider>
-                  <SafeAreaProvider>
-                    <GestureHandlerRootView style={styles.root}>
-                      <KeyboardProvider>
-                        <NavigationContainer ref={navigationRef} linking={linking}>
-                          <RootStackNavigator />
-                        </NavigationContainer>
-                      </KeyboardProvider>
-                    </GestureHandlerRootView>
-                  </SafeAreaProvider>
-                </RamadanProvider>
-              </LocationProvider>
-            </CoordinatesProvider>
-          </QueryClientProvider>
-        </PrayerAdjustmentsProvider>
-      </ErrorBoundary>
+      <LanguageProvider>
+        <ErrorBoundary>
+          <PrayerAdjustmentsProvider>
+            <QueryClientProvider client={queryClient}>
+              <CoordinatesProvider>
+                <LocationProvider>
+                  <RamadanProvider>
+                    <SafeAreaProvider>
+                      <GestureHandlerRootView style={styles.root}>
+                        <KeyboardProvider>
+                          <NavigationContainer ref={navigationRef} linking={linking}>
+                            <RootStackNavigator />
+                          </NavigationContainer>
+                        </KeyboardProvider>
+                      </GestureHandlerRootView>
+                    </SafeAreaProvider>
+                  </RamadanProvider>
+                </LocationProvider>
+              </CoordinatesProvider>
+            </QueryClientProvider>
+          </PrayerAdjustmentsProvider>
+        </ErrorBoundary>
+      </LanguageProvider>
     </ThemeProvider>
   );
 }

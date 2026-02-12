@@ -14,6 +14,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
+import { useTranslation } from '@/hooks/useTranslation';
 import { Spacing, BorderRadius } from '@/constants/theme';
 import { useDuaCollection } from '@/hooks/useDuaCollection';
 import { useDuaFavorites } from '@/hooks/useDuaFavorites';
@@ -44,7 +45,8 @@ export function DuaCollectionScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { isDark, theme } = useTheme();
-  
+  const { t, locale } = useTranslation();
+
   const [activeTab, setActiveTab] = useState<TabType>('categories');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -90,18 +92,18 @@ export function DuaCollectionScreen() {
 
   const handleDeleteCustomDua = useCallback((dua: CustomDua) => {
     Alert.alert(
-      'Delete Dua',
-      'Are you sure you want to delete this dua?',
+      t('duaCollection.deleteDua'),
+      t('duaCollection.deleteConfirm'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Delete',
+          text: t('common.delete'),
           style: 'destructive',
           onPress: async () => {
             try {
               await deleteCustomDua(dua.id);
             } catch (error) {
-              Alert.alert('Error', 'Failed to delete dua');
+              Alert.alert(t('common.error'), t('duaCollection.deleteFailed'));
             }
           },
         },
@@ -127,7 +129,7 @@ export function DuaCollectionScreen() {
       >
         <Animated.View style={[styles.deleteActionContent, { transform: [{ scale }] }]}>
           <Feather name="trash-2" size={22} color="#fff" />
-          <ThemedText type="small" style={{ color: '#fff', marginTop: 4 }}>Delete</ThemedText>
+          <ThemedText type="small" style={{ color: '#fff', marginTop: 4 }}>{t('common.delete')}</ThemedText>
         </Animated.View>
       </Pressable>
     );
@@ -234,13 +236,15 @@ export function DuaCollectionScreen() {
             />
           </View>
           <ThemedText type="small" style={styles.categoryTitle}>
-            {category.titleEn}
+            {t(`duaCategories.${category.id}`)}
           </ThemedText>
-          <ThemedText type="arabic" secondary style={[styles.categoryArabic, { fontFamily: 'AlMushafQuran' }]}>
-            {category.titleAr}
-          </ThemedText>
+          {locale !== 'ar' && (
+            <ThemedText type="arabic" secondary style={[styles.categoryArabic, { fontFamily: 'AlMushafQuran' }]}>
+              {category.titleAr}
+            </ThemedText>
+          )}
           <ThemedText type="caption" secondary>
-            {category.count} duas
+            {category.count} {t('duaCollection.duasCount')}
           </ThemedText>
         </Pressable>
       ))}
@@ -254,7 +258,7 @@ export function DuaCollectionScreen() {
         <Pressable onPress={handleBackFromCategory} style={styles.backButton}>
           <Feather name="arrow-left" size={20} color={theme.text} />
           <ThemedText type="body" style={{ marginLeft: Spacing.sm, fontWeight: '600' }}>
-            {category?.titleEn || 'Back'}
+            {t(`duaCategories.${category?.id}`) || t('common.back')}
           </ThemedText>
         </Pressable>
         <FlatList
@@ -283,7 +287,7 @@ export function DuaCollectionScreen() {
         <Pressable onPress={() => navigation.goBack()} style={styles.headerBackButton}>
           <Feather name="arrow-left" size={24} color={theme.text} />
         </Pressable>
-        <ThemedText type="h2">Duas</ThemedText>
+        <ThemedText type="h2">{t('duaCollection.title')}</ThemedText>
       </View>
 
       {/* Search Bar */}
@@ -297,7 +301,7 @@ export function DuaCollectionScreen() {
           <Feather name="search" size={20} color={theme.textSecondary} />
           <TextInput
             style={[styles.searchInput, { color: theme.text }]}
-            placeholder="Search duas..."
+            placeholder={t('duaCollection.searchPlaceholder')}
             placeholderTextColor={theme.textSecondary}
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -311,8 +315,8 @@ export function DuaCollectionScreen() {
       </View>
 
       {/* Tabs */}
-      <ScrollView 
-        horizontal 
+      <ScrollView
+        horizontal
         showsHorizontalScrollIndicator={false}
         style={[
           styles.tabsContainer,
@@ -320,11 +324,11 @@ export function DuaCollectionScreen() {
         ]}
         contentContainerStyle={styles.tabsContent}
       >
-        {renderTab('categories', 'Categories', 'grid')}
-        {renderTab('quranic', 'Quranic', 'book-open')}
-        {renderTab('prophetic', 'Prophetic', 'bookmark')}
-        {renderTab('favorites', 'Favorites', 'heart')}
-        {renderTab('custom', 'My Duas', 'edit-3')}
+        {renderTab('categories', t('duaCollection.categories'), 'grid')}
+        {renderTab('quranic', t('duaCollection.quranic'), 'book-open')}
+        {renderTab('prophetic', t('duaCollection.prophetic'), 'bookmark')}
+        {renderTab('favorites', t('duaCollection.favorites'), 'heart')}
+        {renderTab('custom', t('duaCollection.myDuas'), 'edit-3')}
       </ScrollView>
 
       {/* Content */}
@@ -343,12 +347,12 @@ export function DuaCollectionScreen() {
                 scrollEnabled={false}
                 ListHeaderComponent={
                   <ThemedText type="small" secondary style={{ marginBottom: Spacing.md }}>
-                    {searchResults.length} result{searchResults.length !== 1 ? 's' : ''} for "{searchQuery}"
+                    {searchResults.length} {searchResults.length !== 1 ? t('duaCollection.results') : t('duaCollection.result')} {t('duaCollection.forQuery')} "{searchQuery}"
                   </ThemedText>
                 }
               />
             ) : (
-              renderEmptyState(`No duas found for "${searchQuery}"`, 'search')
+              renderEmptyState(t('duaCollection.noResultsFor', { query: searchQuery }), 'search')
             )}
           </>
         )}
@@ -360,9 +364,9 @@ export function DuaCollectionScreen() {
               <>
                 {!selectedCategory && (
                   <>
-                    <DuaOfTheDay 
-                      dua={duaOfTheDay} 
-                      onPress={() => handleDuaPress(duaOfTheDay)} 
+                    <DuaOfTheDay
+                      dua={duaOfTheDay}
+                      onPress={() => handleDuaPress(duaOfTheDay)}
                     />
                     {renderCategoryGrid()}
                   </>
@@ -377,7 +381,7 @@ export function DuaCollectionScreen() {
                 renderItem={renderDuaItem}
                 keyExtractor={item => item.id}
                 scrollEnabled={false}
-                ListEmptyComponent={renderEmptyState('No Quranic duas available', 'book-open')}
+                ListEmptyComponent={renderEmptyState(t('duaCollection.noQuranic'), 'book-open')}
               />
             )}
 
@@ -387,7 +391,7 @@ export function DuaCollectionScreen() {
                 renderItem={renderDuaItem}
                 keyExtractor={item => item.id}
                 scrollEnabled={false}
-                ListEmptyComponent={renderEmptyState('No Prophetic duas available', 'bookmark')}
+                ListEmptyComponent={renderEmptyState(t('duaCollection.noProphetic'), 'bookmark')}
               />
             )}
 
@@ -397,7 +401,7 @@ export function DuaCollectionScreen() {
                 renderItem={renderDuaItem}
                 keyExtractor={item => item.id}
                 scrollEnabled={false}
-                ListEmptyComponent={renderEmptyState('No favorite duas yet.\nTap the heart icon on any dua to add it here.', 'heart')}
+                ListEmptyComponent={renderEmptyState(t('duaCollection.noFavorites'), 'heart')}
               />
             )}
 
@@ -407,7 +411,7 @@ export function DuaCollectionScreen() {
                   onPress={handleAddCustomDua}
                   style={({ pressed }) => [
                     styles.addButton,
-                    { 
+                    {
                       backgroundColor: theme.primary,
                       opacity: pressed ? 0.8 : 1,
                     },
@@ -415,7 +419,7 @@ export function DuaCollectionScreen() {
                 >
                   <Feather name="plus" size={20} color="#fff" />
                   <ThemedText type="body" style={{ color: '#fff', marginLeft: Spacing.sm, fontWeight: '600' }}>
-                    Add Custom Dua
+                    {t('duaCollection.addCustom')}
                   </ThemedText>
                 </Pressable>
                 <FlatList
@@ -423,7 +427,7 @@ export function DuaCollectionScreen() {
                   renderItem={renderCustomDuaItem}
                   keyExtractor={item => item.id}
                   scrollEnabled={false}
-                  ListEmptyComponent={renderEmptyState('No custom duas yet.\nAdd your personal supplications here.', 'edit-3')}
+                  ListEmptyComponent={renderEmptyState(t('duaCollection.noCustom'), 'edit-3')}
                 />
               </>
             )}

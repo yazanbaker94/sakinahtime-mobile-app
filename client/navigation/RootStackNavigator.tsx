@@ -30,6 +30,7 @@ import NotificationSettingsScreen from "@/screens/NotificationSettingsScreen";
 import WordByWordSettingsScreen from "@/screens/WordByWordSettingsScreen";
 import { ReciterSelectionScreen } from "@/screens/ReciterSelectionScreen";
 import LocationSettingsScreen from "@/screens/LocationSettingsScreen";
+import LanguageSelectorScreen from "@/screens/LanguageSelectorScreen";
 import OnboardingScreen from "@/screens/OnboardingScreen";
 import { useOnboarding } from "@/hooks/useOnboarding";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
@@ -70,6 +71,7 @@ export type RootStackParamList = {
   WordByWordSettings: undefined;
   ReciterSelection: { currentReciter: string; onSelect: (reciterId: string) => void };
   LocationSettings: undefined;
+  LanguageSelector: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -299,6 +301,13 @@ export default function RootStackNavigator() {
       <Stack.Screen
         name="LocationSettings"
         component={LocationSettingsScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="LanguageSelector"
+        component={LanguageSelectorScreen}
         options={{
           headerShown: false,
         }}

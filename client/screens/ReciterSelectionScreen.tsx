@@ -12,6 +12,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
+import { useTranslation } from '@/hooks/useTranslation';
 import { Spacing, BorderRadius } from '@/constants/theme';
 import { audioDownloadService } from '@/services/AudioDownloadService';
 import { RECITERS } from '@/constants/offline';
@@ -26,7 +27,8 @@ export function ReciterSelectionScreen() {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<ReciterSelectionRouteProp>();
   const { isDark, theme } = useTheme();
-  
+  const { t, locale } = useTranslation();
+
   const { currentReciter, onSelect } = route.params;
   const [recitersWithDownloads, setRecitersWithDownloads] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -62,8 +64,8 @@ export function ReciterSelectionScreen() {
       <Pressable
         style={({ pressed }) => [
           styles.reciterItem,
-          { 
-            backgroundColor: isSelected 
+          {
+            backgroundColor: isSelected
               ? `${theme.primary}15`
               : theme.cardBackground,
             borderColor: isSelected ? theme.primary : 'transparent',
@@ -79,44 +81,44 @@ export function ReciterSelectionScreen() {
         ]}>
           <Feather name="mic" size={20} color={theme.primary} />
         </View>
-        
+
         <View style={styles.reciterInfo}>
           <View style={styles.reciterNameRow}>
-            <ThemedText 
-              type="body" 
-              style={{ 
+            <ThemedText
+              type="body"
+              style={{
                 fontWeight: isSelected ? '700' : '500',
                 flex: 1,
               }}
               numberOfLines={1}
             >
-              {reciter.nameEn}
+              {locale === 'ar' ? reciter.nameAr : reciter.nameEn}
             </ThemedText>
             {hasDownloads && (
               <View style={[
                 styles.downloadedBadge,
                 { backgroundColor: isDark ? 'rgba(59, 130, 246, 0.3)' : 'rgba(59, 130, 246, 0.15)' }
               ]}>
-                <Feather 
-                  name="download" 
-                  size={12} 
-                  color={isDark ? '#60A5FA' : '#3B82F6'} 
+                <Feather
+                  name="download"
+                  size={12}
+                  color={isDark ? '#60A5FA' : '#3B82F6'}
                 />
-                <ThemedText 
-                  type="caption" 
-                  style={{ 
+                <ThemedText
+                  type="caption"
+                  style={{
                     color: isDark ? '#60A5FA' : '#3B82F6',
                     marginLeft: 4,
                     fontSize: 10,
                   }}
                 >
-                  Downloaded
+                  {t('reciterSelection.downloaded')}
                 </ThemedText>
               </View>
             )}
           </View>
           <ThemedText type="caption" secondary style={{ marginTop: 2 }}>
-            {reciter.nameAr} • {reciter.style}
+            {locale === 'ar' ? `${reciter.nameEn} • ${reciter.style}` : `${reciter.nameAr} • ${reciter.style}`}
           </ThemedText>
         </View>
 
@@ -141,10 +143,10 @@ export function ReciterSelectionScreen() {
         </Pressable>
         <View style={styles.headerContent}>
           <ThemedText type="h3" style={{ fontWeight: '700' }}>
-            Select Reciter
+            {t('reciterSelection.title')}
           </ThemedText>
           <ThemedText type="caption" secondary>
-            {RECITERS.length} reciters available
+            {RECITERS.length} {t('reciterSelection.recitersAvailable')}
           </ThemedText>
         </View>
       </View>
@@ -156,7 +158,7 @@ export function ReciterSelectionScreen() {
       ]}>
         <Feather name="info" size={16} color={theme.primary} />
         <ThemedText type="caption" style={{ color: theme.primary, marginLeft: Spacing.sm, flex: 1 }}>
-          Reciters with the download badge have audio files saved on your device
+          {t('reciterSelection.infoBanner')}
         </ThemedText>
       </View>
 
@@ -166,7 +168,7 @@ export function ReciterSelectionScreen() {
         renderItem={renderReciterItem}
         keyExtractor={item => item.id}
         contentContainerStyle={[
-          styles.listContent, 
+          styles.listContent,
           { paddingBottom: insets.bottom + Spacing.xl }
         ]}
         showsVerticalScrollIndicator={false}

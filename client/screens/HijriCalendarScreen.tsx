@@ -20,6 +20,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '../hooks/useTheme';
+import { useTranslation } from '../hooks/useTranslation';
 import { useHijriDate } from '../hooks/useHijriDate';
 import { useIslamicEvents } from '../hooks/useIslamicEvents';
 import { useFastingDays } from '../hooks/useFastingDays';
@@ -36,7 +37,7 @@ interface DayDetailModalProps {
   isDark: boolean;
 }
 
-function DayDetailModal({ visible, day, onClose, isDark, theme }: DayDetailModalProps & { theme: any }) {
+function DayDetailModal({ visible, day, onClose, isDark, theme, t, locale }: DayDetailModalProps & { theme: any; t: (key: string, opts?: any) => string; locale: string }) {
   if (!day) return null;
 
   return (
@@ -56,7 +57,7 @@ function DayDetailModal({ visible, day, onClose, isDark, theme }: DayDetailModal
             {day.hijriDate.day} {day.hijriDate.monthNameEn} {day.hijriDate.year}
           </Text>
           <Text style={[styles.modalSubtitle, { color: theme.textSecondary }]}>
-            {day.gregorianDate.toLocaleDateString('en-US', {
+            {day.gregorianDate.toLocaleDateString(locale === 'ar' ? 'ar-SA' : locale === 'fr' ? 'fr-FR' : locale === 'de' ? 'de-DE' : locale === 'ru' ? 'ru-RU' : locale === 'zh' ? 'zh-CN' : 'en-US', {
               weekday: 'long',
               year: 'numeric',
               month: 'long',
@@ -66,25 +67,25 @@ function DayDetailModal({ visible, day, onClose, isDark, theme }: DayDetailModal
 
           {day.event && (
             <View style={[styles.modalSection, { borderTopColor: theme.border }]}>
-              <Text style={[styles.modalSectionTitle, { color: theme.textSecondary }]}>Event</Text>
-              <Text style={[styles.modalEventName, { color: theme.text }]}>{day.event.nameEn}</Text>
+              <Text style={[styles.modalSectionTitle, { color: theme.textSecondary }]}>{t('hijriCalendar.event')}</Text>
+              <Text style={[styles.modalEventName, { color: theme.text }]}>{t(`islamicEvents.${day.event.id}`) || day.event.nameEn}</Text>
               <Text style={[styles.modalEventArabic, { color: theme.textSecondary }]}>{day.event.nameAr}</Text>
               {day.event.description && (
-                <Text style={[styles.modalDescription, { color: theme.textSecondary }]}>{day.event.description}</Text>
+                <Text style={[styles.modalDescription, { color: theme.textSecondary }]}>{t(`islamicEvents.${day.event.id}_desc`) || day.event.description}</Text>
               )}
             </View>
           )}
 
           {day.fastingDay && (
             <View style={[styles.modalSection, { borderTopColor: theme.border }]}>
-              <Text style={[styles.modalSectionTitle, { color: theme.textSecondary }]}>Fasting</Text>
+              <Text style={[styles.modalSectionTitle, { color: theme.textSecondary }]}>{t('hijriCalendar.fasting')}</Text>
               <FastingDayBadge type={day.fastingDay.type} isDark={isDark} />
               <Text style={[styles.modalDescription, { color: theme.textSecondary }]}>{day.fastingDay.label}</Text>
             </View>
           )}
 
           <TouchableOpacity style={[styles.modalCloseButton, { backgroundColor: theme.primary }]} onPress={onClose}>
-            <Text style={styles.modalCloseText}>Close</Text>
+            <Text style={styles.modalCloseText}>{t('common.close')}</Text>
           </TouchableOpacity>
         </View>
       </TouchableOpacity>
@@ -96,6 +97,7 @@ export function HijriCalendarScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const { isDark, theme } = useTheme();
+  const { t, locale } = useTranslation();
   const { hijriDate, gregorianDate, moonPhase } = useHijriDate();
   const { upcomingEvents, nextMajorEvent } = useIslamicEvents();
   const { todayFasting, isFastingProhibited } = useFastingDays();
@@ -125,7 +127,7 @@ export function HijriCalendarScreen() {
         >
           <Feather name="arrow-left" size={24} color={theme.primary} />
         </Pressable>
-        <Text style={[styles.headerTitle, { color: theme.text }]}>Islamic Calendar</Text>
+        <Text style={[styles.headerTitle, { color: theme.text }]}>{t('hijriCalendar.title')}</Text>
         <View style={styles.headerSpacer} />
       </View>
 
@@ -164,6 +166,8 @@ export function HijriCalendarScreen() {
         onClose={handleCloseModal}
         isDark={isDark}
         theme={theme}
+        t={t}
+        locale={locale}
       />
     </View>
   );

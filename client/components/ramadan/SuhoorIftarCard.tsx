@@ -9,6 +9,7 @@ import { Feather } from '@expo/vector-icons';
 import { ThemedText } from '../ThemedText';
 import { Card } from '../Card';
 import { useTheme } from '../../hooks/useTheme';
+import { useTranslation } from '../../hooks/useTranslation';
 import { useSuhoorIftar } from '../../hooks/useSuhoorIftar';
 import { Spacing, BorderRadius } from '../../constants/theme';
 
@@ -28,6 +29,7 @@ function formatCountdown(hours: number, minutes: number, seconds: number): strin
 
 export function SuhoorIftarCard({ onPress }: SuhoorIftarCardProps) {
   const { isDark } = useTheme();
+  const { t } = useTranslation();
   const {
     times,
     suhoorCountdown,
@@ -114,7 +116,7 @@ export function SuhoorIftarCard({ onPress }: SuhoorIftarCardProps) {
       {/* Notification Toggles */}
       <View style={styles.notificationSection}>
         <View style={styles.notificationRow}>
-          <ThemedText type="small" secondary>Suhoor Reminder</ThemedText>
+          <ThemedText type="small" secondary>{t('suhoorIftar.suhoorReminder')}</ThemedText>
           <Switch
             value={settings.suhoorNotificationEnabled}
             onValueChange={(value) => updateSettings({ suhoorNotificationEnabled: value })}
@@ -122,7 +124,7 @@ export function SuhoorIftarCard({ onPress }: SuhoorIftarCardProps) {
           />
         </View>
         <View style={styles.notificationRow}>
-          <ThemedText type="small" secondary>Iftar Reminder</ThemedText>
+          <ThemedText type="small" secondary>{t('suhoorIftar.iftarReminder')}</ThemedText>
           <Switch
             value={settings.iftarNotificationEnabled}
             onValueChange={(value) => updateSettings({ iftarNotificationEnabled: value })}

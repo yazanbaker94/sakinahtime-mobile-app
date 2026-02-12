@@ -28,9 +28,11 @@ import { useReadingReminder } from '@/hooks/useReadingReminder';
 import { ProgressCalculator } from '@/services/ProgressCalculator';
 import { DailyGoal } from '@/types/progress';
 import { QURAN_CONSTANTS } from '@/constants/quran-constants';
+import { useTranslation } from '@/hooks/useTranslation';
 
 export default function ProgressScreen() {
   const { theme, isDark } = useTheme();
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const {
@@ -68,7 +70,7 @@ export default function ProgressScreen() {
   const handleSaveGoal = async () => {
     const target = parseInt(goalTarget, 10);
     if (isNaN(target)) {
-      Alert.alert('Invalid Goal', 'Please enter a valid number');
+      Alert.alert(t('progress.invalidGoal'), t('progress.invalidGoalMessage'));
       return;
     }
 
@@ -77,8 +79,8 @@ export default function ProgressScreen() {
 
     if (target < minTarget || target > maxTarget) {
       Alert.alert(
-        'Invalid Goal',
-        `${goalType === 'pages' ? 'Page' : 'Verse'} goal must be between ${minTarget} and ${maxTarget}`
+        t('progress.invalidGoal'),
+        `${goalType === 'pages' ? t('progress.pages') : t('progress.verses')} ${t('progress.goalRange')} ${minTarget} ${t('progress.and')} ${maxTarget}`
       );
       return;
     }
@@ -92,24 +94,24 @@ export default function ProgressScreen() {
       await setDailyGoal(goal);
       setShowGoalSettings(false);
     } catch (error) {
-      Alert.alert('Error', 'Failed to save goal settings');
+      Alert.alert(t('common.error'), t('progress.errorSavingGoal'));
     }
   };
 
   const handleResetProgress = () => {
     Alert.alert(
-      'Reset Progress',
-      'Are you sure you want to reset all reading progress? This cannot be undone.',
+      t('progress.resetAllProgress'),
+      t('progress.resetConfirm'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Reset',
+          text: t('progress.resetButton'),
           style: 'destructive',
           onPress: async () => {
             try {
               await resetProgress();
             } catch (error) {
-              Alert.alert('Error', 'Failed to reset progress');
+              Alert.alert(t('common.error'), t('progress.errorResetting'));
             }
           },
         },
@@ -122,8 +124,8 @@ export default function ProgressScreen() {
       const granted = await requestPermission();
       if (!granted) {
         Alert.alert(
-          'Permission Required',
-          'Please enable notifications in your device settings to use reading reminders.'
+          t('progress.permissionRequired'),
+          t('progress.permissionMessage')
         );
         return;
       }
@@ -135,7 +137,7 @@ export default function ProgressScreen() {
     return (
       <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
         <View style={styles.loadingContainer}>
-          <ThemedText>Loading progress...</ThemedText>
+          <ThemedText>{t('progress.loadingProgress')}</ThemedText>
         </View>
       </ThemedView>
     );
@@ -149,7 +151,7 @@ export default function ProgressScreen() {
           <Feather name="arrow-left" size={24} color={isDark ? '#fff' : '#000'} />
         </Pressable>
         <ThemedText type="h2" style={styles.headerTitle}>
-          Reading Progress
+          {t('progress.readingProgress')}
         </ThemedText>
         <View style={{ width: 40 }} />
       </View>
@@ -158,7 +160,7 @@ export default function ProgressScreen() {
         {/* Overall Progress Card */}
         <View style={[styles.card, { backgroundColor: theme.backgroundSecondary }]}>
           <ThemedText type="h3" style={styles.cardTitle}>
-            Overall Progress
+            {t('progress.overallProgress')}
           </ThemedText>
 
           {/* Circular Progress */}
@@ -167,22 +169,22 @@ export default function ProgressScreen() {
               <ThemedText type="h2" style={styles.progressPercentage}>
                 {stats?.completionPercentage.toFixed(1)}%
               </ThemedText>
-              <ThemedText type="caption">Complete</ThemedText>
+              <ThemedText type="caption">{t('progress.complete')}</ThemedText>
             </View>
           </View>
 
           <View style={styles.statsRow}>
             <View style={styles.statItem}>
               <ThemedText type="h2">{stats?.totalPagesRead || 0}</ThemedText>
-              <ThemedText type="caption">Pages Read</ThemedText>
+              <ThemedText type="caption">{t('progress.pagesRead')}</ThemedText>
             </View>
             <View style={styles.statItem}>
               <ThemedText type="h2">{stats?.juzCompleted || 0}/30</ThemedText>
-              <ThemedText type="caption">Juz Complete</ThemedText>
+              <ThemedText type="caption">{t('progress.juzComplete')}</ThemedText>
             </View>
             <View style={styles.statItem}>
               <ThemedText type="h2">{stats?.khatmCount || 0}</ThemedText>
-              <ThemedText type="caption">Khatm</ThemedText>
+              <ThemedText type="caption">{t('progress.khatm')}</ThemedText>
             </View>
           </View>
         </View>
@@ -190,7 +192,7 @@ export default function ProgressScreen() {
         {/* Today's Progress Card */}
         <View style={[styles.card, { backgroundColor: theme.backgroundSecondary }]}>
           <ThemedText type="h3" style={styles.cardTitle}>
-            Today's Progress
+            {t('progress.todaysProgress')}
           </ThemedText>
 
           <View style={styles.todayStats}>
@@ -202,8 +204,8 @@ export default function ProgressScreen() {
               />
               <ThemedText type="body" style={styles.todayStatText}>
                 {progress?.dailyGoal.type === 'verses'
-                  ? `${todayProgress?.versesRead || 0} verses read`
-                  : `${todayProgress?.pagesRead || 0} pages read`}
+                  ? `${todayProgress?.versesRead || 0} ${t('progress.versesRead')}`
+                  : `${todayProgress?.pagesRead || 0} ${t('progress.pagesReadToday')}`}
               </ThemedText>
             </View>
 
@@ -224,15 +226,15 @@ export default function ProgressScreen() {
             {progress?.dailyGoal.enabled && (
               <ThemedText type="caption">
                 {progress.dailyGoal.type === 'verses'
-                  ? `${todayProgress?.versesRead || 0}/${progress.dailyGoal.target} verses`
-                  : `${todayProgress?.pagesRead || 0}/${progress.dailyGoal.target} pages`}
+                  ? `${todayProgress?.versesRead || 0}/${progress.dailyGoal.target} ${t('progress.verses').toLowerCase()}`
+                  : `${todayProgress?.pagesRead || 0}/${progress.dailyGoal.target} ${t('progress.pages').toLowerCase()}`}
               </ThemedText>
             )}
 
             <ThemedText type="caption" style={{ opacity: 0.7 }}>
               {progress?.dailyGoal.enabled
-                ? `Goal: ${progress.dailyGoal.target} ${progress.dailyGoal.type}/day`
-                : 'No daily goal set'}
+                ? `${t('progress.goal')}: ${progress.dailyGoal.target} ${progress.dailyGoal.type === 'pages' ? t('progress.pages').toLowerCase() : t('progress.verses').toLowerCase()}/${t('prayer.day').toLowerCase()}`
+                : t('progress.noGoalSet')}
             </ThemedText>
           </View>
         </View>
@@ -240,19 +242,19 @@ export default function ProgressScreen() {
         {/* Streak Card */}
         <View style={[styles.card, { backgroundColor: theme.backgroundSecondary }]}>
           <ThemedText type="h3" style={styles.cardTitle}>
-            Reading Streak
+            {t('progress.readingStreak')}
           </ThemedText>
 
           <View style={styles.streakContainer}>
             <View style={styles.streakItem}>
               <Feather name="zap" size={32} color="#F59E0B" />
               <ThemedText type="h2">{stats?.currentStreak || 0}</ThemedText>
-              <ThemedText type="caption">Current Streak</ThemedText>
+              <ThemedText type="caption">{t('progress.currentStreak')}</ThemedText>
             </View>
             <View style={styles.streakItem}>
               <Feather name="award" size={32} color="#8B5CF6" />
               <ThemedText type="h2">{stats?.longestStreak || 0}</ThemedText>
-              <ThemedText type="caption">Longest Streak</ThemedText>
+              <ThemedText type="caption">{t('progress.longestStreak')}</ThemedText>
             </View>
           </View>
         </View>
@@ -261,7 +263,7 @@ export default function ProgressScreen() {
         {weeklyData && (
           <View style={[styles.card, { backgroundColor: theme.backgroundSecondary }]}>
             <ThemedText type="h3" style={styles.cardTitle}>
-              This Week
+              {t('progress.thisWeek')}
             </ThemedText>
 
             <View style={styles.weeklyChart}>
@@ -284,7 +286,7 @@ export default function ProgressScreen() {
             </View>
 
             <ThemedText type="caption" style={styles.weeklyAverage}>
-              Average: {weeklyData.averagePerDay.toFixed(1)} pages/day
+              {t('progress.average')}: {weeklyData.averagePerDay.toFixed(1)} {t('progress.pagesPerDay')}
             </ThemedText>
           </View>
         )}
@@ -296,7 +298,7 @@ export default function ProgressScreen() {
             onPress={() => setShowGoalSettings(!showGoalSettings)}
           >
             <ThemedText type="h3" style={styles.cardTitle}>
-              Daily Goal Settings
+              {t('progress.dailyGoalSettings')}
             </ThemedText>
             <Feather
               name={showGoalSettings ? 'chevron-up' : 'chevron-down'}
@@ -308,7 +310,7 @@ export default function ProgressScreen() {
           {showGoalSettings && (
             <View style={styles.goalSettings}>
               <View style={styles.settingRow}>
-                <ThemedText>Enable Daily Goal</ThemedText>
+                <ThemedText>{t('progress.enableDailyGoal')}</ThemedText>
                 <Switch
                   value={goalEnabled}
                   onValueChange={setGoalEnabled}
@@ -317,7 +319,7 @@ export default function ProgressScreen() {
               </View>
 
               <View style={styles.settingRow}>
-                <ThemedText>Goal Type</ThemedText>
+                <ThemedText>{t('progress.goalType')}</ThemedText>
                 <View style={styles.goalTypeButtons}>
                   <Pressable
                     style={[
@@ -327,7 +329,7 @@ export default function ProgressScreen() {
                     onPress={() => setGoalType('pages')}
                   >
                     <ThemedText style={goalType === 'pages' ? styles.goalTypeTextActive : undefined}>
-                      Pages
+                      {t('progress.pages')}
                     </ThemedText>
                   </Pressable>
                   <Pressable
@@ -338,14 +340,14 @@ export default function ProgressScreen() {
                     onPress={() => setGoalType('verses')}
                   >
                     <ThemedText style={goalType === 'verses' ? styles.goalTypeTextActive : undefined}>
-                      Verses
+                      {t('progress.verses')}
                     </ThemedText>
                   </Pressable>
                 </View>
               </View>
 
               <View style={styles.settingRow}>
-                <ThemedText>Target ({goalType === 'pages' ? '1-20' : '1-100'})</ThemedText>
+                <ThemedText>{t('progress.target')} ({goalType === 'pages' ? '1-20' : '1-100'})</ThemedText>
                 <TextInput
                   style={[styles.goalInput, { color: theme.text }]}
                   value={goalTarget}
@@ -356,7 +358,7 @@ export default function ProgressScreen() {
               </View>
 
               <Pressable style={[styles.saveButton, { backgroundColor: theme.primary }]} onPress={handleSaveGoal}>
-                <ThemedText style={styles.saveButtonText}>Save Goal</ThemedText>
+                <ThemedText style={styles.saveButtonText}>{t('progress.saveGoal')}</ThemedText>
               </Pressable>
             </View>
           )}
@@ -365,11 +367,11 @@ export default function ProgressScreen() {
         {/* Reminder Settings */}
         <View style={[styles.card, { backgroundColor: theme.backgroundSecondary }]}>
           <ThemedText type="h3" style={styles.cardTitle}>
-            Reading Reminder
+            {t('progress.readingReminder')}
           </ThemedText>
 
           <View style={styles.settingRow}>
-            <ThemedText>Enable Reminder</ThemedText>
+            <ThemedText>{t('progress.enableReminder')}</ThemedText>
             <Switch
               value={reminderEnabled}
               onValueChange={handleReminderToggle}
@@ -379,7 +381,7 @@ export default function ProgressScreen() {
 
           {reminderEnabled && (
             <View style={styles.settingRow}>
-              <ThemedText>Reminder Time</ThemedText>
+              <ThemedText>{t('progress.reminderTime')}</ThemedText>
               <Pressable
                 style={[styles.timeButton, { borderColor: theme.border }]}
                 onPress={() => setShowTimePicker(true)}
@@ -402,7 +404,7 @@ export default function ProgressScreen() {
               <View style={styles.timePickerHeader}>
                 <Pressable onPress={() => setShowTimePicker(false)}>
                   <ThemedText style={{ color: theme.primary, fontWeight: '600' }}>
-                    Done
+                    {t('progress.done')}
                   </ThemedText>
                 </Pressable>
               </View>
@@ -458,7 +460,7 @@ export default function ProgressScreen() {
           onPress={handleResetProgress}
         >
           <Feather name="trash-2" size={20} color="#fff" />
-          <ThemedText style={styles.resetButtonText}>Reset All Progress</ThemedText>
+          <ThemedText style={styles.resetButtonText}>{t('progress.resetAllProgress')}</ThemedText>
         </Pressable>
 
         <View style={{ height: insets.bottom + 20 }} />

@@ -15,6 +15,7 @@ import { RootStackParamList } from '@/navigation/RootStackNavigator';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
 import { Spacing, BorderRadius } from '@/constants/theme';
+import { useTranslation } from '@/hooks/useTranslation';
 import { StorageOverview } from '@/components/StorageOverview';
 import { StorageBreakdown } from '@/components/StorageBreakdown';
 import { StorageSettingsCard } from '@/components/StorageSettingsCard';
@@ -29,11 +30,12 @@ export function StorageManagementScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { isDark, theme } = useTheme();
+  const { t } = useTranslation();
   const { isOnline, isWifi, lastOnline } = useNetworkStatus();
-  
+
   const { storageInfo, isLoading, clearCache, refreshStorageInfo } = useOfflineStorage();
   const { settings, updateSettings, isLoading: settingsLoading } = useOfflineSettings();
-  
+
   const [clearing, setClearing] = useState<StorageCategory | null>(null);
 
   // Auto-cleanup orphaned files when screen loads
@@ -51,30 +53,31 @@ export function StorageManagementScreen() {
   }, []);
 
   const handleClearCache = async (category: StorageCategory) => {
-    const categoryNames: Record<StorageCategory, string> = {
-      audio: 'Quran Audio',
-      tafsir: 'Tafsir',
-      prayer: 'Prayer Times Cache',
-      cache: 'Other Cache',
-      all: 'All Cached Data',
+    const categoryNameKeys: Record<StorageCategory, string> = {
+      audio: 'storageAlerts.quranAudio',
+      tafsir: 'storageAlerts.tafsir',
+      prayer: 'storageAlerts.prayerTimesCache',
+      cache: 'storageAlerts.otherCache',
+      all: 'storageAlerts.allCachedData',
     };
+    const categoryName = t(categoryNameKeys[category]);
 
     Alert.alert(
-      `Clear ${categoryNames[category]}?`,
-      category === 'all' 
-        ? 'This will remove all downloaded Quran audio and tafsir. You will need to re-download for offline use.'
-        : `This will remove all ${categoryNames[category].toLowerCase()}. You may need to re-download for offline use.`,
+      t('storageAlerts.clearConfirm', { category: categoryName }),
+      category === 'all'
+        ? t('storageAlerts.clearAllDesc')
+        : t('storageAlerts.clearCategoryDesc', { category: categoryName.toLowerCase() }),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('storageAlerts.cancel'), style: 'cancel' },
         {
-          text: 'Clear',
+          text: t('storageAlerts.clear'),
           style: 'destructive',
           onPress: async () => {
             setClearing(category);
             try {
               await clearCache(category);
             } catch (error) {
-              Alert.alert('Error', 'Failed to clear cache. Please try again.');
+              Alert.alert(t('storageAlerts.error'), t('storageAlerts.failedToClear'));
             } finally {
               setClearing(null);
             }
@@ -98,7 +101,7 @@ export function StorageManagementScreen() {
         <View style={[styles.loadingContainer, { paddingTop: insets.top }]}>
           <ActivityIndicator size="large" color={theme.primary} />
           <ThemedText type="body" secondary style={{ marginTop: Spacing.md }}>
-            Loading storage info...
+            {t('storage.loadingInfo')}
           </ThemedText>
         </View>
       </ThemedView>
@@ -113,10 +116,10 @@ export function StorageManagementScreen() {
           <Feather name="arrow-left" size={24} color={theme.text} />
         </Pressable>
         <ThemedText type="h3" style={{ flex: 1 }}>
-          Storage & Downloads
+          {t('storage.title')}
         </ThemedText>
-        <NetworkStatusBadge 
-          status={{ isConnected: isOnline, isWifi, lastOnline: lastOnline?.getTime() || null }} 
+        <NetworkStatusBadge
+          status={{ isConnected: isOnline, isWifi, lastOnline: lastOnline?.getTime() || null }}
         />
       </View>
 
@@ -134,8 +137,8 @@ export function StorageManagementScreen() {
         {/* Storage Breakdown */}
         {storageInfo && (
           <View style={styles.section}>
-            <StorageBreakdown 
-              storageInfo={storageInfo} 
+            <StorageBreakdown
+              storageInfo={storageInfo}
               onCategoryPress={handleCategoryPress}
             />
           </View>
@@ -144,14 +147,14 @@ export function StorageManagementScreen() {
         {/* Quick Actions */}
         <View style={styles.section}>
           <ThemedText type="body" style={styles.sectionTitle}>
-            Quick Actions
+            {t('storage.quickActions')}
           </ThemedText>
-          
+
           <View style={styles.actionsGrid}>
             <Pressable
               style={({ pressed }) => [
                 styles.actionCard,
-                { 
+                {
                   backgroundColor: isDark ? 'rgba(96, 165, 250, 0.15)' : 'rgba(59, 130, 246, 0.1)',
                   opacity: pressed ? 0.7 : 1,
                 }
@@ -162,17 +165,17 @@ export function StorageManagementScreen() {
                 <Feather name="headphones" size={20} color={isDark ? '#60A5FA' : '#3B82F6'} />
               </View>
               <ThemedText type="small" style={{ fontWeight: '500', marginTop: Spacing.xs }}>
-                Manage Audio
+                {t('storage.manageAudio')}
               </ThemedText>
               <ThemedText type="caption" secondary>
-                Download Quran
+                {t('storage.downloadQuran')}
               </ThemedText>
             </Pressable>
 
             <Pressable
               style={({ pressed }) => [
                 styles.actionCard,
-                { 
+                {
                   backgroundColor: isDark ? 'rgba(248, 113, 113, 0.15)' : 'rgba(239, 68, 68, 0.1)',
                   opacity: pressed ? 0.7 : 1,
                 }
@@ -188,10 +191,10 @@ export function StorageManagementScreen() {
                     <Feather name="trash-2" size={20} color={isDark ? '#F87171' : '#EF4444'} />
                   </View>
                   <ThemedText type="small" style={{ fontWeight: '500', marginTop: Spacing.xs }}>
-                    Clear All
+                    {t('storage.clearAll')}
                   </ThemedText>
                   <ThemedText type="caption" secondary>
-                    Free up space
+                    {t('storage.freeUpSpace')}
                   </ThemedText>
                 </>
               )}
@@ -201,8 +204,8 @@ export function StorageManagementScreen() {
 
         {/* Settings */}
         <View style={styles.section}>
-          <StorageSettingsCard 
-            settings={settings} 
+          <StorageSettingsCard
+            settings={settings}
             onSettingsChange={updateSettings}
           />
         </View>
@@ -211,27 +214,27 @@ export function StorageManagementScreen() {
         <Pressable
           style={({ pressed }) => [
             styles.refreshButton,
-            { 
+            {
               backgroundColor: `${theme.primary}26`,
               opacity: pressed ? 0.7 : 1,
             }
           ]}
           onPress={refreshStorageInfo}
         >
-          <Feather 
-            name="refresh-cw" 
-            size={16} 
-            color={theme.primary} 
+          <Feather
+            name="refresh-cw"
+            size={16}
+            color={theme.primary}
           />
-          <ThemedText 
-            type="small" 
-            style={{ 
+          <ThemedText
+            type="small"
+            style={{
               color: theme.primary,
               marginLeft: Spacing.xs,
               fontWeight: '500',
             }}
           >
-            Refresh Storage Info
+            {t('storage.refreshInfo')}
           </ThemedText>
         </Pressable>
       </ScrollView>

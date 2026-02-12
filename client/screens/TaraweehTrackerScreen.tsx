@@ -13,6 +13,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { Card } from '@/components/Card';
 import { useTheme } from '@/hooks/useTheme';
+import { useTranslation } from '@/hooks/useTranslation';
 import { useTaraweehTracker } from '@/hooks/useTaraweehTracker';
 import { useRamadan } from '@/contexts/RamadanContext';
 import { RAMADAN_DAYS } from '@/constants/ramadan';
@@ -24,6 +25,7 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 export default function TaraweehTrackerScreen() {
   const insets = useSafeAreaInsets();
   const { isDark, theme } = useTheme();
+  const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const { currentDay } = useRamadan();
   const { entries, stats } = useTaraweehTracker();
@@ -36,7 +38,7 @@ export default function TaraweehTrackerScreen() {
 
   const handleDayPress = (day: number) => {
     if (currentDay === null || day > currentDay) return;
-    
+
     const existingEntry = entriesByDay.get(day);
     navigation.navigate('LogTaraweeh', { day, existingEntry });
   };
@@ -44,7 +46,7 @@ export default function TaraweehTrackerScreen() {
   const renderCalendarGrid = () => {
     const days = Array.from({ length: RAMADAN_DAYS }, (_, i) => i + 1);
     const rows: number[][] = [];
-    
+
     for (let i = 0; i < days.length; i += 7) {
       rows.push(days.slice(i, i + 7));
     }
@@ -116,7 +118,7 @@ export default function TaraweehTrackerScreen() {
           <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
             <Feather name="arrow-left" size={24} color={theme.text} />
           </Pressable>
-          <ThemedText type="h2" style={styles.title}>Taraweeh Tracker</ThemedText>
+          <ThemedText type="h2" style={styles.title}>{t('taraweeh.title')}</ThemedText>
           <View style={{ width: 24 }} />
         </View>
 
@@ -125,33 +127,33 @@ export default function TaraweehTrackerScreen() {
           <View style={[styles.statCard, { backgroundColor: theme.cardBackground }]}>
             <Feather name="check-circle" size={20} color={theme.primary} />
             <ThemedText type="h3" style={{ color: theme.primary }}>{stats.nightsCompleted}</ThemedText>
-            <ThemedText type="caption" secondary>Nights</ThemedText>
+            <ThemedText type="caption" secondary>{t('taraweeh.nights')}</ThemedText>
           </View>
           <View style={[styles.statCard, { backgroundColor: theme.cardBackground }]}>
             <Feather name="zap" size={20} color={streakColor} />
             <ThemedText type="h3" style={{ color: streakColor }}>{stats.currentStreak}</ThemedText>
-            <ThemedText type="caption" secondary>Streak</ThemedText>
+            <ThemedText type="caption" secondary>{t('taraweeh.streak')}</ThemedText>
           </View>
           <View style={[styles.statCard, { backgroundColor: theme.cardBackground }]}>
             <Feather name="award" size={20} color={accentColor} />
             <ThemedText type="h3" style={{ color: accentColor }}>{stats.bestStreak}</ThemedText>
-            <ThemedText type="caption" secondary>Best</ThemedText>
+            <ThemedText type="caption" secondary>{t('taraweeh.best')}</ThemedText>
           </View>
         </View>
 
         {/* Calendar */}
         <Card elevation={2} style={styles.calendarCard}>
-          <ThemedText type="h4" style={styles.calendarTitle}>Ramadan Calendar</ThemedText>
-          
+          <ThemedText type="h4" style={styles.calendarTitle}>{t('taraweeh.ramadanCalendar')}</ThemedText>
+
           {/* Legend */}
           <View style={styles.legend}>
             <View style={styles.legendItem}>
               <View style={[styles.legendDot, { backgroundColor: theme.primary }]} />
-              <ThemedText type="caption" secondary>Mosque</ThemedText>
+              <ThemedText type="caption" secondary>{t('logTaraweeh.mosque')}</ThemedText>
             </View>
             <View style={styles.legendItem}>
               <View style={[styles.legendDot, { backgroundColor: accentColor }]} />
-              <ThemedText type="caption" secondary>Home</ThemedText>
+              <ThemedText type="caption" secondary>{t('logTaraweeh.home')}</ThemedText>
             </View>
           </View>
 
@@ -160,23 +162,23 @@ export default function TaraweehTrackerScreen() {
 
         {/* Location Breakdown */}
         <Card elevation={2}>
-          <ThemedText type="h4" style={styles.sectionTitle}>Location Breakdown</ThemedText>
+          <ThemedText type="h4" style={styles.sectionTitle}>{t('taraweeh.locationBreakdown')}</ThemedText>
           <View style={styles.breakdownRow}>
             <View style={styles.breakdownItem}>
               <Feather name="map-pin" size={20} color={theme.primary} />
               <ThemedText type="h3" style={{ marginLeft: Spacing.sm }}>{stats.mosqueNights}</ThemedText>
-              <ThemedText type="body" secondary style={{ marginLeft: Spacing.xs }}>at Mosque</ThemedText>
+              <ThemedText type="body" secondary style={{ marginLeft: Spacing.xs }}>{t('taraweeh.atMosque')}</ThemedText>
             </View>
             <View style={styles.breakdownItem}>
               <Feather name="home" size={20} color={accentColor} />
               <ThemedText type="h3" style={{ marginLeft: Spacing.sm }}>{stats.homeNights}</ThemedText>
-              <ThemedText type="body" secondary style={{ marginLeft: Spacing.xs }}>at Home</ThemedText>
+              <ThemedText type="body" secondary style={{ marginLeft: Spacing.xs }}>{t('taraweeh.atHome')}</ThemedText>
             </View>
           </View>
-          
+
           {/* Completion Rate */}
           <View style={styles.completionSection}>
-            <ThemedText type="small" secondary>Completion Rate</ThemedText>
+            <ThemedText type="small" secondary>{t('taraweeh.completionRate')}</ThemedText>
             <View style={[styles.progressBar, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }]}>
               <View
                 style={[styles.progressFill, { width: `${stats.completionRate}%`, backgroundColor: accentColor }]}

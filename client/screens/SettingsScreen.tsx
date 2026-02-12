@@ -13,13 +13,15 @@ import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { ThemePicker } from "@/components/ThemePicker";
 import { useNotifications } from "@/hooks/useNotifications";
+import { useTranslation } from "@/hooks/useTranslation";
+import { SUPPORTED_LANGUAGES } from "@/i18n";
 
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
   const tabBarHeight = useBottomTabBarHeight();
   const { theme, isDark } = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-
+  const { t, locale } = useTranslation();
   const { settings: notificationSettings } = useNotifications();
 
   return (
@@ -48,15 +50,55 @@ export default function SettingsScreen() {
                 </View>
                 <View style={styles.settingText}>
                   <ThemedText type="body" style={{ fontWeight: '600' }}>
-                    Appearance
+                    {t('settings.appearance')}
                   </ThemedText>
                   <ThemedText type="caption" secondary>
-                    Customize your theme
+                    {t('settings.customizeTheme')}
                   </ThemedText>
                 </View>
               </View>
             </View>
             <ThemePicker />
+          </View>
+        </View>
+
+        {/* Language Section */}
+        <View style={styles.section}>
+          <View style={[styles.card, {
+            backgroundColor: isDark ? `${theme.primary}33` : theme.cardBackground,
+            elevation: isDark ? 0 : 3,
+            shadowOpacity: isDark ? 0 : 0.08,
+          }]}>
+            <Pressable
+              onPress={() => {
+                if (Platform.OS !== "web") {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                }
+                navigation.navigate('LanguageSelector');
+              }}
+              style={({ pressed }) => [
+                styles.settingRow,
+                { opacity: pressed ? 0.7 : 1 },
+              ]}
+            >
+              <View style={styles.settingLeft}>
+                <View style={[styles.iconCircle, { backgroundColor: `${theme.primary}26` }]}>
+                  <Feather name="globe" size={20} color={theme.primary} />
+                </View>
+                <View style={styles.settingText}>
+                  <ThemedText type="body" style={{ fontWeight: '600' }}>
+                    {t('settings.language')}
+                  </ThemedText>
+                  <ThemedText type="caption" secondary>
+                    {(() => {
+                      const currentLang = SUPPORTED_LANGUAGES.find(l => l.code === locale);
+                      return currentLang ? `${currentLang.flag} ${currentLang.nativeName}` : t('settings.chooseLanguage');
+                    })()}
+                  </ThemedText>
+                </View>
+              </View>
+              <Feather name="chevron-right" size={20} color={theme.textSecondary} />
+            </Pressable>
           </View>
         </View>
 
@@ -85,10 +127,10 @@ export default function SettingsScreen() {
                 </View>
                 <View style={styles.settingText}>
                   <ThemedText type="body" style={{ fontWeight: '600' }}>
-                    Prayer & Fasting
+                    {t('settings.prayerFasting')}
                   </ThemedText>
                   <ThemedText type="caption" secondary>
-                    Notifications, azan, and reminders
+                    {t('settings.notificationsAzanReminders')}
                   </ThemedText>
                 </View>
               </View>
@@ -122,10 +164,10 @@ export default function SettingsScreen() {
                 </View>
                 <View style={styles.settingText}>
                   <ThemedText type="body" style={{ fontWeight: '600' }}>
-                    Storage & Downloads
+                    {t('settings.storageDownloads')}
                   </ThemedText>
                   <ThemedText type="caption" secondary>
-                    Manage offline content
+                    {t('settings.manageOfflineContent')}
                   </ThemedText>
                 </View>
               </View>
@@ -159,10 +201,10 @@ export default function SettingsScreen() {
                 </View>
                 <View style={styles.settingText}>
                   <ThemedText type="body" style={{ fontWeight: '600' }}>
-                    Word by Word
+                    {t('settings.wordByWord')}
                   </ThemedText>
                   <ThemedText type="caption" secondary>
-                    Translation language
+                    {t('settings.translationLanguage')}
                   </ThemedText>
                 </View>
               </View>
@@ -196,10 +238,10 @@ export default function SettingsScreen() {
                 </View>
                 <View style={styles.settingText}>
                   <ThemedText type="body" style={{ fontWeight: '600' }}>
-                    Dhikr Reminders
+                    {t('settings.dhikrReminders')}
                   </ThemedText>
                   <ThemedText type="caption" secondary>
-                    Floating overlay reminders
+                    {t('settings.floatingOverlay')}
                   </ThemedText>
                 </View>
               </View>
@@ -237,10 +279,10 @@ export default function SettingsScreen() {
                 </View>
                 <View style={styles.settingText}>
                   <ThemedText type="body" style={{ fontWeight: '600' }}>
-                    Feedback & Suggestions
+                    {t('settings.feedbackSuggestions')}
                   </ThemedText>
                   <ThemedText type="caption" secondary>
-                    Help us improve the app
+                    {t('settings.helpImprove')}
                   </ThemedText>
                 </View>
               </View>

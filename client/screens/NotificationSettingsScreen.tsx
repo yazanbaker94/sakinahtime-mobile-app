@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { View, StyleSheet, ScrollView, Pressable, Switch, Platform } from "react-native";
+import { View, StyleSheet, ScrollView, Pressable, Switch, Platform, NativeModules, Alert } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -17,6 +17,7 @@ import { usePrayerAdjustments, PrayerAdjustments } from "@/hooks/usePrayerAdjust
 import { FastingNotificationSettings } from "@/components/FastingNotificationSettings";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const PRAYERS = [
   { key: "Fajr", nameEn: "Fajr", nameAr: "الفجر" },
@@ -30,6 +31,7 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function NotificationSettingsScreen() {
   const { isDark, theme } = useTheme();
+  const { t, locale } = useTranslation();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<RouteProp<RootStackParamList, 'NotificationSettings'>>();
@@ -116,7 +118,7 @@ export default function NotificationSettingsScreen() {
           <Feather name="arrow-left" size={24} color={theme.text} />
         </Pressable>
         <ThemedText type="h3" style={{ fontWeight: '700' }}>
-          Notification Settings
+          {t('notifications.title')}
         </ThemedText>
         <View style={{ width: 24 }} />
       </View>
@@ -141,9 +143,9 @@ export default function NotificationSettingsScreen() {
                 <Feather name="bell" size={20} color={theme.primary} />
               </View>
               <View style={styles.settingText}>
-                <ThemedText type="body" style={{ fontWeight: '600' }}>Prayer Notifications</ThemedText>
+                <ThemedText type="body" style={{ fontWeight: '600' }}>{t('notifications.prayerNotifications')}</ThemedText>
                 <ThemedText type="small" secondary>
-                  Get notified when it's time to pray
+                  {t('notifications.getNotified')}
                 </ThemedText>
               </View>
             </View>
@@ -160,7 +162,7 @@ export default function NotificationSettingsScreen() {
             <View style={styles.prayerNotifications}>
               {PRAYERS.map((prayer) => (
                 <View key={prayer.key} style={styles.prayerNotificationRow}>
-                  <ThemedText type="body">{prayer.nameEn} - {prayer.nameAr}</ThemedText>
+                  <ThemedText type="body">{t(`prayer.${prayer.key.toLowerCase()}`)}</ThemedText>
                   <Switch
                     value={notificationSettings.prayers[prayer.key as keyof typeof notificationSettings.prayers]}
                     onValueChange={(value) => togglePrayerNotification(prayer.key as keyof typeof notificationSettings.prayers, value)}
@@ -187,9 +189,9 @@ export default function NotificationSettingsScreen() {
                 <Feather name="volume-2" size={20} color={theme.primary} />
               </View>
               <View style={styles.settingText}>
-                <ThemedText type="body" style={{ fontWeight: '600' }}>Azan Sound</ThemedText>
+                <ThemedText type="body" style={{ fontWeight: '600' }}>{t('notifications.azanSound')}</ThemedText>
                 <ThemedText type="small" secondary>
-                  Play azan when prayer time arrives
+                  {t('notifications.playAzanWhenPrayerTime')}
                 </ThemedText>
               </View>
             </View>
@@ -205,11 +207,11 @@ export default function NotificationSettingsScreen() {
           {azanSettings.enabled && (
             <View style={styles.prayerNotifications}>
               <ThemedText type="small" secondary style={{ marginBottom: 8 }}>
-                Select which prayers play azan sound
+                {t('notifications.selectPrayersForAzan')}
               </ThemedText>
               {PRAYERS.map((prayer) => (
                 <View key={prayer.key} style={styles.prayerNotificationRow}>
-                  <ThemedText type="body">{prayer.nameEn} - {prayer.nameAr}</ThemedText>
+                  <ThemedText type="body">{t(`prayer.${prayer.key.toLowerCase()}`)}</ThemedText>
                   <Switch
                     value={azanSettings.prayers[prayer.key as keyof typeof azanSettings.prayers]}
                     onValueChange={(value) => togglePrayerAzan(prayer.key as keyof typeof azanSettings.prayers, value)}
@@ -236,9 +238,9 @@ export default function NotificationSettingsScreen() {
                 <Feather name="bell" size={20} color={theme.gold} />
               </View>
               <View style={styles.settingText}>
-                <ThemedText type="body" style={{ fontWeight: '600' }}>Iqama Reminder</ThemedText>
+                <ThemedText type="body" style={{ fontWeight: '600' }}>{t('notifications.iqamaReminder')}</ThemedText>
                 <ThemedText type="small" secondary>
-                  Play "Haya Al Salat" before prayer
+                  {t('notifications.playHayaAlSalat')}
                 </ThemedText>
               </View>
             </View>
@@ -257,9 +259,9 @@ export default function NotificationSettingsScreen() {
                 <View style={styles.settingInfo}>
                   <View style={{ width: 44 }} />
                   <View style={styles.settingText}>
-                    <ThemedText type="body">Reminder Delay</ThemedText>
+                    <ThemedText type="body">{t('notifications.reminderDelay')}</ThemedText>
                     <ThemedText type="small" secondary>
-                      {iqamaSettings.delayMinutes} minutes after Azan
+                      {iqamaSettings.delayMinutes} {t('notifications.minutesAfterAzan')}
                     </ThemedText>
                   </View>
                 </View>
@@ -278,7 +280,7 @@ export default function NotificationSettingsScreen() {
                       }}
                       style={[styles.delayItem, iqamaSettings.delayMinutes === delay && { backgroundColor: `${theme.primary}15` }]}
                     >
-                      <ThemedText type="body">{delay} minutes</ThemedText>
+                      <ThemedText type="body">{delay} {t('notifications.minutes')}</ThemedText>
                       {iqamaSettings.delayMinutes === delay && <Feather name="check" size={20} color={theme.primary} />}
                     </Pressable>
                   ))}
@@ -290,9 +292,9 @@ export default function NotificationSettingsScreen() {
                 <View style={styles.settingInfo}>
                   <View style={{ width: 44 }} />
                   <View style={styles.settingText}>
-                    <ThemedText type="body">Prayer Selection</ThemedText>
+                    <ThemedText type="body">{t('notifications.prayerSelection')}</ThemedText>
                     <ThemedText type="small" secondary>
-                      Choose which prayers get iqama
+                      {t('notifications.choosePrayersForIqama')}
                     </ThemedText>
                   </View>
                 </View>
@@ -303,7 +305,7 @@ export default function NotificationSettingsScreen() {
                 <View style={styles.iqamaPrayerToggles}>
                   {PRAYERS.map((prayer) => (
                     <View key={`iqama-${prayer.key}`} style={styles.prayerNotificationRow}>
-                      <ThemedText type="body">{prayer.nameEn} - {prayer.nameAr}</ThemedText>
+                      <ThemedText type="body">{t(`prayer.${prayer.key.toLowerCase()}`)}</ThemedText>
                       <Switch
                         value={iqamaSettings.prayers[prayer.key as keyof IqamaSettings["prayers"]]}
                         onValueChange={(value) => togglePrayerIqama(prayer.key as keyof IqamaSettings["prayers"], value)}
@@ -332,9 +334,9 @@ export default function NotificationSettingsScreen() {
                 <Feather name="clock" size={20} color={theme.gold} />
               </View>
               <View style={styles.settingText}>
-                <ThemedText type="body" style={{ fontWeight: '600' }}>Time Adjustments</ThemedText>
+                <ThemedText type="body" style={{ fontWeight: '600' }}>{t('notifications.timeAdjustments')}</ThemedText>
                 <ThemedText type="small" secondary>
-                  Fine-tune prayer times (±30 min)
+                  {t('notifications.timeAdjustmentsFineTune')}
                 </ThemedText>
               </View>
             </View>
@@ -347,7 +349,7 @@ export default function NotificationSettingsScreen() {
                 const adjustment = prayerAdjustments[prayer.key as keyof PrayerAdjustments];
                 return (
                   <View key={prayer.key} style={styles.adjustmentRow}>
-                    <ThemedText type="body" style={{ flex: 1 }}>{prayer.nameEn}</ThemedText>
+                    <ThemedText type="body" style={{ flex: 1 }}>{t(`prayer.${prayer.key.toLowerCase()}`)}</ThemedText>
                     <View style={styles.adjustmentControls}>
                       <Pressable
                         onPress={() => handleAdjustPrayerTime(prayer.key as keyof PrayerAdjustments, adjustment - 1)}
@@ -357,7 +359,7 @@ export default function NotificationSettingsScreen() {
                       </Pressable>
                       <View style={[styles.adjustmentValue, { backgroundColor: theme.backgroundSecondary }]}>
                         <ThemedText type="body" style={{ fontWeight: '700', minWidth: 50, textAlign: 'center' }}>
-                          {adjustment > 0 ? '+' : ''}{adjustment} min
+                          {adjustment > 0 ? '+' : ''}{adjustment} {t('notifications.min')}
                         </ThemedText>
                       </View>
                       <Pressable
@@ -391,13 +393,13 @@ export default function NotificationSettingsScreen() {
                 <Feather name="book" size={20} color={isDark ? '#60A5FA' : '#3B82F6'} />
               </View>
               <View style={styles.settingText}>
-                <ThemedText type="body" style={{ fontWeight: '600' }}>Calculation Method</ThemedText>
+                <ThemedText type="body" style={{ fontWeight: '600' }}>{t('notifications.calculationMethod')}</ThemedText>
                 <ThemedText type="small" secondary>
-                  {CALCULATION_METHODS.find(m => m.id === calculationMethod)?.name || "ISNA"}
+                  {(() => { const m = CALCULATION_METHODS.find(m => m.id === calculationMethod); return m ? t(`calculationMethods.${m.localeKey}`) || m.name : 'ISNA'; })()}
                 </ThemedText>
                 {!isManuallySet && (
                   <ThemedText type="caption" style={{ color: theme.primary, marginTop: 2 }}>
-                    ✓ Auto-detected for {country || 'your region'}
+                    ✓ {t('notifications.autoDetectedFor')} {country || 'your region'}
                   </ThemedText>
                 )}
               </View>
@@ -410,9 +412,9 @@ export default function NotificationSettingsScreen() {
               {/* Auto-detect toggle */}
               <View style={[styles.autoDetectRow, { borderBottomWidth: 1, borderBottomColor: 'rgba(0,0,0,0.06)', paddingBottom: Spacing.md, marginBottom: Spacing.sm }]}>
                 <View style={{ flex: 1 }}>
-                  <ThemedText type="body" style={{ fontWeight: '500' }}>Auto-detect by location</ThemedText>
+                  <ThemedText type="body" style={{ fontWeight: '500' }}>{t('notifications.autoDetectByLocation')}</ThemedText>
                   <ThemedText type="caption" secondary>
-                    Recommended: {CALCULATION_METHODS.find(m => m.id === recommendedMethod)?.name || 'Muslim World League'}
+                    {t('notifications.recommended')}: {(() => { const m = CALCULATION_METHODS.find(m => m.id === recommendedMethod); return m ? t(`calculationMethods.${m.localeKey}`) || m.name : 'Muslim World League'; })()}
                   </ThemedText>
                 </View>
                 <Pressable
@@ -425,7 +427,7 @@ export default function NotificationSettingsScreen() {
                   style={[styles.autoDetectButton, { backgroundColor: !isManuallySet ? `${theme.primary}20` : theme.backgroundSecondary }]}
                 >
                   <ThemedText type="small" style={{ color: !isManuallySet ? theme.primary : theme.textSecondary, fontWeight: '600' }}>
-                    {!isManuallySet ? 'Active' : 'Use Auto'}
+                    {!isManuallySet ? t('notifications.active') : t('notifications.useAuto')}
                   </ThemedText>
                 </Pressable>
               </View>
@@ -440,7 +442,7 @@ export default function NotificationSettingsScreen() {
                   }}
                   style={[styles.methodItem, calculationMethod === method.id && { backgroundColor: `${theme.primary}15` }]}
                 >
-                  <ThemedText type="body">{method.name}</ThemedText>
+                  <ThemedText type="body">{t(`calculationMethods.${method.localeKey}`) || method.name}</ThemedText>
                   {calculationMethod === method.id && <Feather name="check" size={20} color={theme.primary} />}
                 </Pressable>
               ))}

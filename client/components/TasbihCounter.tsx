@@ -9,6 +9,7 @@ import { View, StyleSheet, Pressable, Animated, Alert } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
+import { useTranslation } from '@/hooks/useTranslation';
 import { Spacing, BorderRadius } from '@/constants/theme';
 import { useTasbihCounter } from '@/hooks/useTasbihCounter';
 
@@ -24,6 +25,7 @@ export function TasbihCounter({
   onCountChange,
 }: TasbihCounterProps) {
   const { isDark, theme } = useTheme();
+  const { t } = useTranslation();
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const countAnim = useRef(new Animated.Value(0)).current;
 
@@ -70,12 +72,12 @@ export function TasbihCounter({
 
   const handleLongPress = useCallback(() => {
     Alert.alert(
-      'Reset Counter',
-      'Are you sure you want to reset the counter to 0?',
+      t('tasbih.resetCounter'),
+      t('tasbih.resetConfirm'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('tasbih.cancel'), style: 'cancel' },
         {
-          text: 'Reset',
+          text: t('tasbih.reset'),
           style: 'destructive',
           onPress: () => {
             reset();
@@ -101,13 +103,13 @@ export function TasbihCounter({
             color={theme.primary}
           />
           <ThemedText type="body" style={styles.title}>
-            Tasbih Counter
+            {t('tasbih.title')}
           </ThemedText>
         </View>
         {target && (
           <View style={[styles.targetBadge, { backgroundColor: `${theme.primary}1A` }]}>
             <ThemedText type="caption" style={{ color: theme.primary }}>
-              Target: {target}
+              {t('tasbih.target')}: {target}
             </ThemedText>
           </View>
         )}
@@ -138,7 +140,7 @@ export function TasbihCounter({
               {count}
             </ThemedText>
           </Animated.View>
-          
+
           {/* Progress indicator */}
           {target && (
             <View style={styles.progressContainer}>
@@ -169,7 +171,7 @@ export function TasbihCounter({
       {/* Instructions */}
       <View style={styles.instructions}>
         <ThemedText type="caption" secondary style={styles.instructionText}>
-          Tap to count • Hold to reset
+          {t('tasbih.tapToCount')}
         </ThemedText>
       </View>
 
@@ -181,7 +183,7 @@ export function TasbihCounter({
             type="small"
             style={{ color: theme.primary, marginLeft: Spacing.xs }}
           >
-            Target reached!
+            {t('tasbih.targetReached')}
           </ThemedText>
         </View>
       )}

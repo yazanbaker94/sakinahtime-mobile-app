@@ -9,6 +9,7 @@ import { View, StyleSheet, Pressable } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
+import { useTranslation } from '@/hooks/useTranslation';
 import { Spacing, BorderRadius } from '@/constants/theme';
 import { Dua } from '@/types/dua';
 
@@ -19,6 +20,7 @@ interface DuaOfTheDayProps {
 
 export function DuaOfTheDay({ dua, onPress }: DuaOfTheDayProps) {
   const { theme } = useTheme();
+  const { t } = useTranslation();
 
   // Get source text
   const getSourceText = (): string => {
@@ -28,7 +30,7 @@ export function DuaOfTheDay({ dua, onPress }: DuaOfTheDayProps) {
     if (dua.source === 'hadith' && dua.hadithSource) {
       return dua.hadithSource;
     }
-    return 'Islamic Supplication';
+    return t('duaOfDay.islamicSupplication');
   };
 
   return (
@@ -36,7 +38,7 @@ export function DuaOfTheDay({ dua, onPress }: DuaOfTheDayProps) {
       onPress={onPress}
       style={({ pressed }) => [
         styles.container,
-        { 
+        {
           backgroundColor: `${theme.primary}1A`,
           opacity: pressed ? 0.8 : 1,
         }
@@ -52,22 +54,22 @@ export function DuaOfTheDay({ dua, onPress }: DuaOfTheDayProps) {
         </View>
         <View style={styles.headerText}>
           <ThemedText type="body" style={{ fontWeight: '600' }}>
-            Dua of the Day
+            {t('duaOfDay.title')}
           </ThemedText>
           <ThemedText type="caption" secondary>
             {getSourceText()}
           </ThemedText>
         </View>
-        <Feather 
-          name="chevron-right" 
-          size={20} 
-          color={theme.textSecondary} 
+        <Feather
+          name="chevron-right"
+          size={20}
+          color={theme.textSecondary}
         />
       </View>
 
       {/* Arabic Preview */}
-      <ThemedText 
-        type="arabic" 
+      <ThemedText
+        type="arabic"
         style={[styles.arabicText, { fontFamily: 'AlMushafQuran' }]}
         numberOfLines={2}
       >
@@ -75,9 +77,9 @@ export function DuaOfTheDay({ dua, onPress }: DuaOfTheDayProps) {
       </ThemedText>
 
       {/* Translation Preview */}
-      <ThemedText 
-        type="small" 
-        secondary 
+      <ThemedText
+        type="small"
+        secondary
         style={styles.translation}
         numberOfLines={2}
       >
@@ -86,11 +88,11 @@ export function DuaOfTheDay({ dua, onPress }: DuaOfTheDayProps) {
 
       {/* Tap hint */}
       <View style={styles.tapHint}>
-        <ThemedText 
-          type="caption" 
+        <ThemedText
+          type="caption"
           style={{ color: theme.primary }}
         >
-          Tap to read full dua
+          {t('duaOfDay.tapToRead')}
         </ThemedText>
       </View>
     </Pressable>

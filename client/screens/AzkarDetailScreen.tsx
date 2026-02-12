@@ -6,10 +6,12 @@ import { ThemedView } from "@/components/ThemedView";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Spacing, Colors, BorderRadius } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
+import { useTranslation } from "@/hooks/useTranslation";
 import { azkarData, Dhikr } from "@/data/azkar";
 import { Feather } from "@expo/vector-icons";
-import { useRoute, useNavigation } from "@react-navigation/native";
+import { useRoute, useNavigation, CompositeNavigationProp } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/navigation/RootStackNavigator";
 
 type AzkarDetailRouteProp = RouteProp<RootStackParamList, "AzkarDetail">;
@@ -23,6 +25,7 @@ const STORAGE_KEYS = {
 export default function AzkarDetailScreen() {
   const insets = useSafeAreaInsets();
   const { theme, isDark } = useTheme();
+  const { t, locale } = useTranslation();
   const route = useRoute<AzkarDetailRouteProp>();
   const navigation = useNavigation();
   const { category } = route.params;
@@ -167,7 +170,7 @@ export default function AzkarDetailScreen() {
               {isQuran && (
                 <View style={[styles.quranBadge, { backgroundColor: `${theme.gold}15` }]}>
                   <ThemedText type="caption" style={{ color: theme.gold, fontWeight: '600' }}>
-                    Quran
+                    {t('azkarDetail.quran')}
                   </ThemedText>
                 </View>
               )}
@@ -207,57 +210,59 @@ export default function AzkarDetailScreen() {
               </View>
             ) : <View />}
 
-            {showCounter ? (
-              <View style={styles.counterContainer}>
-                <Pressable
-                  onPress={(e) => {
-                    e.stopPropagation();
-                    resetCounter(item.id);
-                  }}
-                  style={[styles.resetButton, {
-                    backgroundColor: isDark ? 'rgba(239, 68, 68, 0.15)' : 'rgba(220, 38, 38, 0.1)',
-                  }]}
-                  hitSlop={8}
-                >
-                  <Feather name="rotate-ccw" size={12} color={isDark ? '#EF4444' : '#DC2626'} />
-                </Pressable>
-                <View style={[styles.counterBadge, {
-                  backgroundColor: `${theme.primary}20`,
-                  borderColor: theme.primary,
-                }]}>
-                  {isComplete && (
-                    <Feather
-                      name="check"
-                      size={14}
-                      color={theme.primary}
-                      style={{ marginRight: 4 }}
-                    />
-                  )}
-                  <ThemedText
-                    type="body"
-                    style={{
-                      color: theme.primary,
-                      fontWeight: '700',
-                      fontSize: 16,
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing.sm }}>
+              {showCounter ? (
+                <View style={styles.counterContainer}>
+                  <Pressable
+                    onPress={(e) => {
+                      e.stopPropagation();
+                      resetCounter(item.id);
                     }}
+                    style={[styles.resetButton, {
+                      backgroundColor: isDark ? 'rgba(239, 68, 68, 0.15)' : 'rgba(220, 38, 38, 0.1)',
+                    }]}
+                    hitSlop={8}
                   >
-                    {currentCount}
-                  </ThemedText>
-                  {targetCount > 0 && (
+                    <Feather name="rotate-ccw" size={12} color={isDark ? '#EF4444' : '#DC2626'} />
+                  </Pressable>
+                  <View style={[styles.counterBadge, {
+                    backgroundColor: `${theme.primary}20`,
+                    borderColor: theme.primary,
+                  }]}>
+                    {isComplete && (
+                      <Feather
+                        name="check"
+                        size={14}
+                        color={theme.primary}
+                        style={{ marginRight: 4 }}
+                      />
+                    )}
                     <ThemedText
-                      type="caption"
+                      type="body"
                       style={{
                         color: theme.primary,
-                        marginLeft: 4,
-                        opacity: 0.7,
+                        fontWeight: '700',
+                        fontSize: 16,
                       }}
                     >
-                      / {targetCount}
+                      {currentCount}
                     </ThemedText>
-                  )}
+                    {targetCount > 0 && (
+                      <ThemedText
+                        type="caption"
+                        style={{
+                          color: theme.primary,
+                          marginLeft: 4,
+                          opacity: 0.7,
+                        }}
+                      >
+                        / {targetCount}
+                      </ThemedText>
+                    )}
+                  </View>
                 </View>
-              </View>
-            ) : null}
+              ) : null}
+            </View>
           </View>
         </Pressable>
       );
@@ -284,7 +289,7 @@ export default function AzkarDetailScreen() {
           </Pressable>
           <View style={styles.headerInfo}>
             <ThemedText type="h3" style={{ fontWeight: "700", flex: 1 }} numberOfLines={1}>
-              {category.titleEn}
+              {t(`azkarCategories.${category.id}`)}
             </ThemedText>
             <ThemedText type="arabic" secondary style={{ fontSize: 16, fontFamily: 'AlMushafQuran', marginLeft: Spacing.sm }}>
               {category.titleAr}
@@ -315,7 +320,7 @@ export default function AzkarDetailScreen() {
                   : theme.textSecondary,
               }}
             >
-              Translit
+              {t('azkarDetail.translit')}
             </ThemedText>
           </Pressable>
 
@@ -342,7 +347,7 @@ export default function AzkarDetailScreen() {
                   : theme.textSecondary,
               }}
             >
-              English
+              {t('azkarDetail.english')}
             </ThemedText>
           </Pressable>
 
@@ -369,7 +374,7 @@ export default function AzkarDetailScreen() {
                   : theme.textSecondary,
               }}
             >
-              Counter
+              {t('azkarDetail.counter')}
             </ThemedText>
           </Pressable>
         </View>

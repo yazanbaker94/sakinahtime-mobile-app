@@ -12,6 +12,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { Card } from '@/components/Card';
 import { useTheme } from '@/hooks/useTheme';
+import { useTranslation } from '@/hooks/useTranslation';
 import { useCharityTracker } from '@/hooks/useCharityTracker';
 import { CharityType } from '@/types/ramadan';
 import { Spacing, BorderRadius } from '@/constants/theme';
@@ -27,6 +28,7 @@ const CHARITY_TYPES: { value: CharityType; label: string; icon: string }[] = [
 export default function AddDonationScreen() {
   const insets = useSafeAreaInsets();
   const { isDark, theme } = useTheme();
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const { addEntry } = useCharityTracker();
 
@@ -59,7 +61,7 @@ export default function AddDonationScreen() {
         <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
           <Feather name="arrow-left" size={24} color={theme.text} />
         </Pressable>
-        <ThemedText type="h2" style={styles.title}>Add Donation</ThemedText>
+        <ThemedText type="h2" style={styles.title}>{t('donation.addTitle')}</ThemedText>
         <View style={{ width: 24 }} />
       </View>
 
@@ -70,7 +72,7 @@ export default function AddDonationScreen() {
         keyboardDismissMode="interactive"
       >
         <Card elevation={2} style={styles.card} onPress={Keyboard.dismiss}>
-          <ThemedText type="body" style={styles.label}>Type</ThemedText>
+          <ThemedText type="body" style={styles.label}>{t('donation.type')}</ThemedText>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.typeScroll}>
             <View style={styles.typeButtons}>
               {CHARITY_TYPES.map(({ value, label, icon }) => (
@@ -86,7 +88,7 @@ export default function AddDonationScreen() {
             </View>
           </ScrollView>
 
-          <ThemedText type="body" style={styles.label}>Amount</ThemedText>
+          <ThemedText type="body" style={styles.label}>{t('donation.amount')}</ThemedText>
           <TextInput
             style={[styles.input, { backgroundColor: theme.backgroundSecondary, color: theme.text }]}
             value={entryAmount}
@@ -96,21 +98,21 @@ export default function AddDonationScreen() {
             keyboardType="decimal-pad"
           />
 
-          <ThemedText type="body" style={styles.label}>Recipient (optional)</ThemedText>
+          <ThemedText type="body" style={styles.label}>{t('donation.recipientOptional')}</ThemedText>
           <TextInput
             style={[styles.input, { backgroundColor: theme.backgroundSecondary, color: theme.text }]}
             value={entryRecipient}
             onChangeText={setEntryRecipient}
-            placeholder="Organization or person"
+            placeholder={t('donation.recipientPlaceholder')}
             placeholderTextColor={theme.textSecondary}
           />
 
-          <ThemedText type="body" style={styles.label}>Notes (optional)</ThemedText>
+          <ThemedText type="body" style={styles.label}>{t('donation.notesOptional')}</ThemedText>
           <TextInput
             style={[styles.input, styles.notesInput, { backgroundColor: theme.backgroundSecondary, color: theme.text }]}
             value={entryNotes}
             onChangeText={setEntryNotes}
-            placeholder="Add any notes..."
+            placeholder={t('donation.notesPlaceholder')}
             placeholderTextColor={theme.textSecondary}
             multiline
             blurOnSubmit={true}
@@ -119,7 +121,7 @@ export default function AddDonationScreen() {
 
           <Pressable style={[styles.submitButton, { backgroundColor: accentColor }]} onPress={handleAddEntry}>
             <Feather name="check" size={18} color="#fff" />
-            <ThemedText type="body" style={{ color: '#fff', marginLeft: Spacing.sm, fontWeight: '600' }}>Add Donation</ThemedText>
+            <ThemedText type="body" style={{ color: '#fff', marginLeft: Spacing.sm, fontWeight: '600' }}>{t('donation.addButton')}</ThemedText>
           </Pressable>
         </Card>
       </ScrollView>

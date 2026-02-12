@@ -10,6 +10,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
 import { Spacing, BorderRadius } from '@/constants/theme';
+import { useTranslation } from '@/hooks/useTranslation';
 import { DownloadStatus } from '../types/offline';
 import { formatBytes } from '../constants/offline';
 
@@ -39,6 +40,7 @@ export function SurahDownloadItem({
   onDelete,
 }: SurahDownloadItemProps) {
   const { isDark, theme } = useTheme();
+  const { t } = useTranslation();
 
   const isDownloaded = status === 'completed';
   const isDownloading = status === 'downloading';
@@ -86,7 +88,7 @@ export function SurahDownloadItem({
     <Pressable
       style={({ pressed }) => [
         styles.container,
-        { 
+        {
           backgroundColor: isDark ? `${theme.primary}26` : theme.backgroundDefault,
           opacity: pressed ? 0.7 : 1,
         }
@@ -121,19 +123,19 @@ export function SurahDownloadItem({
                 styles.progressBar,
                 { backgroundColor: isDark ? 'rgba(255, 255, 255, 0.1)' : '#E5E7EB' }
               ]}>
-                <View 
+                <View
                   style={[
                     styles.progressFill,
-                    { 
+                    {
                       width: `${progress}%`,
                       backgroundColor: getStatusColor(),
                     }
-                  ]} 
+                  ]}
                 />
               </View>
             )}
             <ThemedText type="caption" style={{ color: getStatusColor() }}>
-              {isDownloading ? `${progress}%` : 'Queued'}
+              {isDownloading ? `${progress}%` : t('surahDownload.queued')}
             </ThemedText>
           </View>
         )}
@@ -153,14 +155,14 @@ export function SurahDownloadItem({
         </View>
 
         {!isPending && (
-          <Pressable 
+          <Pressable
             style={styles.actionButton}
             onPress={handlePress}
           >
-            <Feather 
-              name={getActionIcon() as any} 
-              size={18} 
-              color={isDownloaded ? (isDark ? '#F87171' : '#EF4444') : getStatusColor()} 
+            <Feather
+              name={getActionIcon() as any}
+              size={18}
+              color={isDownloaded ? (isDark ? '#F87171' : '#EF4444') : getStatusColor()}
             />
           </Pressable>
         )}

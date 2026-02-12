@@ -1,0 +1,40 @@
+diff --git a/client/screens/MushafScreen.tsx b/client/screens/MushafScreen.tsx
+index 7c5a221..20482b2 100644
+--- a/client/screens/MushafScreen.tsx
++++ b/client/screens/MushafScreen.tsx
+@@ -3203,6 +3203,35 @@ function MushafScreenContent() {
+               <ThemedText type="body" style={{ marginLeft: 12, fontWeight: '500' }}>Tafsir/Translation</ThemedText>
+             </Pressable>
+             <View style={[styles.menuDivider, { backgroundColor: `${theme.gold}33` }]} />
++            <Pressable
++              onPress={() => {
++                const surah = surahs.find(s => s.number === selectedVerse.surah);
++                const verseRef = `${surah?.nameEn || 'Surah ' + selectedVerse.surah}, Ayah ${selectedVerse.ayah}`;
++                // Get actual Arabic text
++                const verseData = quranData.data.surahs
++                  .find((s: any) => s.number === selectedVerse.surah)
++                  ?.ayahs.find((a: any) => a.numberInSurah === selectedVerse.ayah);
++                const arabicText = verseData?.text || '';
++                // Get English translation if available
++                const verseKey = `${selectedVerse.surah}:${selectedVerse.ayah}`;
++                const translation = tafsirData?.sahihInternational?.[verseKey]?.t || '';
++                const translationPart = translation ? `\nTranslation: "${translation}"` : '';
++                closeMenu();
++                // Navigate to SakinahAi tab with the explain prompt including actual verse text
++                navigation.navigate('Main', {
++                  screen: 'SakinahAiTab',
++                  params: { prompt: `Explain ${verseRef} from the Quran.\n\nArabic: ${arabicText}${translationPart}\n\nWhat is its meaning, context, and lessons we can learn from it?` },
++                });
++              }}
++              style={({ pressed }) => [
++                styles.menuItem,
++                { opacity: pressed ? 0.6 : 1 },
++              ]}
++            >
++              <Feather name="zap" size={20} color={theme.gold} />
++              <ThemedText type="body" style={{ marginLeft: 12, fontWeight: '500' }}>Explain with Ai</ThemedText>
++            </Pressable>
++            <View style={[styles.menuDivider, { backgroundColor: `${theme.gold}33` }]} />
+             <Pressable
+               onPress={() => {
+                 setNoteVerseKey(selectedVerse.verseKey);

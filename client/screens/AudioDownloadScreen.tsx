@@ -22,6 +22,7 @@ import { audioDownloadService } from '@/services/AudioDownloadService';
 import { SURAH_INFO, RECITERS, formatBytes, getEstimatedSurahSize, getTotalQuranSizeEstimate } from '@/constants/offline';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '@/navigation/RootStackNavigator';
+import { useTranslation } from '@/hooks/useTranslation';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'AudioDownload'>;
 
@@ -29,10 +30,11 @@ export function AudioDownloadScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp>();
   const { isDark, theme } = useTheme();
+  const { t, locale } = useTranslation();
   const { isOnline, lastOnline } = useNetworkStatus();
-  
+
   const [selectedReciter, setSelectedReciter] = useState(RECITERS[0].id);
-  
+
   const {
     downloadedSurahs,
     downloadQueue,
@@ -72,7 +74,7 @@ export function AudioDownloadScreen() {
       const queueItem = downloadQueue.find(
         item => item.surahNumber === surah.number
       );
-      
+
       return {
         ...surah,
         isDownloaded,
@@ -85,35 +87,35 @@ export function AudioDownloadScreen() {
 
   const handleDownloadAll = () => {
     if (!isOnline) {
-      Alert.alert('Offline', 'You need an internet connection to download audio.');
+      Alert.alert(t('audioDownload.offline'), t('audioDownload.needInternet'));
       return;
     }
 
     const remaining = totalSurahs - downloadedCount;
     Alert.alert(
-      'Download All Surahs',
+      t('audioDownload.downloadAllSurahs'),
       `This will download ${remaining} surahs (approximately ${formatBytes(totalSize - (downloadedCount * (totalSize / totalSurahs)))}). Continue?`,
       [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Download', onPress: downloadAll },
+        { text: t('storageAlerts.cancel'), style: 'cancel' },
+        { text: t('audioDownload.download'), onPress: downloadAll },
       ]
     );
   };
 
   const handleDeleteAll = () => {
     Alert.alert(
-      'Delete All Audio',
+      t('audioDownload.deleteAllAudio'),
       `This will remove all downloaded audio for ${reciterInfo?.nameEn}. You will need to re-download for offline playback.`,
       [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Delete', style: 'destructive', onPress: deleteAll },
+        { text: t('storageAlerts.cancel'), style: 'cancel' },
+        { text: t('audioDownload.delete'), style: 'destructive', onPress: deleteAll },
       ]
     );
   };
 
   const handleSurahDownload = async (surahNumber: number) => {
     if (!isOnline) {
-      Alert.alert('Offline', 'You need an internet connection to download audio.');
+      Alert.alert(t('audioDownload.offline'), t('audioDownload.needInternet'));
       return;
     }
     await downloadSurah(surahNumber);
@@ -138,12 +140,12 @@ export function AudioDownloadScreen() {
       }}
       onDelete={() => {
         Alert.alert(
-          'Delete Audio',
-          `Delete downloaded audio for ${item.nameEn}?`,
+          t('audioDownload.deleteAudio'),
+          `${t('audioDownload.deleteConfirmMessage')} ${locale === 'ar' ? item.nameAr : item.nameEn}?`,
           [
-            { text: 'Cancel', style: 'cancel' },
-            { 
-              text: 'Delete', 
+            { text: t('storageAlerts.cancel'), style: 'cancel' },
+            {
+              text: t('audioDownload.delete'),
               style: 'destructive',
               onPress: () => deleteSurah(item.number)
             },
@@ -161,7 +163,7 @@ export function AudioDownloadScreen() {
           <Feather name="arrow-left" size={24} color={theme.text} />
         </Pressable>
         <ThemedText type="h3" style={{ flex: 1 }}>
-          Audio Downloads
+          {t('audioDownload.title')}
         </ThemedText>
       </View>
 
@@ -188,16 +190,16 @@ export function AudioDownloadScreen() {
             <Feather name="mic" size={20} color={theme.primary} />
           </View>
           <View style={{ flex: 1 }}>
-            <ThemedText type="caption" secondary>Reciter</ThemedText>
+            <ThemedText type="caption" secondary>{t('mushaf.selectReciter')}</ThemedText>
             <ThemedText type="body" style={{ fontWeight: '600' }} numberOfLines={1}>
-              {reciterInfo?.nameEn}
+              {locale === 'ar' ? reciterInfo?.nameAr : reciterInfo?.nameEn}
             </ThemedText>
           </View>
         </View>
-        <Feather 
-          name="chevron-right" 
-          size={20} 
-          color={theme.textSecondary} 
+        <Feather
+          name="chevron-right"
+          size={20}
+          color={theme.textSecondary}
         />
       </Pressable>
 
@@ -215,14 +217,14 @@ export function AudioDownloadScreen() {
           </ThemedText>
         </View>
         <View style={styles.progressBar}>
-          <View 
+          <View
             style={[
               styles.progressFill,
-              { 
+              {
                 width: `${(downloadedCount / totalSurahs) * 100}%`,
                 backgroundColor: theme.primary,
               }
-            ]} 
+            ]}
           />
         </View>
       </View>
@@ -246,32 +248,32 @@ export function AudioDownloadScreen() {
           <Pressable
             style={({ pressed }) => [
               styles.batchButton,
-              { 
+              {
                 backgroundColor: isDark ? 'rgba(251, 191, 36, 0.15)' : 'rgba(245, 158, 11, 0.1)',
                 opacity: pressed ? 0.7 : 1,
               }
             ]}
             onPress={() => {
               Alert.alert(
-                'Cancel Downloads',
-                'Cancel all pending downloads? Partially downloaded surahs will be removed.',
+                t('audioDownload.cancelDownloads'),
+                t('audioDownload.cancelAllDesc'),
                 [
-                  { text: 'Keep Downloading', style: 'cancel' },
-                  { text: 'Cancel All', style: 'destructive', onPress: cancelAllDownloads },
+                  { text: t('audioDownload.keepDownloading'), style: 'cancel' },
+                  { text: t('audioDownload.cancelAll'), style: 'destructive', onPress: cancelAllDownloads },
                 ]
               );
             }}
           >
             <Feather name="x-circle" size={18} color={isDark ? '#FBBF24' : '#F59E0B'} />
-            <ThemedText 
-              type="small" 
-              style={{ 
+            <ThemedText
+              type="small"
+              style={{
                 color: isDark ? '#FBBF24' : '#F59E0B',
                 marginLeft: Spacing.xs,
                 fontWeight: '600',
               }}
             >
-              Cancel All
+              {t('audioDownload.cancelAll')}
             </ThemedText>
           </Pressable>
         ) : (
@@ -279,7 +281,7 @@ export function AudioDownloadScreen() {
           <Pressable
             style={({ pressed }) => [
               styles.batchButton,
-              { 
+              {
                 backgroundColor: `${theme.primary}15`,
                 opacity: pressed || !isOnline || downloadedCount === totalSurahs ? 0.5 : 1,
               }
@@ -288,15 +290,15 @@ export function AudioDownloadScreen() {
             disabled={!isOnline || downloadedCount === totalSurahs}
           >
             <Feather name="download-cloud" size={18} color={theme.primary} />
-            <ThemedText 
-              type="small" 
-              style={{ 
+            <ThemedText
+              type="small"
+              style={{
                 color: theme.primary,
                 marginLeft: Spacing.xs,
                 fontWeight: '600',
               }}
             >
-              Download All
+              {t('audioDownload.downloadAll')}
             </ThemedText>
           </Pressable>
         )}
@@ -304,7 +306,7 @@ export function AudioDownloadScreen() {
         <Pressable
           style={({ pressed }) => [
             styles.batchButton,
-            { 
+            {
               backgroundColor: isDark ? 'rgba(248, 113, 113, 0.15)' : 'rgba(239, 68, 68, 0.1)',
               opacity: pressed || downloadedCount === 0 ? 0.5 : 1,
             }
@@ -313,15 +315,15 @@ export function AudioDownloadScreen() {
           disabled={downloadedCount === 0}
         >
           <Feather name="trash-2" size={18} color={isDark ? '#F87171' : '#EF4444'} />
-          <ThemedText 
-            type="small" 
-            style={{ 
+          <ThemedText
+            type="small"
+            style={{
               color: isDark ? '#F87171' : '#EF4444',
               marginLeft: Spacing.xs,
               fontWeight: '600',
             }}
           >
-            Delete All
+            {t('audioDownload.deleteAll')}
           </ThemedText>
         </Pressable>
       </View>

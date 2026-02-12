@@ -16,12 +16,14 @@ import * as Haptics from 'expo-haptics';
 import { Feather } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useTheme } from '@/hooks/useTheme';
 import { useQadaTracker } from '@/hooks/useQadaTracker';
 import { PrayerName, PRAYER_NAMES } from '@/types/prayerLog';
 import { Spacing, BorderRadius } from '@/constants/theme';
+import { useTranslation } from '@/hooks/useTranslation';
 
 const PRAYER_DISPLAY: Record<PrayerName, { nameEn: string; nameAr: string; icon: string }> = {
     Fajr: { nameEn: 'Fajr', nameAr: 'الفجر', icon: 'sunrise' },
@@ -33,8 +35,9 @@ const PRAYER_DISPLAY: Record<PrayerName, { nameEn: string; nameAr: string; icon:
 
 export default function QadaTrackerScreen() {
     const insets = useSafeAreaInsets();
-    const navigation = useNavigation();
+    const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const { isDark, theme } = useTheme();
+    const { t } = useTranslation();
     const { qadaCounts, totalQada, logQadaPrayer, adjustQadaCount, loading } = useQadaTracker();
     const [editingPrayer, setEditingPrayer] = useState<PrayerName | null>(null);
     const [editValue, setEditValue] = useState('');
@@ -96,7 +99,7 @@ export default function QadaTrackerScreen() {
                         <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
                             <Feather name="arrow-left" size={24} color={theme.text} />
                         </Pressable>
-                        <ThemedText type="h2" style={styles.title}>Qada Tracker</ThemedText>
+                        <ThemedText type="h2" style={styles.title}>{t('qadaTracker.title')}</ThemedText>
                     </View>
                 </View>
 
@@ -109,7 +112,7 @@ export default function QadaTrackerScreen() {
                         {totalQada}
                     </ThemedText>
                     <ThemedText type="body" secondary>
-                        Total Qada prayers remaining
+                        {t('qadaTracker.totalRemaining')}
                     </ThemedText>
                 </View>
 
@@ -120,7 +123,7 @@ export default function QadaTrackerScreen() {
                 ]}>
                     <Feather name="info" size={14} color="#3B82F6" />
                     <ThemedText type="caption" style={{ color: '#3B82F6', flex: 1, marginLeft: 8 }}>
-                        Tap the count number to edit directly. Use "Log" after praying a Qada.
+                        {t('qadaTracker.hint')}
                     </ThemedText>
                 </View>
 
@@ -153,11 +156,9 @@ export default function QadaTrackerScreen() {
                                     </View>
                                     <View style={{ flexShrink: 1 }}>
                                         <ThemedText type="body" style={{ fontWeight: '600', fontSize: 16 }}>
-                                            {display.nameEn}
+                                            {t(`prayer.${prayer.toLowerCase()}`)}
                                         </ThemedText>
-                                        <ThemedText type="caption" secondary style={{ fontFamily: 'AlMushafQuran' }}>
-                                            {display.nameAr}
-                                        </ThemedText>
+
                                     </View>
                                 </View>
 

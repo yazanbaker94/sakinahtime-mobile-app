@@ -10,16 +10,17 @@ import { ThemedText } from './ThemedText';
 import { useTheme } from '../hooks/useTheme';
 import { WeeklyStats } from '../types/prayerLog';
 import { Spacing, BorderRadius } from '../constants/theme';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface WeeklyChartProps {
   stats: WeeklyStats | null;
 }
 
-const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const DAY_KEYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 
-function getDayName(dateStr: string): string {
+function getDayKey(dateStr: string): string {
   const date = new Date(dateStr + 'T00:00:00');
-  return DAY_NAMES[date.getDay()];
+  return DAY_KEYS[date.getDay()];
 }
 
 function getBarColor(prayedCount: number, isDark: boolean, primaryColor: string): string {
@@ -31,11 +32,12 @@ function getBarColor(prayedCount: number, isDark: boolean, primaryColor: string)
 
 export function WeeklyChart({ stats }: WeeklyChartProps) {
   const { isDark, theme } = useTheme();
+  const { t } = useTranslation();
 
   if (!stats) {
     return (
       <View style={[styles.container, { backgroundColor: theme.cardBackground }]}>
-        <ThemedText type="body" secondary>No data available</ThemedText>
+        <ThemedText type="body" secondary>{t('weeklyChart.noData')}</ThemedText>
       </View>
     );
   }
@@ -55,7 +57,7 @@ export function WeeklyChart({ stats }: WeeklyChartProps) {
       }
     ]}>
       <View style={styles.header}>
-        <ThemedText type="h3" style={styles.title}>This Week</ThemedText>
+        <ThemedText type="h3" style={styles.title}>{t('weeklyChart.title')}</ThemedText>
         <View style={[styles.percentageBadge, { backgroundColor: `${theme.primary}26` }]}>
           <ThemedText type="body" style={{ color: theme.primary, fontWeight: '700' }}>
             {stats.completionPercentage}%
@@ -89,7 +91,7 @@ export function WeeklyChart({ stats }: WeeklyChartProps) {
                 style={[styles.dayLabel, isToday && styles.todayLabel]}
                 secondary={!isToday}
               >
-                {getDayName(day.date)}
+                {t(`weeklyChart.${getDayKey(day.date)}`)}
               </ThemedText>
               <ThemedText type="caption" secondary style={styles.countLabel}>
                 {day.prayedCount}/5
@@ -104,19 +106,19 @@ export function WeeklyChart({ stats }: WeeklyChartProps) {
           <ThemedText type="h3" style={{ color: theme.primary }}>
             {stats.totalPrayed}
           </ThemedText>
-          <ThemedText type="caption" secondary>Prayed</ThemedText>
+          <ThemedText type="caption" secondary>{t('weeklyChart.prayed')}</ThemedText>
         </View>
         <View style={styles.statItem}>
           <ThemedText type="h3" style={{ color: '#EF4444' }}>
             {stats.totalMissed}
           </ThemedText>
-          <ThemedText type="caption" secondary>Missed</ThemedText>
+          <ThemedText type="caption" secondary>{t('weeklyChart.missed')}</ThemedText>
         </View>
         <View style={styles.statItem}>
           <ThemedText type="h3" style={{ color: '#F59E0B' }}>
             {stats.totalLate}
           </ThemedText>
-          <ThemedText type="caption" secondary>Late</ThemedText>
+          <ThemedText type="caption" secondary>{t('weeklyChart.late')}</ThemedText>
         </View>
       </View>
     </View>

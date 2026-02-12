@@ -12,12 +12,14 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { Card } from '@/components/Card';
 import { useTheme } from '@/hooks/useTheme';
+import { useTranslation } from '@/hooks/useTranslation';
 import { useCharityTracker } from '@/hooks/useCharityTracker';
 import { Spacing, BorderRadius } from '@/constants/theme';
 
 export default function SetCharityGoalScreen() {
   const insets = useSafeAreaInsets();
   const { isDark, theme } = useTheme();
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const { goal, setGoal } = useCharityTracker();
 
@@ -39,7 +41,7 @@ export default function SetCharityGoalScreen() {
         <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
           <Feather name="arrow-left" size={24} color={theme.text} />
         </Pressable>
-        <ThemedText type="h2" style={styles.title}>Set Goal</ThemedText>
+        <ThemedText type="h2" style={styles.title}>{t('setGoal.title')}</ThemedText>
         <View style={{ width: 24 }} />
       </View>
 
@@ -50,7 +52,7 @@ export default function SetCharityGoalScreen() {
         keyboardDismissMode="interactive"
       >
         <Card elevation={2} style={styles.card} onPress={Keyboard.dismiss}>
-          <ThemedText type="body" style={styles.label}>Goal Amount (USD)</ThemedText>
+          <ThemedText type="body" style={styles.label}>{t('setGoal.goalAmount')}</ThemedText>
           <TextInput
             style={[
               styles.input,
@@ -67,14 +69,14 @@ export default function SetCharityGoalScreen() {
           />
           <Pressable style={[styles.submitButton, { backgroundColor: accentColor }]} onPress={handleSetGoal}>
             <Feather name="target" size={18} color="#fff" />
-            <ThemedText type="body" style={{ color: '#fff', marginLeft: Spacing.sm, fontWeight: '600' }}>Set Goal</ThemedText>
+            <ThemedText type="body" style={{ color: '#fff', marginLeft: Spacing.sm, fontWeight: '600' }}>{t('setGoal.setButton')}</ThemedText>
           </Pressable>
         </Card>
 
         <Card elevation={1} style={styles.infoCard} onPress={Keyboard.dismiss}>
           <Feather name="info" size={16} color={isDark ? '#9CA3AF' : '#6B7280'} />
           <ThemedText type="small" secondary style={styles.infoText}>
-            Setting a charity goal helps you track your progress throughout Ramadan. You can update this goal at any time.
+            {t('setGoal.infoText')}
           </ThemedText>
         </Card>
       </ScrollView>

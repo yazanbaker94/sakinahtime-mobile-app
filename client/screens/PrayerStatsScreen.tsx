@@ -30,10 +30,12 @@ import { useQadaTracker } from '@/hooks/useQadaTracker';
 import { usePrayerLog } from '@/hooks/usePrayerLog';
 import { PRAYER_NAMES, PrayerName, MISSED_REMINDER_DELAY_OPTIONS } from '@/types/prayerLog';
 import { Spacing, BorderRadius } from '@/constants/theme';
+import { useTranslation } from '@/hooks/useTranslation';
 
 export default function PrayerStatsScreen() {
   const insets = useSafeAreaInsets();
   const { isDark, theme } = useTheme();
+  const { t } = useTranslation();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const {
     streak,
@@ -125,7 +127,7 @@ Tracked with SakinahTime 🌙`;
         title: 'My Prayer Statistics',
       });
     } catch (error) {
-      Alert.alert('Export Failed', 'Could not share prayer statistics.');
+      Alert.alert(t('prayerStats.exportFailed'), t('prayerStats.exportError'));
     }
   };
 
@@ -133,7 +135,7 @@ Tracked with SakinahTime 🌙`;
     return (
       <ThemedView style={styles.container}>
         <View style={[styles.loadingContainer, { paddingTop: insets.top }]}>
-          <ThemedText type="body" secondary>Loading statistics...</ThemedText>
+          <ThemedText type="body" secondary>{t('prayerStats.loadingStats')}</ThemedText>
         </View>
       </ThemedView>
     );
@@ -157,7 +159,7 @@ Tracked with SakinahTime 🌙`;
             <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
               <Feather name="arrow-left" size={24} color={theme.text} />
             </Pressable>
-            <ThemedText type="h2" style={styles.title}>Prayer Statistics</ThemedText>
+            <ThemedText type="h2" style={styles.title}>{t('prayerStats.title')}</ThemedText>
           </View>
           <Pressable onPress={handleExport} style={styles.exportButton}>
             <Feather name="share" size={20} color={theme.text} />
@@ -172,9 +174,9 @@ Tracked with SakinahTime 🌙`;
           <View style={styles.trackingInfo}>
             <Feather name="check-square" size={20} color={theme.primary} />
             <View style={styles.trackingText}>
-              <ThemedText type="body" style={{ fontWeight: '600' }}>Prayer Tracking</ThemedText>
+              <ThemedText type="body" style={{ fontWeight: '600' }}>{t('prayerStats.prayerTracking')}</ThemedText>
               <ThemedText type="caption" secondary>
-                {trackingEnabled ? 'Tap prayers to mark as prayed' : 'Enable to track your prayers'}
+                {trackingEnabled ? t('prayerStats.tapToMark') : t('prayerStats.enableToTrack')}
               </ThemedText>
             </View>
           </View>
@@ -195,19 +197,19 @@ Tracked with SakinahTime 🌙`;
             styles.legendCard,
             { backgroundColor: theme.cardBackground }
           ]}>
-            <ThemedText type="caption" secondary style={{ marginBottom: Spacing.sm }}>Tap a button to mark prayer status:</ThemedText>
+            <ThemedText type="caption" secondary style={{ marginBottom: Spacing.sm }}>{t('prayerStats.tapToMarkStatus')}</ThemedText>
             <View style={styles.legendRow}>
               <View style={styles.legendItem}>
                 <View style={[styles.legendDot, { backgroundColor: '#10B981' }]} />
-                <ThemedText type="caption">Prayed</ThemedText>
+                <ThemedText type="caption">{t('prayerStats.prayed')}</ThemedText>
               </View>
               <View style={styles.legendItem}>
                 <View style={[styles.legendDot, { backgroundColor: '#EF4444' }]} />
-                <ThemedText type="caption">Missed</ThemedText>
+                <ThemedText type="caption">{t('prayerStats.missed')}</ThemedText>
               </View>
               <View style={styles.legendItem}>
                 <View style={[styles.legendDot, { backgroundColor: '#F59E0B' }]} />
-                <ThemedText type="caption">Late</ThemedText>
+                <ThemedText type="caption">{t('prayerStats.late')}</ThemedText>
               </View>
             </View>
           </View>
@@ -223,11 +225,11 @@ Tracked with SakinahTime 🌙`;
               <View style={styles.reminderInfo}>
                 <Feather name="bell" size={20} color={theme.primary} />
                 <View style={styles.reminderText}>
-                  <ThemedText type="body" style={{ fontWeight: '600' }}>Missed Prayer Reminder</ThemedText>
+                  <ThemedText type="body" style={{ fontWeight: '600' }}>{t('prayerStats.missedReminder')}</ThemedText>
                   <ThemedText type="caption" secondary>
                     {missedReminderEnabled
-                      ? `Remind after ${missedReminderDelayMinutes} min if unmarked`
-                      : 'Get reminded to mark your prayers'}
+                      ? t('prayerStats.remindAfter', { minutes: missedReminderDelayMinutes })
+                      : t('prayerStats.getReminded')}
                   </ThemedText>
                 </View>
               </View>
@@ -246,7 +248,7 @@ Tracked with SakinahTime 🌙`;
             {missedReminderEnabled && (
               <View style={styles.delayOptions}>
                 <ThemedText type="caption" secondary style={{ marginBottom: Spacing.sm }}>
-                  Remind me after:
+                  {t('prayerStats.remindAfterLabel')}
                 </ThemedText>
                 <View style={styles.delayButtonsRow}>
                   {MISSED_REMINDER_DELAY_OPTIONS.map((minutes) => (
@@ -287,7 +289,7 @@ Tracked with SakinahTime 🌙`;
           ]}>
             <Feather name="check-circle" size={20} color={theme.primary} />
             <ThemedText type="h3" style={{ color: theme.primary }}>{totalPrayersLogged}</ThemedText>
-            <ThemedText type="caption" secondary>Total Logged</ThemedText>
+            <ThemedText type="caption" secondary>{t('prayerStats.totalLogged')}</ThemedText>
           </View>
 
           <Pressable
@@ -299,7 +301,7 @@ Tracked with SakinahTime 🌙`;
           >
             <Feather name="rotate-ccw" size={20} color="#EF4444" />
             <ThemedText type="h3" style={{ color: '#EF4444' }}>{totalQada}</ThemedText>
-            <ThemedText type="caption" secondary>Qada Due</ThemedText>
+            <ThemedText type="caption" secondary>{t('prayerStats.qadaDue')}</ThemedText>
           </Pressable>
         </View>
 
@@ -327,7 +329,7 @@ Tracked with SakinahTime 🌙`;
                 viewMode === 'weekly' && { color: '#fff' },
               ]}
             >
-              Weekly
+              {t('prayerStats.weekly')}
             </ThemedText>
           </Pressable>
           <Pressable
@@ -346,7 +348,7 @@ Tracked with SakinahTime 🌙`;
                 viewMode === 'monthly' && { color: '#fff' },
               ]}
             >
-              Monthly
+              {t('prayerStats.monthly')}
             </ThemedText>
           </Pressable>
         </View>
@@ -375,12 +377,12 @@ Tracked with SakinahTime 🌙`;
               elevation: 3,
             }
           ]}>
-            <ThemedText type="h3" style={styles.breakdownTitle}>Prayer Breakdown</ThemedText>
+            <ThemedText type="h3" style={styles.breakdownTitle}>{t('prayerStats.prayerBreakdown')}</ThemedText>
             {PRAYER_NAMES.map((prayer) => {
               const data = monthlyStats.prayerBreakdown[prayer];
               return (
                 <View key={prayer} style={styles.breakdownRow}>
-                  <ThemedText type="body" style={{ flex: 1 }}>{prayer}</ThemedText>
+                  <ThemedText type="body" style={{ flex: 1 }}>{t(`prayer.${prayer.toLowerCase()}`)}</ThemedText>
                   <View style={styles.breakdownBar}>
                     <View
                       style={[
@@ -401,7 +403,7 @@ Tracked with SakinahTime 🌙`;
           </View>
         )}
       </ScrollView>
-    </ThemedView>
+    </ThemedView >
   );
 }
 

@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect, useRef } from "react";
-import { View, StyleSheet, Platform, Pressable, useWindowDimensions, PixelRatio } from "react-native";
-import { Image } from "expo-image";
+import { View, StyleSheet, Platform, Pressable, useWindowDimensions } from "react-native";
+import { SvgXml } from "react-native-svg";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -24,62 +24,32 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from "react-native-reanimated";
+import { useTranslation } from "@/hooks/useTranslation";
 
-// Helper to normalize sizes across different pixel densities
-const normalize = (size: number) => {
-  const scale = PixelRatio.get();
-  // Normalize to a baseline of 2x density
-  if (scale < 2) return Math.round(size * 0.85);
-  if (scale > 3) return Math.round(size * 1.1);
-  return size;
-};
+// SVG compass assets — dark and light variants
+import {
+  compassRingDarkSvg, compassRingLightSvg,
+  needleDarkSvg, needleLightSvg,
+  kaabaIconDarkSvg, kaabaIconLightSvg,
+} from "@/constants/qiblaCompassSvg";
 
-// Hook to get responsive compass dimensions
-const useCompassDimensions = () => {
+// Hook to get responsive compass size
+const useCompassSize = () => {
   const { width, height } = useWindowDimensions();
 
   return useMemo(() => {
-    const screenMin = Math.min(width, height);
-    // Use percentage of screen width, with min/max bounds
-    // Account for padding (40px each side = 80px total)
     const availableWidth = width - 80;
-    // Also consider height - we want compass to fit comfortably
-    const availableHeight = height * 0.42; // ~42% of screen height for compass
-
+    const availableHeight = height * 0.42;
     const compassSize = Math.min(
-      Math.max(availableWidth * 0.85, 220), // Min 220
-      Math.min(availableHeight, 340) // Max 340
+      Math.max(availableWidth * 0.85, 220),
+      Math.min(availableHeight, 340)
     );
-
-    const innerRingSize = compassSize * 0.8; // 80% of compass size
-    // Position Kaaba slightly beyond cardinal letters (outer edge of inner ring)
-    const cardinalRadius = innerRingSize / 2 - normalize(32);
-    const qiblaIndicatorRadius = innerRingSize / 2 - normalize(15); // Outer than cardinals
-
-    return {
-      compassSize,
-      innerRingSize,
-      qiblaIndicatorRadius,
-      // Scaled values for various elements
-      borderWidth: normalize(3),
-      tickMajorLength: normalize(14),
-      tickMinorLength: normalize(10),
-      tickSmallLength: normalize(5),
-      tickMajorWidth: normalize(2.5),
-      tickMinorWidth: normalize(1.5),
-      tickSmallWidth: normalize(1),
-      kaabaSize: normalize(28), // Smaller Kaaba icon
-      centerDotSize: normalize(22),
-      pointerWidth: normalize(11),
-      pointerHeight: normalize(65),
-      cardinalFontSize: normalize(17),
-      cardinalNorthFontSize: normalize(20),
-      cardinalRadius: innerRingSize / 2 - normalize(32),
-    };
+    return compassSize;
   }, [width, height]);
 };
 
 export default function QiblaScreen() {
+  const { t } = useTranslation();
   const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
   const { theme, isDark } = useTheme();
@@ -96,7 +66,7 @@ export default function QiblaScreen() {
   const smoothRotation = useSharedValue(0);
 
   // Get responsive dimensions
-  const dims = useCompassDimensions();
+  const compassSize = useCompassSize();
 
   const {
     latitude,
@@ -233,23 +203,31 @@ export default function QiblaScreen() {
 
 
 
-  const qiblaIndicatorAnimStyle = useAnimatedStyle(() => {
-    const angleRad = ((qiblaDirection - 90) * Math.PI) / 180;
-    const x = Math.cos(angleRad) * dims.qiblaIndicatorRadius;
-    const y = Math.sin(angleRad) * dims.qiblaIndicatorRadius;
+  // Kaaba position on compass edge — radius is ~65% of compass size (matching SVG coordinate system)
+  const kaabaRadius = compassSize * 0.38;
+  const kaabaSize = compassSize * 0.12; // ~12% of compass for kaaba icon
+
+  const kaabaAnimStyle = useAnimatedStyle(() => {
+    // Angle relative to compass: qibla bearing stays on the rotating ring
+    const angle = qiblaDirection;
+    const angleRad = ((angle - 90) * Math.PI) / 180;
+    const x = Math.cos(angleRad) * kaabaRadius;
+    const y = Math.sin(angleRad) * kaabaRadius;
     return {
       transform: [
         { translateX: x },
         { translateY: y },
+        // Counter-rotate to keep Kaaba upright as compass rotates
+        { rotate: `${-(smoothRotation.value)}deg` },
       ],
     };
-  }, [qiblaDirection, dims.qiblaIndicatorRadius]);
+  }, [qiblaDirection, kaabaRadius, smoothRotation]);
 
   const getDirectionText = () => {
-    if (direction === "aligned") return "Facing Qibla";
+    if (direction === "aligned") return t('qibla.facingQibla');
     const turnDegrees = Math.round(relativeAngle);
-    if (direction === "left") return `Turn Left ${turnDegrees}°`;
-    return `Turn Right ${turnDegrees}°`;
+    if (direction === "left") return `${t('qibla.turnLeft')} ${turnDegrees}°`;
+    return `${t('qibla.turnRight')} ${turnDegrees}°`;
   };
 
   const getDirectionIcon = (): "check-circle" | "chevron-left" | "chevron-right" => {
@@ -284,14 +262,14 @@ export default function QiblaScreen() {
               <Feather name="map-pin" size={48} color={theme.primary} />
             </View>
             <ThemedText type="h3" style={styles.permissionTitle}>
-              Location Access Required
+              {t('prayer.locationRequired')}
             </ThemedText>
             <ThemedText type="body" secondary style={styles.permissionText}>
-              We need your location to calculate the Qibla direction from your current position.
+              {t('qibla.locationRequiredQibla')}
             </ThemedText>
             {Platform.OS === "web" ? (
               <ThemedText type="small" secondary style={styles.permissionText}>
-                Please enable location in your browser settings.
+                {t('prayer.browserLocationHint')}
               </ThemedText>
             ) : canAskAgain ? (
               <Pressable
@@ -306,7 +284,7 @@ export default function QiblaScreen() {
                 }]}
               >
                 <ThemedText type="body" style={{ color: "#FFFFFF", fontWeight: '600' }}>
-                  Enable Location
+                  {t('prayer.enableLocation')}
                 </ThemedText>
               </Pressable>
             ) : (
@@ -322,7 +300,7 @@ export default function QiblaScreen() {
                 }]}
               >
                 <ThemedText type="body" style={{ color: "#FFFFFF", fontWeight: '600' }}>
-                  Open Settings
+                  {t('prayer.openSettings')}
                 </ThemedText>
               </Pressable>
             )}
@@ -353,7 +331,7 @@ export default function QiblaScreen() {
           ]}
         >
           <ThemedText type="body" secondary>
-            {locationLoading ? "Getting your location..." : "Initializing compass..."}
+            {locationLoading ? t('qibla.gettingLocation') : t('qibla.initializingCompass')}
           </ThemedText>
         </View>
       </ThemedView>
@@ -379,10 +357,10 @@ export default function QiblaScreen() {
           {/* Location Badge */}
           {city ? (
             <View style={styles.locationBadge}>
-              <Feather name="map-pin" size={15} color={primaryColor} />
+              <Feather name="map-pin" size={15} color={isDark ? '#FFFFFF' : '#000000'} />
               <ThemedText type="small" style={{
                 marginLeft: 7,
-                color: primaryColor,
+                color: isDark ? '#FFFFFF' : '#000000',
                 fontWeight: '700',
                 fontSize: 13,
               }}>
@@ -407,176 +385,76 @@ export default function QiblaScreen() {
               gap: 6,
             })}
           >
-            <Feather name="home" size={16} color={primaryColor} />
-            <ThemedText type="caption" style={{ color: primaryColor, fontWeight: '600', fontSize: 12 }}>
-              Mosques
+            <Feather name="home" size={16} color={isDark ? '#FFFFFF' : '#000000'} />
+            <ThemedText type="caption" style={{ color: isDark ? '#FFFFFF' : '#000000', fontWeight: '600', fontSize: 12 }}>
+              {t('qibla.mosques')}
             </ThemedText>
           </Pressable>
         </View>
 
-        {/* Premium Compass */}
+        {/* SVG Compass */}
         <View style={[styles.compassWrapper, {
-          width: dims.compassSize + 20,
-          height: dims.compassSize + 20,
+          width: compassSize + 20,
+          height: compassSize + 20,
         }]}>
-          {/* Subtle outer ring - only changes when locked */}
+          {/* Subtle outer glow ring - changes when locked */}
           <View style={[styles.glowRing, {
-            width: dims.compassSize + 12,
-            height: dims.compassSize + 12,
-            borderRadius: (dims.compassSize + 12) / 2,
+            width: compassSize + 12,
+            height: compassSize + 12,
+            borderRadius: (compassSize + 12) / 2,
             borderColor: isLocked ? primaryColor : `${primaryColor}20`,
             borderWidth: isLocked ? 3 : 2,
           }]} />
 
-          <View style={[styles.compassOuter, {
-            width: dims.compassSize,
-            height: dims.compassSize,
-            borderRadius: dims.compassSize / 2,
-            backgroundColor: isDark ? `${theme.backgroundDefault}FA` : `${theme.backgroundDefault}FA`,
-            borderWidth: dims.borderWidth,
-            borderColor: `${primaryColor}40`,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 12 },
-            shadowOpacity: isDark ? 0.6 : 0.18,
-            shadowRadius: 30,
-            elevation: 12,
-          }]}>
-            <Animated.View style={[styles.compassInner, {
-              width: dims.innerRingSize,
-              height: dims.innerRingSize,
+          {/* Compass container */}
+          <View style={{
+            width: compassSize,
+            height: compassSize,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+            {/* Layer 1: Compass Ring — rotates with device heading */}
+            <Animated.View style={[{
+              position: 'absolute',
+              width: compassSize,
+              height: compassSize,
             }, compassRotationStyle]}>
-              <View style={[styles.innerRing, {
-                width: dims.innerRingSize,
-                height: dims.innerRingSize,
-                borderRadius: dims.innerRingSize / 2,
-                borderColor: `${primaryColor}59`,
-                borderWidth: normalize(2.5),
-              }]}>
-                {/* Cardinal Directions */}
-                {["N", "E", "S", "W"].map((dir, index) => {
-                  const angle = index * 90;
-                  const angleRad = ((angle - 90) * Math.PI) / 180;
-                  const radius = dims.cardinalRadius;
-                  const x = Math.cos(angleRad) * radius;
-                  const y = Math.sin(angleRad) * radius;
-                  const labelSize = 40;
+              <SvgXml
+                xml={isDark ? compassRingDarkSvg : compassRingLightSvg}
+                width={compassSize}
+                height={compassSize}
+              />
 
-                  return (
-                    <View
-                      key={dir}
-                      style={[
-                        styles.directionLabelContainer,
-                        {
-                          width: labelSize,
-                          height: labelSize,
-                          // Position from center of innerRing
-                          left: dims.innerRingSize / 2 - labelSize / 2 + x,
-                          top: dims.innerRingSize / 2 - labelSize / 2 + y,
-                        },
-                      ]}
-                    >
-                      <ThemedText
-                        type="h4"
-                        style={{
-                          color: dir === "N" ? primaryColor : (isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.4)'),
-                          fontWeight: dir === "N" ? '800' : '600',
-                          fontSize: dir === "N" ? dims.cardinalNorthFontSize : dims.cardinalFontSize,
-                        }}
-                      >
-                        {dir}
-                      </ThemedText>
-                    </View>
-                  );
-                })}
-
-                {/* Compass Ticks */}
-                {[...Array(72)].map((_, i) => {
-                  const angle = i * 5;
-                  const isMajor = i % 18 === 0;
-                  const isMinor = i % 9 === 0 && !isMajor;
-                  const tickLength = isMajor ? dims.tickMajorLength : isMinor ? dims.tickMinorLength : dims.tickSmallLength;
-                  const tickWidth = isMajor ? dims.tickMajorWidth : isMinor ? dims.tickMinorWidth : dims.tickSmallWidth;
-
-                  // Calculate position on the circle edge
-                  const angleRad = ((angle - 90) * Math.PI) / 180;
-                  const outerRadius = dims.innerRingSize / 2 - 4; // Just inside the border
-                  const innerRadius = outerRadius - tickLength;
-                  const centerX = dims.innerRingSize / 2;
-                  const centerY = dims.innerRingSize / 2;
-
-                  // Position tick at outer edge, pointing inward
-                  const x = centerX + Math.cos(angleRad) * (outerRadius - tickLength / 2);
-                  const y = centerY + Math.sin(angleRad) * (outerRadius - tickLength / 2);
-
-                  return (
-                    <View
-                      key={i}
-                      style={[
-                        styles.tick,
-                        {
-                          width: tickWidth,
-                          height: tickLength,
-                          backgroundColor: isMajor
-                            ? (isDark ? '#FFFFFF' : '#000000')
-                            : (isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.3)'),
-                          left: x - tickWidth / 2,
-                          top: y - tickLength / 2,
-                          transform: [{ rotate: `${angle}deg` }],
-                          opacity: isMajor ? 1 : isMinor ? 0.75 : 0.5,
-                        },
-                      ]}
-                    />
-                  );
-                })}
-
-                {/* Kaaba/Qibla Indicator */}
-                <Animated.View
-                  style={[
-                    styles.qiblaIndicator,
-                    qiblaIndicatorAnimStyle,
-                  ]}
-                >
-                  <Image
-                    source={require('../../assets/images/kaabaa.png')}
-                    style={{
-                      width: dims.kaabaSize,
-                      height: dims.kaabaSize,
-                      transform: [{ rotate: `${heading || 0}deg` }]
-                    }}
-                    contentFit="contain"
-                    priority="high"
-                    cachePolicy="memory-disk"
-                  />
-                </Animated.View>
-              </View>
+              {/* Layer 2: Kaaba Icon — positioned on ring edge at qibla bearing */}
+              <Animated.View
+                style={[{
+                  position: 'absolute',
+                  width: kaabaSize,
+                  height: kaabaSize,
+                  left: compassSize / 2 - kaabaSize / 2,
+                  top: compassSize / 2 - kaabaSize / 2,
+                }, kaabaAnimStyle]}
+              >
+                <SvgXml
+                  xml={isDark ? kaabaIconDarkSvg : kaabaIconLightSvg}
+                  width={kaabaSize}
+                  height={kaabaSize}
+                />
+              </Animated.View>
             </Animated.View>
 
-            {/* Center Pointer */}
-            <View style={styles.centerPoint}>
-              <View style={[styles.pointerUp, {
-                borderLeftWidth: dims.pointerWidth,
-                borderRightWidth: dims.pointerWidth,
-                borderBottomWidth: dims.pointerHeight,
-                borderBottomColor: isAligned ? primaryColor : goldColor,
-                shadowColor: isAligned ? primaryColor : goldColor,
-                shadowOffset: { width: 0, height: 0 },
-                shadowOpacity: 0.7,
-                shadowRadius: 12,
-                marginBottom: -dims.centerDotSize / 2,
-              }]} />
-              <View style={[styles.centerDot, {
-                width: dims.centerDotSize,
-                height: dims.centerDotSize,
-                borderRadius: dims.centerDotSize / 2,
-                backgroundColor: isAligned ? primaryColor : goldColor,
-                shadowColor: isAligned ? primaryColor : goldColor,
-                shadowOffset: { width: 0, height: 0 },
-                shadowOpacity: 0.9,
-                shadowRadius: 10,
-                elevation: 6,
-                borderWidth: dims.borderWidth,
-                borderColor: '#FFFFFF',
-              }]} />
+            <View style={{
+              width: compassSize,
+              height: compassSize,
+              position: 'absolute',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+              <SvgXml
+                xml={isDark ? needleDarkSvg : needleLightSvg}
+                width={compassSize}
+                height={compassSize}
+              />
             </View>
           </View>
         </View>
@@ -597,7 +475,7 @@ export default function QiblaScreen() {
               },
             ]}
           >
-            {isLocked ? "Direction Locked" : getDirectionText()}
+            {isLocked ? t('qibla.directionLocked') : getDirectionText()}
           </ThemedText>
         </View>
 
@@ -642,7 +520,7 @@ export default function QiblaScreen() {
               fontSize: 13,
             }}
           >
-            {isLocked ? "Tap to Unlock" : "Lock Direction"}
+            {isLocked ? t('qibla.tapToUnlock') : t('qibla.lockDirection')}
           </ThemedText>
         </Pressable>
 
@@ -650,32 +528,32 @@ export default function QiblaScreen() {
         <View style={styles.infoContainer}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
             <View style={[styles.infoCard, { flex: 1 }]}>
-              <Feather name="navigation" size={16} color={isDark ? '#94A3B8' : '#64748B'} style={{ marginBottom: 4 }} />
-              <ThemedText type="h3" style={{ fontWeight: '800', fontSize: 20, letterSpacing: -0.5 }}>
+              <Feather name="navigation" size={16} color={isDark ? '#FFFFFF' : '#000000'} style={{ marginBottom: 4 }} />
+              <ThemedText type="h3" style={{ fontWeight: '800', fontSize: 20, letterSpacing: -0.5, color: isDark ? '#FFFFFF' : '#000000' }}>
                 {heading}°
               </ThemedText>
-              <ThemedText type="caption" secondary style={{ marginTop: 2, fontSize: 8, fontWeight: '700', letterSpacing: 0.3 }}>
-                HEADING
+              <ThemedText type="caption" style={{ marginTop: 2, fontSize: 8, fontWeight: '700', letterSpacing: 0.3, color: isDark ? '#FFFFFF' : '#000000', opacity: 0.7 }}>
+                {t('qibla.heading')}
               </ThemedText>
             </View>
 
             <View style={[styles.infoCard, { flex: 1 }]}>
-              <Feather name="compass" size={16} color={primaryColor} style={{ marginBottom: 4 }} />
-              <ThemedText type="h3" style={{ color: primaryColor, fontWeight: '800', fontSize: 20, letterSpacing: -0.5 }}>
+              <Feather name="compass" size={16} color={isDark ? '#FFFFFF' : '#000000'} style={{ marginBottom: 4 }} />
+              <ThemedText type="h3" style={{ color: isDark ? '#FFFFFF' : '#000000', fontWeight: '800', fontSize: 20, letterSpacing: -0.5 }}>
                 {qiblaDirection}°
               </ThemedText>
-              <ThemedText type="caption" secondary style={{ marginTop: 2, fontSize: 8, fontWeight: '700', letterSpacing: 0.3 }}>
-                QIBLA
+              <ThemedText type="caption" style={{ marginTop: 2, fontSize: 8, fontWeight: '700', letterSpacing: 0.3, color: isDark ? '#FFFFFF' : '#000000', opacity: 0.7 }}>
+                {t('qibla.qiblaLabel')}
               </ThemedText>
             </View>
 
             <View style={[styles.infoCard, { flex: 1 }]}>
-              <Feather name="map-pin" size={16} color={goldColor} style={{ marginBottom: 4 }} />
-              <ThemedText type="h3" style={{ color: goldColor, fontWeight: '800', fontSize: 20, letterSpacing: -0.5 }}>
+              <Feather name="map-pin" size={16} color={isDark ? '#FFFFFF' : '#000000'} style={{ marginBottom: 4 }} />
+              <ThemedText type="h3" style={{ color: isDark ? '#FFFFFF' : '#000000', fontWeight: '800', fontSize: 20, letterSpacing: -0.5 }}>
                 {distanceToMecca.toLocaleString()}
               </ThemedText>
-              <ThemedText type="caption" secondary style={{ marginTop: 2, fontSize: 8, fontWeight: '700', letterSpacing: 0.3 }}>
-                KM
+              <ThemedText type="caption" style={{ marginTop: 2, fontSize: 8, fontWeight: '700', letterSpacing: 0.3, color: isDark ? '#FFFFFF' : '#000000', opacity: 0.7 }}>
+                {t('qibla.km')}
               </ThemedText>
             </View>
           </View>
@@ -685,7 +563,7 @@ export default function QiblaScreen() {
             <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8 }}>
               <Feather name="info" size={12} color={goldColor} />
               <ThemedText type="caption" style={{ marginLeft: 6, color: goldColor, fontWeight: '500', fontSize: 11 }}>
-                Move phone in figure-8 to calibrate
+                {t('qibla.calibrateShort')}
               </ThemedText>
             </View>
           )}
@@ -710,8 +588,8 @@ export default function QiblaScreen() {
               flex: 1,
             }}>
               {Platform.OS === "web"
-                ? "Compass not available on web. Use on mobile device."
-                : compassError || "Compass not available"}
+                ? t('qibla.compassNotAvailableWeb')
+                : compassError || t('qibla.compassNotAvailable')}
             </ThemedText>
           </View>
         ) : null}
@@ -778,47 +656,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     borderWidth: 4,
   },
-  compassOuter: {
-    alignItems: "center",
-    justifyContent: "center",
-    overflow: "hidden",
-  },
-  compassInner: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  innerRing: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  directionLabelContainer: {
-    position: "absolute",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  tick: {
-    position: "absolute",
-  },
-  qiblaIndicator: {
-    position: "absolute",
-  },
-  kaabaCircle: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  centerPoint: {
-    position: "absolute",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  pointerUp: {
-    width: 0,
-    height: 0,
-    borderLeftColor: "transparent",
-    borderRightColor: "transparent",
-  },
-  centerDot: {
-  },
+
   directionIndicator: {
     flexDirection: "row",
     alignItems: "center",
