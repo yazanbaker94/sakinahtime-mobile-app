@@ -1,0 +1,2750 @@
+{
+  "tabs": {
+    "qibla": "Kıble",
+    "prayer": "Namaz",
+    "quran": "Kur'an",
+    "azkar": "Zikirler",
+    "settings": "Ayarlar"
+  },
+  "settings": {
+    "title": "Ayarlar",
+    "appearance": "Görünüm",
+    "customizeTheme": "Temanızı özelleştirin",
+    "language": "Dil",
+    "chooseLanguage": "Dilinizi seçin",
+    "prayerFasting": "Namaz & Oruç",
+    "notificationsAzanReminders": "Bildirimler, ezan ve hatırlatmalar",
+    "storageDownloads": "Depolama & İndirmeler",
+    "manageOfflineContent": "Çevrimdışı içeriği yönetin",
+    "wordByWord": "Kelime Kelime",
+    "translationLanguage": "Çeviri dili",
+    "dhikrReminders": "Zikir Hatırlatmaları",
+    "floatingOverlay": "Kayan hatırlatma bildirimleri",
+    "feedbackSuggestions": "Geri Bildirim & Öneriler",
+    "helpImprove": "Uygulamayı geliştirmemize yardımcı olun",
+    "colorMode": "Renk Modu",
+    "theme": "Tema",
+    "light": "Açık",
+    "dark": "Koyu",
+    "auto": "Otomatik"
+  },
+  "prayer": {
+    "title": "Namaz Vakitleri",
+    "fajr": "İmsak",
+    "sunrise": "Güneş",
+    "dhuhr": "Öğle",
+    "asr": "İkindi",
+    "maghrib": "Akşam",
+    "isha": "Yatsı",
+    "nextPrayer": "SONRAKİ NAMAZ",
+    "timeRemaining": "Kalan Süre",
+    "prayerCalendar": "Namaz Takvimi",
+    "prayerStats": "Namaz İstatistikleri",
+    "progress": "İlerleme",
+    "hijriCalendar": "Hicri Takvim",
+    "calculationMethod": "Hesaplama Yöntemi",
+    "prayed": "Kılındı",
+    "missed": "Kaçırıldı",
+    "late": "Geç",
+    "onTime": "Zamanında",
+    "notLogged": "Kaydedilmedi",
+    "logPrayer": "Namaz Kaydet",
+    "currentStreak": "Mevcut Seri",
+    "days": "GÜN",
+    "day": "GÜN",
+    "today": "Bugün",
+    "yesterday": "Dün",
+    "location": "Konum",
+    "setLocation": "Konumunuzu ayarlayın",
+    "tapToSetLocation": "Doğru namaz vakitleri için konumunuzu ayarlayın",
+    "noLocation": "Konum Ayarlanmadı",
+    "checkingPermission": "Konum izni kontrol ediliyor...",
+    "locationRequired": "Konum Erişimi Gerekli",
+    "locationExplanation": "Bölgeniz için doğru namaz vakitlerini hesaplamak için konumunuza ihtiyacımız var.",
+    "browserLocationHint": "Lütfen tarayıcı ayarlarınızdan konumu etkinleştirin.",
+    "enableLocation": "Konumu Etkinleştir",
+    "openSettings": "Ayarları Aç",
+    "loadingPrayerTimes": "Namaz vakitleri yükleniyor...",
+    "failedToLoad": "Namaz vakitleri yüklenemedi",
+    "hours": "SAAT",
+    "minutes": "DAKİKA",
+    "seconds": "SANİYE",
+    "min": "dk"
+  },
+  "qibla": {
+    "title": "Kıble",
+    "direction": "Yön",
+    "degrees": "derece",
+    "compass": "Pusula",
+    "distance": "Mesafe",
+    "toKaaba": "Kâbe'ye",
+    "facingQibla": "Kıbleye Yöneldiniz",
+    "turnLeft": "Sola Dönün",
+    "turnRight": "Sağa Dönün",
+    "directionLocked": "Yön Kilitlendi",
+    "tapToUnlock": "Kilidi Açmak İçin Dokunun",
+    "lockDirection": "Yönü Kilitle",
+    "compassNotAvailable": "Pusula kullanılamıyor",
+    "compassNotAvailableWeb": "Pusula web'de kullanılamıyor. Mobil cihazda kullanın.",
+    "calibrate": "Telefonunuzu 8 şeklinde hareket ettirerek pusulayı kalibre edin",
+    "calibrateShort": "Kalibre etmek için telefonu 8 şeklinde hareket ettirin",
+    "heading": "YÖN",
+    "qiblaLabel": "KIBLE",
+    "km": "KM",
+    "mosques": "Camiler",
+    "gettingLocation": "Konumunuz alınıyor...",
+    "initializingCompass": "Pusula başlatılıyor...",
+    "locationRequiredQibla": "Mevcut konumunuzdan Kıble yönünü hesaplamak için konumunuza ihtiyacımız var."
+  },
+  "quran": {
+    "title": "Kur'an",
+    "surah": "Sure",
+    "juz": "Cüz",
+    "page": "Sayfa",
+    "verse": "Ayet",
+    "verses": "Ayetler",
+    "search": "Ara",
+    "searchQuran": "Kur'an'da Ara",
+    "bookmark": "Yer İmi",
+    "bookmarks": "Yer İmleri",
+    "bookmarked": "İşaretlendi",
+    "addNote": "Not Ekle",
+    "notes": "Notlar",
+    "highlight": "Vurgula",
+    "highlights": "Vurgular",
+    "copy": "Kopyala",
+    "share": "Paylaş",
+    "play": "Oynat",
+    "pause": "Duraklat",
+    "stop": "Durdur",
+    "continue": "Devam Et",
+    "tafsir": "Tefsir",
+    "translation": "Çeviri",
+    "translations": "Çeviriler",
+    "transliteration": "Transliterasyon",
+    "reciter": "Kari",
+    "lastRead": "Son Okunan",
+    "continueLast": "Kaldığınız yerden devam edin",
+    "meccan": "Mekki",
+    "medinan": "Medeni",
+    "save": "Kaydet",
+    "delete": "Sil",
+    "cancel": "İptal",
+    "savedVerses": "Kaydedilen Ayetler",
+    "all": "Tümü",
+    "recent": "Son",
+    "tafsirTranslations": "Tefsir & Çeviriler",
+    "download": "İndir",
+    "downloaded": "İndirildi",
+    "downloading": "İndiriliyor",
+    "readMode": "Okuma Modu",
+    "mushafMode": "Mushaf Modu",
+    "surahReader": "Sure Okuyucu",
+    "goToPage": "Sayfaya git",
+    "goToSurah": "Sureye git",
+    "goToJuz": "Cüze git",
+    "wordByWord": "Kelime Kelime",
+    "audio": "Ses",
+    "settings": "Ayarlar"
+  },
+  "azkar": {
+    "title": "Zikirler & Dualar",
+    "morningAzkar": "Sabah Zikirleri",
+    "eveningAzkar": "Akşam Zikirleri",
+    "afterPrayer": "Namaz Sonrası",
+    "sleep": "Uyku",
+    "wakeUp": "Uyanma",
+    "dailyTip": "Günlük İpucu",
+    "categories": "Kategoriler",
+    "duas": "Dualar",
+    "guides": "Rehberler",
+    "all": "Tümü",
+    "favorites": "Favoriler",
+    "count": "Sayaç",
+    "completed": "Tamamlandı",
+    "repeat": "Tekrar",
+    "times": "kez",
+    "time": "kez",
+    "remaining": "kalan",
+    "reset": "Sıfırla",
+    "duaOfTheDay": "Günün Duası",
+    "dailyDhikr": "Günlük Zikir",
+    "dhikrGoal": "Zikir Hedefi",
+    "worship": "İbadet & Namaz",
+    "dailyLife": "Günlük Hayat",
+    "travel": "Yolculuk",
+    "food": "Yeme & İçme",
+    "protection": "Korunma",
+    "hadith": "Hadis",
+    "islamicGuides": "İslami Rehberler",
+    "search": "Zikir ve dua ara...",
+    "searchDuas": "Dua ara...",
+    "quranic": "Kur'ani",
+    "prophetic": "Nebevi",
+    "custom": "Özel",
+    "customDuas": "Özel Dualar",
+    "addCustomDua": "Özel Dua Ekle",
+    "noDuasYet": "Henüz özel dua yok",
+    "noFavorites": "Henüz favori yok",
+    "noResults": "Sonuç bulunamadı",
+    "deleteConfirm": "Bu duayı silmek istediğinizden emin misiniz?",
+    "tapToStart": "Başlamak için dokunun",
+    "target": "Hedef",
+    "progress": "İlerleme",
+    "allCategories": "Tüm Kategoriler",
+    "deleteDua": "Duayı Sil",
+    "deleteDuaConfirm": "Bu duayı silmek istediğinizden emin misiniz?",
+    "myDuas": "Dualarım",
+    "result": "sonuç",
+    "results": "sonuç",
+    "noDuasFound": "Şunun için dua bulunamadı:",
+    "searchGuides": "Rehber ara...",
+    "noGuidesFound": "Şunun için rehber bulunamadı:",
+    "back": "Geri",
+    "addPersonalSupplications": "Henüz özel dua yok.\nKişisel dualarınızı ekleyin.",
+    "tapHeartTip": "Henüz favori dua yok.\nHerhangi bir duada kalp simgesine dokunun.",
+    "noQuranicDuas": "Kur'ani dua bulunmuyor",
+    "noPropheticDuas": "Nebevi dua bulunmuyor",
+    "adhkarCount": "zikir",
+    "dailyTips": [
+      {
+        "text": "Hz. Peygamber ﷺ buyurdu: \"En faziletli zikir La ilahe illallah (Allah'tan başka ilah yoktur) sözüdür.\"",
+        "source": "Tirmizi"
+      },
+      {
+        "text": "Hz. Peygamber ﷺ buyurdu: \"Kim günde yüz kere SubhanAllahi ve bihamdihi derse, günahları deniz köpüğü kadar bile olsa bağışlanır.\"",
+        "source": "Buhari & Müslim"
+      },
+      {
+        "text": "Hz. Peygamber ﷺ buyurdu: \"İki kelime vardır ki dile hafif, terazide ağır, Rahman'a sevimlidir: SubhanAllahi ve bihamdihi, SubhanAllahil Azim.\"",
+        "source": "Buhari & Müslim"
+      },
+      {
+        "text": "Hz. Peygamber ﷺ buyurdu: \"Kim her farz namazdan sonra Ayetel Kürsi'yi okursa, cennetle arasında yalnızca ölüm vardır.\"",
+        "source": "Nesai"
+      },
+      {
+        "text": "Hz. Peygamber ﷺ buyurdu: \"Kulun Rabbine en yakın olduğu an secdede olduğu andır, o halde duayı çoğaltın.\"",
+        "source": "Müslim"
+      },
+      {
+        "text": "Hz. Peygamber ﷺ buyurdu: \"Sizden biriniz kendisi için istediğini kardeşi için de istemedikçe gerçek iman etmiş olmaz.\"",
+        "source": "Buhari & Müslim"
+      },
+      {
+        "text": "Hz. Peygamber ﷺ buyurdu: \"Allah'a ve ahiret gününe iman eden kişi, ya hayır söylesin ya da sussun.\"",
+        "source": "Buhari & Müslim"
+      },
+      {
+        "text": "Hz. Peygamber ﷺ buyurdu: \"Sizin en hayırlınız Kur'an'ı öğrenen ve öğretendir.\"",
+        "source": "Buhari"
+      },
+      {
+        "text": "Hz. Peygamber ﷺ buyurdu: \"Kardeşinin yüzüne gülümsemen sadakadır.\"",
+        "source": "Tirmizi"
+      },
+      {
+        "text": "Hz. Peygamber ﷺ buyurdu: \"Kim ilim öğrenmek için bir yola girerse, Allah ona cennetin yolunu kolaylaştırır.\"",
+        "source": "Müslim"
+      },
+      {
+        "text": "Hz. Peygamber ﷺ buyurdu: \"Ezan ile ikamet arasında yapılan dua reddedilmez.\"",
+        "source": "Ebu Davud & Tirmizi"
+      }
+    ]
+  },
+  "azkarDetail": {
+    "quran": "Kur'an",
+    "translit": "Okunuş",
+    "english": "Türkçe",
+    "counter": "Sayaç"
+  },
+  "duaCollection": {
+    "title": "Dualar",
+    "searchPlaceholder": "Dua ara...",
+    "categories": "Kategoriler",
+    "quranic": "Kur'ani",
+    "prophetic": "Nebevi",
+    "favorites": "Favoriler",
+    "myDuas": "Dualarım",
+    "deleteDua": "Duayı Sil",
+    "deleteConfirm": "Bu duayı silmek istediğinizden emin misiniz?",
+    "deleteFailed": "Dua silinemedi",
+    "duasCount": "dua",
+    "noResultsFor": "\"{{query}}\" için dua bulunamadı",
+    "results": "sonuç",
+    "result": "sonuç",
+    "forQuery": "için",
+    "noQuranic": "Kur'ani dua bulunmuyor",
+    "noProphetic": "Nebevi dua bulunmuyor",
+    "noFavorites": "Henüz favori dua yok.\nHerhangi bir duada kalp simgesine dokunarak ekleyin.",
+    "noCustom": "Henüz özel dua yok.\nKişisel dualarınızı buraya ekleyin.",
+    "addCustom": "Özel Dua Ekle"
+  },
+  "progress": {
+    "title": "İlerleme",
+    "readingProgress": "Okuma İlerlemesi",
+    "overallProgress": "Genel İlerleme",
+    "complete": "Tamamlandı",
+    "pagesRead": "Okunan Sayfalar",
+    "juzComplete": "Tamamlanan Cüz",
+    "khatm": "Hatim",
+    "todaysProgress": "Bugünkü İlerleme",
+    "versesRead": "ayet okundu",
+    "pagesReadToday": "sayfa okundu",
+    "readingStreak": "Okuma Serisi",
+    "currentStreak": "Mevcut Seri",
+    "longestStreak": "En Uzun Seri",
+    "bestStreak": "En İyi Seri",
+    "thisWeek": "Bu Hafta",
+    "average": "Ortalama",
+    "pagesPerDay": "sayfa/gün",
+    "dailyGoalSettings": "Günlük Hedef Ayarları",
+    "enableDailyGoal": "Günlük Hedefi Etkinleştir",
+    "goalType": "Hedef Türü",
+    "pages": "Sayfalar",
+    "verses": "Ayetler",
+    "target": "Hedef",
+    "saveGoal": "Hedefi Kaydet",
+    "readingReminder": "Okuma Hatırlatması",
+    "enableReminder": "Hatırlatmayı Etkinleştir",
+    "reminderTime": "Hatırlatma Zamanı",
+    "resetAllProgress": "Tüm İlerlemeyi Sıfırla",
+    "resetConfirm": "Tüm okuma ilerlemesini sıfırlamak istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+    "resetButton": "Sıfırla",
+    "noGoalSet": "Günlük hedef belirlenmedi",
+    "invalidGoal": "Geçersiz Hedef",
+    "invalidGoalMessage": "Lütfen geçerli bir sayı girin",
+    "goalRange": "hedef şu aralıkta olmalıdır:",
+    "and": "ve",
+    "permissionRequired": "İzin Gerekli",
+    "permissionMessage": "Okuma hatırlatmalarını kullanmak için lütfen cihaz ayarlarından bildirimleri etkinleştirin.",
+    "errorSavingGoal": "Hedef ayarları kaydedilemedi",
+    "errorResetting": "İlerleme sıfırlanamadı",
+    "loadingProgress": "İlerleme yükleniyor...",
+    "done": "Bitti",
+    "goal": "Hedef",
+    "weeklyOverview": "Haftalık Özet",
+    "monthlyOverview": "Aylık Özet",
+    "streak": "Seri",
+    "totalPrayers": "Toplam Namaz",
+    "completionRate": "Tamamlanma Oranı",
+    "prayerLog": "Namaz Kaydı",
+    "weekly": "Haftalık",
+    "monthly": "Aylık",
+    "allTime": "Tüm Zamanlar",
+    "exportStats": "İstatistikleri Dışa Aktar",
+    "qadaTracker": "Kaza Takipçisi",
+    "qadaRemaining": "Kalan Kaza",
+    "taraweeh": "Teravih",
+    "charity": "Hayır",
+    "zakatCalculator": "Zekât Hesaplayıcı",
+    "hifzProgress": "Hıfz İlerlemesi",
+    "quranSchedule": "Kur'an Programı"
+  },
+  "notifications": {
+    "title": "Bildirim Ayarları",
+    "prayerNotifications": "Namaz Bildirimleri",
+    "getNotified": "Namaz vakti geldiğinde bildirim alın",
+    "prayerAlarms": "Namaz Alarmları",
+    "azanSettings": "Ezan Ayarları",
+    "azan": "Ezan",
+    "azanSound": "Ezan Sesi",
+    "playHayaAlSalat": "Namazdan önce \"Hayya Ale's-Salah\" çalın",
+    "silentMode": "Sessiz Mod",
+    "flipToSilence": "Ters Çevirip Sustur",
+    "flipToSilenceDesc": "Ezanı susturmak için telefonu ters çevirin",
+    "testAzan": "Ezanı Test Et",
+    "vibration": "Titreşim",
+    "iqama": "İkamet",
+    "iqamaReminder": "İkamet Hatırlatması",
+    "iqamaWait": "İkamet Bekleme",
+    "iqamaDelay": "İkamet Gecikmesi",
+    "minutesAfterAzan": "ezan sonrası dakika",
+    "minutes": "dakika",
+    "enabled": "Etkin",
+    "disabled": "Devre Dışı",
+    "timeAdjustments": "Zaman Ayarları",
+    "adjustPrayerTimes": "Namaz vakitlerini ayarla (dakika)",
+    "calculationMethod": "Hesaplama Yöntemi",
+    "highLatitude": "Yüksek Enlem Kuralı",
+    "asrCalculation": "İkindi Hesaplaması",
+    "standard": "Standart",
+    "hanafi": "Hanefi",
+    "prayerTracking": "Namaz Takibi",
+    "enableTracking": "Takibi Etkinleştir",
+    "trackDailyPrayers": "Günlük namazlarınızı takip edin",
+    "missedPrayerReminder": "Kaçırılan Namaz Hatırlatması",
+    "reminderAfterPrayer": "Namaz vakti geçtikten sonra hatırlat",
+    "reminderDelay": "Hatırlatma Gecikmesi",
+    "minutesAfterPrayer": "namaz sonrası dakika",
+    "fasting": "Oruç",
+    "suhoorReminder": "Sahur Hatırlatması",
+    "iftarReminder": "İftar Hatırlatması",
+    "beforeSuhoor": "sahurdan önce dakika",
+    "beforeIftar": "iftardan önce dakika",
+    "fastingReminders": "Oruç Hatırlatmaları",
+    "enableFastingReminders": "Oruç hatırlatmalarını etkinleştir",
+    "playAzanWhenPrayerTime": "Namaz vakti geldiğinde ezan çal",
+    "selectPrayersForAzan": "Hangi namazlarda ezan çalınacağını seçin",
+    "prayerSelection": "Namaz Seçimi",
+    "choosePrayersForIqama": "Hangi namazlarda ikamet yapılacağını seçin",
+    "testIqama": "İkameti Test Et",
+    "testIqamaPlaying": "İkamet sesi çalıyor. Duyamıyorsanız sesinizi kontrol edin.",
+    "timeAdjustmentsFineTune": "Namaz vakitlerini ince ayar (±30 dk)",
+    "min": "dk",
+    "autoDetectByLocation": "Konuma göre otomatik algıla",
+    "recommended": "Önerilen",
+    "active": "Aktif",
+    "useAuto": "Otomatik Kullan",
+    "autoDetectedFor": "Şunun için otomatik algılandı:"
+  },
+  "qadaTracker": {
+    "title": "Kaza Takipçisi",
+    "totalRemaining": "Toplam kalan kaza namazları",
+    "hint": "Sayıya dokunarak düzenleyin. Kaza namazı kıldıktan sonra 'Kaydet' düğmesini kullanın."
+  },
+  "location": {
+    "title": "Konum Ayarları",
+    "searchCity": "Şehir ara...",
+    "currentLocation": "Mevcut Konum",
+    "useCurrentLocation": "Mevcut Konumu Kullan",
+    "manualEntry": "Manuel Giriş",
+    "latitude": "Enlem",
+    "longitude": "Boylam",
+    "save": "Kaydet",
+    "detectingLocation": "Konum algılanıyor...",
+    "locationSaved": "Konum kaydedildi",
+    "invalidCoordinates": "Geçersiz koordinatlar",
+    "detecting": "Konum algılanıyor...",
+    "unavailable": "Konum kullanılamıyor",
+    "permissionRequired": "İzin gerekli",
+    "manual": "Manuel",
+    "locationSource": "KONUM KAYNAĞI",
+    "useGPS": "GPS Konumunu Kullan",
+    "setManually": "Konumu Manuel Ayarla",
+    "searchWorldwide": "Dünya genelinde şehir arayın",
+    "recentLocations": "SON KONUMLAR",
+    "info": "Konumunuz doğru namaz vakitlerini ve Kıble yönünü hesaplamak için kullanılır. GPS kullanılamadığında veya doğru olmadığında manuel konum kullanışlıdır."
+  },
+  "qada": {
+    "title": "Kaza Takipçisi",
+    "totalRemaining": "Toplam Kalan",
+    "addMissed": "Kaçırılan Ekle",
+    "prayersMadeUp": "Kılınan Kazalar",
+    "prayersRemaining": "Kalan",
+    "hint": "Çıkarmak için namaz sayısına uzun basın",
+    "noQada": "Kalan kaza namazı yok. Maşallah!",
+    "fajr": "İmsak",
+    "dhuhr": "Öğle",
+    "asr": "İkindi",
+    "maghrib": "Akşam",
+    "isha": "Yatsı",
+    "prayers": "namaz"
+  },
+  "zakat": {
+    "title": "Zekât Hesaplayıcı",
+    "totalWealth": "Toplam Servet",
+    "enterWealth": "Toplam servet miktarını girin",
+    "calculate": "Hesapla",
+    "zakatDue": "Ödenecek Zekât",
+    "nisab": "Nisab",
+    "meetsNisab": "Nisab eşiğini karşılıyor",
+    "doesNotMeetNisab": "Nisab eşiğini karşılamıyor",
+    "goldNisab": "Altın Nisab",
+    "silverNisab": "Gümüş Nisab",
+    "info": "Zekât, bir hicri yıl boyunca elde tutulan toplam uygun servetin %2,5'idir.",
+    "gold": "Altın",
+    "silver": "Gümüş",
+    "cash": "Nakit & Banka Bakiyeleri",
+    "stocks": "Hisse Senedi & Yatırımlar",
+    "property": "Kira Mülkü",
+    "totalAssets": "Toplam Varlıklar",
+    "zakatPayable": "Ödenecek Zekât",
+    "reset": "Sıfırla",
+    "currency": "Para Birimi"
+  },
+  "charity": {
+    "title": "Hayır Takipçisi",
+    "totalDonated": "Toplam Bağış",
+    "addDonation": "Bağış Ekle",
+    "setGoal": "Hedef Belirle",
+    "goal": "Hedef",
+    "recentDonations": "Son Bağışlar",
+    "noDonations": "Henüz bağış yok",
+    "amount": "Miktar",
+    "type": "Tür",
+    "category": "Kategori",
+    "date": "Tarih",
+    "deleteConfirm": "Bu bağışı silmek istediğinizden emin misiniz?",
+    "enterAmount": "Miktar girin",
+    "selectCategory": "Kategori seçin",
+    "sadaqah": "Sadaka",
+    "zakatPayment": "Zekât",
+    "waqf": "Vakıf",
+    "other": "Diğer",
+    "goalAmount": "Hedef Miktarı",
+    "goalProgress": "Hedef İlerlemesi",
+    "to": "Kime",
+    "totalGiven": "Toplam Verilen",
+    "editGoal": "Hedefi Düzenle",
+    "zakatStatus": "Zekât Durumu",
+    "paid": "Ödendi",
+    "notYetPaid": "Bu yıl henüz ödenmedi",
+    "breakdownByType": "Türe Göre Dağılım"
+  },
+  "ramadan": {
+    "title": "Ramazan Paneli",
+    "daysRemaining": "Kalan Günler",
+    "fastingToday": "Bugün Oruç",
+    "taraweeh": "Teravih",
+    "logTaraweeh": "Teravih Kaydet",
+    "suhoor": "Sahur",
+    "iftar": "İftar",
+    "fastingDays": "Oruç Günleri",
+    "completed": "Tamamlandı",
+    "remaining": "Kalan",
+    "ramadanMode": "Ramazan Modu",
+    "activateMessage": "Ramazan Modu, mübarek Ramazan ayında otomatik olarak etkinleşecektir.",
+    "checkBackMessage": "Sahur/İftar vakitleri, Kur'an okuma programları, Teravih takibi ve daha fazlası için Ramazan başladığında tekrar kontrol edin."
+  },
+  "hifz": {
+    "title": "Hıfz İlerlemesi",
+    "memorized": "Ezberlenmiş",
+    "inProgress": "Devam Ediyor",
+    "notStarted": "Başlanmadı",
+    "totalMemorized": "Toplam Ezberlenen",
+    "markMemorized": "Ezberlenmiş Olarak İşaretle",
+    "markInProgress": "Devam Ediyor Olarak İşaretle",
+    "resetSurah": "Sureyi Sıfırla",
+    "versesMemorized": "Ezberlenen Ayetler",
+    "dueToday": "Bugün İçin",
+    "revisedToday": "Bugün Tekrar Edilen",
+    "dailyGoal": "Günlük Hedef",
+    "overallProgress": "Genel İlerleme",
+    "verses": "Ayetler",
+    "pages": "Sayfalar",
+    "juz": "Cüz",
+    "dueForRevision": "Tekrar Edilmesi Gereken",
+    "last": "Son",
+    "ease": "Kolaylık",
+    "moreVersesDue": "daha ayet bekliyor",
+    "statusLegend": "Durum Açıklaması",
+    "notifications": "Bildirimler",
+    "dailyReminders": "Günlük Hatırlatmalar",
+    "reminderHint": "Ezberinizi tekrar etmeniz için hatırlatma alın",
+    "resetAllProgress": "Tüm İlerlemeyi Sıfırla"
+  },
+  "storage": {
+    "title": "Depolama & İndirmeler",
+    "totalUsed": "Kullanılan Toplam Depolama",
+    "audioFiles": "Ses Dosyaları",
+    "clearAllDownloads": "Tüm İndirmeleri Temizle",
+    "clearConfirm": "İndirilen tüm içeriği silmek istediğinizden emin misiniz?",
+    "confirm": "Onayla",
+    "cancel": "İptal",
+    "reciterAudio": "Kari Sesi",
+    "mushafPages": "Mushaf Sayfaları",
+    "totalSize": "Toplam Boyut",
+    "noDownloads": "Henüz indirme yok",
+    "loadingInfo": "Depolama bilgisi yükleniyor...",
+    "quickActions": "Hızlı İşlemler",
+    "manageAudio": "Sesi Yönet",
+    "downloadQuran": "Kur'an İndir",
+    "clearAll": "Tümünü Temizle",
+    "freeUpSpace": "Yer açın",
+    "refreshInfo": "Depolama Bilgisini Yenile"
+  },
+  "onboarding": {
+    "welcome": "SakinahTime'a Hoş Geldiniz",
+    "welcomeDesc": "Bilinçli bir manevi yolculuk için yoldaşınız",
+    "skip": "Atla",
+    "next": "İleri",
+    "getStarted": "Başla",
+    "done": "Bitti",
+    "prayerTimesTitle": "Doğru Namaz Vakitleri",
+    "prayerTimesDesc": "Konumunuza göre hassas namaz vakitleri ve güzel ezan bildirimleri alın",
+    "quranTitle": "Güzel Kur'an Deneyimi",
+    "quranDesc": "Birden fazla çeviri, kelime kelime anlam ve sesli tilavet ile Kur'an okuyun",
+    "azkarTitle": "Günlük Zikirler & Dualar",
+    "azkarDesc": "Sabah ve akşam zikirleri, her vesile için dualar ve zikir sayacına erişin",
+    "notificationsDesc": "Özelleştirilebilir bildirimler ve ezan alarmlarıyla hiçbir namazı kaçırmayın",
+    "widgetDesc": "Namaz vakitlerine hızlı erişim için ana ekranınıza bir widget ekleyin",
+    "welcomeTitle": "Esselamu Aleyküm",
+    "welcomeSubtitle": "SakinahTime'a Hoş Geldiniz",
+    "welcomeDescription": "Namaz vakitleri, Kur'an okuma ve manevi gelişim için yoldaşınız.",
+    "locationTitle": "Doğru Namaz Vakitleri",
+    "locationSubtitle": "Konum Erişimi",
+    "locationDescription": "Bölgeniz için hassas namaz vakitlerini hesaplamak üzere konumunuzu kullanıyoruz.",
+    "notificationsTitle": "Hiçbir Namazı Kaçırmayın",
+    "notificationsSubtitle": "Bildirim Hatırlatmaları",
+    "notificationsDescription": "Namaz vakti geldiğinde güzel ezan sesleriyle bildirim alın.",
+    "widgetTitle": "Widget Ekleyin",
+    "widgetSubtitle": "Güvenilir Ezan",
+    "widgetDescription": "Telefon yeniden başlatıldıktan sonra bile güvenilir ezan bildirimleri için ana ekranınıza namaz vakitleri widget'ı ekleyin.",
+    "doneTitle": "Hazırsınız!",
+    "doneSubtitle": "Başlamaya Hazır",
+    "doneDescription": "Daha bilinçli bir manevi pratik yolculuğuna başlayın.",
+    "locationEnabled": "Konum etkinleştirildi",
+    "notificationsEnabled": "Bildirimler etkinleştirildi",
+    "enable": "Etkinleştir",
+    "continue": "Devam Et",
+    "notNow": "Şimdi değil",
+    "enableExactAlarms": "Hassas Alarmları Etkinleştir",
+    "exactAlarmsDescription": "SakinahTime'ın hassas namaz vakti alarmları planlaması için izne ihtiyacı var.\n\nLütfen sonraki ekranda \"Alarmlar ve hatırlatmalar\"ı etkinleştirin.",
+    "openSettings": "Ayarları Aç",
+    "enableReliableAzan": "Güvenilir Ezanı Etkinleştir",
+    "reliableAzanDescription": "Telefon yeniden başlatıldıktan sonra ezanın çalmasını sağlamak için lütfen şuna dokunun:\n\nPil → Sınırsız\n\nBu, uygulamanın namaz vakitlerinde telefonunuzu uyandırmasına olanak tanır."
+  },
+  "mosque": {
+    "title": "Yakındaki Camiler",
+    "findMosques": "Cami Bul",
+    "distance": "Mesafe",
+    "directions": "Yol Tarifi",
+    "noMosques": "Yakında cami bulunamadı",
+    "searchMosques": "Cami ara...",
+    "openInMaps": "Haritada Aç"
+  },
+  "hijri": {
+    "title": "Hicri Takvim",
+    "today": "Bugün",
+    "months": {
+      "1": "Muharrem",
+      "2": "Safer",
+      "3": "Rebiülevvel",
+      "4": "Rebiülahir",
+      "5": "Cemaziyelevvel",
+      "6": "Cemaziyelahir",
+      "7": "Recep",
+      "8": "Şaban",
+      "9": "Ramazan",
+      "10": "Şevval",
+      "11": "Zilkade",
+      "12": "Zilhicce"
+    }
+  },
+  "prayerStats": {
+    "title": "Namaz İstatistikleri",
+    "overview": "Genel Bakış",
+    "totalPrayed": "Toplam Kılınan",
+    "totalMissed": "Toplam Kaçırılan",
+    "onTimeRate": "Zamanında Oranı",
+    "weeklyBreakdown": "Haftalık Dağılım",
+    "monthlyBreakdown": "Aylık Dağılım",
+    "bestDay": "En İyi Gün",
+    "prayerBreakdown": "Namaz Dağılımı",
+    "noData": "Henüz namaz verisi yok. Namazlarınızı takip etmeye başlayın!",
+    "loadingStats": "İstatistikler yükleniyor...",
+    "prayerTracking": "Namaz Takibi",
+    "tapToMark": "Kılındı olarak işaretlemek için namazlara dokunun",
+    "enableToTrack": "Namazlarınızı takip etmek için etkinleştirin",
+    "tapToMarkStatus": "Namaz durumunu işaretlemek için bir düğmeye dokunun:",
+    "prayed": "Kılındı",
+    "missed": "Kaçırıldı",
+    "late": "Geç",
+    "missedReminder": "Kaçırılan Namaz Hatırlatması",
+    "remindAfter": "İşaretlenmezse {{minutes}} dk sonra hatırlat",
+    "getReminded": "Namazlarınızı işaretlemeniz için hatırlatma alın",
+    "remindAfterLabel": "Şu süre sonra hatırlat:",
+    "totalLogged": "Toplam Kaydedilen",
+    "qadaDue": "Kaza Borcu",
+    "weekly": "Haftalık",
+    "monthly": "Aylık",
+    "exportFailed": "Dışa Aktarma Başarısız",
+    "exportError": "Namaz istatistikleri paylaşılamadı."
+  },
+  "prayerCalendar": {
+    "title": "Namaz Takvimi",
+    "monthlyView": "Aylık Görünüm",
+    "allPrayed": "Tümü Kılındı",
+    "someMissed": "Bazıları Kaçırıldı",
+    "notTracked": "Takip Edilmedi",
+    "today": "Bugün",
+    "unableToLoad": "Namaz vakitleri yüklenemedi",
+    "selectMonthYear": "Ay & Yıl Seçin",
+    "year": "Yıl",
+    "month": "Ay"
+  },
+  "audioDownload": {
+    "title": "Ses İndirmeleri",
+    "downloadAll": "Tümünü İndir",
+    "deleteAll": "Tümünü Sil",
+    "downloading": "İndiriliyor...",
+    "downloaded": "İndirildi",
+    "notDownloaded": "İndirilmedi",
+    "surahAudio": "Sure Sesi",
+    "offline": "Çevrimdışı",
+    "needInternet": "Ses indirmek için internet bağlantısı gereklidir.",
+    "downloadAllSurahs": "Tüm Sureleri İndir",
+    "deleteAllAudio": "Tüm Sesleri Sil",
+    "download": "İndir",
+    "delete": "Sil",
+    "deleteAudio": "Sesi Sil",
+    "cancelDownloads": "İndirmeleri İptal Et",
+    "cancelAllDesc": "Bekleyen tüm indirmeler iptal edilsin mi? Kısmen indirilen sureler kaldırılacaktır.",
+    "keepDownloading": "İndirmeye Devam Et",
+    "cancelAll": "Tümünü İptal Et",
+    "deleteConfirmMessage": "İndirilen sesi sil:"
+  },
+  "reciter": {
+    "title": "Kari Seçin",
+    "currentReciter": "Mevcut Kari",
+    "popular": "Popüler",
+    "allReciters": "Tüm Kariler"
+  },
+  "duaDetail": {
+    "reference": "Kaynak",
+    "benefits": "Faydalar",
+    "occasion": "Vesile",
+    "shareAsDua": "Duayı Paylaş",
+    "notFound": "Dua Bulunamadı",
+    "notFoundMessage": "Bu dua bulunamadı.",
+    "listenPronunciation": "Telaffuzu Dinle",
+    "viewInQuran": "Kur'an'da Görüntüle",
+    "ayah": "Ayet",
+    "benefitsVirtues": "Faydalar & Faziletler"
+  },
+  "customDuaForm": {
+    "editDua": "Duayı Düzenle",
+    "addCustomDua": "Özel Dua Ekle",
+    "saving": "Kaydediliyor...",
+    "saveFailed": "Dua kaydedilemedi. Lütfen tekrar deneyin.",
+    "deleteConfirm": "Bu duayı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+    "deleteFailed": "Dua silinemedi. Lütfen tekrar deneyin.",
+    "arabicText": "Arapça Metin",
+    "optional": "İsteğe Bağlı",
+    "transliteration": "Okunuş",
+    "transliterationPlaceholder": "Okunuşu girin (ör. Allahümme...)",
+    "translationMeaning": "Çeviri / Anlam",
+    "translationPlaceholder": "Anlam veya çeviriyi girin",
+    "personalNotes": "Kişisel Notlar",
+    "notesPlaceholder": "Kişisel not veya hatırlatma ekleyin",
+    "deleteThisDua": "Bu Duayı Sil"
+  },
+  "islamicGuide": {
+    "title": "İslami Rehber",
+    "steps": "Adımlar",
+    "references": "Kaynaklar"
+  },
+  "dhikrOverlay": {
+    "title": "Zikir Kaplama Ayarları",
+    "enableOverlay": "Kaplamayı Etkinleştir",
+    "overlayDesc": "Kayan zikir hatırlatmaları göster",
+    "frequency": "Sıklık",
+    "everyMinutes": "Her {{count}} dakikada",
+    "style": "Stil",
+    "position": "Konum"
+  },
+  "wordByWordSettings": {
+    "title": "Kelime Kelime Ayarları",
+    "translationLang": "Çeviri Dili",
+    "showTransliteration": "Okunuşu Göster",
+    "fontSize": "Yazı Boyutu"
+  },
+  "quranSchedule": {
+    "title": "Kur'an Programı",
+    "createSchedule": "Program Oluştur",
+    "completionDate": "Hedef Tamamlanma Tarihi",
+    "pagesPerDay": "Günlük Sayfa",
+    "startDate": "Başlangıç Tarihi",
+    "daysDone": "Tamamlanan Günler",
+    "day": "Gün",
+    "pages": "Sayfalar",
+    "completed": "Tamamlandı",
+    "pending": "Beklemede",
+    "openInMushaf": "Mushaf'ta Aç",
+    "today": "Bugün",
+    "juz": "Cüz",
+    "surahs": "Sureler:",
+    "openMushaf": "Mushaf'ı Aç",
+    "markComplete": "Tamamlandı İşaretle",
+    "completedAt": "Tamamlandı:",
+    "remaining": "Kalan",
+    "complete": "Tamamla",
+    "behindSchedule": "programın gerisinde"
+  },
+  "zakatCalculator": {
+    "title": "Zekât Hesaplayıcı",
+    "totalWealth": "Toplam Servet (USD)",
+    "enterWealth": "Toplam servetinizi girin",
+    "calculate": "Zekâtı Hesapla",
+    "results": "Hesaplama Sonuçları",
+    "nisabGold": "Nisab (Altın)",
+    "nisabSilver": "Nisab (Gümüş)",
+    "meetsNisab": "Nisab'ı Karşılıyor",
+    "zakatDue": "Ödenecek Zekât (%2,5)",
+    "info": "Zekât, Nisab eşiğinin üzerinde bir hicri yıl boyunca elde tutulan servetin %2,5'idir. Nisab, 87,48g altın veya 612,36g gümüş değerine dayanır."
+  },
+  "hijriCalendar": {
+    "title": "İslami Takvim",
+    "event": "Etkinlik",
+    "fasting": "Oruç",
+    "ah": "H.",
+    "fastingProhibited": "Bugün oruç tutmak yasaktır",
+    "eventIn": "{{name}} {{count}} gün sonra",
+    "eventIn_plural": "{{name}} {{count}} gün sonra"
+  },
+  "common": {
+    "loading": "Yükleniyor...",
+    "error": "Hata",
+    "retry": "Tekrar Dene",
+    "ok": "Tamam",
+    "cancel": "İptal",
+    "save": "Kaydet",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "close": "Kapat",
+    "back": "Geri",
+    "done": "Bitti",
+    "search": "Ara",
+    "share": "Paylaş",
+    "copy": "Kopyala",
+    "copied": "Kopyalandı!",
+    "noResults": "Sonuç bulunamadı",
+    "offline": "Çevrimdışısınız",
+    "yes": "Evet",
+    "no": "Hayır",
+    "confirm": "Onayla",
+    "reset": "Sıfırla",
+    "add": "Ekle",
+    "remove": "Kaldır",
+    "enable": "Etkinleştir",
+    "disable": "Devre Dışı Bırak",
+    "on": "Açık",
+    "off": "Kapalı",
+    "yourRegion": "bölgeniz",
+    "goBack": "Geri Dön",
+    "skip": "Atla"
+  },
+  "components": {
+    "streakDays": "günlük seri",
+    "streakDaysPlural": "günlük seri",
+    "perfectDay": "Mükemmel Gün",
+    "offlineMode": "Çevrimdışı Mod",
+    "usingCachedData": "Önbellek verisi kullanılıyor",
+    "lastSynced": "Son senkronizasyon",
+    "somethingWentWrong": "Bir şeyler yanlış gitti",
+    "tryAgain": "Tekrar Dene"
+  },
+  "streak": {
+    "prayerStreak": "Namaz Serisi",
+    "currentStreak": "Mevcut Seri",
+    "longestStreak": "En Uzun Seri",
+    "days": "gün",
+    "day": "gün",
+    "startToday": "Bugün serinize başlayın!",
+    "greatStart": "Harika başlangıç! Devam edin!",
+    "buildingMomentum": "İvme kazanıyorsunuz!",
+    "amazingConsistency": "Harika tutarlılık!",
+    "incredibleDedication": "İnanılmaz adanmışlık!",
+    "trulyInspiring": "Maşallah! Gerçekten ilham verici!"
+  },
+  "fasting": {
+    "fastingReminders": "Oruç Hatırlatmaları",
+    "getNotifiedFasting": "Yaklaşan oruç günleri hakkında bildirim alın",
+    "receiveReminders": "Önerilen oruç günleri için hatırlatma alın",
+    "reminderTime": "Hatırlatma Zamanı",
+    "eveningBefore": "Önceki Akşam",
+    "beforeFajr": "İmsaktan Önce",
+    "thirtyMinBefore": "30 dk önce",
+    "fastingDays": "Oruç Günleri",
+    "monday": "Pazartesi",
+    "thursday": "Perşembe",
+    "whiteDays": "Eyyam-ı Bıyz",
+    "ashura": "Aşure",
+    "dayOfArafah": "Arefe Günü",
+    "shawwal": "Şevval",
+    "weeklySunnahFast": "Haftalık sünnet orucu",
+    "whiteDaysDesc": "Her ayın 13, 14, 15. günleri",
+    "ashuraDesc": "Muharrem'in 10'u",
+    "arafahDesc": "Zilhicce'nin 9'u",
+    "shawwalDesc": "Ramazan'dan sonra 6 gün",
+    "notificationPermissionRequired": "⚠️ Bildirim izni gerekli"
+  },
+  "storageAlerts": {
+    "quranAudio": "Kur'an Sesi",
+    "tafsir": "Tefsir",
+    "prayerTimesCache": "Namaz Vakitleri Önbelleği",
+    "otherCache": "Diğer Önbellek",
+    "allCachedData": "Tüm Önbellek Verisi",
+    "clearConfirm": "{{category}} temizlensin mi?",
+    "clearAllDesc": "Bu işlem indirilen tüm Kur'an seslerini ve tefsirleri kaldıracaktır. Çevrimdışı kullanım için yeniden indirmeniz gerekecektir.",
+    "clearCategoryDesc": "Bu işlem tüm {{category}} kaldıracaktır. Çevrimdışı kullanım için yeniden indirmeniz gerekebilir.",
+    "cancel": "İptal",
+    "clear": "Temizle",
+    "error": "Hata",
+    "failedToClear": "Önbellek temizlenemedi. Lütfen tekrar deneyin."
+  },
+  "mushaf": {
+    "notes": "Notes & Highlights",
+    "bookmarks": "Bookmarks",
+    "highlights": "Highlights",
+    "addNote": "Not Ekle",
+    "save": "Save",
+    "delete": "Delete",
+    "noNotesYet": "No notes or highlights yet",
+    "tapToAddNote": "Long-press any verse to add a note or highlight",
+    "noBookmarksYet": "No bookmarks yet",
+    "tapToBookmark": "Tap any verse to bookmark it",
+    "editNote": "Edit Note",
+    "writeNoteHere": "Write your note here...",
+    "hifzModeActivated": "Hifz Mode Activated",
+    "hifzModeDesc": "Tap any verse to reveal it. Long-press on a verse for memorization options. Hold the Hifz button for settings.",
+    "wordByWordHighlighting": "Word-by-Word Highlighting",
+    "wordByWordDesc": "Long-press anywhere on the page and drag to scrub through the audio. The highlighted word will follow your finger.",
+    "justNow": "Just now",
+    "minutesAgo": "{{count}}m ago",
+    "hoursAgo": "{{count}}h ago",
+    "daysAgo": "{{count}}d ago",
+    "noBookmarks": "No bookmarks yet",
+    "noResults": "Sonuç bulunamadı",
+    "tryDifferent": "Try different keywords",
+    "search": "Search...",
+    "writeNote": "Write your note here...",
+    "quarterHizb": "Quarter Hizb",
+    "halfHizb": "Half Hizb",
+    "fullJuzOnly": "Full Juz Only",
+    "copyVerse": "Ayeti Kopyala",
+    "shareVerse": "Ayeti Paylaş",
+    "chooseHighlight": "Choose Highlight Color",
+    "removeHighlight": "Remove Highlight",
+    "highlight": "Highlight",
+    "selectReciter": "Kari Seçin",
+    "audioSettings": "Audio Settings",
+    "noTafsir": "No tafsir available",
+    "noTafsirVerse": "No tafsir available for this verse",
+    "recently": "Recently",
+    "earlier": "Earlier",
+    "deleteFailed": "Failed to delete. Please try again.",
+    "quran": "Quran",
+    "surahs114": "114 Surahs",
+    "juz30": "30 Juz",
+    "recentCount": "Recent",
+    "surahTab": "Surah",
+    "juzTab": "Juz",
+    "recentTab": "Recent",
+    "searchPlaceholder": "Search...",
+    "includeTafsir": "Include Tafsir/Translation in search",
+    "notesSection": "NOTES",
+    "highlightsSection": "HIGHLIGHTS",
+    "tafsirTranslation": "Tafsir/Translation",
+    "nowPlaying": "Şu an çalıyor",
+    "paused": "Duraklatıldı",
+    "verse": "Verse",
+    "repeat": "Repeat",
+    "loop": "Loop",
+    "remaining": "remaining",
+    "surah": "Sure",
+    "noTafsirAvailable": "No tafsir available for this verse",
+    "noteInputPlaceholder": "Write your note here...",
+    "juzLabel": "Juz",
+    "hizbLabel": "Hizb",
+    "searching": "SEARCHING...",
+    "resultsCount": "RESULTS",
+    "recentlyViewed": "Recently Viewed",
+    "allSurahs": "ALL SURAHS",
+    "recentlyViewedLabel": "RECENTLY VIEWED",
+    "quartersLabel": "QUARTERS",
+    "halvesLabel": "HALVES",
+    "pagesYouVisit": "Pages you visit will appear here",
+    "noRecentPages": "No recent pages yet",
+    "verses": "verses",
+    "pageNumber": "Page",
+    "loadingVerses": "Loading verses...",
+    "bookmark": "Yer İmi",
+    "removeBookmark": "Remove Bookmark",
+    "tafsirAndTranslations": "Tafsir & Translations",
+    "downloadedCount": "downloaded",
+    "playUntil": "PLAY UNTIL",
+    "page": "Sayfa",
+    "juz": "Cüz",
+    "reciterLabel": "RECITER",
+    "play": "Play",
+    "playCount": "Play {{count}}×",
+    "setLoopStart": "Set Loop Start",
+    "setLoopEnd": "Set Loop End",
+    "playLoop": "Play Loop",
+    "tapToReveal": "Tap to reveal",
+    "notStarted": "Not Started",
+    "inProgress": "In Progress",
+    "memorized": "Memorized",
+    "all": "All",
+    "tapToMinimize": "TAP TO MINIMIZE",
+    "myTranslations": "MY TRANSLATIONS",
+    "myTafsirs": "MY TAFSIRS",
+    "tafsirBadge": "TAFSIR",
+    "translationBadge": "TRANSLATION",
+    "currentlyActive": "Currently Active",
+    "select": "Select",
+    "availableToDownload": "AVAILABLE TO DOWNLOAD",
+    "translationsCount": "Translations",
+    "tafsirsCount": "Tafsirs",
+    "tapToDownload": "Tap to download",
+    "deleteTafsir": "Delete Tafsir",
+    "deleteTafsirConfirm": "Delete {{name}}?",
+    "storageFull": "Storage full. Please free up space on your device and try again.",
+    "downloadFailed": "Download failed. Please check your connection and storage space.",
+    "tafsirNotAvailable": "No tafsir available",
+    "tafsirNotAvailableVerse": "No tafsir available for this verse",
+    "title": "Mushaf",
+    "goToPage": "Sayfaya Git",
+    "goToSurah": "Sureye Git",
+    "goToJuz": "Cüze Git",
+    "bookmarkAdded": "Yer imi eklendi",
+    "bookmarkRemoved": "Yer imi kaldırıldı",
+    "lastRead": "Son Okunan",
+    "lastReadPage": "Son okunan sayfa",
+    "continueReading": "Okumaya Devam Et",
+    "settings": "Ayarlar",
+    "fontSize": "Yazı Boyutu",
+    "theme": "Tema",
+    "translation": "Çeviri",
+    "transliteration": "Okunuş",
+    "wordByWord": "Kelime Kelime",
+    "audioPlayer": "Ses Oynatıcı",
+    "loading": "Yükleniyor...",
+    "error": "Hata",
+    "retry": "Tekrar Dene",
+    "noTranslation": "Çeviri mevcut değil",
+    "selectTranslation": "Çeviri Seçin",
+    "downloadForOffline": "Çevrimdışı için İndir",
+    "removeDownload": "İndirmeyi Kaldır",
+    "playing": "Çalıyor",
+    "stopped": "Durduruldu",
+    "playVerse": "Ayeti Çal",
+    "playPage": "Sayfayı Çal",
+    "playSurah": "Sureyi Çal",
+    "stopPlayback": "Çalmayı Durdur",
+    "nextPage": "Sonraki Sayfa",
+    "previousPage": "Önceki Sayfa",
+    "pageOf": "Sayfa {{current}} / {{total}}",
+    "searchInMushaf": "Mushaf'ta Ara",
+    "verseNumber": "Ayet {{number}}",
+    "bismillah": "Bismillahirrahmanirrahim",
+    "sajdah": "Secde Ayeti",
+    "hizb": "Hizb",
+    "quarter": "Çeyrek",
+    "half": "Yarım",
+    "threeQuarter": "Üç Çeyrek",
+    "rubu": "Rub'",
+    "navigateByJuz": "Cüze Göre",
+    "navigateBySurah": "Sureye Göre",
+    "navigateByPage": "Sayfaya Göre",
+    "jumpTo": "Git...",
+    "readingMode": "Okuma Modu",
+    "singlePage": "Tek Sayfa",
+    "doublePage": "Çift Sayfa",
+    "continuous": "Sürekli",
+    "swipeNavigate": "Gezmek için kaydırın",
+    "tapEdges": "Gezinmek için kenarlara dokunun",
+    "pinchZoom": "Yakınlaştırmak/uzaklaştırmak için sıkıştırın",
+    "madaniScript": "Medine Yazısı",
+    "indoPakScript": "Hint-Pak Yazısı",
+    "mushafType": "Mushaf Türü",
+    "verseActions": "Ayet İşlemleri",
+    "addBookmark": "Yer İmi Ekle",
+    "showTafsir": "Tefsir Göster",
+    "verseCopied": "Ayet kopyalandı",
+    "pageBookmarked": "Sayfa yer imlerine eklendi",
+    "quickNavigate": "Hızlı Gezin"
+  },
+  "mosqueFinder": {
+    "nearbyMosques": "Yakındaki Camiler",
+    "searchPlaceholder": "Cami ara...",
+    "radius1km": "1 km",
+    "radius5km": "5 km",
+    "radius10km": "10 km",
+    "radius25km": "25 km"
+  },
+  "calendar": {
+    "months": [
+      "Oca",
+      "Şub",
+      "Mar",
+      "Nis",
+      "May",
+      "Haz",
+      "Tem",
+      "Ağu",
+      "Eyl",
+      "Eki",
+      "Kas",
+      "Ara"
+    ],
+    "weekdays": [
+      "P",
+      "P",
+      "S",
+      "Ç",
+      "P",
+      "C",
+      "C"
+    ]
+  },
+  "themePicker": {
+    "colorMode": "Renk Modu",
+    "theme": "Tema",
+    "light": "Açık",
+    "dark": "Koyu",
+    "auto": "Otomatik",
+    "themeDefault": "Zümrüt",
+    "themeRoseGold": "Roze Altın",
+    "themeLavender": "Lavanta",
+    "themeSagePeach": "Adaçayı & Şeftali",
+    "themeOceanBreeze": "Okyanus Esintisi"
+  },
+  "storageOverview": {
+    "storageUsed": "Kullanılan Depolama",
+    "manage": "Yönet",
+    "storageFull": "Depolama neredeyse dolu. İndirmeye devam etmek için bazı verileri temizleyin.",
+    "availableOnDevice": "cihazda mevcut"
+  },
+  "storageBreakdown": {
+    "title": "Depolama Dağılımı",
+    "quranAudio": "Kur'an Sesi",
+    "tafsir": "Tefsir",
+    "prayerTimes": "Namaz Vakitleri",
+    "otherCache": "Diğer Önbellek"
+  },
+  "storageSettings": {
+    "downloadSettings": "İndirme Ayarları",
+    "storageLimit": "Depolama Limiti",
+    "maxSpace": "Çevrimdışı içerik için maksimum alan",
+    "wifiOnly": "Yalnızca WiFi'de indir",
+    "wifiOnlyDesc": "Yalnızca WiFi'de indirerek mobil veri tasarrufu yapın",
+    "autoDelete": "Eski önbelleği otomatik sil",
+    "autoDeleteDesc": "Limite ulaşıldığında eski önbellek verilerini otomatik kaldır"
+  },
+  "dhikrReminders": {
+    "title": "Dhikr Reminders",
+    "floatingReminders": "Floating Reminders",
+    "dhikrNotifications": "Dhikr Notifications",
+    "showOverlay": "Show dhikr overlay on top of other apps",
+    "receiveNotifications": "Receive periodic dhikr notifications",
+    "grantPermission": "Grant overlay permission",
+    "previewOverlay": "Preview Overlay",
+    "reminderInterval": "Reminder Interval",
+    "dhikrCategories": "Dhikr Categories",
+    "chooseTypes": "Choose which types of dhikr to include",
+    "quietHours": "Quiet Hours",
+    "pauseSleep": "Pause reminders during sleep time",
+    "startAt": "Start at",
+    "endAt": "End at",
+    "autoDismiss": "Auto Dismiss",
+    "overlayDisappears": "Overlay disappears after this time",
+    "iosNotice": "Floating overlay is only available on Android. On iOS, you'll receive standard notifications instead.",
+    "noCategories": "Please enable at least one dhikr category",
+    "previewFailed": "Could not show overlay preview. Please try again.",
+    "noDhikr": "Could not find dhikr content for selected categories",
+    "error": "Error",
+    "serviceFailed": "Failed to start dhikr reminder service",
+    "interval30min": "30 min",
+    "interval1hour": "1 hour",
+    "interval2hours": "2 hours",
+    "interval3hours": "3 hours",
+    "interval4hours": "4 hours",
+    "autoDismiss5s": "5s",
+    "autoDismiss10s": "10s",
+    "autoDismiss15s": "15s",
+    "autoDismiss20s": "20s",
+    "autoDismiss30s": "30s",
+    "quiet9pm": "9 PM",
+    "quiet10pm": "10 PM",
+    "quiet11pm": "11 PM",
+    "quiet12am": "12 AM",
+    "wake5am": "5 AM",
+    "wake6am": "6 AM",
+    "wake7am": "7 AM",
+    "wake8am": "8 AM"
+  },
+  "quickAccess": {
+    "title": "Hızlı Erişim",
+    "morning": "Sabah",
+    "evening": "Akşam",
+    "prayer": "Namaz",
+    "sleep": "Uyku",
+    "wake": "Uyanma",
+    "general": "Genel"
+  },
+  "tasbih": {
+    "title": "Tespih Sayacı",
+    "target": "Hedef",
+    "tapToCount": "Saymak için dokunun • Sıfırlamak için basılı tutun",
+    "targetReached": "Hedefe ulaşıldı!",
+    "resetCounter": "Sayacı Sıfırla",
+    "resetConfirm": "Sayacı 0'a sıfırlamak istediğinizden emin misiniz?",
+    "cancel": "İptal",
+    "reset": "Sıfırla"
+  },
+  "weeklyChart": {
+    "title": "Bu Hafta",
+    "prayed": "Kılındı",
+    "missed": "Kaçırıldı",
+    "late": "Geç",
+    "noData": "Veri mevcut değil",
+    "sun": "Paz",
+    "mon": "Pzt",
+    "tue": "Sal",
+    "wed": "Çar",
+    "thu": "Per",
+    "fri": "Cum",
+    "sat": "Cmt"
+  },
+  "citySearch": {
+    "selectCity": "Şehir Seçin",
+    "searchPlaceholder": "Dünya genelinde şehir arayın...",
+    "recent": "SON",
+    "popularCities": "POPÜLER ŞEHİRLER",
+    "noCities": "Şehir bulunamadı",
+    "tryDifferent": "Farklı bir yazım deneyin veya yakındaki daha büyük bir şehir arayın",
+    "offline": "Çevrimdışı",
+    "offlineMessage": "Şu anda çevrimdışısınız. Yeni bir şehre geçmek için namaz vakitlerini almak üzere internet gereklidir. Lütfen yakın zamanda ziyaret ettiğiniz bir şehri kullanın veya çevrimiçi olduğunuzda tekrar deneyin.",
+    "networkError": "Ağ hatası. Yerel sonuçlar gösteriliyor."
+  },
+  "upcomingEvents": {
+    "title": "Yaklaşan Etkinlikler",
+    "noEvents": "Yaklaşan etkinlik yok"
+  },
+  "hifzControls": {
+    "title": "Hıfz Kontrolleri",
+    "hideTab": "Hide",
+    "repeatTab": "Repeat",
+    "loopTab": "Loop",
+    "progressTab": "Progress",
+    "hideMode": "Hide Mode",
+    "wordAudio": "Word Audio",
+    "requiresInternet": "requires internet",
+    "playPronunciation": "Play pronunciation when revealing a word",
+    "quickActions": "Quick Actions",
+    "revealAll": "Reveal All",
+    "hideAll": "Hide All",
+    "autoHideDelay": "Auto-Hide Delay",
+    "autoHideAfter": "Automatically hide after revealing",
+    "markCurrentVerse": "Mark Current Verse",
+    "verse": "Verse",
+    "notStarted": "Not Started",
+    "inProgress": "In Progress",
+    "memorized": "Memorized",
+    "longPressToMark": "Long press on a verse to mark its memorization status",
+    "bulkMarking": "Bulk Marking",
+    "page": "Page",
+    "juz": "Juz",
+    "clear": "Clear",
+    "clearPageMarkings": "Clear Page Markings",
+    "markEntirePage": "Mark Entire Page",
+    "clearJuzMarkings": "Clear Juz Markings",
+    "markEntireJuz": "Mark Entire Juz",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "memorize": "Ezberle",
+    "review": "Gözden Geçir",
+    "test": "Test Et",
+    "newVerses": "Yeni Ayetler",
+    "revision": "Tekrar",
+    "startMemorizing": "Ezberlemeye Başla",
+    "markAsMemorized": "Ezberlenmiş Olarak İşaretle",
+    "markAsInProgress": "Devam Ediyor Olarak İşaretle",
+    "resetProgress": "İlerlemeyi Sıfırla",
+    "listen": "Dinle",
+    "repeat": "Tekrar Et",
+    "recite": "Oku",
+    "hideArabic": "Arapçayı Gizle",
+    "showArabic": "Arapçayı Göster",
+    "hideTranslation": "Çeviriyi Gizle",
+    "showTranslation": "Çeviriyi Göster",
+    "speed": "Hız",
+    "normal": "Normal",
+    "slow": "Yavaş",
+    "fast": "Hızlı",
+    "repeatCount": "Tekrar Sayısı",
+    "autoAdvance": "Otomatik İlerle",
+    "pauseBetween": "Aralar Arasında Duraklat"
+  },
+  "taraweeh": {
+    "title": "Teravih Takipçisi",
+    "ramadanCalendar": "Ramazan Takvimi",
+    "locationBreakdown": "Konum Dağılımı",
+    "completionRate": "Tamamlanma Oranı",
+    "logNight": "Geceyi Kaydet",
+    "edit": "Düzenle",
+    "night": "Gece",
+    "nights": "Gece",
+    "streak": "Seri",
+    "best": "En İyi",
+    "atMosque": "Camide",
+    "atHome": "Evde"
+  },
+  "mosqueDetail": {
+    "title": "Cami Detayları",
+    "openingHours": "Açılış Saatleri",
+    "directions": "Yol Tarifi",
+    "call": "Ara",
+    "website": "Web Sitesi",
+    "rating": "Puan",
+    "reviews": "değerlendirme",
+    "failedToLoad": "Detaylar yüklenemedi",
+    "tryAgain": "Tekrar Dene",
+    "openNow": "Şu An Açık",
+    "closed": "Kapalı",
+    "address": "Adres",
+    "contact": "İletişim",
+    "getDirections": "Yol Tarifi Al",
+    "away": "uzakta"
+  },
+  "donation": {
+    "addTitle": "Bağış Ekle",
+    "type": "Tür",
+    "amount": "Miktar",
+    "recipientOptional": "Alıcı (isteğe bağlı)",
+    "recipientPlaceholder": "Kuruluş veya kişi",
+    "notesOptional": "Notlar (isteğe bağlı)",
+    "notesPlaceholder": "Not ekleyin...",
+    "addButton": "Bağış Ekle",
+    "sadaqah": "Sadaka",
+    "zakat": "Zekât",
+    "fidya": "Fidye",
+    "kaffarah": "Kefaret",
+    "other": "Diğer"
+  },
+  "setGoal": {
+    "title": "Hedef Belirle",
+    "goalAmount": "Hedef Miktarı (USD)",
+    "setButton": "Hedefi Belirle",
+    "infoText": "Hayır hedefi belirlemek, Ramazan boyunca ilerlemenizi takip etmenize yardımcı olur. Bu hedefi istediğiniz zaman güncelleyebilirsiniz."
+  },
+  "logTaraweeh": {
+    "editTitle": "Düzenle",
+    "logTitle": "Kaydet",
+    "night": "Gece",
+    "rakaat": "Rekât",
+    "location": "Konum",
+    "mosque": "Cami",
+    "home": "Ev",
+    "notesOptional": "Notlar (isteğe bağlı)",
+    "notesPlaceholder": "Not ekleyin...",
+    "delete": "Sil",
+    "save": "Kaydet"
+  },
+  "suhoorIftar": {
+    "suhoorReminder": "Sahur Hatırlatması",
+    "iftarReminder": "İftar Hatırlatması"
+  },
+  "ramadanCountdown": {
+    "daysLeft": "Kalan Gün"
+  },
+  "quranProgress": {
+    "title": "Kur'an İlerlemesi"
+  },
+  "monthlyCalendar": {
+    "noData": "Veri mevcut değil"
+  },
+  "savedLoops": {
+    "title": "Kaydedilen Döngüler",
+    "enterName": "Enter loop name...",
+    "noName": "Please enter a name for the loop",
+    "noRange": "Please set a loop range first",
+    "saveLoop": "Döngüyü Kaydet",
+    "saveCurrent": "Save Current",
+    "delete": "Sil",
+    "deleteLoop": "Delete Loop",
+    "deleteConfirm": "Bu döngüyü silmek istediğinizden emin misiniz?",
+    "cancel": "Cancel",
+    "save": "Save",
+    "noLoops": "Henüz kaydedilen döngü yok",
+    "error": "Error",
+    "plays": "plays",
+    "noLoopsMessage": "Ezber/tekrar için ayet aralıkları kaydedin",
+    "surah": "Sure",
+    "verses": "Ayet",
+    "lastPracticed": "Son Çalışma",
+    "play": "Oynat",
+    "repeat": "Tekrar",
+    "speed": "Hız",
+    "loop": "Döngü"
+  },
+  "revision": {
+    "title": "Tekrar",
+    "dueNow": "Due Now",
+    "noRevision": "Bugün tekrar yok",
+    "startReview": "Start Review",
+    "markReviewed": "Mark as Reviewed",
+    "versesDue": "verses due for review",
+    "todayProgress": "Today's Progress",
+    "overdue": "Gecikmiş",
+    "due": "Due",
+    "allCaughtUp": "All caught up!",
+    "noVersesDue": "No verses due for revision right now",
+    "completedToday": "Completed Today",
+    "startSession": "Start Revision Session",
+    "howWell": "How well did you remember",
+    "forgot": "Forgot",
+    "hard": "Zor",
+    "okay": "Okay",
+    "good": "Good",
+    "easy": "Kolay",
+    "perfect": "Perfect",
+    "dAgo": "d ago",
+    "dueToday": "Bugün İçin",
+    "upcoming": "Yaklaşan",
+    "noRevisionMessage": "Tüm günlükleriniz tamamlandı. Yarın tekrar kontrol edin.",
+    "markRevised": "Tekrar edildi olarak işaretle",
+    "snooze": "Ertele",
+    "skipToday": "Bugün atla",
+    "reviseNow": "Şimdi tekrar et",
+    "difficulty": "Zorluk",
+    "medium": "Orta",
+    "nextReview": "Sonraki gözden geçirme",
+    "lastRevised": "Son tekrar",
+    "timesRevised": "Tekrar sayısı",
+    "revisionHistory": "Tekrar Geçmişi",
+    "resetSchedule": "Programı Sıfırla"
+  },
+  "repeatControls": {
+    "title": "Tekrar Kontrolleri",
+    "subtitle": "For memorization practice",
+    "timesToRepeat": "Times to Repeat",
+    "timesHint": "Verse plays this many times",
+    "gapBetween": "Gap Between Repeats",
+    "gapHint": "Time to recite along before next play",
+    "recitationSpeed": "Recitation Speed",
+    "speedHint": "Slower helps with learning pronunciation",
+    "stopRepeating": "Stop Repeating",
+    "repeatCount": "Tekrar Sayısı",
+    "delayBetween": "Tekrarlar Arası Bekleme",
+    "seconds": "saniye",
+    "loopForever": "Sonsuz Döngü",
+    "stop": "Durdur"
+  },
+  "calendarGrid": {
+    "whiteDay": "White Day",
+    "event": "Event",
+    "fasting": "Fasting",
+    "today": "Bugün",
+    "selected": "Seçili",
+    "noData": "Bu gün için veri yok"
+  },
+  "hifzProgress": {
+    "title": "Hıfz İlerlemesi",
+    "exportFailed": "Export Failed",
+    "exportError": "Could not export progress data",
+    "resetProgress": "Reset Progress",
+    "resetConfirm": "Are you sure you want to reset all memorization progress?",
+    "resetSuccess": "Progress has been reset",
+    "resetError": "Failed to reset progress",
+    "cancel": "Cancel",
+    "reset": "Reset",
+    "success": "Success",
+    "error": "Error",
+    "totalMemorized": "Toplam Ezberlenen",
+    "surahsComplete": "Tamamlanan Sureler",
+    "versesMemorized": "Ezberlenen Ayetler",
+    "juzComplete": "Tamamlanan Cüzler",
+    "overallProgress": "Genel İlerleme",
+    "memorizedLabel": "Ezberlenen",
+    "inProgressLabel": "Devam Eden",
+    "notStartedLabel": "Başlanmadı",
+    "byJuz": "Cüze Göre",
+    "bySurah": "Sureye Göre"
+  },
+  "reciterSelection": {
+    "title": "Kari Seçin",
+    "recitersAvailable": "reciters available",
+    "downloaded": "Downloaded",
+    "infoBanner": "Reciters with the download badge have audio files saved on your device",
+    "current": "Mevcut",
+    "popular": "Popüler",
+    "all": "Tümü"
+  },
+  "wordByWord": {
+    "title": "Kelime Kelime",
+    "infoHint": "Long-press any word in the Mushaf to see its meaning and hear pronunciation.",
+    "translationLanguage": "Translation Language",
+    "arabicMeanings": "Arabic meanings of difficult words",
+    "tapToDownload": "Tap to download",
+    "downloading": "Downloading...",
+    "audio": "Audio",
+    "playPronunciation": "Play word pronunciation",
+    "audioHint": "Hear the word when you lift your finger",
+    "arabic": "Arapça",
+    "transliteration": "Okunuş",
+    "translation": "Çeviri",
+    "root": "Kök",
+    "grammar": "Gramer",
+    "morphology": "Morfoloji",
+    "tapWord": "Detaylar için kelimeye dokunun"
+  },
+  "errorFallback": {
+    "title": "Bir Şeyler Yanlış Gitti",
+    "message": "Beklenmeyen bir hata oluştu.",
+    "tryAgain": "Try Again",
+    "errorDetails": "Error Details",
+    "retry": "Tekrar Dene",
+    "goBack": "Geri Dön"
+  },
+  "downloadProgress": {
+    "downloading": "İndiriliyor...",
+    "paused": "Paused",
+    "failed": "Başarısız",
+    "pending": "Pending",
+    "title": "İndirme İlerlemesi",
+    "completed": "Tamamlandı"
+  },
+  "duaOfDay": {
+    "title": "Günün Duası",
+    "islamicSupplication": "Islamic Supplication",
+    "tapToRead": "Tap to read full dua",
+    "newDuaIn": "Yeni dua şu sürede",
+    "shareTitle": "Günlük Dua"
+  },
+  "dailyDhikr": {
+    "title": "Günlük Zikir",
+    "subtitle": "Today's featured remembrance",
+    "goal": "Hedef"
+  },
+  "surahDownload": {
+    "queued": "Queued",
+    "downloadSurah": "Sureyi İndir"
+  },
+  "hifzConstants": {
+    "fullVerse": "Full Verse",
+    "fullVerseDesc": "Hide entire verse, tap to reveal all",
+    "wordByWord": "Word by Word",
+    "wordByWordDesc": "Reveal one word at a time as you recite",
+    "manual": "Manual",
+    "none": "None",
+    "sec2": "2 sec",
+    "sec5": "5 sec",
+    "slow": "Slow",
+    "medium": "Medium",
+    "normal": "Normal",
+    "memorized": "Ezberlenen",
+    "inProgress": "Devam Ediyor",
+    "notStarted": "Başlanmadı",
+    "learning": "Öğreniyor",
+    "reviewing": "Gözden Geçiriyor",
+    "needsWork": "Çalışma Gerekli",
+    "mastered": "Ustalaşmış"
+  },
+  "calculationMethods": {
+    "shia": "Shia Ithna-Ansari",
+    "karachi": "Karaçi Üniversitesi",
+    "isna": "Kuzey Amerika İslam Derneği",
+    "mwl": "Dünya Müslüman Birliği",
+    "ummAlQura": "Umm Al-Qura University, Makkah",
+    "egypt": "Mısır Genel Fetva Kurumu",
+    "tehran": "Tahran İslami Bilimler Enstitüsü",
+    "gulf": "Körfez Bölgesi",
+    "kuwait": "Kuveyt",
+    "qatar": "Katar",
+    "muis": "Majlis Ugama Islam Singapura, Singapore",
+    "uoif": "Union Organization Islamic de France",
+    "diyanet": "Diyanet İşleri Başkanlığı, Turkey",
+    "russia": "Rusya",
+    "moonsighting": "Hilal Gözetleme Komitesi",
+    "jordan": "Ministry of Awqaf, Islamic Affairs, Jordan",
+    "makkah": "Ümmül Kura Üniversitesi, Mekke",
+    "jafari": "Şia İsna Aşeri",
+    "singapore": "Singapur",
+    "france": "Fransa",
+    "turkey": "Türkiye Diyanet İşleri",
+    "custom": "Özel"
+  },
+  "loopRange": {
+    "start": "Start",
+    "end": "End",
+    "notSet": "Not set",
+    "clear": "Clear",
+    "playLoop": "Play Loop",
+    "stopLoop": "Stop Loop",
+    "helpText": "Long-press a verse and tap \"Set Loop Start\" or \"Set Loop End\" to define the range",
+    "from": "Başlangıç",
+    "to": "Bitiş",
+    "repeatCount": "Tekrar",
+    "saveLoop": "Döngüyü Kaydet",
+    "startLoop": "Döngüyü Başlat",
+    "clearLoop": "Döngüyü Temizle"
+  },
+  "azkarCategories": {
+    "morning": "Sabah Zikirleri",
+    "evening": "Akşam Zikirleri",
+    "after-prayer": "After Prayer",
+    "sleep": "Uyku",
+    "waking": "Waking Up",
+    "general": "Genel",
+    "afterPrayer": "Namazdan Sonra",
+    "wakeUp": "Uyanma"
+  },
+  "duaCategories": {
+    "travel": "Yolculuk",
+    "eating": "Eating & Drinking",
+    "sleeping": "Sleeping & Waking",
+    "places": "Entering & Leaving",
+    "weather": "Weather & Nature",
+    "health": "Sağlık",
+    "protection": "Korunma",
+    "gratitude": "Şükür",
+    "forgiveness": "Bağışlanma",
+    "guidance": "Hidayet",
+    "family": "Aile",
+    "general": "Genel",
+    "worship": "İbadet & Namaz",
+    "dailyLife": "Günlük Hayat",
+    "food": "Yeme & İçme",
+    "knowledge": "İlim"
+  },
+  "guideCategories": {
+    "worship": "Worship & Prayer",
+    "purification": "Temizlik",
+    "hajj": "Hajj & Umrah",
+    "charity": "Hayır & Zekât",
+    "fasting": "Oruç",
+    "funeral": "Funeral Rites",
+    "character": "Ahlak",
+    "knowledge": "İlim",
+    "finance": "İslami Finans",
+    "prayer": "Namaz",
+    "pilgrimage": "Hac & Umre",
+    "death": "Vefat & Yas"
+  },
+  "guides": {
+    "how-to-perform-salah": {
+      "title": "How to Perform Salah (Prayer)",
+      "description": "Comprehensive guide for performing the five daily prayers according to the Prophetic tradition",
+      "steps": {
+        "0": {
+          "title": "1. Make Intention",
+          "content": "Make the intention in your heart for which prayer you are performing. The intention is in the heart and does not need to be spoken aloud."
+        },
+        "1": {
+          "title": "2. Takbir (Opening)",
+          "content": "Raise your hands to shoulder or ear level and say 'Allahu Akbar'. This marks the beginning of the prayer."
+        },
+        "2": {
+          "title": "3. Recite Opening Supplication",
+          "content": "Place your right hand over your left on your chest and recite: 'Subhanaka Allahumma wa bihamdika, wa tabarakasmuka, wa ta'ala jadduka, wa la ilaha ghayruk'."
+        },
+        "3": {
+          "title": "4. Recite Al-Fatiha",
+          "content": "Recite Surah Al-Fatiha. This is obligatory in every rak'ah. After finishing, say 'Ameen' quietly."
+        },
+        "4": {
+          "title": "5. Recite Additional Surah",
+          "content": "In the first two rak'ahs, recite another surah or verses from the Quran after Al-Fatiha."
+        },
+        "5": {
+          "title": "6. Perform Ruku (Bowing)",
+          "content": "Say 'Allahu Akbar' and bow down, placing your hands on your knees. Say 'Subhana Rabbiyal Adheem' three times."
+        },
+        "6": {
+          "title": "7. Stand Up from Ruku",
+          "content": "Rise from bowing while saying 'Sami'Allahu liman hamidah'. When standing, say 'Rabbana wa lakal hamd'."
+        },
+        "7": {
+          "title": "8. Perform Sujud",
+          "content": "Say 'Allahu Akbar' and prostrate. Say 'Subhana Rabbiyal A'la' three times. Perform two prostrations."
+        },
+        "8": {
+          "title": "9. Sit for Tashahhud",
+          "content": "After every two rak'ahs, sit and recite the Tashahhud. Point your right index finger while reciting."
+        },
+        "9": {
+          "title": "10. Give Tasleem",
+          "content": "Turn your head to the right and say 'As-salamu alaykum wa rahmatullah', then turn left and repeat."
+        }
+      }
+    },
+    "how-to-perform-istikhara": {
+      "title": "How to Perform Istikhara Prayer",
+      "description": "Guide for seeking Allah's guidance in making important decisions",
+      "steps": {
+        "0": {
+          "title": "1. Identify Your Decision",
+          "content": "Have a specific matter in mind that you need guidance on. Istikhara is for permissible matters where you're unsure which option is better."
+        },
+        "1": {
+          "title": "2. Perform Two Rak'ahs",
+          "content": "Pray two rak'ahs of voluntary prayer. In the first rak'ah after Al-Fatiha, recite Surah Al-Kafirun. In the second, recite Surah Al-Ikhlas."
+        },
+        "2": {
+          "title": "3. Recite the Istikhara Dua",
+          "content": "After completing the prayer, raise your hands and recite: 'Allahumma inni astakhiruka bi'ilmika, wa astaqdiruka bi-qudratika...' (O Allah, I seek Your guidance by Your knowledge...)."
+        },
+        "3": {
+          "title": "4. Mention Your Matter",
+          "content": "When you reach the part 'fee haadhal amr' (in this matter of mine), specify what you're seeking guidance about."
+        },
+        "4": {
+          "title": "5. Trust Allah's Plan",
+          "content": "After making the dua, proceed with your decision. Trust that Allah will make the better option easier for you and put barriers in the way of what's not good for you."
+        }
+      }
+    },
+    "how-to-perform-tahajjud": {
+      "title": "How to Perform Tahajjud Prayer",
+      "description": "Guide for performing the night prayer in the last third of the night",
+      "steps": {
+        "0": {
+          "title": "1. Wake Up in Last Third",
+          "content": "Wake up in the last third of the night (approximately 1-2 hours before Fajr). This is the most blessed time for Tahajjud."
+        },
+        "1": {
+          "title": "2. Make Wudu",
+          "content": "Perform ablution and prepare yourself mentally and spiritually for standing before Allah."
+        },
+        "2": {
+          "title": "3. Pray in Pairs",
+          "content": "Pray at least 2 rak'ahs, but you can pray more in pairs (2, 4, 6, 8, etc.). The Prophet (ﷺ) would pray 11 rak'ahs."
+        },
+        "3": {
+          "title": "4. Recite Long Portions",
+          "content": "Take your time in recitation, ruku, and sujud. Recite longer portions of the Quran than you would in regular prayers."
+        },
+        "4": {
+          "title": "5. Make Dua",
+          "content": "After completing your prayer, make sincere dua. This is a time when Allah descends to the lowest heaven and answers prayers."
+        },
+        "5": {
+          "title": "6. End with Witr",
+          "content": "Conclude your night prayer with Witr (odd number of rak'ahs, typically 1 or 3)."
+        }
+      }
+    },
+    "how-to-perform-eid-prayer": {
+      "title": "How to Perform Eid Prayer",
+      "description": "Guide for performing Eid al-Fitr and Eid al-Adha prayers",
+      "steps": {
+        "0": {
+          "title": "1. Prepare for Eid",
+          "content": "Take a bath, wear your best clothes, and apply perfume. For Eid al-Fitr, eat dates before going. For Eid al-Adha, wait until after the prayer."
+        },
+        "1": {
+          "title": "2. Go to Prayer Ground",
+          "content": "Go to the Eid prayer ground early. It's Sunnah to take one route to the prayer and return by a different route."
+        },
+        "2": {
+          "title": "3. First Rak'ah",
+          "content": "After the opening Takbir, there are 7 additional Takbirs. Raise your hands with each Takbir. Then recite Al-Fatiha and another Surah (commonly Al-A'la)."
+        },
+        "3": {
+          "title": "4. Second Rak'ah",
+          "content": "After standing from prostration, there are 5 additional Takbirs. Then recite Al-Fatiha and another Surah (commonly Al-Ghashiyah)."
+        },
+        "4": {
+          "title": "5. Listen to Khutbah",
+          "content": "After the prayer, the Imam delivers two khutbahs. It's recommended to stay and listen, though not obligatory."
+        },
+        "5": {
+          "title": "6. Exchange Greetings",
+          "content": "Greet fellow Muslims with 'Eid Mubarak' or 'Taqabbal Allahu minna wa minkum' (May Allah accept from us and from you)."
+        }
+      }
+    },
+    "morning-evening-adhkar": {
+      "title": "Morning and Evening Adhkar",
+      "description": "Essential remembrances to recite in the morning and evening",
+      "steps": {
+        "0": {
+          "title": "1. Ayat al-Kursi",
+          "content": "Recite Ayat al-Kursi (Quran 2:255). The Prophet (ﷺ) said whoever recites it in the morning will be protected until evening."
+        },
+        "1": {
+          "title": "2. Last Two Verses of Al-Baqarah",
+          "content": "Recite the last two verses of Surah Al-Baqarah (2:285-286). These are sufficient for protection."
+        },
+        "2": {
+          "title": "3. Surah Al-Ikhlas, Al-Falaq, An-Nas",
+          "content": "Recite these three surahs three times each. They provide complete protection."
+        },
+        "3": {
+          "title": "4. Tasbih, Tahmid, Takbir",
+          "content": "Say 'Subhan Allah' (33x), 'Alhamdulillah' (33x), 'Allahu Akbar' (34x)."
+        },
+        "4": {
+          "title": "5. Sayyid al-Istighfar",
+          "content": "Recite the master of seeking forgiveness: 'Allahumma anta Rabbi, la ilaha illa ant...'."
+        },
+        "5": {
+          "title": "6. Protection Dua",
+          "content": "Say: 'Bismillahil-ladhi la yadurru ma'asmihi shay'un fil-ardi wa la fis-sama' (three times)."
+        }
+      }
+    },
+    "how-to-perform-wudu": {
+      "title": "Abdest Nasıl Alınır",
+      "description": "İslami abdest alma rehberi",
+      "steps": {
+        "0": {
+          "title": "1. Niyet",
+          "content": "Kalbinizde abdest almaya niyet edin ve Bismillah deyin."
+        },
+        "1": {
+          "title": "2. Elleri Yıkama",
+          "content": "Her iki elinizi bileklerinize kadar 3 kez yıkayın. Parmak aralarını iyice ovun."
+        },
+        "2": {
+          "title": "3. Ağız ve Burun",
+          "content": "Sağ elinizle 3 kez ağzınıza su alıp çalkayın. Burnunuza su çekin ve sol elinizle atın, 3 kez tekrarlayın."
+        },
+        "3": {
+          "title": "4. Yüz Yıkama",
+          "content": "Yüzünüzü saç çizgisinden çene altına, kulaktan kulağa 3 kez yıkayın."
+        },
+        "4": {
+          "title": "5. Kolları Yıkama",
+          "content": "Sağ kolunuzu parmak uçlarından dirseğe kadar 3 kez yıkayın, ardından sol kolunuzu aynı şekilde yıkayın."
+        },
+        "5": {
+          "title": "6. Başı Meshetme",
+          "content": "Islak ellerinizle başınızı önden arkaya doğru bir kez meshedin."
+        },
+        "6": {
+          "title": "7. Kulakları Meshetme",
+          "content": "İşaret parmaklarınızla kulak içini, başparmaklarınızla kulak arkasını meshedin."
+        },
+        "7": {
+          "title": "8. Ayakları Yıkama",
+          "content": "Sağ ayağınızı topuklara kadar, parmak araları dahil 3 kez yıkayın. Sol ayağınız için tekrarlayın."
+        }
+      }
+    },
+    "how-to-perform-ghusl": {
+      "title": "Gusül Nasıl Alınır",
+      "description": "İslami boy abdesti rehberi",
+      "steps": {
+        "0": {
+          "title": "1. Niyet",
+          "content": "Kalbinizde gusül almaya niyet edin."
+        },
+        "1": {
+          "title": "2. Elleri Yıkama",
+          "content": "Her iki elinizi 3 kez yıkayın."
+        },
+        "2": {
+          "title": "3. Gizli Yerleri Temizleme",
+          "content": "Sol elinizle gizli yerlerinizi yıkayın, ardından ellerinizi sabunla yıkayın."
+        },
+        "3": {
+          "title": "4. Abdest Alma",
+          "content": "Ayaklar hariç tam abdest alın (ayakları sonra yıkayacaksınız)."
+        },
+        "4": {
+          "title": "5. Saçları Yıkama",
+          "content": "Suyun saç diplerine ulaşmasını sağlayarak başınızı 3 kez yıkayın."
+        },
+        "5": {
+          "title": "6. Sağ Tarafı Yıkama",
+          "content": "Vücudunuzun sağ tarafını yıkayın, suyun her yere ulaşmasını sağlayın."
+        },
+        "6": {
+          "title": "7. Sol Tarafı Yıkama",
+          "content": "Vücudunuzun sol tarafını yıkayın, hiçbir yer kuru kalmasın."
+        },
+        "7": {
+          "title": "8. Ayakları Yıkama",
+          "content": "Parmak araları dahil her iki ayağınızı yıkayın."
+        }
+      }
+    },
+    "how-to-perform-tayammum": {
+      "title": "Teyemmüm Nasıl Yapılır",
+      "description": "Su bulunamadığında kuru abdest rehberi",
+      "steps": {
+        "0": {
+          "title": "1. Niyet",
+          "content": "Kalbinizde teyemmüm almaya niyet edin. Teyemmüm yalnızca su bulunamadığında veya su kullanmanın zararlı olacağı durumlarda geçerlidir."
+        },
+        "1": {
+          "title": "2. Bismillah",
+          "content": "Başlamadan önce 'Bismillah' deyin."
+        },
+        "2": {
+          "title": "3. Ellerinizi Toprak veya Kuma Vurun",
+          "content": "Ellerinizi temiz toprak, kum veya toza bir kez vurun."
+        },
+        "3": {
+          "title": "4. Yüzü Meshetme",
+          "content": "Her iki avucunuzla yüzünüzü bir kez meshedin."
+        },
+        "4": {
+          "title": "5. Elleri Meshetme",
+          "content": "Sol elinizi sağ elinizin üstüne sürün, ardından sağ elinizi sol elinizin üstüne bileklere kadar sürün."
+        },
+        "5": {
+          "title": "6. Tamamlandı",
+          "content": "Teyemmümünüz tamamlanmıştır ve bir namaz için geçerlidir. Her namaz vakti için tekrarlayın."
+        }
+      }
+    },
+    "how-to-perform-umrah": {
+      "title": "Umre Nasıl Yapılır",
+      "description": "Umre ibadetini yerine getirme rehberi",
+      "steps": {
+        "0": {
+          "title": "1. İhrama Girme",
+          "content": "Mikat noktasına varmadan önce umre niyetiyle ihrama girin, gusül alın ve ihram giysilerinizi giyin. Telbiye getirin: 'Lebbeyk Allahümme Umra'."
+        },
+        "1": {
+          "title": "2. Mescid-i Haram'a Giriş",
+          "content": "Sağ ayağınızla girin ve mescide giriş duasını okuyun."
+        },
+        "2": {
+          "title": "3. Tavaf",
+          "content": "Kâbe'nin etrafında Hacer-i Esved'den başlayarak saat yönünün tersine 7 tur dönün. Erkekler sağ omuzlarını açık bırakmalı (ıztıba) ve ilk üç turda hızlı yürümelidir (remel)."
+        },
+        "3": {
+          "title": "4. İki Rekât Namaz",
+          "content": "Tavaftan sonra mümkünse Makam-ı İbrahim'in arkasında, değilse Harem'in herhangi bir yerinde iki rekât namaz kılın."
+        },
+        "4": {
+          "title": "5. Zemzem İçme",
+          "content": "Zemzem suyu için ve dua edin."
+        },
+        "5": {
+          "title": "6. Sa'y",
+          "content": "Safa ve Merve arasında Safa'dan başlayarak 7 kez yürüyün. Erkekler yeşil ışıklar arasında koşmalıdır."
+        },
+        "6": {
+          "title": "7. Saç Tıraşı",
+          "content": "Erkekler başlarını kazıtmalı veya saçlarını kısaltmalıdır. Kadınlar saçlarından parmak ucu kadar kesmelidir. Bu umrenizi tamamlar."
+        }
+      }
+    },
+    "how-to-perform-tawaf": {
+      "title": "Tavaf Nasıl Yapılır",
+      "description": "Kâbe'nin etrafında dönme rehberi",
+      "steps": {
+        "0": {
+          "title": "1. Hacer-i Esved'e Yönelme",
+          "content": "Kâbe solunuzda kalacak şekilde Hacer-i Esved'e (Siyah Taş) yönelin."
+        },
+        "1": {
+          "title": "2. Niyet",
+          "content": "Kalbinizde tavaf niyeti edin."
+        },
+        "2": {
+          "title": "3. Dokunma veya İşaret Etme",
+          "content": "Mümkünse Hacer-i Esved'e dokunup öpün. Değilse, ona doğru işaret edin ve 'Bismillah, Allahu Ekber' deyin."
+        },
+        "3": {
+          "title": "4. Dönmeye Başlama",
+          "content": "Kâbe'yi solunuzda tutarak saat yönünün tersine yürüyün. Erkekler sağ omuzlarını açık bırakmalıdır."
+        },
+        "4": {
+          "title": "5. Zikir ve Dua",
+          "content": "Tavafta okunması gereken özel dualar yoktur. Kur'an okuyun, zikir yapın veya kişisel dua edin."
+        },
+        "5": {
+          "title": "6. Rükn-ü Yemâni",
+          "content": "Mümkünse Rükn-ü Yemâni'ye sağ elinizle öpmeden dokunun."
+        },
+        "6": {
+          "title": "7. Yedi Turu Tamamlama",
+          "content": "Yedi tam tur tamamlayın. Hacer-i Esved'in önünden her geçişinizde ona doğru işaret edin ve 'Allahu Ekber' deyin."
+        },
+        "7": {
+          "title": "8. İki Rekât Namaz",
+          "content": "Tavafı tamamladıktan sonra Makam-ı İbrahim'in arkasında veya Harem'in herhangi bir yerinde iki rekât namaz kılın."
+        }
+      }
+    },
+    "how-to-calculate-zakat": {
+      "title": "Zekât Nasıl Hesaplanır ve Ödenir",
+      "description": "Farz olan sadakayı hesaplama ve ödeme rehberi",
+      "steps": {
+        "0": {
+          "title": "1. Nisab'ı Anlama",
+          "content": "Nisab, zekâtın farz olması için gereken asgari servet miktarıdır. 85 gram altın veya 595 gram gümüş değerine eşittir."
+        },
+        "1": {
+          "title": "2. Servetinizi Hesaplama",
+          "content": "Zekâta tabi tüm varlıklarınızı toplayın: nakit, banka hesapları, altın, gümüş, ticari mallar, hisse senetleri ve size borçlu olunan paralar."
+        },
+        "2": {
+          "title": "3. Borçları Düşme",
+          "content": "Yıl içinde vadesi gelen borçlarınızı düşün."
+        },
+        "3": {
+          "title": "4. Nisab'ı Kontrol Etme",
+          "content": "Net zekâta tabi servetiniz Nisab eşiğinin üzerindeyse zekât farzdır."
+        },
+        "4": {
+          "title": "5. %2,5 Hesaplama",
+          "content": "Zekâta tabi servetinizi 0,025 (%2,5) ile çarpın. Bu sizin zekât miktarınızdır."
+        },
+        "5": {
+          "title": "6. Uygun Alıcılara Ödeme",
+          "content": "Zekâtınızı Kur'an 9:60'ta belirtilen sekiz kategoriye dağıtın: fakirler, yoksullar, zekât toplayıcıları, kalpleri İslam'a ısındırılacaklar, köleler, borçlular, Allah yolunda olanlar ve yolcular."
+        },
+        "6": {
+          "title": "7. Niyet Etme",
+          "content": "Öderken bunun farz zekâtınız olduğuna niyet edin."
+        }
+      }
+    },
+    "how-to-pay-zakat-al-fitr": {
+      "title": "Fitre Nasıl Ödenir",
+      "description": "Ramazan sonunda ödenmesi gereken farz sadaka rehberi",
+      "steps": {
+        "0": {
+          "title": "1. Amacını Anlama",
+          "content": "Fitre, oruç tutan kişiyi boş sözlerden ve kötü konuşmalardan arındırır ve Bayram günü fakirlere yiyecek sağlar."
+        },
+        "1": {
+          "title": "2. Kimlerin Ödemesi Gerekir",
+          "content": "Bir gün ve bir gecelik yiyeceğinden fazlasına sahip her Müslüman, kendisi ve bakmakla yükümlü olduğu kişiler için fitre ödemek zorundadır."
+        },
+        "2": {
+          "title": "3. Miktarı Hesaplama",
+          "content": "Miktar bir sa' (yaklaşık 3 kg veya 2,5 litre) temel gıda (buğday, arpa, hurma, üzüm veya pirinç) veya parasal karşılığıdır."
+        },
+        "3": {
+          "title": "4. Zamanı",
+          "content": "Bayram namazından önce ödenmelidir. Bayramdan 1-2 gün önce ödenmesi en iyisidir. Bayram namazından sonra ödenen fitre değil, geç kalmış sadaka sayılır."
+        },
+        "4": {
+          "title": "5. Fakirlere Verme",
+          "content": "Topluluğunuzdaki fakir ve muhtaç Müslümanlara doğrudan veya güvenilir bir kuruluş aracılığıyla verin."
+        }
+      }
+    },
+    "how-to-give-sadaqah": {
+      "title": "Sadaka Nasıl Verilir (Gönüllü Hayır)",
+      "description": "İhlasla gönüllü hayır verme rehberi",
+      "steps": {
+        "0": {
+          "title": "1. Saf Niyet",
+          "content": "Sadakayı yalnızca Allah'ın rızası için verin, insanların takdiri veya övgüsü için değil."
+        },
+        "1": {
+          "title": "2. Helal Servetten Verme",
+          "content": "Sadakanızın meşru yollarla kazanılmış paradan geldiğinden emin olun. Allah yalnızca temiz olanı kabul eder."
+        },
+        "2": {
+          "title": "3. Mümkünse Gizli Verme",
+          "content": "Hz. Peygamber ﷺ en iyi sadakanın gizli verilen olduğunu söylemiştir. Ancak açık sadaka başkalarına ilham verebilir."
+        },
+        "3": {
+          "title": "4. Düzenli Verme",
+          "content": "Düzenli verilen küçük miktarlar, ara sıra verilen büyük miktarlardan daha iyidir. Hz. Peygamber ﷺ buyurdu ki Allah'a en sevimli ameller devamlı olanlardır."
+        },
+        "4": {
+          "title": "5. Hatırlatmama",
+          "content": "İnsanlara sadakanızı asla hatırlatmayın veya sözlerinizle incitmeyin. Bu sevabı boşa çıkarır."
+        },
+        "5": {
+          "title": "6. Gülümsemek Sadakadır",
+          "content": "Sadakanın yalnızca para olmadığını unutmayın. Gülümsemek, birine yardım etmek, yoldan zarar verici şeyleri kaldırmak ve güzel sözler de sadaka türleridir."
+        }
+      }
+    },
+    "how-to-fast-ramadan": {
+      "title": "Ramazan Orucu Nasıl Tutulur",
+      "description": "Farz orucu tutmak için kapsamlı rehber",
+      "steps": {
+        "0": {
+          "title": "1. Geceden Niyet",
+          "content": "İmsaktan önce oruç niyeti edin. Hz. Peygamber ﷺ buyurdu: 'İmsaktan önce niyet etmeyen kişinin orucu yoktur.'"
+        },
+        "1": {
+          "title": "2. Sahur Yeme",
+          "content": "Sahur yemeğini yiyin. Hz. Peygamber ﷺ buyurdu: 'Sahur yiyin, çünkü onda bereket vardır.' İmsak'tan önce yemeyi bırakın."
+        },
+        "2": {
+          "title": "3. Yeme, İçme ve İlişkiden Uzak Durma",
+          "content": "İmsak'tan akşam namazına kadar yeme, içme, sigara ve evlilik ilişkisinden uzak durun."
+        },
+        "3": {
+          "title": "4. Dilinizi Koruma",
+          "content": "Yalan, gıybet, tartışma ve kötü sözlerden kaçının. Hz. Peygamber ﷺ buyurdu: 'Kim yalan söylemeyi ve yalanla amel etmeyi bırakmazsa, Allah'ın onun yemesini içmesini bırakmasına ihtiyacı yoktur.'"
+        },
+        "4": {
+          "title": "5. İyi Amelleri Çoğaltma",
+          "content": "Namaz, Kur'an okuma, zikir ve hayır işlerini artırın. Ramazan, Kur'an ve cömertlik ayıdır."
+        },
+        "5": {
+          "title": "6. Akşam İftar",
+          "content": "Akşam namazı girdiğinde hemen orucunuzu açın. Hz. Peygamber ﷺ hurma ve su ile iftar açar, sonra akşam namazını kılardı."
+        },
+        "6": {
+          "title": "7. İftar Öncesi Dua",
+          "content": "Oruçlunun duası kabul edilir. Şöyle deyin: 'Allahümme leke sumtü ve ala rızkıke eftartü' (Allah'ım, senin için oruç tuttum ve senin rızkınla iftar ettim)."
+        }
+      }
+    },
+    "how-to-fast-voluntarily": {
+      "title": "Nafile Oruç Nasıl Tutulur",
+      "description": "Yıl boyunca tavsiye edilen nafile oruçlar rehberi",
+      "steps": {
+        "0": {
+          "title": "1. Pazartesi ve Perşembe",
+          "content": "Hz. Peygamber ﷺ Pazartesi ve Perşembe günleri oruç tutardı. Bu günlerde amellerin Allah'a arz edildiğini söylemiştir."
+        },
+        "1": {
+          "title": "2. Her Ay Üç Gün",
+          "content": "Her ay kameri ayın 13, 14 ve 15'inde (eyyam-ı bıyz) oruç tutun. Bu, tüm yıl boyunca oruç tutmuş gibi sayılır."
+        },
+        "2": {
+          "title": "3. Arefe Günü",
+          "content": "Zilhicce'nin 9'unda (hacı olmayanlar için) oruç tutun. Hz. Peygamber ﷺ bunun önceki ve gelecek yılın günahlarını affettireceğini söylemiştir."
+        },
+        "3": {
+          "title": "4. Aşure Günü",
+          "content": "Muharrem'in 10'unda oruç tutun ve 9 veya 11'inde de tutmanız tavsiye edilir. Önceki yılın günahlarını affettirir."
+        },
+        "4": {
+          "title": "5. Şevval'in Altı Günü",
+          "content": "Ramazan'dan sonra Şevval'de altı gün oruç tutun. Hz. Peygamber ﷺ bunun tüm yıl oruç tutmuş gibi sayıldığını söylemiştir."
+        },
+        "5": {
+          "title": "6. Niyet",
+          "content": "Nafile oruçlar için, hiçbir şey yememişseniz gün içinde de niyet edebilirsiniz."
+        }
+      }
+    },
+    "how-to-perform-janazah-prayer": {
+      "title": "Cenaze Namazı Nasıl Kılınır",
+      "description": "Cenaze namazı kılma rehberi",
+      "steps": {
+        "0": {
+          "title": "1. Safta Durma",
+          "content": "İmamın arkasında saflar oluşturun. Cenaze öne konulur, erkekler imama daha yakın durur."
+        },
+        "1": {
+          "title": "2. Birinci Tekbir",
+          "content": "Ellerinizi kaldırın ve 'Allahu Ekber' deyin, ardından sessizce Fatiha'yı okuyun."
+        },
+        "2": {
+          "title": "3. İkinci Tekbir",
+          "content": "'Allahu Ekber' deyin (elleri kaldırmadan) ve Hz. Peygamber'e salavat getirin: 'Allahümme salli ala Muhammed...'"
+        },
+        "3": {
+          "title": "4. Üçüncü Tekbir",
+          "content": "'Allahu Ekber' deyin ve cenaze için dua edin: 'Allahümme'ğfir lehu verhamhu...'"
+        },
+        "4": {
+          "title": "5. Dördüncü Tekbir",
+          "content": "'Allahu Ekber' deyin ve kendiniz ile tüm Müslümanlar için kısa bir dua edin."
+        },
+        "5": {
+          "title": "6. Selam",
+          "content": "Başınızı sağa çevirip 'Esselamu aleykum' deyin, ardından sola çevirip tekrarlayın."
+        }
+      }
+    },
+    "how-to-offer-condolences": {
+      "title": "Taziye Nasıl Yapılır",
+      "description": "Yas tutanlara İslami adabıyla başsağlığı dileme",
+      "steps": {
+        "0": {
+          "title": "1. Hızlı Ziyaret",
+          "content": "Haberi aldıktan sonra kısa sürede aileyi ziyaret edin, ancak alan ve mahremiyet ihtiyaçlarına duyarlı olun."
+        },
+        "1": {
+          "title": "2. Uygun Sözler Söyleme",
+          "content": "'İnna lillahi ve inna ileyhi raciun' (Biz Allah'a aidiz ve O'na döneceğiz) deyin. Sabırlarının karşılığında Allah'ın onları ödüllendireceğini hatırlatın."
+        },
+        "2": {
+          "title": "3. Dua Etme",
+          "content": "Merhum ve ailesi için dua edin: 'Allah onu bağışlasın, ona rahmet etsin ve size sabır ve ecir versin.'"
+        },
+        "3": {
+          "title": "4. Pratik Yardım Sunma",
+          "content": "Yemek hazırlama, iş yapma veya cenaze hazırlıklarına yardım gibi somut yardımlar teklif edin."
+        },
+        "4": {
+          "title": "5. Kısa Tutma",
+          "content": "Aile sizi kalmaya özellikle davet etmedikçe ziyaretinizi kısa tutun."
+        },
+        "5": {
+          "title": "6. Aşırı Ağlamaktan Kaçınma",
+          "content": "Soğukkanlılığınızı koruyun, yüksek sesle ağlama veya aşırı yas gösterilerinden kaçının, çünkü bu İslam'da hoş karşılanmaz."
+        }
+      }
+    },
+    "how-to-control-anger": {
+      "title": "Öfke Nasıl Kontrol Edilir",
+      "description": "Öfke yönetimi için İslami rehber",
+      "steps": {
+        "0": {
+          "title": "1. Allah'a Sığınma",
+          "content": "Öfkenizin yükseldiğini hissettiğinizde 'Euzubillahimineşşeytanirracim' (Kovulmuş şeytandan Allah'a sığınırım) deyin."
+        },
+        "1": {
+          "title": "2. Sessiz Kalma",
+          "content": "Hz. Peygamber ﷺ buyurdu: 'Biriniz öfkelendiğinde sussun.' Sessizlik, pişman olacağınız şeyler söylemenizi engeller."
+        },
+        "2": {
+          "title": "3. Pozisyon Değiştirme",
+          "content": "Ayaktaysanız oturun. Oturuyorsanız uzanın. Hz. Peygamber ﷺ fiziksel durumunuzu değiştirmenizi öğretmiştir."
+        },
+        "3": {
+          "title": "4. Abdest Alma",
+          "content": "Soğuk su ile abdest alın. Hz. Peygamber ﷺ öfkenin şeytandan olduğunu ve şeytanın ateşten yaratıldığını, ateşin ise su ile söndürüldüğünü söylemiştir."
+        },
+        "4": {
+          "title": "5. Allah'ın Bağışlamasını Hatırlama",
+          "content": "Hatalarınıza rağmen Allah'ın sizi nasıl bağışladığını düşünün. Bu sizi başkalarına karşı daha bağışlayıcı yapmalıdır."
+        },
+        "5": {
+          "title": "6. Sonuçları Düşünme",
+          "content": "Öfkeyle hareket etmenin olumsuz sonuçlarını düşünün: bozulan ilişkiler, pişman olunan sözler ve kaybedilen saygı."
+        }
+      }
+    },
+    "how-to-practice-humility": {
+      "title": "Tevazu Nasıl Uygulanır",
+      "description": "İslam'da tevazu geliştirme rehberi",
+      "steps": {
+        "0": {
+          "title": "1. Kökenini Hatırlama",
+          "content": "Topraktan yaratıldığınızı ve toprağa döneceğinizi düşünün. Bu gerçek herkesi alçakgönüllü yapmalıdır."
+        },
+        "1": {
+          "title": "2. Allah'ın Nimetlerini Kabul Etme",
+          "content": "Tüm nimetlerinizin, yeteneklerinizin ve başarılarınızın, kendi çabanızla değil, Allah'tan gelen hediyeler olduğunu bilin."
+        },
+        "2": {
+          "title": "3. Başkalarına Hizmet",
+          "content": "Hz. Peygamber ﷺ Müslümanların lideri olmasına rağmen ailesine hizmet eder, elbiselerini yamar ve ev işlerine yardım ederdi."
+        },
+        "3": {
+          "title": "4. Övünmekten Kaçınma",
+          "content": "Servetiniz, bilginiz, soyunuz veya başarılarınızla övünmeyin. Hz. Peygamber ﷺ buyurdu: 'Kalbinde zerre kadar kibir olan cennete giremez.'"
+        },
+        "4": {
+          "title": "5. Tavsiye Kabul Etme",
+          "content": "Statüsü ne olursa olsun başkalarından gelen eleştiri ve tavsiyelere açık olun. Gerçek herkesten gelebilir."
+        },
+        "5": {
+          "title": "6. Herkese Eşit Davranma",
+          "content": "Fakirlere, yaşlılara ve sosyal statüsü düşük olanlara saygı gösterin. Hz. Peygamber ﷺ buyurdu: 'Sizin en hayırlınız ailelerine en iyi davranandır.'"
+        }
+      }
+    },
+    "how-to-forgive-others": {
+      "title": "Başkalarını Nasıl Affedersiniz",
+      "description": "Bağışlama ve af hakkında İslami öğretiler",
+      "steps": {
+        "0": {
+          "title": "1. Allah'ın Bağışlamasını Hatırlama",
+          "content": "Allah sayısız günahınızı bağışlar. Kur'an der ki: 'Affetsinler, hoş görsünler. Allah'ın sizi bağışlamasını istemez misiniz?' (24:22)"
+        },
+        "1": {
+          "title": "2. Mükâfatı Anlama",
+          "content": "Hz. Peygamber ﷺ buyurdu: 'Sadaka malı eksiltmez ve Allah affeden kişinin şerefini artırır.'"
+        },
+        "2": {
+          "title": "3. Kendini Onların Yerine Koyma",
+          "content": "Kişinin neden size haksızlık ettiğini anlamaya çalışın. Belki zor bir dönemden geçiyordu veya eylemlerinin etkisini fark etmemişti."
+        },
+        "3": {
+          "title": "4. Onlar İçin Dua Etme",
+          "content": "Size haksızlık eden kişi için dua edin. Bu kalbinizi yumuşatır ve kırgınlığınızdan kurtulmanıza yardımcı olur."
+        },
+        "4": {
+          "title": "5. Kinden Vazgeçme",
+          "content": "Kin tutmak yalnızca size zarar verir. Hz. Peygamber ﷺ buyurdu: 'Birbirinize buğz etmeyin, haset etmeyin ve kardeşler olarak Allah'ın kulları olun.'"
+        },
+        "5": {
+          "title": "6. Mümkünse Barışma",
+          "content": "Uygunsa barışmak için adım atın. Hz. Peygamber ﷺ buyurdu: 'Bir Müslüman'ın kardeşiyle üç günden fazla dargın kalması helal değildir.'"
+        }
+      }
+    },
+    "how-to-seek-knowledge": {
+      "title": "İslami İlim Nasıl Öğrenilir",
+      "description": "İslami bilgiyi doğru şekilde öğrenme rehberi",
+      "steps": {
+        "0": {
+          "title": "1. Niyetini Arındırma",
+          "content": "İlmi Allah rızası için öğrenin, dünyevi kazanç veya şöhret için değil. Hz. Peygamber ﷺ gösteriş için ilim öğrenmeye karşı uyarmıştır."
+        },
+        "1": {
+          "title": "2. Temellerden Başlama",
+          "content": "Temel bilgilerle başlayın: doğru inanç (Akaid), namaz kılma, temel İslami hükümler ve Kur'an okuma."
+        },
+        "2": {
+          "title": "3. Ehil Hocalar Bulma",
+          "content": "Kur'an ve Sünnet'e uyan bilgili, güvenilir âlimlerden öğrenin. Hz. Peygamber ﷺ buyurdu: 'Bu ilim her nesilden güvenilir olanlar tarafından taşınacaktır.'"
+        },
+        "3": {
+          "title": "4. Tutarlı Olma",
+          "content": "Her gün az da olsa düzenli çalışın. Hz. Peygamber ﷺ buyurdu: 'Allah'a en sevimli ameller devamlı olanlardır.'"
+        },
+        "4": {
+          "title": "5. Öğrendiğinizi Uygulama",
+          "content": "Bilginizi hayatınızda uygulayın. Amelsiz ilim meyvesiz ağaç gibidir."
+        },
+        "5": {
+          "title": "6. Başkalarına Öğretme",
+          "content": "Faydalı bilgiyi başkalarıyla paylaşın. Hz. Peygamber ﷺ buyurdu: 'Sizin en hayırlınız Kur'an'ı öğrenen ve öğretendir.'"
+        }
+      }
+    },
+    "how-to-make-tawbah": {
+      "title": "Tövbe Nasıl Yapılır",
+      "description": "Günahlardan samimi tövbe rehberi",
+      "steps": {
+        "0": {
+          "title": "1. Günahı Hemen Bırakma",
+          "content": "İlk adım günahı hemen bırakmaktır. Günahı işlemeye devam ederken tövbe edemezsiniz."
+        },
+        "1": {
+          "title": "2. Samimi Pişmanlık Duyma",
+          "content": "Allah'a itaatsizlik ettiğiniz için kalbinizde samimi pişmanlık hissedin. Hz. Peygamber ﷺ buyurdu: 'Pişmanlık tövbedir.'"
+        },
+        "2": {
+          "title": "3. Allah'tan Bağışlanma Dileme",
+          "content": "Allah'tan sizi bağışlamasını isteyin. 'Estağfirullah' (Allah'tan bağışlanma dilerim) deyin ve samimi dua edin."
+        },
+        "3": {
+          "title": "4. Geri Dönmemeye Kesin Karar Verme",
+          "content": "O günaha asla geri dönmemek için kesin niyet edin. Bu kararlılık geçerli tövbe için zorunludur."
+        },
+        "4": {
+          "title": "5. Gerekirse Telafi Etme",
+          "content": "Günahınız birine haksızlık içeriyorsa, onlardan özür dileyin ve telafi edin. Çalınan malı iade edin, verilen zarardan özür dileyin vb."
+        },
+        "5": {
+          "title": "6. Kötülüğü İyilikle Değiştirme",
+          "content": "Günahınızın ardından iyi ameller yapın. Allah buyuruyor: 'Şüphesiz iyilikler kötülükleri giderir' (Kur'an 11:114)."
+        },
+        "6": {
+          "title": "7. Asla Ümit Kesme",
+          "content": "Günahlarınız ne kadar büyük olursa olsun, Allah'ın rahmetinden asla ümit kesmeyin. Buyuruyor: 'De ki: Ey kendilerine kötülük edip aşırı giden kullarım! Allah'ın rahmetinden ümidinizi kesmeyin' (Kur'an 39:53)."
+        }
+      }
+    },
+    "understanding-riba": {
+      "title": "Ribayı (Faizi) Anlamak",
+      "description": "İslam'da faiz yasağı hakkında bilgi edinin",
+      "steps": {
+        "0": {
+          "title": "1. Riba Nedir?",
+          "content": "Riba 'artış' veya 'fazlalık' anlamına gelir. İslami finansta, miktarı ne olursa olsun, ödünç verilen para üzerindeki garantili faizi ifade eder."
+        },
+        "1": {
+          "title": "2. Neden Yasaklanmıştır?",
+          "content": "Allah buyuruyor: 'Allah alışverişi helal, ribayı haram kılmıştır' (Kur'an 2:275). Riba muhtaçları sömürür ve üretken çaba olmadan servet yaratır."
+        },
+        "2": {
+          "title": "3. Riba Türleri",
+          "content": "Riba el-Nesie: Borç faizi. Riba el-Fadl: Aynı emtiaları eşit olmayan miktarlarda değiştirme (ör. fazlalıklı altın-altın takası)."
+        },
+        "3": {
+          "title": "4. Günahın Ağırlığı",
+          "content": "Hz. Peygamber ﷺ ribanın 73 türü olduğunu, en hafifinin kişinin kendi annesiyle zina yapması gibi olduğunu söylemiştir. Hem alan hem veren lanetlenmiştir."
+        },
+        "4": {
+          "title": "5. Alternatifler",
+          "content": "Geleneksel faizli krediler yerine İslami bankalar, kâr paylaşım düzenlemeleri (Mudaraba) veya faizsiz borç (Karz-ı Hasen) kullanın."
+        }
+      }
+    },
+    "halal-income": {
+      "title": "Helal Gelir Kazanma",
+      "description": "İslam'da meşru kazanç rehberi",
+      "steps": {
+        "0": {
+          "title": "1. Helal Gelirin Önemi",
+          "content": "Hz. Peygamber ﷺ buyurdu: 'Hiç kimse kendi elinin emeğinden daha iyi bir şey yememiştir.' Helal gelir kabul edilen ibadet için zorunludur."
+        },
+        "1": {
+          "title": "2. Yasaklı Sektörler",
+          "content": "Şunlardan gelir elde etmekten kaçının: alkol, kumar, domuz, faizli bankacılık, yetişkin eğlence ve topluma zararlı her şey."
+        },
+        "2": {
+          "title": "3. Dürüst İşlem",
+          "content": "Ticarette dürüst olun. Hz. Peygamber ﷺ buyurdu: 'Doğru sözlü, güvenilir tüccar peygamberler, sıddıklar ve şehitlerle birliktedir.'"
+        },
+        "3": {
+          "title": "4. Adil Fiyatlandırma",
+          "content": "Müşterileri sömürmeyin veya fiyatları artırmak için mal stoklamayın. Hz. Peygamber ﷺ fiyatları artırmak için gıda stoklayanları lanetlemiştir."
+        },
+        "4": {
+          "title": "5. Sözleşmelere Uyma",
+          "content": "Tüm anlaşma ve sözleşmelere uyun. Allah buyuruyor: 'Ey iman edenler! Sözleşmelere uyun' (Kur'an 5:1)."
+        },
+        "5": {
+          "title": "6. İşçilere Zamanında Ödeme",
+          "content": "Hz. Peygamber ﷺ buyurdu: 'İşçinin ücretini teri kurumadan verin.' Ödemeyi geciktirmek zulümdür."
+        }
+      }
+    },
+    "islamic-banking": {
+      "title": "İslami Bankacılık Temelleri",
+      "description": "Şeriata uygun bankacılığı anlama",
+      "steps": {
+        "0": {
+          "title": "1. Temel İlkeler",
+          "content": "İslami bankacılık faizi (riba), aşırı belirsizliği (garar) ve kumarı (meysir) yasaklar. Kârlar gerçek ekonomik faaliyetten gelmelidir."
+        },
+        "1": {
+          "title": "2. Murabaha (Maliyet Artı)",
+          "content": "Banka bir varlığı satın alır ve size açıklanan bir kâr marjıyla satar. Taksitlerle ödersiniz. Kâr baştan sabitlenir, faiz değildir."
+        },
+        "2": {
+          "title": "3. Mudaraba (Kâr Paylaşımı)",
+          "content": "Siz sermaye sağlarsınız, banka yönetir. Kârlar üzerinde anlaşılan oranlara göre paylaşılır; zararlar sermaye sağlayana aittir."
+        },
+        "3": {
+          "title": "4. Müşaraka (Ortaklık)",
+          "content": "Her iki taraf da sermaye koyar ve kâr ile zararı yatırım oranlarına göre paylaşır."
+        },
+        "4": {
+          "title": "5. İcara (Kiralama)",
+          "content": "Banka bir varlığı satın alır ve size kiralar. Kira süresi sonunda satın alma seçeneğiniz olabilir."
+        },
+        "5": {
+          "title": "6. Banka Seçimi",
+          "content": "Şeriat danışma kurulu olan bankaları arayın. Ürünlerini araştırın ve yalnızca yeniden markalaştırılmış geleneksel ürünler değil, gerçekten uyumlu olduklarından emin olun."
+        }
+      }
+    },
+    "halal-investing": {
+      "title": "Helal Yatırım Rehberi",
+      "description": "Şeriata uygun yatırım yapma",
+      "steps": {
+        "0": {
+          "title": "1. Yasaklı Sektörleri Tarama",
+          "content": "Şu sektörlerde faaliyet gösteren şirketlerden kaçının: alkol, tütün, kumar, geleneksel bankacılık/sigorta, domuz, silah ve yetişkin eğlence."
+        },
+        "1": {
+          "title": "2. Finansal Oranlar",
+          "content": "Birçok âlim şunları gerektirir: borç/aktif oranı %33'ün altında, faiz geliri gelirin %5'inin altında ve nakit/alacaklar aktiflerin %50'sinin altında."
+        },
+        "2": {
+          "title": "3. Getirilerin Arındırılması",
+          "content": "Şirket gelirinin küçük bir kısmı uyumsuz kaynaklardan geliyorsa, temettülerinizin o yüzdesini hesaplayıp hayıra bağışlayın."
+        },
+        "3": {
+          "title": "4. İslami Fonlar",
+          "content": "İslam âlimleri tarafından önceden taranmış Şeriata uygun yatırım fonları ve ETF'leri değerlendirin."
+        },
+        "4": {
+          "title": "5. Gayrimenkul",
+          "content": "Mülk yatırımı genellikle helaldir. Geleneksel ipotek yerine İslami konut finansmanı kullanın."
+        },
+        "5": {
+          "title": "6. Âlimlere Danışma",
+          "content": "Şüpheye düştüğünüzde bilgili âlimlere danışın veya İslami finans tarama hizmetlerini kullanın."
+        }
+      }
+    },
+    "debt-management": {
+      "title": "İslami Borç Yönetimi",
+      "description": "İslami ilkelere göre borç yönetimi",
+      "steps": {
+        "0": {
+          "title": "1. Gereksiz Borçtan Kaçınma",
+          "content": "Hz. Peygamber ﷺ borçtan Allah'a sığınmıştır. Yalnızca gerçekten gerekli olduğunda borçlanın ve geri ödeme planınız olsun."
+        },
+        "1": {
+          "title": "2. Tüm Borçları Belgeleme",
+          "content": "Allah buyuruyor: 'Belirli bir süre için borçlandığınızda onu yazın' (Kur'an 2:282). Bu her iki tarafı da korur."
+        },
+        "2": {
+          "title": "3. Geri Ödemeye Niyet Etme",
+          "content": "Hz. Peygamber ﷺ buyurdu: 'Kim geri ödemek niyetiyle borç alırsa, Allah ona ödemeyi kolaylaştırır. Kim de harcamak niyetiyle alırsa, Allah onu helak eder.'"
+        },
+        "3": {
+          "title": "4. Zamanında Ödeme",
+          "content": "İmkânınız varsa ödemeyi geciktirmeyin. Hz. Peygamber ﷺ buyurdu: 'Zengin kişinin ödemeyi geciktirmesi zulümdür.'"
+        },
+        "4": {
+          "title": "5. Alacaklı Olarak Müsamaha",
+          "content": "Borçlunuz zorlanıyorsa ona süre tanıyın. Allah buyuruyor: 'Darlık içindeyse, genişliğe çıkana kadar süre tanıyın' (Kur'an 2:280)."
+        },
+        "5": {
+          "title": "6. Mümkünse Affetme",
+          "content": "Borcu bağışlamak büyük sevaba vesiledir. Allah buyuruyor: 'Sadaka verirseniz sizin için daha hayırlıdır' (Kur'an 2:280)."
+        }
+      }
+    },
+    "how-to-pray-salah": {
+      "title": "Namaz Nasıl Kılınır",
+      "description": "Beş vakit namazı kılmak için adım adım rehber",
+      "steps": {
+        "0": {
+          "title": "1. Niyet ve Tekbir",
+          "content": "Kıbleye yönelin. Kılmak istediğiniz namaz için kalbinizde niyet edin. Ellerinizi kulaklarınız hizasına kaldırın ve 'Allahu Ekber' diyerek namaza başlayın."
+        },
+        "1": {
+          "title": "2. Kıyam (Ayakta Durma)",
+          "content": "Sağ elinizi sol elinizin üzerine koyun. Sübhaneke duasını, ardından Fatiha suresini ve ardından başka bir sure veya ayetler okuyun."
+        },
+        "2": {
+          "title": "3. Rükû (Eğilme)",
+          "content": "'Allahu Ekber' deyip eğilin, ellerinizi dizlerinize koyun. Sırtınızı düz tutun ve 3 kez 'Sübhane Rabbiyel Azim' deyin."
+        },
+        "3": {
+          "title": "4. Rükûdan Kalkma",
+          "content": "'Semi Allahu limen hamideh' diyerek doğrulun. Ardından 'Rabbena lekel hamd' deyin."
+        },
+        "4": {
+          "title": "5. Birinci Secde",
+          "content": "'Allahu Ekber' deyip yere kapanın. Alnınız, burnunuz, iki eliniz, iki diziniz ve ayak parmaklarınız yere temas etmelidir. 3 kez 'Sübhane Rabbiyel Ala' deyin."
+        },
+        "5": {
+          "title": "6. Oturuş",
+          "content": "'Allahu Ekber' deyip kalkıp oturun. Bir an bekleyip dua edin."
+        },
+        "6": {
+          "title": "7. İkinci Secde",
+          "content": "'Allahu Ekber' deyip ikinci secdeye gidin. Yine 3 kez 'Sübhane Rabbiyel Ala' deyin."
+        },
+        "7": {
+          "title": "8. İkinci Rekât",
+          "content": "İkinci rekât için ayağa kalkın. Aynı adımları Fatiha'dan itibaren tekrarlayın."
+        },
+        "8": {
+          "title": "9. Teşehhüd",
+          "content": "İkinci rekâttan sonra Ettahiyyat duasını okuyun. Namaz 2 rekâtlıysa salavatları okuyup selam verin."
+        },
+        "9": {
+          "title": "10. Selam",
+          "content": "Başınızı sağa çevirerek 'Esselamu aleykum ve rahmetullah' deyin, ardından sola çevirerek aynısını tekrarlayın."
+        }
+      }
+    }
+  },
+  "islamicEvents": {
+    "new_year": "İslami Yeni Yıl",
+    "ashura": "Aşure Günü",
+    "mawlid": "Mevlid-i Nebi",
+    "isra_miraj": "İsra ve Miraç",
+    "mid_shaban": "Berat Kandili",
+    "ramadan_start": "Ramazan Başlangıcı",
+    "laylat_qadr": "Kadir Gecesi",
+    "eid_fitr": "Ramazan Bayramı",
+    "arafah": "Arefe Günü",
+    "eid_adha": "Kurban Bayramı",
+    "new_year_desc": "Muharrem'in ilk günü İslami takvim yılının başlangıcını işaret eder.",
+    "ashura_desc": "Muharrem'in 10'u. Bu gün oruç tutmak önceki yılın günahlarını affettirir.",
+    "mawlid_desc": "Hz. Muhammed ﷺ'in doğum gününü anar.",
+    "isra_miraj_desc": "Hz. Muhammed ﷺ'in Gece Yolculuğu ve Miraca Yükselişi.",
+    "mid_shaban_desc": "Allah'ın dünya semasına indiği ve birçok kişiyi bağışladığı gece.",
+    "ramadan_start_desc": "Mübarek oruç ayı başlıyor.",
+    "laylat_qadr_desc": "Bin aydan daha hayırlı olan Kadir Gecesi.",
+    "eid_fitr_desc": "Ramazan'ın sonunu kutlayan Ramazan Bayramı.",
+    "arafah_desc": "Bu gün oruç tutmak önceki ve gelecek yılın günahlarını affettirir.",
+    "eid_adha_desc": "Hz. İbrahim'in oğlunu kurban etme iradesini anan Kurban Bayramı."
+  },
+  "countdown": {
+    "today": "Bugün",
+    "tomorrow": "Yarın",
+    "inDays": "%{count} gün sonra",
+    "inWeek": "%{count} hafta sonra",
+    "inWeeks": "%{count} hafta sonra",
+    "inMonth": "%{count} ay sonra",
+    "inMonths": "%{count} ay sonra"
+  },
+  "fastingLabels": {
+    "monday": "Pazartesi Orucu",
+    "thursday": "Perşembe Orucu",
+    "white_day": "Eyyam-ı Bıyz",
+    "ashura": "Aşure Orucu",
+    "arafah": "Arefe Orucu",
+    "shawwal": "Şevval Orucu"
+  },
+  "prayerStatus": {
+    "prayed": "Kılındı",
+    "late": "Geç",
+    "missed": "Kaçırıldı"
+  },
+  "duaTranslations": {
+    "q1": "Rabbimiz, bize dünyada iyilik ver, ahirette de iyilik ver ve bizi ateş azabından koru.",
+    "q2": "Rabbimiz, biz kendimize zulmettik. Eğer bizi bağışlamaz ve bize merhamet etmezsen, mutlaka hüsrana uğrayanlardan oluruz.",
+    "q3": "Rabbim, göğsümü aç, işimi kolaylaştır ve dilimdeki düğümü çöz ki sözümü anlasınlar.",
+    "q4": "Rabbim, ilmimi artır.",
+    "q5": "Rabbim, şeytanların kışkırtmalarından Sana sığınırım. Rabbim, onların yanımda bulunmalarından da Sana sığınırım.",
+    "q6": "Rabbimiz, günahlarımızı ve işlerimizdeki taşkınlıklarımızı bağışla, ayaklarımızı sabit kıl ve kâfirler topluluğuna karşı bize yardım et.",
+    "q7": "Rabbimiz, eşlerimizden ve nesillerimizden bize göz aydınlığı bağışla ve bizi takva sahiplerine önder kıl.",
+    "q8": "Rabbim, bana ve anne babama verdiğin nimete şükretmemi ve Senin razı olacağın salih amel işlememi ilham et.",
+    "q9": "Rabbimiz, bizi hidayete erdirdikten sonra kalplerimizi saptırma ve bize katından bir rahmet bağışla. Şüphesiz Sen çokça bağışlayansın.",
+    "q10": "Rabbimiz, hesap gününde beni, anne babamı ve müminleri bağışla.",
+    "q11": "Rabbimiz, üzerimize sabır yağdır, ayaklarımızı sabit kıl ve kâfirler topluluğuna karşı bize yardım et.",
+    "q12": "Rabbimiz, üzerimize sabır yağdır ve canımızı Müslümanlar olarak al.",
+    "q13": "Rabbimiz, bizi zalimler topluluğu için fitne kılma ve rahmetinle bizi kâfirler topluluğundan kurtar.",
+    "q14": "Rabbim, hakkında bilgim olmayan şeyi Senden istemekten Sana sığınırım.",
+    "q15": "Rabbimiz, bizi inkâr edenler için fitne kılma ve bizi bağışla. Rabbimiz, şüphesiz Sen Azîz'sin, Hakîm'sin.",
+    "q16": "Rabbimiz, iman ettik, bizi bağışla ve bize merhamet et. Sen merhamet edenlerin en hayırlısısın.",
+    "q17": "Rabbim, bağışla ve merhamet et. Sen merhamet edenlerin en hayırlısısın.",
+    "q18": "Rabbimiz, bizi ve iman ederek bizden önce geçmiş kardeşlerimizi bağışla. Kalplerimizde iman edenlere karşı bir kin bırakma. Rabbimiz, şüphesiz Sen Raûf'sun, Rahîm'sin.",
+    "q19": "Rabbim, bana katından temiz bir nesil bağışla. Şüphesiz Sen duayı işitensin.",
+    "q20": "Rabbim, beni namaza devam eden kıl, neslimden de. Rabbimiz, duamı kabul et.",
+    "q21": "Rabbim, beni yalnız bırakma. Sen vârislerin en hayırlısısın.",
+    "q22": "Rabbim, bana ve anne babama verdiğin nimete şükretmemi, Senin razı olacağın salih amel işlememi ilham et ve beni rahmetinle salih kullarının arasına kat.",
+    "q23": "Bizi buna hidayet eden Allah'a hamdolsun. Allah bizi hidayete erdirmeseydi, biz doğru yolu bulamazdık.",
+    "q24": "Rabbimiz, bize katından bir rahmet ver ve işimizde bize doğru yolu göster.",
+    "q25": "Rabbim, beni doğruluk girişiyle girdir, doğruluk çıkışıyla çıkar ve katından bana yardım edici bir güç ver.",
+    "q26": "Rabbimiz, nurumuzu tamamla ve bizi bağışla. Şüphesiz Sen her şeye güç yetirensin.",
+    "q27": "Rabbimiz, Sana tevekkül ettik, Sana yöneldik ve dönüş Sanadır.",
+    "q28": "Rabbimiz, unuttuğumuz veya hata ettiğimiz şeylerden dolayı bizi sorumlu tutma.",
+    "q29": "Rabbimiz, bizden öncekilere yüklediğin gibi bize ağır yük yükleme.",
+    "q30": "Rabbimiz, güç yetiremeyeceğimiz şeyi bize yükleme. Bizi affet, bizi bağışla, bize merhamet et. Sen Mevlamızsın, kâfirler topluluğuna karşı bize yardım et.",
+    "q31": "Rabbim, bu şehri güvenli kıl ve beni ve oğullarımı putlara tapmaktan uzak tut.",
+    "q32": "Rabbimiz, bizi Sana teslim olmuş Müslümanlar kıl, neslimizden de Sana teslim olmuş bir ümmet çıkar. Bize ibadet usullerimizi göster ve tövbemizi kabul et. Şüphesiz Sen Tevvâb'sın, Rahîm'sin.",
+    "q33": "Rabbim, ben kendime zulmettim, beni bağışla.",
+    "q34": "Rabbim, bana indireceğin her hayra muhtacım.",
+    "q35": "Senden başka ilah yoktur, Seni tenzih ederim. Gerçekten ben zalimlerden oldum.",
+    "q36": "Bana gerçekten zarar dokundu ve Sen merhametlilerin en merhametlisisin.",
+    "q37": "Rabbim, bana ve anne babama verdiğin nimete şükretmemi ilham et.",
+    "q38": "Rabbim, beni, anne babamı, evime mümin olarak girenleri ve tüm mümin erkek ve kadınları bağışla.",
+    "q39": "Rabbimiz, cehennem azabını bizden uzaklaştır. Şüphesiz onun azabı süreklidir.",
+    "q40": "Rabbimiz, biz iman ettik, günahlarımızı bağışla ve bizi ateş azabından koru.",
+    "q41": "Rabbimiz, Sen bunları boşuna yaratmadın. Seni tenzih ederiz, bizi ateş azabından koru.",
+    "q42": "Rabbimiz, şüphesiz Sen insanları hakkında şüphe olmayan bir günde toplayacaksın. Allah vaadinden dönmez.",
+    "h1": "Adıyla yerde ve gökte hiçbir şeyin zarar veremeyeceği Allah'ın adıyla. O, her şeyi işiten ve bilendir.",
+    "h2": "Kendisinden başka ilah olmayan, Hayy ve Kayyûm olan yüce Allah'tan bağışlanma diler ve O'na tövbe ederim.",
+    "h3": "Allah'ım, Senden hidayet, takva, iffet ve zenginlik isterim.",
+    "h4": "Allah'ım, kaygı ve hüzünden Sana sığınırım, acizlik ve tembellikten Sana sığınırım, korkaklık ve cimrilikten Sana sığınırım, borç altında ezilmekten ve insanların baskısından Sana sığınırım.",
+    "h5": "Allah'ım, bedenimde afiyet ver. Allah'ım, kulağımda afiyet ver. Allah'ım, gözümde afiyet ver. Senden başka ilah yoktur.",
+    "h6": "Bunu bize boyun eğdiren Allah'ı tespih ederiz, biz buna güç yetiremezdik. Şüphesiz biz Rabbimize döneceğiz.",
+    "h7": "Allah'ın adıyla ve Allah'ın bereketine sığınarak.",
+    "h8": "Bizi yediren, içiren ve Müslüman kılan Allah'a hamdolsun.",
+    "h9": "Senin adınla Allah'ım, ölür ve dirilirim.",
+    "h10": "Bizi öldürdükten sonra dirilten Allah'a hamdolsun. Dönüş O'nadır.",
+    "h11": "Sabaha erdik ve mülk de Allah'ın olarak sabaha erdi. Hamd Allah'a mahsustur. Allah'tan başka ilah yoktur, tektir, ortağı yoktur.",
+    "h12": "Allah'ım, Senin sayende sabahladık, Senin sayende akşamladık, Senin sayende yaşar, Senin sayende ölürüz. Dönüş Sanadır.",
+    "h13": "Allah'ım, Senden dünyada ve ahirette afiyet isterim.",
+    "h14": "Allah'ım, küfürden ve fakirlikten Sana sığınırım. Kabir azabından Sana sığınırım.",
+    "h15": "Allah'ım, kusurlarımı ört ve korkularımı gider.",
+    "h16": "Allah'ım, Sen Rabbimsin, Senden başka ilah yoktur. Beni Sen yarattın, ben Senin kulunum ve gücüm yettiğince Sana verdiğim söz ve vaadim üzereyim.",
+    "h17": "Allah'tan bağışlanma diler ve O'na tövbe ederim.",
+    "h18": "Rabbim, beni bağışla ve tövbemi kabul et. Şüphesiz Sen Tevvâb'sın, Rahîm'sin.",
+    "h19": "Allah'ım, beni hidayete erdir ve beni doğru yolda tut.",
+    "h20": "Allah'ım, Senden faydalı ilim, helal rızık ve kabul olunan amel isterim.",
+    "h21": "Allah'ım, bana öğrettiklerinle beni faydalandır, bana faydalı olanı öğret ve ilmimi artır.",
+    "h22": "Allah'ım, ey insanların Rabbi, sıkıntıyı gider, şifa ver, Sen Şâfî'sin. Senin şifandan başka şifa yoktur; hastalık bırakmayan bir şifa ver.",
+    "h23": "Yüce Arş'ın Rabbi olan Azîm Allah'tan sana şifa vermesini isterim.",
+    "h24": "Allah'ım, bu yolculuğumuzda Senden iyilik ve takva ve Senin razı olacağın ameller isteriz.",
+    "h25": "Allah'ım, bu yolculuğumuzu bize kolaylaştır ve mesafesini kısalt.",
+    "h26": "Beni yediren ve benden hiçbir güç ve kuvvet olmaksızın bana rızık veren Allah'a hamdolsun.",
+    "h27": "Allah'ım, bunu bize bereketli kıl ve bize bundan daha hayırlısını yedir.",
+    "h28": "Allah'ım, kullarını dirilttiğin gün azabından beni koru.",
+    "h29": "Allah'ım, nefsimi Sana teslim ettim, işimi Sana havale ettim, yüzümü Sana döndüm ve sırtımı Sana dayadım.",
+    "h30": "Allah'ın adıyla girdik, Allah'ın adıyla çıktık ve Rabbimiz Allah'a tevekkül ettik.",
+    "h31": "Allah'ım, bana rahmet kapılarını aç.",
+    "h32": "Allah'ım, Senden fazlından isterim.",
+    "h33": "Allah'ın adıyla, Allah'a tevekkül ettim. Güç ve kuvvet ancak Allah iledir.",
+    "h34": "Allah'ım, faydalı bir yağmur yağdır.",
+    "h35": "Gök gürültüsünün hamd ile tesbih ettiği ve meleklerin korkusundan tespih ettiği Zat'ı tenzih ederim.",
+    "h36": "Allah'ım, çevremize yağdır, üzerimize değil.",
+    "h37": "Allah'ım, Seni zikretmemde, Sana şükretmemde ve Sana güzel ibadet etmemde bana yardım et.",
+    "h38": "Her hâl üzere Allah'a hamdolsun.",
+    "h39": "Allah'ım, ikisini de mübarek kıl, üzerlerine bereket indir ve onlara rızık ver.",
+    "h40": "Allah sana bereket versin, üzerine bereket indirsin ve ikinizi hayırda bir araya getirsin.",
+    "h41": "Allah bize yeter, O ne güzel vekildir.",
+    "h42": "Güç ve kuvvet ancak Allah iledir.",
+    "h43": "Allah'ım, Senden cenneti ister, cehennemden Sana sığınırım.",
+    "h44": "Allah'ın yarattıklarının şerrinden, O'nun eksiksiz kelimelerine sığınırım.",
+    "h45": "Allah'ım, nefsimin şerrinden ve alnından tuttuğun her canlının şerrinden Sana sığınırım.",
+    "h46": "Allah'ım, işlerimin güvencesi olan dinimi ıslah et, geçimimin kaynağı olan dünyamı ıslah et ve dönüş yerim olan ahiretimi ıslah et.",
+    "h47": "Allah'ım, küçüğü ve büyüğü, ilki ve sonu, açığı ve gizlisi; tüm günahlarımı bağışla.",
+    "h48": "Allah'ım, cüzzamdan, delirmekten, cilt hastalıklarından ve kötü hastalıklardan Sana sığınırım.",
+    "h49": "Allah'ım, Senin adınla yaşar ve ölürüm.",
+    "h50": "Allah'ım, Sen yolculukta arkadaş, ailede halifedir.",
+    "h51": "Kovulmuş şeytandan, Yüce Allah'a, O'nun kerim Zat'ına ve kadim saltanatına sığınırım.",
+    "h52": "Allah'ım, Senden işlerimde sebat ve doğru yolda kararlılık isterim.",
+    "c1": "Dönerken tövbe eder, ibadet eder ve Rabbimize hamd ederiz.",
+    "c2": "Allah'ın yarattıklarının şerrinden, O'nun eksiksiz kelimelerine sığınırım.",
+    "c3": "Allah'ın lütfu ve rahmetiyle yağmura kavuştuk.",
+    "c4": "Zararı yok, inşaallah günahların arınmasıdır.",
+    "c5": "Ey kalpleri çeviren! Kalbimi dinin üzere sabit kıl.",
+    "c6": "Allah'ım, nimetinin yok olmasından, afiyetinin değişmesinden, ansızın cezalandırmandan ve tüm gazabından Sana sığınırım.",
+    "c7": "Nimetiyle salih amellerin tamamlandığı Allah'a hamdolsun.",
+    "c8": "Allah'ım, önümden, arkamdan, sağımdan, solumdan ve üstümden beni koru."
+  },
+  "azkarTranslations": {
+    "m1": "Âyetü'l-Kürsî - Allah! O'ndan başka ilah yoktur. O, Hayy ve Kayyûm'dur. O'nu ne uyuklama ne de uyku tutar. Göklerde ve yerde ne varsa O'nundur. O'nun izni olmadan katında kim şefaat edebilir? Onların önlerindeki ve arkalarındaki her şeyi bilir. Onlar O'nun ilminden ancak O'nun dilediği kadarını kavrayabilirler. O'nun Kürsü'sü gökleri ve yeri kuşatmıştır. Onları korumak O'na ağır gelmez. O, Aliyy ve Azîm'dir.",
+    "m2": "İhlâs Sûresi - De ki: O, Allah'tır, bir tektir. Allah Samed'dir (her şey O'na muhtaçtır). O doğurmamış ve doğmamıştır. Ve hiçbir şey O'nun dengi değildir.",
+    "m3": "Felak Sûresi - De ki: Tan yerinin Rabbine sığınırım, yarattıklarının şerrinden, karanlık çöktüğünde gecenin şerrinden, düğümlere üfleyenlerin şerrinden ve haset ettiğinde hasetçinin şerrinden.",
+    "m4": "Nâs Sûresi - De ki: İnsanların Rabbine sığınırım, insanların Melikine, insanların İlahına, sinsi vesvesecinin şerrinden. O ki insanların göğüslerine vesvese veriri, cinlerden ve insanlardan.",
+    "m5": "İslam fıtratı üzere, ihlas kelimesi üzere, Peygamberimiz Hz. Muhammed'in (sallallahu aleyhi ve sellem) dini üzere ve babamız İbrahim'in Hanif ve Müslüman olan milleti üzere sabaha erdik; o müşriklerden değildi.",
+    "m6": "Allah'ım, Senden faydalı ilim, helal rızık ve kabul olunan amel isterim.",
+    "m7": "Allah'tan bağışlanma diler ve O'na tövbe ederim.",
+    "m8": "Allah'ım, kaygı ve hüzünden Sana sığınırım, acizlik ve tembellikten Sana sığınırım, korkaklık ve cimrilikten Sana sığınırım, borç altında ezilmekten ve insanların baskısından Sana sığınırım.",
+    "m9": "Ey Rabbim! Yüzünün celaline ve saltanatının büyüklüğüne yaraşır şekilde hamd Sana mahsustur.",
+    "m10": "Allah'ım, Sen Rabbimsin, Senden başka ilah yoktur. Sana tevekkül ettim, Sen Yüce Arş'ın Rabbisin. Allah ne dilerse olur, dilemediği olmaz. Güç ve kuvvet ancak Yüce Allah iledir. Allah'ın her şeye kadir olduğunu ve ilmiyle her şeyi kuşattığını bilirim. Allah'ım, nefsimin şerrinden ve alnından tuttuğun her canlının şerrinden Sana sığınırım. Şüphesiz Rabbim dosdoğru yol üzerindedir.",
+    "m11": "Sabaha erdik ve mülk de Allah'ın olarak sabaha erdi. Hamd Allah'a mahsustur. Allah'tan başka ilah yoktur, tektir, ortağı yoktur. Mülk O'nundur, hamd O'nadır ve O her şeye kadirdir. Rabbim, bu günün hayrını ve sonrasının hayrını Senden isterim. Bu günün şerrinden ve sonrasının şerrinden Sana sığınırım. Rabbim, tembellikten ve yaşlılığın kötülüğünden Sana sığınırım. Rabbim, cehennem azabından ve kabir azabından Sana sığınırım.",
+    "m12": "Allah'ım, Sen Rabbimsin, Senden başka ilah yoktur. Beni Sen yarattın, ben Senin kulunum. Gücüm yettiğince Sana verdiğim söz ve vaadim üzereyim. Yaptıklarımın şerrinden Sana sığınırım. Üzerimdeki nimetini itiraf eder, günahımı kabul ederim. Beni bağışla, çünkü günahları ancak Sen bağışlarsın. (Seyyidü'l-İstiğfar)",
+    "m13": "Rab olarak Allah'a, din olarak İslam'a ve peygamber olarak Hz. Muhammed'e (sallallahu aleyhi ve sellem) razı oldum.",
+    "m14": "Allah'ım, sabaha erdiğimde Seni, Arş'ının taşıyıcılarını, meleklerini ve tüm yaratıklarını şahit tutarım ki Senden başka ilah olmayan Allah yalnız Sensin, ortağın yoktur ve Muhammed Senin kulun ve elçindir.",
+    "m15": "Allah'ım, benim veya yaratıklarından herhangi birinin sabaha erdiği nimet yalnızca Sendendir, ortağın yoktur. Hamd ve şükür Sanadır.",
+    "m16": "Allah bana yeter, O'ndan başka ilah yoktur. O'na tevekkül ettim, O Yüce Arş'ın Rabbidir.",
+    "m17": "Adıyla yerde ve gökte hiçbir şeyin zarar veremeyeceği Allah'ın adıyla. O, her şeyi işiten ve bilendir.",
+    "m18": "Allah'ım, Senin sayende sabahladık, Senin sayende akşamladık, Senin sayende yaşar, Senin sayende ölürüz. Son dönüş Sanadır.",
+    "m19": "Yaratıklarının sayısınca, kendisinin razı olduğunca, Arş'ının ağırlığınca ve kelimelerinin mürekkebi kadar Allah'ı tespih ve hamd ederim.",
+    "m20": "Allah'ım, bedenimde afiyet ver. Allah'ım, kulağımda afiyet ver. Allah'ım, gözümde afiyet ver. Senden başka ilah yoktur.",
+    "m21": "Allah'ım, küfürden ve fakirlikten Sana sığınırım. Kabir azabından Sana sığınırım. Senden başka ilah yoktur.",
+    "m22": "Allah'ım, dünyada ve ahirette af ve afiyet isterim. Allah'ım, dinim, dünyam, ailem ve malım hakkında af ve afiyet isterim. Allah'ım, kusurlarımı ört ve korkularımı gider. Allah'ım, önümden, arkamdan, sağımdan, solumdan ve üstümden beni koru. Altımdan helak edilmekten Senin azametine sığınırım.",
+    "m23": "Ey Hayy, ey Kayyûm! Rahmetine sığınırım. Bütün işlerimi düzelt ve göz açıp kapayıncaya kadar bile beni nefsime bırakma.",
+    "m24": "Sabaha erdik ve mülk de Âlemlerin Rabbi Allah'ın olarak sabaha erdi. Allah'ım, bu günün hayrını, fetih ve yardımını, nurunu, bereketini ve hidayetini Senden isterim. Bu günün şerrinden ve sonrasının şerrinden Sana sığınırım.",
+    "m25": "Allah'ım, gaybı ve görüneni bilen, göklerin ve yerin yaratıcısı, her şeyin Rabbi ve Melîki! Senden başka ilah olmadığına şehadet ederim. Nefsimin şerrinden, şeytanın şerrinden ve şirkinden ve kendime veya bir Müslümana kötülük yapmaktan Sana sığınırım.",
+    "m26": "Allah'ın yarattıklarının şerrinden, O'nun eksiksiz kelimelerine sığınırım.",
+    "m27": "Allah'ım, Peygamberimiz Muhammed'e salât, selam ve bereket ver.",
+    "m28": "Allah'ım, bilerek Sana ortak koşmaktan Sana sığınırız ve bilmediklerimiz için Senden bağışlanma dileriz.",
+    "m29": "Allah'tan başka ilah yoktur, tektir, ortağı yoktur. Mülk O'nundur, hamd O'nadır ve O her şeye kadirdir.",
+    "m30": "Allah'ı tespih ve hamd ederim.",
+    "e1": "Âyetü'l-Kürsî - Akşam okuyan kimse, sabaha kadar cinlerden korunur.",
+    "e2": "İhlâs Sûresi - Sabah akşam okumak her şeye yeter.",
+    "e3": "Felak Sûresi - Tan yerinin Rabbine sığın.",
+    "e4": "Nâs Sûresi - İnsanların Rabbine sığın.",
+    "e5": "Akşama erdik ve mülk de Allah'ın olarak akşama erdi. Rabbim, bu gecenin hayrını ve sonrasının hayrını Senden isterim, bu gecenin şerrinden ve sonrasının şerrinden Sana sığınırım.",
+    "e6": "Allah'ım, Sen Rabbimsin, Senden başka ilah yoktur. Beni Sen yarattın, ben Senin kulunum. (Seyyidü'l-İstiğfar) - Akşam yakîn ile söyleyip o gece vefat eden cennete girer.",
+    "e7": "Rab olarak Allah'a, din olarak İslam'a ve peygamber olarak Hz. Muhammed'e razı oldum. Sabah akşam söyleyen kişiyi Allah Kıyamet gününde razı edecektir.",
+    "e8": "Allah'ım, akşama erdiğimde Seni, Arş'ının taşıyıcılarını, meleklerini ve tüm yaratıklarını şahit tutarım ki Senden başka ilah olmayan Allah yalnız Sensin. Bunu söyleyen cehennemden kurtulacaktır.",
+    "e9": "Allah'ım, akşama erdiğimde benim veya yaratıklarından herhangi birinin sahip olduğu nimet yalnızca Sendendir. Bunu söyleyen o günün şükrünü ifa etmiş olur.",
+    "e10": "Allah bana yeter, O'ndan başka ilah yoktur. O'na tevekkül ettim, O Yüce Arş'ın Rabbidir. Allah ona her konuda yetecektir.",
+    "e11": "Adıyla yerde ve gökte hiçbir şeyin zarar veremeyeceği Allah'ın adıyla. Ona hiçbir şey zarar vermez.",
+    "e12": "Allah'ım, Senin sayende akşamladık, Senin sayende sabahladık, Senin sayende yaşar, Senin sayende ölürüz. Son dönüş Sanadır.",
+    "e13": "İslam fıtratı üzere, ihlas kelimesi üzere, Peygamberimiz Hz. Muhammed'in dini üzere ve babamız İbrahim'in milleti üzere akşama erdik.",
+    "e14": "Yaratıklarının sayısınca, kendisinin razı olduğunca, Arş'ının ağırlığınca ve kelimelerinin mürekkebi kadar Allah'ı tespih ve hamd ederim.",
+    "e15": "Allah'ım, bedenimde afiyet ver. Allah'ım, kulağımda afiyet ver. Allah'ım, gözümde afiyet ver. Senden başka ilah yoktur.",
+    "e16": "Allah'ım, küfürden ve fakirlikten Sana sığınırım. Kabir azabından Sana sığınırım. Senden başka ilah yoktur.",
+    "e17": "Allah'ım, dünyada ve ahirette af ve afiyet isterim. Allah'ım, kusurlarımı ört ve korkularımı gider. Allah'ım, her yönden beni koru.",
+    "e18": "Ey Hayy, ey Kayyûm! Rahmetine sığınırım. Bütün işlerimi düzelt ve göz açıp kapayıncaya kadar bile beni nefsime bırakma.",
+    "e19": "Akşama erdik ve mülk de Âlemlerin Rabbi Allah'ın olarak akşama erdi. Allah'ım, bu gecenin hayrını, fetih ve yardımını, nurunu, bereketini ve hidayetini Senden isterim.",
+    "e20": "Allah'ım, gaybı ve görüneni bilen, göklerin ve yerin yaratıcısı! Nefsimin şerrinden ve şeytanın şerrinden ve şirkinden Sana sığınırım.",
+    "e21": "Allah'ın yarattıklarının şerrinden, O'nun eksiksiz kelimelerine sığınırım.",
+    "e22": "Allah'ım, Peygamberimiz Muhammed'e salât, selam ve bereket ver. Sabah akşam salavat getiren kişi, Peygamber'in şefaatine nail olacaktır.",
+    "e23": "Allah'ım, bilerek Sana ortak koşmaktan Sana sığınırız ve bilmediklerimiz için Senden bağışlanma dileriz.",
+    "e24": "Allah'ım, kaygı ve hüzünden Sana sığınırım, acizlik ve tembellikten Sana sığınırım, korkaklık ve cimrilikten Sana sığınırım, borç altında ezilmekten ve insanların baskısından Sana sığınırım.",
+    "e25": "Kendisinden başka ilah olmayan, Hayy ve Kayyûm olan Yüce Allah'tan bağışlanma diler ve O'na tövbe ederim.",
+    "e26": "Ey Rabbim! Yüzünün celaline ve saltanatının büyüklüğüne yaraşır şekilde hamd Sana mahsustur.",
+    "e27": "Allah'ım, Sen Rabbimsin, Senden başka ilah yoktur. Sana tevekkül ettim. Allah ne dilerse olur, dilemediği olmaz. Güç ve kuvvet ancak Allah iledir.",
+    "e28": "Allah'tan başka ilah yoktur, tektir, ortağı yoktur. Mülk O'nundur, hamd O'nadır ve O her şeye kadirdir. On köle azat etmeye, yüz sevaba denk ve şeytandan korunmadır.",
+    "e29": "Allah'ı tespih ve hamd ederim. Günahları denizin köpüğü kadar olsa da bağışlanır.",
+    "ap1": "Allah'tan bağışlanma dilerim.",
+    "ap2": "Allah'ım, Sen Selâm'sın ve selam Sendendir. Ey celal ve ikram sahibi, Sen mübareksin.",
+    "ap3": "Sübhanallah (Allah'ı tespih ederim).",
+    "ap4": "Elhamdülillah (Allah'a hamdolsun).",
+    "ap5": "Allahu Ekber (Allah en büyüktür).",
+    "ap6": "Allah'tan başka ilah yoktur, tektir, ortağı yoktur. Mülk O'nundur, hamd O'nadır ve O her şeye kadirdir.",
+    "ap7": "Allah'ım, Seni zikretmemde, Sana şükretmemde ve Sana güzel ibadet etmemde bana yardım et.",
+    "ap8": "Âyetü'l-Kürsî (Bakara 2:255)",
+    "s1": "Senin adınla Allah'ım, ölür ve dirilirim.",
+    "s2": "Allah'ım, Senin adınla yaşar ve Senin adınla ölürüm.",
+    "s3": "Sübhanallah (Allah'ı tespih ederim).",
+    "s4": "Elhamdülillah (Allah'a hamdolsun).",
+    "s5": "Allahu Ekber (Allah en büyüktür).",
+    "s6": "Allah'ım, kullarını dirilttiğin gün azabından beni koru.",
+    "w1": "Bizi öldürdükten sonra dirilten Allah'a hamdolsun. Dönüş O'nadır.",
+    "w2": "Allah'tan başka ilah yoktur, tektir, ortağı yoktur. Mülk O'nundur, hamd O'nadır ve O her şeye kadirdir. Sübhanallah, elhamdülillah, la ilahe illallah ve Allahu Ekber. Güç ve kuvvet ancak Yüce Allah iledir.",
+    "w3": "Bedenimde afiyet veren, ruhumu bana geri döndüren ve bana zikretme izni veren Allah'a hamdolsun.",
+    "w4": "Allah'ım, bu günün hayrını, fethini, yardımını, nurunu, bereketini ve hidayetini Senden isterim.",
+    "g1": "Allah'ı tespih ve hamd ederim, Yüce Allah'ı tespih ederim.",
+    "g2": "Güç ve kuvvet ancak Allah iledir.",
+    "g3": "Allah'tan bağışlanma diler ve O'na tövbe ederim.",
+    "g4": "Allah'ım, Muhammed'e ve Muhammed'in ailesine salât eyle.",
+    "g5": "Allah bize yeter, O ne güzel vekildir.",
+    "g6": "Allah'ım, beni bağışla, bana merhamet et, beni hidayete erdir ve bana rızık ver.",
+    "g7": "Rabbimiz, bize dünyada iyilik ver, ahirette de iyilik ver ve bizi ateş azabından koru.",
+    "g8": "Allah'ım, kaygı ve hüzünden Sana sığınırım.",
+    "g9": "Allah'ım, Senden hidayet, takva, iffet ve zenginlik isterim.",
+    "g10": "Sübhanallah (Allah'ı tespih ederim).",
+    "g11": "Elhamdülillah (Allah'a hamdolsun).",
+    "g12": "Allahu Ekber (Allah en büyüktür)."
+  }
+}

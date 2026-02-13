@@ -33,8 +33,16 @@ export default function PrayerCalendarScreen() {
     const navigation = useNavigation();
     const { theme, isDark } = useTheme();
     const { t, locale } = useTranslation();
-    const MONTHS = locale === 'ar' ? ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'] : MONTHS_EN;
-    const WEEKDAYS = locale === 'ar' ? ['أ', 'إ', 'ث', 'أ', 'خ', 'ج', 'س'] : WEEKDAYS_EN;
+    const dateLocaleMap: Record<string, string> = {
+        en: 'en-US', ar: 'ar-SA', fr: 'fr-FR', de: 'de-DE', ru: 'ru-RU', zh: 'zh-CN',
+        bn: 'bn-BD', tr: 'tr-TR', id: 'id-ID', ur: 'ur-PK',
+    };
+    const dateLocale = dateLocaleMap[locale] || 'en-US';
+    // Use i18n calendar months, fall back to English
+    const calMonths = t('calendar.months');
+    const MONTHS: string[] = Array.isArray(calMonths) && calMonths.length === 12 ? calMonths : MONTHS_EN;
+    const calWeekdays = t('calendar.weekdays');
+    const WEEKDAYS: string[] = Array.isArray(calWeekdays) && calWeekdays.length === 7 ? calWeekdays : WEEKDAYS_EN;
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [viewMonth, setViewMonth] = useState(new Date());
     const [showMonthYearPicker, setShowMonthYearPicker] = useState(false);
@@ -216,11 +224,11 @@ export default function PrayerCalendarScreen() {
                 <View style={[styles.dateRow, { backgroundColor: isDark ? theme.cardBackground : theme.backgroundSecondary }]}>
                     <View>
                         <ThemedText type="body" style={{ fontWeight: '600' }}>
-                            {isToday ? t('prayerCalendar.today') : selectedDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                            {isToday ? t('prayerCalendar.today') : selectedDate.toLocaleDateString(dateLocale, { weekday: 'short', month: 'short', day: 'numeric' })}
                         </ThemedText>
                         {prayerData?.date?.hijri && (
                             <ThemedText type="caption" secondary>
-                                {prayerData.date.hijri.day} {prayerData.date.hijri.month?.ar} {prayerData.date.hijri.year}
+                                {prayerData.date.hijri.day} {t(`hijri.months.${prayerData.date.hijri.month?.number || 1}`)} {prayerData.date.hijri.year}
                             </ThemedText>
                         )}
                     </View>

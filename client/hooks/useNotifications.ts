@@ -103,7 +103,6 @@ const DEFAULT_SETTINGS: NotificationSettings = {
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: false,
     shouldShowBanner: true,
@@ -244,11 +243,6 @@ export function useNotifications() {
         channelId: (notification.request.content as any).channelId,
         data: notification.request.content.data,
       });
-
-      // Trigger azan playback if it's a prayer notification
-      if (notification.request.content.data?.prayer) {
-        console.log('🕌 Prayer notification received, azan should play via useAzan hook');
-      }
     });
 
     // Listen for notifications being tapped - STOP AZAN

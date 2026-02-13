@@ -1,0 +1,2542 @@
+{
+  "tabs": {
+    "qibla": "قبلہ",
+    "prayer": "نماز",
+    "quran": "قرآن",
+    "azkar": "اذکار",
+    "settings": "ترتیبات"
+  },
+  "settings": {
+    "title": "ترتیبات",
+    "appearance": "ظاہری شکل",
+    "customizeTheme": "اپنی تھیم کو اپنی مرضی کے مطابق بنائیں",
+    "language": "زبان",
+    "chooseLanguage": "اپنی زبان منتخب کریں",
+    "prayerFasting": "نماز اور روزہ",
+    "notificationsAzanReminders": "اطلاعات، اذان، اور یاد دہانیاں",
+    "storageDownloads": "اسٹوریج اور ڈاؤن لوڈز",
+    "manageOfflineContent": "آف لائن مواد کا انتظام کریں",
+    "wordByWord": "لفظ بلفظ",
+    "translationLanguage": "ترجمے کی زبان",
+    "dhikrReminders": "ذکر کی یاد دہانیاں",
+    "floatingOverlay": "فلوٹنگ اوورلے یاد دہانیاں",
+    "feedbackSuggestions": "رائے اور تجاویز",
+    "helpImprove": "ایپ کو بہتر بنانے میں ہماری مدد کریں",
+    "colorMode": "رنگ موڈ",
+    "theme": "تھیم",
+    "light": "روشن",
+    "dark": "تاریک",
+    "auto": "خودکار"
+  },
+  "prayer": {
+    "title": "اوقات نماز",
+    "fajr": "فجر",
+    "sunrise": "طلوع آفتاب",
+    "dhuhr": "ظہر",
+    "asr": "عصر",
+    "maghrib": "مغرب",
+    "isha": "عشاء",
+    "nextPrayer": "اگلی نماز",
+    "timeRemaining": "باقی وقت",
+    "prayerCalendar": "نماز کیلنڈر",
+    "prayerStats": "نماز کے اعداد و شمار",
+    "progress": "پیشرفت",
+    "hijriCalendar": "ہجری کیلنڈر",
+    "calculationMethod": "حساب کا طریقہ",
+    "prayed": "پڑھی",
+    "missed": "قضا",
+    "late": "تاخیر سے",
+    "onTime": "وقت پر",
+    "notLogged": "درج نہیں",
+    "logPrayer": "نماز درج کریں",
+    "currentStreak": "موجودہ سلسلہ",
+    "days": "دن",
+    "day": "دن",
+    "today": "آج",
+    "yesterday": "کل",
+    "location": "مقام",
+    "setLocation": "اپنا مقام مقرر کریں",
+    "tapToSetLocation": "درست اوقات نماز کے لیے اپنا مقام مقرر کرنے کے لیے ٹیپ کریں",
+    "noLocation": "کوئی مقام مقرر نہیں",
+    "checkingPermission": "مقام کی اجازت جانچ رہے ہیں...",
+    "locationRequired": "مقام تک رسائی ضروری ہے",
+    "locationExplanation": "آپ کے علاقے کے لیے درست اوقات نماز کا حساب لگانے کے لیے ہمیں آپ کے مقام کی ضرورت ہے۔",
+    "browserLocationHint": "براہ کرم اپنے براؤزر کی ترتیبات میں مقام فعال کریں۔",
+    "enableLocation": "مقام فعال کریں",
+    "openSettings": "ترتیبات کھولیں",
+    "loadingPrayerTimes": "اوقات نماز لوڈ ہو رہے ہیں...",
+    "failedToLoad": "اوقات نماز لوڈ کرنے میں ناکامی",
+    "hours": "گھنٹے",
+    "minutes": "منٹ",
+    "seconds": "سیکنڈ",
+    "min": "منٹ"
+  },
+  "qibla": {
+    "title": "قبلہ",
+    "direction": "سمت",
+    "degrees": "ڈگری",
+    "compass": "قطب نما",
+    "distance": "فاصلہ",
+    "toKaaba": "کعبہ تک",
+    "facingQibla": "قبلہ رخ",
+    "turnLeft": "بائیں مڑیں",
+    "turnRight": "دائیں مڑیں",
+    "directionLocked": "سمت مقفل",
+    "tapToUnlock": "کھولنے کے لیے ٹیپ کریں",
+    "lockDirection": "سمت مقفل کریں",
+    "compassNotAvailable": "قطب نما دستیاب نہیں",
+    "compassNotAvailableWeb": "ویب پر قطب نما دستیاب نہیں۔ موبائل ڈیوائس پر استعمال کریں۔",
+    "calibrate": "اپنے فون کو آٹھ کی شکل میں حرکت دے کر قطب نما کیلیبریٹ کریں",
+    "calibrateShort": "کیلیبریٹ کرنے کے لیے فون کو آٹھ کی شکل میں حرکت دیں",
+    "heading": "سمت",
+    "qiblaLabel": "قبلہ",
+    "km": "کلومیٹر",
+    "mosques": "مساجد",
+    "gettingLocation": "آپ کا مقام حاصل کر رہے ہیں...",
+    "initializingCompass": "قطب نما شروع ہو رہا ہے...",
+    "locationRequiredQibla": "آپ کی موجودہ پوزیشن سے قبلہ کی سمت کا حساب لگانے کے لیے ہمیں آپ کے مقام کی ضرورت ہے۔"
+  },
+  "quran": {
+    "title": "قرآن",
+    "surah": "سورۃ",
+    "juz": "پارہ",
+    "page": "صفحہ",
+    "verse": "آیت",
+    "verses": "آیات",
+    "search": "تلاش",
+    "searchQuran": "قرآن میں تلاش کریں",
+    "bookmark": "بک مارک",
+    "bookmarks": "بک مارکس",
+    "bookmarked": "بک مارک شدہ",
+    "addNote": "نوٹ شامل کریں",
+    "notes": "نوٹس",
+    "highlight": "نشان زد",
+    "highlights": "نشان زد شدہ",
+    "copy": "کاپی",
+    "share": "شیئر",
+    "play": "چلائیں",
+    "pause": "وقفہ",
+    "stop": "بند کریں",
+    "continue": "جاری رکھیں",
+    "tafsir": "تفسیر",
+    "translation": "ترجمہ",
+    "translations": "تراجم",
+    "transliteration": "تلفظ",
+    "reciter": "قاری",
+    "lastRead": "آخری پڑھا ہوا",
+    "continueLast": "جہاں چھوڑا تھا وہاں سے جاری رکھیں",
+    "meccan": "مکی",
+    "medinan": "مدنی",
+    "save": "محفوظ کریں",
+    "delete": "حذف کریں",
+    "cancel": "منسوخ",
+    "savedVerses": "محفوظ شدہ آیات",
+    "all": "سب",
+    "recent": "حالیہ",
+    "tafsirTranslations": "تفسیر اور تراجم",
+    "download": "ڈاؤن لوڈ",
+    "downloaded": "ڈاؤن لوڈ شدہ",
+    "downloading": "ڈاؤن لوڈ ہو رہا ہے",
+    "readMode": "پڑھنے کا موڈ",
+    "mushafMode": "مصحف موڈ",
+    "surahReader": "سورۃ ریڈر",
+    "goToPage": "صفحہ پر جائیں",
+    "goToSurah": "سورۃ پر جائیں",
+    "goToJuz": "پارے پر جائیں",
+    "wordByWord": "لفظ بلفظ",
+    "audio": "آڈیو",
+    "settings": "ترتیبات"
+  },
+  "azkar": {
+    "title": "اذکار اور دعائیں",
+    "morningAzkar": "صبح کے اذکار",
+    "eveningAzkar": "شام کے اذکار",
+    "afterPrayer": "نماز کے بعد",
+    "sleep": "سونے سے پہلے",
+    "wakeUp": "بیدار ہونے پر",
+    "dailyTip": "آج کی نصیحت",
+    "categories": "زمرے",
+    "duas": "دعائیں",
+    "guides": "رہنمائیاں",
+    "all": "سب",
+    "favorites": "پسندیدہ",
+    "count": "شمار",
+    "completed": "مکمل",
+    "repeat": "دہرائیں",
+    "times": "مرتبہ",
+    "time": "مرتبہ",
+    "remaining": "باقی",
+    "reset": "ری سیٹ",
+    "duaOfTheDay": "آج کی دعا",
+    "dailyDhikr": "روزانہ ذکر",
+    "dhikrGoal": "ذکر کا ہدف",
+    "worship": "عبادت اور نماز",
+    "dailyLife": "روزمرہ زندگی",
+    "travel": "سفر",
+    "food": "کھانا اور مشروبات",
+    "protection": "حفاظت",
+    "hadith": "حدیث",
+    "islamicGuides": "اسلامی رہنمائیاں",
+    "search": "اذکار اور دعائیں تلاش کریں...",
+    "searchDuas": "دعائیں تلاش کریں...",
+    "quranic": "قرآنی",
+    "prophetic": "نبوی",
+    "custom": "اپنی مرضی",
+    "customDuas": "اپنی دعائیں",
+    "addCustomDua": "اپنی دعا شامل کریں",
+    "noDuasYet": "ابھی تک کوئی اپنی دعا نہیں",
+    "noFavorites": "ابھی تک کوئی پسندیدہ نہیں",
+    "noResults": "کوئی نتائج نہیں ملے",
+    "deleteConfirm": "کیا آپ واقعی اس دعا کو حذف کرنا چاہتے ہیں؟",
+    "tapToStart": "شروع کرنے کے لیے ٹیپ کریں",
+    "target": "ہدف",
+    "progress": "پیشرفت",
+    "allCategories": "تمام زمرے",
+    "deleteDua": "دعا حذف کریں",
+    "deleteDuaConfirm": "کیا آپ واقعی اس دعا کو حذف کرنا چاہتے ہیں؟",
+    "myDuas": "میری دعائیں",
+    "result": "نتیجہ",
+    "results": "نتائج",
+    "noDuasFound": "کے لیے کوئی دعائیں نہیں ملیں",
+    "searchGuides": "رہنمائیاں تلاش کریں...",
+    "noGuidesFound": "کے لیے کوئی رہنمائیاں نہیں ملیں",
+    "back": "واپس",
+    "addPersonalSupplications": "ابھی تک کوئی اپنی دعا نہیں۔\nاپنی ذاتی دعائیں شامل کریں۔",
+    "tapHeartTip": "ابھی تک کوئی پسندیدہ دعا نہیں۔\nکسی بھی دعا پر دل کا آئیکن ٹیپ کریں۔",
+    "noQuranicDuas": "کوئی قرآنی دعائیں دستیاب نہیں",
+    "noPropheticDuas": "کوئی نبوی دعائیں دستیاب نہیں",
+    "adhkarCount": "اذکار",
+    "dailyTips": [
+      {
+        "text": "نبی ﷺ نے فرمایا: \"سب سے بہترین ذکر لا الہ الا اللہ ہے۔\"",
+        "source": "ترمذی"
+      },
+      {
+        "text": "نبی ﷺ نے فرمایا: \"جو شخص سبحان اللہ وبحمدہ 100 مرتبہ کہے، اس کے گناہ بخش دیے جائیں گے چاہے وہ سمندر کی جھاگ جتنے ہوں۔\"",
+        "source": "بخاری و مسلم"
+      },
+      {
+        "text": "نبی ﷺ نے فرمایا: \"دو کلمے زبان پر ہلکے، میزان میں بھاری، رحمٰن کو محبوب: سبحان اللہ وبحمدہ، سبحان اللہ العظیم۔\"",
+        "source": "بخاری و مسلم"
+      },
+      {
+        "text": "نبی ﷺ نے فرمایا: \"جو شخص ہر فرض نماز کے بعد آیت الکرسی پڑھے، اسے جنت میں داخل ہونے سے صرف موت روکتی ہے۔\"",
+        "source": "نسائی"
+      },
+      {
+        "text": "نبی ﷺ نے فرمایا: \"بندہ اپنے رب کے سب سے قریب سجدے کی حالت میں ہوتا ہے، پس دعا کثرت سے کرو۔\"",
+        "source": "مسلم"
+      },
+      {
+        "text": "نبی ﷺ نے فرمایا: \"تم میں سے کوئی مومن نہیں ہوتا جب تک وہ اپنے بھائی کے لیے وہی پسند نہ کرے جو اپنے لیے پسند کرتا ہے۔\"",
+        "source": "بخاری و مسلم"
+      },
+      {
+        "text": "نبی ﷺ نے فرمایا: \"جو اللہ اور آخرت کے دن پر ایمان رکھتا ہے، وہ اچھی بات کہے یا خاموش رہے۔\"",
+        "source": "بخاری و مسلم"
+      },
+      {
+        "text": "نبی ﷺ نے فرمایا: \"تم میں سے بہترین وہ ہے جو قرآن سیکھے اور سکھائے۔\"",
+        "source": "بخاری"
+      },
+      {
+        "text": "نبی ﷺ نے فرمایا: \"اپنے بھائی کے سامنے مسکرانا صدقہ ہے۔\"",
+        "source": "ترمذی"
+      },
+      {
+        "text": "نبی ﷺ نے فرمایا: \"جو شخص علم کی تلاش میں راستہ چلے، اللہ اس کے لیے جنت کا راستہ آسان کر دیتا ہے۔\"",
+        "source": "مسلم"
+      },
+      {
+        "text": "نبی ﷺ نے فرمایا: \"اذان اور اقامت کے درمیان کی دعا رد نہیں ہوتی۔\"",
+        "source": "ابو داؤد و ترمذی"
+      }
+    ]
+  },
+  "azkarDetail": {
+    "quran": "قرآن",
+    "translit": "تلفظ",
+    "english": "انگریزی",
+    "counter": "کاؤنٹر"
+  },
+  "duaCollection": {
+    "title": "دعائیں",
+    "searchPlaceholder": "دعائیں تلاش کریں...",
+    "categories": "زمرے",
+    "quranic": "قرآنی",
+    "prophetic": "نبوی",
+    "favorites": "پسندیدہ",
+    "myDuas": "میری دعائیں",
+    "deleteDua": "دعا حذف کریں",
+    "deleteConfirm": "کیا آپ واقعی اس دعا کو حذف کرنا چاہتے ہیں؟",
+    "deleteFailed": "دعا حذف کرنے میں ناکامی",
+    "duasCount": "دعائیں",
+    "noResultsFor": "\"{{query}}\" کے لیے کوئی دعائیں نہیں ملیں",
+    "results": "نتائج",
+    "result": "نتیجہ",
+    "forQuery": "کے لیے",
+    "noQuranic": "کوئی قرآنی دعائیں دستیاب نہیں",
+    "noProphetic": "کوئی نبوی دعائیں دستیاب نہیں",
+    "noFavorites": "ابھی تک کوئی پسندیدہ دعا نہیں۔\nکسی بھی دعا پر دل کا آئیکن ٹیپ کریں۔",
+    "noCustom": "ابھی تک کوئی اپنی دعا نہیں۔\nیہاں اپنی ذاتی دعائیں شامل کریں۔",
+    "addCustom": "اپنی دعا شامل کریں"
+  },
+  "progress": {
+    "title": "پیشرفت",
+    "readingProgress": "پڑھنے کی پیشرفت",
+    "overallProgress": "مجموعی پیشرفت",
+    "complete": "مکمل",
+    "pagesRead": "پڑھے گئے صفحات",
+    "juzComplete": "پارے مکمل",
+    "khatm": "ختم",
+    "todaysProgress": "آج کی پیشرفت",
+    "versesRead": "آیات پڑھیں",
+    "pagesReadToday": "صفحات پڑھے",
+    "readingStreak": "پڑھنے کا سلسلہ",
+    "currentStreak": "موجودہ سلسلہ",
+    "longestStreak": "طویل ترین سلسلہ",
+    "bestStreak": "بہترین سلسلہ",
+    "thisWeek": "اس ہفتے",
+    "average": "اوسط",
+    "pagesPerDay": "صفحات/دن",
+    "dailyGoalSettings": "روزانہ ہدف کی ترتیبات",
+    "enableDailyGoal": "روزانہ ہدف فعال کریں",
+    "goalType": "ہدف کی قسم",
+    "pages": "صفحات",
+    "verses": "آیات",
+    "target": "ہدف",
+    "saveGoal": "ہدف محفوظ کریں",
+    "readingReminder": "پڑھنے کی یاد دہانی",
+    "enableReminder": "یاد دہانی فعال کریں",
+    "reminderTime": "یاد دہانی کا وقت",
+    "resetAllProgress": "تمام پیشرفت ری سیٹ کریں",
+    "resetConfirm": "کیا آپ واقعی تمام پڑھنے کی پیشرفت ری سیٹ کرنا چاہتے ہیں؟ یہ واپس نہیں ہو سکتا۔",
+    "resetButton": "ری سیٹ",
+    "noGoalSet": "کوئی روزانہ ہدف مقرر نہیں",
+    "invalidGoal": "غلط ہدف",
+    "invalidGoalMessage": "براہ کرم ایک درست نمبر درج کریں",
+    "goalRange": "ہدف کے درمیان ہونا چاہیے",
+    "and": "اور",
+    "permissionRequired": "اجازت ضروری",
+    "permissionMessage": "پڑھنے کی یاد دہانیاں استعمال کرنے کے لیے اپنے آلے کی ترتیبات میں اطلاعات فعال کریں۔",
+    "errorSavingGoal": "ہدف کی ترتیبات محفوظ کرنے میں ناکامی",
+    "errorResetting": "پیشرفت ری سیٹ کرنے میں ناکامی",
+    "loadingProgress": "پیشرفت لوڈ ہو رہی ہے...",
+    "done": "مکمل",
+    "goal": "ہدف",
+    "weeklyOverview": "ہفتہ وار جائزہ",
+    "monthlyOverview": "ماہانہ جائزہ",
+    "streak": "سلسلہ",
+    "totalPrayers": "کل نمازیں",
+    "completionRate": "تکمیل کی شرح",
+    "prayerLog": "نماز کا ریکارڈ",
+    "weekly": "ہفتہ وار",
+    "monthly": "ماہانہ",
+    "allTime": "مجموعی",
+    "exportStats": "اعداد و شمار برآمد کریں",
+    "qadaTracker": "قضا ٹریکر",
+    "qadaRemaining": "باقی قضا",
+    "taraweeh": "تراویح",
+    "charity": "صدقہ",
+    "zakatCalculator": "زکوٰة کیلکولیٹر",
+    "hifzProgress": "حفظ کی پیشرفت",
+    "quranSchedule": "قرآن شیڈول"
+  },
+  "notifications": {
+    "title": "اطلاعات کی ترتیبات",
+    "prayerNotifications": "نماز کی اطلاعات",
+    "getNotified": "نماز کا وقت ہونے پر اطلاع حاصل کریں",
+    "prayerAlarms": "نماز کے الارم",
+    "azanSettings": "اذان کی ترتیبات",
+    "azan": "اذان",
+    "azanSound": "اذان کی آواز",
+    "playHayaAlSalat": "نماز سے پہلے \"حی علی الصلوٰة\" بجائیں",
+    "silentMode": "خاموش موڈ",
+    "flipToSilence": "الٹا کر کے خاموش کریں",
+    "flipToSilenceDesc": "اذان خاموش کرنے کے لیے فون الٹا کر دیں",
+    "testAzan": "اذان ٹیسٹ کریں",
+    "vibration": "وائبریشن",
+    "iqama": "اقامت",
+    "iqamaReminder": "اقامت کی یاد دہانی",
+    "iqamaWait": "اقامت کا انتظار",
+    "iqamaDelay": "اقامت کی تاخیر",
+    "minutesAfterAzan": "اذان کے بعد منٹ",
+    "minutes": "منٹ",
+    "enabled": "فعال",
+    "disabled": "غیر فعال",
+    "timeAdjustments": "وقت کی ایڈجسٹمنٹ",
+    "adjustPrayerTimes": "اوقات نماز ایڈجسٹ کریں (منٹ)",
+    "calculationMethod": "حساب کا طریقہ",
+    "highLatitude": "اونچے عرض بلد کا قاعدہ",
+    "asrCalculation": "عصر کا حساب",
+    "standard": "معیاری",
+    "hanafi": "حنفی",
+    "prayerTracking": "نماز ٹریکنگ",
+    "enableTracking": "ٹریکنگ فعال کریں",
+    "trackDailyPrayers": "اپنی روزانہ نمازوں کا حساب رکھیں",
+    "missedPrayerReminder": "قضا نماز کی یاد دہانی",
+    "reminderAfterPrayer": "نماز کا وقت گزرنے کے بعد یاد دلائیں",
+    "reminderDelay": "یاد دہانی کی تاخیر",
+    "minutesAfterPrayer": "نماز کے بعد منٹ",
+    "fasting": "روزہ",
+    "suhoorReminder": "سحری کی یاد دہانی",
+    "iftarReminder": "افطار کی یاد دہانی",
+    "beforeSuhoor": "سحری سے پہلے منٹ",
+    "beforeIftar": "افطار سے پہلے منٹ",
+    "fastingReminders": "روزے کی یاد دہانیاں",
+    "enableFastingReminders": "روزے کی یاد دہانیاں فعال کریں",
+    "playAzanWhenPrayerTime": "نماز کا وقت ہونے پر اذان بجائیں",
+    "selectPrayersForAzan": "منتخب کریں کن نمازوں میں اذان بجے",
+    "prayerSelection": "نمازوں کا انتخاب",
+    "choosePrayersForIqama": "منتخب کریں کن نمازوں میں اقامت ہو",
+    "testIqama": "اقامت ٹیسٹ کریں",
+    "testIqamaPlaying": "اقامت کی آواز ابھی بج رہی ہے۔ اگر سنائی نہ دے تو آواز چیک کریں۔",
+    "timeAdjustmentsFineTune": "اوقات نماز کو باریکی سے ایڈجسٹ کریں (±30 منٹ)",
+    "min": "منٹ",
+    "autoDetectByLocation": "مقام سے خودکار تشخیص",
+    "recommended": "تجویز کردہ",
+    "active": "فعال",
+    "useAuto": "خودکار استعمال کریں",
+    "autoDetectedFor": "کے لیے خودکار تشخیص شدہ"
+  },
+  "qadaTracker": {
+    "title": "قضا ٹریکر",
+    "totalRemaining": "باقی کل قضا نمازیں",
+    "hint": "شمار پر ٹیپ کر کے براہ راست ترمیم کریں۔ قضا نماز پڑھنے کے بعد 'لاگ' استعمال کریں۔"
+  },
+  "location": {
+    "title": "مقام کی ترتیبات",
+    "searchCity": "شہر تلاش کریں...",
+    "currentLocation": "موجودہ مقام",
+    "useCurrentLocation": "موجودہ مقام استعمال کریں",
+    "manualEntry": "دستی اندراج",
+    "latitude": "عرض بلد",
+    "longitude": "طول بلد",
+    "save": "محفوظ کریں",
+    "detectingLocation": "مقام معلوم کر رہے ہیں...",
+    "locationSaved": "مقام محفوظ ہو گیا",
+    "invalidCoordinates": "غلط نقاط",
+    "detecting": "مقام معلوم کر رہے ہیں...",
+    "unavailable": "مقام دستیاب نہیں",
+    "permissionRequired": "اجازت ضروری",
+    "manual": "دستی",
+    "locationSource": "مقام کا ذریعہ",
+    "useGPS": "GPS مقام استعمال کریں",
+    "setManually": "مقام دستی طور پر مقرر کریں",
+    "searchWorldwide": "دنیا بھر میں کوئی بھی شہر تلاش کریں",
+    "recentLocations": "حالیہ مقامات",
+    "info": "آپ کا مقام درست اوقات نماز اور قبلہ کی سمت کا حساب لگانے کے لیے استعمال ہوتا ہے۔ GPS دستیاب نہ ہونے پر دستی مقام مفید ہے۔"
+  },
+  "qada": {
+    "title": "قضا ٹریکر",
+    "totalRemaining": "کل باقی",
+    "addMissed": "قضا شامل کریں",
+    "prayersMadeUp": "ادا شدہ نمازیں",
+    "prayersRemaining": "باقی",
+    "hint": "کم کرنے کے لیے نماز کی تعداد پر دیر تک دبائیں",
+    "noQada": "کوئی قضا نماز باقی نہیں۔ ماشاءاللہ!",
+    "fajr": "فجر",
+    "dhuhr": "ظہر",
+    "asr": "عصر",
+    "maghrib": "مغرب",
+    "isha": "عشاء",
+    "prayers": "نمازیں"
+  },
+  "zakat": {
+    "title": "زکوٰة کیلکولیٹر",
+    "totalWealth": "کل دولت",
+    "enterWealth": "کل دولت کی رقم درج کریں",
+    "calculate": "حساب لگائیں",
+    "zakatDue": "واجب زکوٰة",
+    "nisab": "نصاب",
+    "meetsNisab": "نصاب کی حد پوری کرتا ہے",
+    "doesNotMeetNisab": "نصاب کی حد پوری نہیں کرتا",
+    "goldNisab": "سونے کا نصاب",
+    "silverNisab": "چاندی کا نصاب",
+    "info": "زکوٰة آپ کی کل اہل دولت کا 2.5% ہے جو ایک قمری سال تک رکھی گئی ہو۔",
+    "gold": "سونا",
+    "silver": "چاندی",
+    "cash": "نقد اور بینک بیلنس",
+    "stocks": "اسٹاکس اور سرمایہ کاری",
+    "property": "کرایے کی جائیداد",
+    "totalAssets": "کل اثاثے",
+    "zakatPayable": "قابل ادائیگی زکوٰة",
+    "reset": "ری سیٹ",
+    "currency": "کرنسی"
+  },
+  "charity": {
+    "title": "صدقہ ٹریکر",
+    "totalDonated": "کل عطیات",
+    "addDonation": "عطیہ شامل کریں",
+    "setGoal": "ہدف مقرر کریں",
+    "goal": "ہدف",
+    "recentDonations": "حالیہ عطیات",
+    "noDonations": "ابھی تک کوئی عطیہ نہیں",
+    "amount": "رقم",
+    "type": "قسم",
+    "category": "زمرہ",
+    "date": "تاریخ",
+    "deleteConfirm": "کیا آپ واقعی اس عطیے کو حذف کرنا چاہتے ہیں؟",
+    "enterAmount": "رقم درج کریں",
+    "selectCategory": "زمرہ منتخب کریں",
+    "sadaqah": "صدقہ",
+    "zakatPayment": "زکوٰة",
+    "waqf": "وقف",
+    "other": "دیگر",
+    "goalAmount": "ہدف رقم",
+    "goalProgress": "ہدف کی پیشرفت",
+    "to": "تک",
+    "totalGiven": "کل دیا گیا",
+    "editGoal": "ہدف ترمیم کریں",
+    "zakatStatus": "زکوٰة کی حیثیت",
+    "paid": "ادا شدہ",
+    "notYetPaid": "اس سال ابھی ادا نہیں ہوئی",
+    "breakdownByType": "قسم کے لحاظ سے تقسیم"
+  },
+  "ramadan": {
+    "title": "رمضان ڈیش بورڈ",
+    "daysRemaining": "باقی دن",
+    "fastingToday": "آج کا روزہ",
+    "taraweeh": "تراویح",
+    "logTaraweeh": "تراویح درج کریں",
+    "suhoor": "سحری",
+    "iftar": "افطار",
+    "fastingDays": "روزے کے دن",
+    "completed": "مکمل",
+    "remaining": "باقی",
+    "ramadanMode": "رمضان موڈ",
+    "activateMessage": "رمضان موڈ مبارک ماہ رمضان کے دوران خودکار طور پر فعال ہو جائے گا۔",
+    "checkBackMessage": "سحری/افطار کے اوقات، قرآن پڑھنے کے شیڈول، تراویح ٹریکنگ وغیرہ کے لیے رمضان شروع ہونے پر واپس چیک کریں۔"
+  },
+  "hifz": {
+    "title": "حفظ کی پیشرفت",
+    "memorized": "حفظ شدہ",
+    "inProgress": "جاری",
+    "notStarted": "شروع نہیں ہوا",
+    "totalMemorized": "کل حفظ شدہ",
+    "markMemorized": "حفظ شدہ نشان لگائیں",
+    "markInProgress": "جاری نشان لگائیں",
+    "resetSurah": "سورۃ ری سیٹ کریں",
+    "versesMemorized": "حفظ شدہ آیات",
+    "dueToday": "آج واجب",
+    "revisedToday": "آج دہرایا",
+    "dailyGoal": "روزانہ ہدف",
+    "overallProgress": "مجموعی پیشرفت",
+    "verses": "آیات",
+    "pages": "صفحات",
+    "juz": "پارہ",
+    "dueForRevision": "دہرانے کے لیے واجب",
+    "last": "آخری",
+    "ease": "آسانی",
+    "moreVersesDue": "مزید آیات واجب",
+    "statusLegend": "حیثیت کی علامات",
+    "notifications": "اطلاعات",
+    "dailyReminders": "روزانہ یاد دہانیاں",
+    "reminderHint": "اپنا حفظ دہرانے کی یاد دہانی حاصل کریں",
+    "resetAllProgress": "تمام پیشرفت ری سیٹ کریں"
+  },
+  "storage": {
+    "title": "اسٹوریج اور ڈاؤن لوڈز",
+    "totalUsed": "کل استعمال شدہ اسٹوریج",
+    "audioFiles": "آڈیو فائلیں",
+    "clearAllDownloads": "تمام ڈاؤن لوڈز صاف کریں",
+    "clearConfirm": "کیا آپ واقعی تمام ڈاؤن لوڈ شدہ مواد حذف کرنا چاہتے ہیں؟",
+    "confirm": "تصدیق",
+    "cancel": "منسوخ",
+    "reciterAudio": "قاری آڈیو",
+    "mushafPages": "مصحف صفحات",
+    "totalSize": "کل سائز",
+    "noDownloads": "ابھی تک کوئی ڈاؤن لوڈ نہیں",
+    "loadingInfo": "اسٹوریج معلومات لوڈ ہو رہی ہیں...",
+    "quickActions": "فوری اقدامات",
+    "manageAudio": "آڈیو کا انتظام",
+    "downloadQuran": "قرآن ڈاؤن لوڈ کریں",
+    "clearAll": "سب صاف کریں",
+    "freeUpSpace": "جگہ خالی کریں",
+    "refreshInfo": "اسٹوریج معلومات تازہ کریں"
+  },
+  "onboarding": {
+    "welcome": "سکینہ ٹائم میں خوش آمدید",
+    "welcomeDesc": "ایک بامعنی روحانی سفر کے لیے آپ کا ساتھی",
+    "skip": "چھوڑیں",
+    "next": "اگلا",
+    "getStarted": "شروع کریں",
+    "done": "مکمل",
+    "prayerTimesTitle": "درست اوقات نماز",
+    "prayerTimesDesc": "خوبصورت اذان اطلاعات کے ساتھ اپنے مقام کی بنیاد پر درست اوقات نماز حاصل کریں",
+    "quranTitle": "خوبصورت قرآنی تجربہ",
+    "quranDesc": "متعدد تراجم، لفظ بلفظ، اور آڈیو تلاوت کے ساتھ قرآن پڑھیں",
+    "azkarTitle": "روزانہ اذکار اور دعائیں",
+    "azkarDesc": "صبح و شام کے اذکار، ہر موقع کی دعائیں، اور ذکر کاؤنٹر تک رسائی",
+    "notificationsDesc": "حسب ضرورت اطلاعات اور اذان الارم کے ساتھ نماز کبھی نہ چھوڑیں",
+    "widgetDesc": "اوقات نماز تک فوری رسائی کے لیے اپنی ہوم اسکرین پر وجٹ شامل کریں",
+    "welcomeTitle": "السلام علیکم",
+    "welcomeSubtitle": "سکینہ ٹائم میں خوش آمدید",
+    "welcomeDescription": "اوقات نماز، قرآن پڑھنے، اور روحانی ترقی کے لیے آپ کا ساتھی۔",
+    "locationTitle": "درست اوقات نماز",
+    "locationSubtitle": "مقام تک رسائی",
+    "locationDescription": "ہم آپ کے علاقے کے لیے درست اوقات نماز کا حساب لگانے کے لیے آپ کا مقام استعمال کرتے ہیں۔",
+    "notificationsTitle": "نماز کبھی نہ چھوڑیں",
+    "notificationsSubtitle": "اطلاعاتی یاد دہانیاں",
+    "notificationsDescription": "نماز کا وقت آنے پر خوبصورت اذان کی آوازوں سے مطلع ہوں۔",
+    "widgetTitle": "وجٹ شامل کریں",
+    "widgetSubtitle": "قابل اعتماد اذان",
+    "widgetDescription": "فون ری سٹارٹ ہونے کے بعد بھی قابل اعتماد اذان اطلاعات کے لیے اپنی ہوم اسکرین پر نماز کے اوقات کا وجٹ شامل کریں۔",
+    "doneTitle": "آپ تیار ہیں!",
+    "doneSubtitle": "شروع کرنے کے لیے تیار",
+    "doneDescription": "ایک بامعنی روحانی عمل کی طرف اپنا سفر شروع کریں۔",
+    "locationEnabled": "مقام فعال",
+    "notificationsEnabled": "اطلاعات فعال",
+    "enable": "فعال کریں",
+    "continue": "جاری رکھیں",
+    "notNow": "ابھی نہیں",
+    "enableExactAlarms": "درست الارم فعال کریں",
+    "exactAlarmsDescription": "سکینہ ٹائم کو درست نماز کے اوقات کے الارم شیڈول کرنے کی اجازت درکار ہے۔\n\nبراہ کرم اگلی اسکرین پر \"الارم اور یاد دہانیاں\" فعال کریں۔",
+    "openSettings": "ترتیبات کھولیں",
+    "enableReliableAzan": "قابل اعتماد اذان فعال کریں",
+    "reliableAzanDescription": "فون ری سٹارٹ ہونے کے بعد اذان بجانے کو یقینی بنانے کے لیے، براہ کرم ٹیپ کریں:\n\nبیٹری → غیر محدود\n\nیہ ایپ کو نماز کے اوقات کے لیے آپ کا فون جگانے کی اجازت دیتا ہے۔"
+  },
+  "mosque": {
+    "title": "قریبی مساجد",
+    "findMosques": "مساجد تلاش کریں",
+    "distance": "فاصلہ",
+    "directions": "ہدایات",
+    "noMosques": "قریب کوئی مسجد نہیں ملی",
+    "searchMosques": "مساجد تلاش کریں...",
+    "openInMaps": "نقشے میں کھولیں"
+  },
+  "hijri": {
+    "title": "ہجری کیلنڈر",
+    "today": "آج",
+    "months": {
+      "1": "محرم",
+      "2": "صفر",
+      "3": "ربیع الاول",
+      "4": "ربیع الثانی",
+      "5": "جمادی الاول",
+      "6": "جمادی الثانی",
+      "7": "رجب",
+      "8": "شعبان",
+      "9": "رمضان",
+      "10": "شوال",
+      "11": "ذوالقعدہ",
+      "12": "ذوالحجہ"
+    }
+  },
+  "prayerStats": {
+    "title": "نماز کے اعداد و شمار",
+    "overview": "جائزہ",
+    "totalPrayed": "کل پڑھی گئیں",
+    "totalMissed": "کل قضا",
+    "onTimeRate": "وقت پر شرح",
+    "weeklyBreakdown": "ہفتہ وار تقسیم",
+    "monthlyBreakdown": "ماہانہ تقسیم",
+    "bestDay": "بہترین دن",
+    "prayerBreakdown": "نماز کی تقسیم",
+    "noData": "ابھی تک کوئی نماز کا ڈیٹا نہیں۔ اپنی نمازوں کا حساب رکھنا شروع کریں!",
+    "loadingStats": "اعداد و شمار لوڈ ہو رہے ہیں...",
+    "prayerTracking": "نماز ٹریکنگ",
+    "tapToMark": "پڑھی ہوئی نشان لگانے کے لیے نمازوں پر ٹیپ کریں",
+    "enableToTrack": "اپنی نمازوں کا حساب رکھنے کے لیے فعال کریں",
+    "tapToMarkStatus": "نماز کی حیثیت نشان لگانے کے لیے بٹن ٹیپ کریں:",
+    "prayed": "پڑھی",
+    "missed": "قضا",
+    "late": "تاخیر سے",
+    "missedReminder": "قضا نماز کی یاد دہانی",
+    "remindAfter": "اگر {{minutes}} منٹ بعد نشان نہ لگایا تو یاد دلائیں",
+    "getReminded": "اپنی نمازیں نشان لگانے کی یاد دہانی حاصل کریں",
+    "remindAfterLabel": "مجھے بعد میں یاد دلائیں:",
+    "totalLogged": "کل درج شدہ",
+    "qadaDue": "واجب قضا",
+    "weekly": "ہفتہ وار",
+    "monthly": "ماہانہ",
+    "exportFailed": "برآمد ناکام",
+    "exportError": "نماز کے اعداد و شمار شیئر نہیں ہو سکے۔"
+  },
+  "prayerCalendar": {
+    "title": "نماز کیلنڈر",
+    "monthlyView": "ماہانہ منظر",
+    "allPrayed": "سب پڑھیں",
+    "someMissed": "کچھ قضا",
+    "notTracked": "ٹریک نہیں",
+    "today": "آج",
+    "unableToLoad": "اوقات نماز لوڈ کرنے سے قاصر",
+    "selectMonthYear": "مہینہ اور سال منتخب کریں",
+    "year": "سال",
+    "month": "مہینہ"
+  },
+  "audioDownload": {
+    "title": "آڈیو ڈاؤن لوڈز",
+    "downloadAll": "سب ڈاؤن لوڈ کریں",
+    "deleteAll": "سب حذف کریں",
+    "downloading": "ڈاؤن لوڈ ہو رہا ہے...",
+    "downloaded": "ڈاؤن لوڈ شدہ",
+    "notDownloaded": "ڈاؤن لوڈ نہیں",
+    "surahAudio": "سورۃ آڈیو",
+    "offline": "آف لائن",
+    "needInternet": "آڈیو ڈاؤن لوڈ کرنے کے لیے انٹرنیٹ کنکشن ضروری ہے۔",
+    "downloadAllSurahs": "تمام سورتیں ڈاؤن لوڈ کریں",
+    "deleteAllAudio": "تمام آڈیو حذف کریں",
+    "download": "ڈاؤن لوڈ",
+    "delete": "حذف کریں",
+    "deleteAudio": "آڈیو حذف کریں",
+    "cancelDownloads": "ڈاؤن لوڈز منسوخ کریں",
+    "cancelAllDesc": "تمام زیر التوا ڈاؤن لوڈز منسوخ کریں؟ نامکمل ڈاؤن لوڈ شدہ سورتیں ہٹا دی جائیں گی۔",
+    "keepDownloading": "ڈاؤن لوڈ جاری رکھیں",
+    "cancelAll": "سب منسوخ کریں",
+    "deleteConfirmMessage": "کے لیے ڈاؤن لوڈ شدہ آڈیو حذف کریں"
+  },
+  "reciter": {
+    "title": "قاری منتخب کریں",
+    "currentReciter": "موجودہ قاری",
+    "popular": "مقبول",
+    "allReciters": "تمام قاری"
+  },
+  "duaDetail": {
+    "reference": "حوالہ",
+    "benefits": "فوائد",
+    "occasion": "موقع",
+    "shareAsDua": "دعا شیئر کریں",
+    "notFound": "دعا نہیں ملی",
+    "notFoundMessage": "یہ دعا نہیں مل سکی۔",
+    "listenPronunciation": "تلفظ سنیں",
+    "viewInQuran": "قرآن میں دیکھیں",
+    "ayah": "آیت",
+    "benefitsVirtues": "فوائد اور فضائل"
+  },
+  "customDuaForm": {
+    "editDua": "دعا ترمیم کریں",
+    "addCustomDua": "اپنی دعا شامل کریں",
+    "saving": "محفوظ ہو رہا ہے...",
+    "saveFailed": "دعا محفوظ کرنے میں ناکامی۔ براہ کرم دوبارہ کوشش کریں۔",
+    "deleteConfirm": "کیا آپ واقعی اس دعا کو حذف کرنا چاہتے ہیں؟ یہ عمل واپس نہیں ہو سکتا۔",
+    "deleteFailed": "دعا حذف کرنے میں ناکامی۔ براہ کرم دوبارہ کوشش کریں۔",
+    "arabicText": "عربی متن",
+    "optional": "اختیاری",
+    "transliteration": "تلفظ",
+    "transliterationPlaceholder": "تلفظ درج کریں (مثلاً اللهم...)",
+    "translationMeaning": "ترجمہ / معنی",
+    "translationPlaceholder": "معنی یا ترجمہ درج کریں",
+    "personalNotes": "ذاتی نوٹس",
+    "notesPlaceholder": "کوئی ذاتی نوٹس یا یاد دہانیاں شامل کریں",
+    "deleteThisDua": "یہ دعا حذف کریں"
+  },
+  "islamicGuide": {
+    "title": "اسلامی رہنمائی",
+    "steps": "مراحل",
+    "references": "حوالہ جات"
+  },
+  "dhikrOverlay": {
+    "title": "ذکر اوورلے ترتیبات",
+    "enableOverlay": "اوورلے فعال کریں",
+    "overlayDesc": "فلوٹنگ ذکر یاد دہانیاں دکھائیں",
+    "frequency": "تعدد",
+    "everyMinutes": "ہر {{count}} منٹ",
+    "style": "طرز",
+    "position": "مقام"
+  },
+  "wordByWordSettings": {
+    "title": "لفظ بلفظ ترتیبات",
+    "translationLang": "ترجمے کی زبان",
+    "showTransliteration": "تلفظ دکھائیں",
+    "fontSize": "فونٹ سائز"
+  },
+  "quranSchedule": {
+    "title": "قرآن شیڈول",
+    "createSchedule": "شیڈول بنائیں",
+    "completionDate": "مکمل ہونے کی تاریخ",
+    "pagesPerDay": "صفحات فی دن",
+    "startDate": "شروع کی تاریخ",
+    "daysDone": "مکمل دن",
+    "day": "دن",
+    "pages": "صفحات",
+    "completed": "مکمل",
+    "pending": "زیر التوا",
+    "openInMushaf": "مصحف میں کھولیں",
+    "today": "آج",
+    "juz": "پارہ",
+    "surahs": "سورتیں:",
+    "openMushaf": "مصحف کھولیں",
+    "markComplete": "مکمل نشان لگائیں",
+    "completedAt": "مکمل ہوا:",
+    "remaining": "باقی",
+    "complete": "مکمل",
+    "behindSchedule": "شیڈول سے پیچھے"
+  },
+  "zakatCalculator": {
+    "title": "زکوٰة کیلکولیٹر",
+    "totalWealth": "کل دولت (USD)",
+    "enterWealth": "اپنی کل دولت درج کریں",
+    "calculate": "زکوٰة کا حساب لگائیں",
+    "results": "حساب کے نتائج",
+    "nisabGold": "نصاب (سونا)",
+    "nisabSilver": "نصاب (چاندی)",
+    "meetsNisab": "نصاب پورا کرتا ہے",
+    "zakatDue": "واجب زکوٰة (2.5%)",
+    "info": "زکوٰة نصاب کی حد سے اوپر ایک قمری سال تک رکھی گئی دولت کا 2.5% ہے۔ نصاب 87.48 گرام سونے یا 612.36 گرام چاندی کی قیمت پر مبنی ہے۔"
+  },
+  "hijriCalendar": {
+    "title": "اسلامی کیلنڈر",
+    "event": "واقعہ",
+    "fasting": "روزہ",
+    "ah": "ہجری",
+    "fastingProhibited": "آج روزہ ممنوع ہے",
+    "eventIn": "{{name}} {{count}} دن میں",
+    "eventIn_plural": "{{name}} {{count}} دنوں میں"
+  },
+  "common": {
+    "loading": "لوڈ ہو رہا ہے...",
+    "error": "خرابی",
+    "retry": "دوبارہ کوشش",
+    "ok": "ٹھیک ہے",
+    "cancel": "منسوخ",
+    "save": "محفوظ کریں",
+    "delete": "حذف کریں",
+    "edit": "ترمیم",
+    "close": "بند",
+    "back": "واپس",
+    "done": "مکمل",
+    "search": "تلاش",
+    "share": "شیئر",
+    "copy": "کاپی",
+    "copied": "کاپی ہو گیا!",
+    "noResults": "کوئی نتائج نہیں ملے",
+    "offline": "آپ آف لائن ہیں",
+    "yes": "ہاں",
+    "no": "نہیں",
+    "confirm": "تصدیق",
+    "reset": "ری سیٹ",
+    "add": "شامل کریں",
+    "remove": "ہٹائیں",
+    "enable": "فعال کریں",
+    "disable": "غیر فعال",
+    "on": "آن",
+    "off": "بند",
+    "yourRegion": "آپ کا علاقہ",
+    "goBack": "واپس جائیں",
+    "skip": "چھوڑیں"
+  },
+  "components": {
+    "streakDays": "دن کا سلسلہ",
+    "streakDaysPlural": "دن کا سلسلہ",
+    "perfectDay": "بہترین دن",
+    "offlineMode": "آف لائن موڈ",
+    "usingCachedData": "محفوظ شدہ ڈیٹا استعمال ہو رہا ہے",
+    "lastSynced": "آخری مطابقت",
+    "somethingWentWrong": "کچھ غلط ہو گیا",
+    "tryAgain": "دوبارہ کوشش کریں"
+  },
+  "streak": {
+    "prayerStreak": "نماز کا سلسلہ",
+    "currentStreak": "موجودہ سلسلہ",
+    "longestStreak": "طویل ترین سلسلہ",
+    "days": "دن",
+    "day": "دن",
+    "startToday": "آج اپنا سلسلہ شروع کریں!",
+    "greatStart": "بہترین شروعات! جاری رکھیں!",
+    "buildingMomentum": "آپ رفتار بنا رہے ہیں!",
+    "amazingConsistency": "حیرت انگیز استقامت!",
+    "incredibleDedication": "ناقابل یقین لگن!",
+    "trulyInspiring": "ماشاءاللہ! واقعی متاثر کن!"
+  },
+  "fasting": {
+    "fastingReminders": "روزے کی یاد دہانیاں",
+    "getNotifiedFasting": "آنے والے روزوں کے بارے میں مطلع ہوں",
+    "receiveReminders": "مستحب روزوں کی یاد دہانیاں حاصل کریں",
+    "reminderTime": "یاد دہانی کا وقت",
+    "eveningBefore": "پہلے شام",
+    "beforeFajr": "فجر سے پہلے",
+    "thirtyMinBefore": "30 منٹ پہلے",
+    "fastingDays": "روزے کے دن",
+    "monday": "پیر",
+    "thursday": "جمعرات",
+    "whiteDays": "ایام بیض",
+    "ashura": "عاشورا",
+    "dayOfArafah": "یوم عرفہ",
+    "shawwal": "شوال",
+    "weeklySunnahFast": "ہفتہ وار سنت روزہ",
+    "whiteDaysDesc": "ہر مہینے کی 13، 14، 15",
+    "ashuraDesc": "10 محرم",
+    "arafahDesc": "9 ذوالحجہ",
+    "shawwalDesc": "رمضان کے بعد 6 دن",
+    "notificationPermissionRequired": "⚠️ اطلاع کی اجازت ضروری"
+  },
+  "storageAlerts": {
+    "quranAudio": "قرآن آڈیو",
+    "tafsir": "تفسیر",
+    "prayerTimesCache": "اوقات نماز کیش",
+    "otherCache": "دیگر کیش",
+    "allCachedData": "تمام کیش شدہ ڈیٹا",
+    "clearConfirm": "{{category}} صاف کریں؟",
+    "clearAllDesc": "اس سے تمام ڈاؤن لوڈ شدہ قرآن آڈیو اور تفسیر ہٹ جائے گی۔ آف لائن استعمال کے لیے دوبارہ ڈاؤن لوڈ کرنا ہوگا۔",
+    "clearCategoryDesc": "اس سے تمام {{category}} ہٹ جائے گی۔ آف لائن استعمال کے لیے دوبارہ ڈاؤن لوڈ کرنا ہو سکتا ہے۔",
+    "cancel": "منسوخ",
+    "clear": "صاف کریں",
+    "error": "خرابی",
+    "failedToClear": "کیش صاف کرنے میں ناکامی۔ براہ کرم دوبارہ کوشش کریں۔"
+  },
+  "mushaf": {
+    "notes": "نوٹس اور نشان زد",
+    "bookmarks": "بک مارکس",
+    "highlights": "نشان زد شدہ",
+    "addNote": "نوٹ شامل کریں",
+    "save": "محفوظ کریں",
+    "delete": "حذف کریں",
+    "noNotesYet": "ابھی تک کوئی نوٹس یا نشان زد نہیں",
+    "tapToAddNote": "کسی بھی آیت پر دیر تک دبائیں نوٹ یا نشان لگانے کے لیے",
+    "noBookmarksYet": "ابھی تک کوئی بک مارک نہیں",
+    "tapToBookmark": "بک مارک کرنے کے لیے کسی آیت پر ٹیپ کریں",
+    "editNote": "نوٹ ترمیم کریں",
+    "writeNoteHere": "اپنا نوٹ یہاں لکھیں...",
+    "hifzModeActivated": "حفظ موڈ فعال",
+    "hifzModeDesc": "ظاہر کرنے کے لیے کسی آیت پر ٹیپ کریں۔ حفظ کے اختیارات کے لیے آیت پر دیر تک دبائیں۔ ترتیبات کے لیے حفظ بٹن دبائیں۔",
+    "wordByWordHighlighting": "لفظ بلفظ نشان زد",
+    "wordByWordDesc": "صفحے پر کہیں بھی دیر تک دبائیں اور آڈیو میں سکرب کرنے کے لیے گھسیٹیں۔ نشان زد لفظ آپ کی انگلی کا پیچھا کرے گا۔",
+    "justNow": "ابھی ابھی",
+    "minutesAgo": "{{count}} منٹ پہلے",
+    "hoursAgo": "{{count}} گھنٹے پہلے",
+    "daysAgo": "{{count}} دن پہلے",
+    "noBookmarks": "ابھی تک کوئی بک مارک نہیں",
+    "noResults": "کوئی نتائج نہیں ملے",
+    "tryDifferent": "مختلف الفاظ آزمائیں",
+    "search": "تلاش کریں...",
+    "writeNote": "اپنا نوٹ یہاں لکھیں...",
+    "quarterHizb": "ربع حزب",
+    "halfHizb": "نصف حزب",
+    "fullJuzOnly": "صرف مکمل پارہ",
+    "copyVerse": "آیت کاپی کریں",
+    "shareVerse": "آیت شیئر کریں",
+    "chooseHighlight": "نشان زد رنگ چنیں",
+    "removeHighlight": "نشان زد ہٹائیں",
+    "highlight": "نشان زد",
+    "selectReciter": "قاری منتخب کریں",
+    "audioSettings": "آڈیو ترتیبات",
+    "noTafsir": "کوئی تفسیر دستیاب نہیں",
+    "noTafsirVerse": "اس آیت کے لیے کوئی تفسیر دستیاب نہیں",
+    "recently": "حال ہی میں",
+    "earlier": "پہلے",
+    "deleteFailed": "حذف کرنے میں ناکامی۔ براہ کرم دوبارہ کوشش کریں۔",
+    "quran": "قرآن",
+    "surahs114": "114 سورتیں",
+    "juz30": "30 پارے",
+    "recentCount": "حالیہ",
+    "surahTab": "سورۃ",
+    "juzTab": "پارہ",
+    "recentTab": "حالیہ",
+    "searchPlaceholder": "تلاش کریں...",
+    "includeTafsir": "تلاش میں تفسیر/ترجمہ شامل کریں",
+    "notesSection": "نوٹس",
+    "highlightsSection": "نشان زد شدہ",
+    "tafsirTranslation": "تفسیر/ترجمہ",
+    "nowPlaying": "ابھی چل رہا ہے",
+    "paused": "موقوف",
+    "verse": "آیت",
+    "repeat": "دہرائیں",
+    "loop": "لوپ",
+    "remaining": "باقی",
+    "surah": "سورۃ",
+    "noTafsirAvailable": "اس آیت کے لیے کوئی تفسیر دستیاب نہیں",
+    "noteInputPlaceholder": "اپنا نوٹ یہاں لکھیں...",
+    "juzLabel": "پارہ",
+    "hizbLabel": "حزب",
+    "searching": "تلاش ہو رہی ہے...",
+    "resultsCount": "نتائج",
+    "recentlyViewed": "حال ہی میں دیکھا",
+    "allSurahs": "تمام سورتیں",
+    "recentlyViewedLabel": "حال ہی میں دیکھا",
+    "quartersLabel": "ارباع",
+    "halvesLabel": "انصاف",
+    "pagesYouVisit": "آپ جو صفحات دیکھیں گے وہ یہاں ظاہر ہوں گے",
+    "noRecentPages": "ابھی تک کوئی حالیہ صفحات نہیں",
+    "verses": "آیات",
+    "pageNumber": "صفحہ",
+    "loadingVerses": "آیات لوڈ ہو رہی ہیں...",
+    "bookmark": "بک مارک",
+    "removeBookmark": "بک مارک ہٹائیں",
+    "tafsirAndTranslations": "تفسیر اور تراجم",
+    "downloadedCount": "ڈاؤن لوڈ شدہ",
+    "playUntil": "تک چلائیں",
+    "page": "صفحہ",
+    "juz": "پارہ",
+    "reciterLabel": "قاری",
+    "play": "چلائیں",
+    "playCount": "{{count}}× چلائیں",
+    "setLoopStart": "لوپ شروع مقرر کریں",
+    "setLoopEnd": "لوپ ختم مقرر کریں",
+    "playLoop": "لوپ چلائیں",
+    "tapToReveal": "ظاہر کرنے کے لیے ٹیپ کریں",
+    "notStarted": "شروع نہیں ہوا",
+    "inProgress": "جاری",
+    "memorized": "حفظ شدہ",
+    "all": "سب",
+    "tapToMinimize": "چھوٹا کرنے کے لیے ٹیپ کریں",
+    "myTranslations": "میرے تراجم",
+    "myTafsirs": "میری تفاسیر",
+    "tafsirBadge": "تفسیر",
+    "translationBadge": "ترجمہ",
+    "currentlyActive": "فی الحال فعال",
+    "select": "منتخب کریں",
+    "availableToDownload": "ڈاؤن لوڈ کے لیے دستیاب",
+    "translationsCount": "تراجم",
+    "tafsirsCount": "تفاسیر",
+    "tapToDownload": "ڈاؤن لوڈ کے لیے ٹیپ کریں",
+    "deleteTafsir": "تفسیر حذف کریں",
+    "deleteTafsirConfirm": "{{name}} حذف کریں؟",
+    "storageFull": "اسٹوریج بھر گیا۔ براہ کرم اپنے آلے پر جگہ خالی کریں اور دوبارہ کوشش کریں۔",
+    "downloadFailed": "ڈاؤن لوڈ ناکام۔ براہ کرم اپنا کنکشن اور اسٹوریج چیک کریں۔",
+    "tafsirNotAvailable": "کوئی تفسیر دستیاب نہیں",
+    "tafsirNotAvailableVerse": "اس آیت کے لیے کوئی تفسیر دستیاب نہیں"
+  },
+  "mosqueFinder": {
+    "nearbyMosques": "قریبی مساجد",
+    "searchPlaceholder": "مساجد تلاش کریں...",
+    "radius1km": "1 کلومیٹر",
+    "radius5km": "5 کلومیٹر",
+    "radius10km": "10 کلومیٹر",
+    "radius25km": "25 کلومیٹر"
+  },
+  "calendar": {
+    "months": [
+      "جنوری",
+      "فروری",
+      "مارچ",
+      "اپریل",
+      "مئی",
+      "جون",
+      "جولائی",
+      "اگست",
+      "ستمبر",
+      "اکتوبر",
+      "نومبر",
+      "دسمبر"
+    ],
+    "weekdays": [
+      "ا",
+      "پ",
+      "م",
+      "ب",
+      "ج",
+      "ج",
+      "ہ"
+    ]
+  },
+  "themePicker": {
+    "colorMode": "رنگ موڈ",
+    "theme": "تھیم",
+    "light": "روشن",
+    "dark": "تاریک",
+    "auto": "خودکار",
+    "themeDefault": "زمرد",
+    "themeRoseGold": "گلابی سونا",
+    "themeLavender": "لیوینڈر",
+    "themeSagePeach": "سیج اور آڑو",
+    "themeOceanBreeze": "سمندری ہوا"
+  },
+  "storageOverview": {
+    "storageUsed": "استعمال شدہ اسٹوریج",
+    "manage": "انتظام",
+    "storageFull": "اسٹوریج تقریباً بھر گیا۔ ڈاؤن لوڈ جاری رکھنے کے لیے کچھ ڈیٹا صاف کریں۔",
+    "availableOnDevice": "آلے پر دستیاب"
+  },
+  "storageBreakdown": {
+    "title": "اسٹوریج تقسیم",
+    "quranAudio": "قرآن آڈیو",
+    "tafsir": "تفسیر",
+    "prayerTimes": "اوقات نماز",
+    "otherCache": "دیگر کیش"
+  },
+  "storageSettings": {
+    "downloadSettings": "ڈاؤن لوڈ ترتیبات",
+    "storageLimit": "اسٹوریج حد",
+    "maxSpace": "آف لائن مواد کے لیے زیادہ سے زیادہ جگہ",
+    "wifiOnly": "صرف وائی فائی پر ڈاؤن لوڈ",
+    "wifiOnlyDesc": "صرف وائی فائی پر ڈاؤن لوڈ کر کے موبائل ڈیٹا بچائیں",
+    "autoDelete": "پرانی کیش خودکار حذف",
+    "autoDeleteDesc": "حد تک پہنچنے پر پرانا کیش شدہ ڈیٹا خودکار طور پر ہٹائیں"
+  },
+  "dhikrReminders": {
+    "title": "ذکر کی یاد دہانیاں",
+    "floatingReminders": "فلوٹنگ یاد دہانیاں",
+    "dhikrNotifications": "ذکر اطلاعات",
+    "showOverlay": "دوسری ایپس کے اوپر ذکر اوورلے دکھائیں",
+    "receiveNotifications": "وقتاً فوقتاً ذکر اطلاعات حاصل کریں",
+    "grantPermission": "اوورلے اجازت دیں",
+    "previewOverlay": "اوورلے پیش نظارہ",
+    "reminderInterval": "یاد دہانی وقفہ",
+    "dhikrCategories": "ذکر زمرے",
+    "chooseTypes": "شامل کرنے کے لیے ذکر کی اقسام منتخب کریں",
+    "quietHours": "خاموش اوقات",
+    "pauseSleep": "نیند کے وقت یاد دہانیاں روکیں",
+    "startAt": "شروع",
+    "endAt": "ختم",
+    "autoDismiss": "خودکار ختم",
+    "overlayDisappears": "اوورلے اس وقت کے بعد غائب ہو جاتا ہے",
+    "iosNotice": "فلوٹنگ اوورلے صرف اینڈرائیڈ پر دستیاب ہے۔ iOS پر آپ کو معیاری اطلاعات ملیں گی۔",
+    "noCategories": "براہ کرم کم از کم ایک ذکر زمرہ فعال کریں",
+    "previewFailed": "اوورلے پیش نظارہ نہیں دکھا سکے۔ براہ کرم دوبارہ کوشش کریں۔",
+    "noDhikr": "منتخب زمروں کے لیے ذکر مواد نہیں مل سکا",
+    "error": "خرابی",
+    "serviceFailed": "ذکر یاد دہانی سروس شروع کرنے میں ناکامی",
+    "interval30min": "30 منٹ",
+    "interval1hour": "1 گھنٹہ",
+    "interval2hours": "2 گھنٹے",
+    "interval3hours": "3 گھنٹے",
+    "interval4hours": "4 گھنٹے",
+    "autoDismiss5s": "5 سیکنڈ",
+    "autoDismiss10s": "10 سیکنڈ",
+    "autoDismiss15s": "15 سیکنڈ",
+    "autoDismiss20s": "20 سیکنڈ",
+    "autoDismiss30s": "30 سیکنڈ",
+    "quiet9pm": "9 بجے رات",
+    "quiet10pm": "10 بجے رات",
+    "quiet11pm": "11 بجے رات",
+    "quiet12am": "12 بجے رات",
+    "wake5am": "5 بجے صبح",
+    "wake6am": "6 بجے صبح",
+    "wake7am": "7 بجے صبح",
+    "wake8am": "8 بجے صبح"
+  },
+  "quickAccess": {
+    "title": "فوری رسائی",
+    "morning": "صبح",
+    "evening": "شام",
+    "prayer": "نماز",
+    "sleep": "سونے سے پہلے",
+    "wake": "بیدار ہونے پر",
+    "general": "عمومی"
+  },
+  "tasbih": {
+    "title": "تسبیح کاؤنٹر",
+    "target": "ہدف",
+    "tapToCount": "شمار کے لیے ٹیپ کریں • ری سیٹ کے لیے دبائیں",
+    "targetReached": "ہدف پورا ہو گیا!",
+    "resetCounter": "کاؤنٹر ری سیٹ کریں",
+    "resetConfirm": "کیا آپ واقعی کاؤنٹر کو 0 پر ری سیٹ کرنا چاہتے ہیں؟",
+    "cancel": "منسوخ",
+    "reset": "ری سیٹ"
+  },
+  "weeklyChart": {
+    "title": "اس ہفتے",
+    "prayed": "پڑھی",
+    "missed": "قضا",
+    "late": "تاخیر سے",
+    "noData": "کوئی ڈیٹا دستیاب نہیں",
+    "sun": "اتوار",
+    "mon": "پیر",
+    "tue": "منگل",
+    "wed": "بدھ",
+    "thu": "جمعرات",
+    "fri": "جمعہ",
+    "sat": "ہفتہ"
+  },
+  "citySearch": {
+    "selectCity": "شہر منتخب کریں",
+    "searchPlaceholder": "دنیا بھر میں کوئی بھی شہر تلاش کریں...",
+    "recent": "حالیہ",
+    "popularCities": "مقبول شہر",
+    "noCities": "کوئی شہر نہیں ملے",
+    "tryDifferent": "مختلف ہجے آزمائیں یا قریبی بڑے شہر کی تلاش کریں",
+    "offline": "آف لائن",
+    "offlineMessage": "آپ فی الحال آف لائن ہیں۔ نئے شہر پر جانے کے لیے انٹرنیٹ ضروری ہے۔ براہ کرم حالیہ شہر استعمال کریں یا آن لائن ہونے پر دوبارہ کوشش کریں۔",
+    "networkError": "نیٹ ورک خرابی۔ مقامی نتائج دکھا رہے ہیں۔"
+  },
+  "upcomingEvents": {
+    "title": "آنے والے واقعات",
+    "noEvents": "کوئی آنے والے واقعات نہیں"
+  },
+  "hifzControls": {
+    "title": "حفظ کنٹرولز",
+    "hideTab": "چھپائیں",
+    "repeatTab": "دہرائیں",
+    "loopTab": "لوپ",
+    "progressTab": "پیشرفت",
+    "hideMode": "چھپانے کا موڈ",
+    "wordAudio": "لفظ آڈیو",
+    "requiresInternet": "انٹرنیٹ ضروری",
+    "playPronunciation": "ظاہر کرتے وقت تلفظ چلائیں",
+    "quickActions": "فوری اقدامات",
+    "revealAll": "سب دکھائیں",
+    "hideAll": "سب چھپائیں",
+    "autoHideDelay": "خودکار چھپانے کی تاخیر",
+    "autoHideAfter": "ظاہر کرنے کے بعد خودکار چھپائیں",
+    "markCurrentVerse": "موجودہ آیت نشان لگائیں",
+    "verse": "آیت",
+    "notStarted": "شروع نہیں ہوا",
+    "inProgress": "جاری",
+    "memorized": "حفظ شدہ",
+    "longPressToMark": "حفظ کی حیثیت نشان لگانے کے لیے آیت پر دیر تک دبائیں",
+    "bulkMarking": "بلک نشان لگانا",
+    "page": "صفحہ",
+    "juz": "پارہ",
+    "clear": "صاف کریں",
+    "clearPageMarkings": "صفحہ کے نشان صاف کریں",
+    "markEntirePage": "پورا صفحہ نشان لگائیں",
+    "clearJuzMarkings": "پارے کے نشان صاف کریں",
+    "markEntireJuz": "پورا پارہ نشان لگائیں",
+    "cancel": "منسوخ",
+    "confirm": "تصدیق"
+  },
+  "taraweeh": {
+    "title": "تراویح ٹریکر",
+    "ramadanCalendar": "رمضان کیلنڈر",
+    "locationBreakdown": "مقام کی تقسیم",
+    "completionRate": "تکمیل کی شرح",
+    "logNight": "رات درج کریں",
+    "edit": "ترمیم",
+    "night": "رات",
+    "nights": "راتیں",
+    "streak": "سلسلہ",
+    "best": "بہترین",
+    "atMosque": "مسجد میں",
+    "atHome": "گھر پر"
+  },
+  "mosqueDetail": {
+    "title": "مسجد کی تفصیلات",
+    "openingHours": "اوقات کار",
+    "directions": "ہدایات",
+    "call": "کال",
+    "website": "ویب سائٹ",
+    "rating": "درجہ بندی",
+    "reviews": "جائزے",
+    "failedToLoad": "تفصیلات لوڈ کرنے میں ناکامی",
+    "tryAgain": "دوبارہ کوشش کریں",
+    "openNow": "ابھی کھلا ہے",
+    "closed": "بند",
+    "address": "پتہ",
+    "contact": "رابطہ",
+    "getDirections": "راستہ حاصل کریں",
+    "away": "دور"
+  },
+  "donation": {
+    "addTitle": "عطیہ شامل کریں",
+    "type": "قسم",
+    "amount": "رقم",
+    "recipientOptional": "وصول کنندہ (اختیاری)",
+    "recipientPlaceholder": "ادارہ یا شخص",
+    "notesOptional": "نوٹس (اختیاری)",
+    "notesPlaceholder": "کوئی نوٹس شامل کریں...",
+    "addButton": "عطیہ شامل کریں",
+    "sadaqah": "صدقہ",
+    "zakat": "زکوٰة",
+    "fidya": "فدیہ",
+    "kaffarah": "کفارہ",
+    "other": "دیگر"
+  },
+  "setGoal": {
+    "title": "ہدف مقرر کریں",
+    "goalAmount": "ہدف رقم (USD)",
+    "setButton": "ہدف مقرر کریں",
+    "infoText": "صدقہ ہدف مقرر کرنے سے آپ کو رمضان بھر اپنی پیشرفت ٹریک کرنے میں مدد ملتی ہے۔ آپ کسی بھی وقت اس ہدف کو تبدیل کر سکتے ہیں۔"
+  },
+  "logTaraweeh": {
+    "editTitle": "ترمیم",
+    "logTitle": "درج کریں",
+    "night": "رات",
+    "rakaat": "رکعات",
+    "location": "مقام",
+    "mosque": "مسجد",
+    "home": "گھر",
+    "notesOptional": "نوٹس (اختیاری)",
+    "notesPlaceholder": "کوئی نوٹس شامل کریں...",
+    "delete": "حذف کریں",
+    "save": "محفوظ کریں"
+  },
+  "suhoorIftar": {
+    "suhoorReminder": "سحری کی یاد دہانی",
+    "iftarReminder": "افطار کی یاد دہانی"
+  },
+  "ramadanCountdown": {
+    "daysLeft": "باقی دن"
+  },
+  "quranProgress": {
+    "title": "قرآن پیشرفت"
+  },
+  "monthlyCalendar": {
+    "noData": "کوئی ڈیٹا دستیاب نہیں"
+  },
+  "savedLoops": {
+    "title": "محفوظ لوپس",
+    "enterName": "لوپ کا نام درج کریں...",
+    "noName": "براہ کرم لوپ کا نام درج کریں",
+    "noRange": "براہ کرم پہلے لوپ کی حد مقرر کریں",
+    "saveLoop": "موجودہ لوپ محفوظ کریں",
+    "saveCurrent": "موجودہ محفوظ کریں",
+    "delete": "حذف کریں",
+    "deleteLoop": "لوپ حذف کریں",
+    "deleteConfirm": "کیا آپ واقعی حذف کرنا چاہتے ہیں",
+    "cancel": "منسوخ",
+    "save": "محفوظ کریں",
+    "noLoops": "ابھی تک کوئی محفوظ لوپ نہیں",
+    "error": "خرابی",
+    "plays": "مرتبہ چلایا"
+  },
+  "revision": {
+    "title": "روزانہ دہرائی",
+    "dueNow": "ابھی واجب",
+    "noRevision": "کوئی دہرائی واجب نہیں",
+    "startReview": "دہرائی شروع کریں",
+    "markReviewed": "دہرایا ہوا نشان لگائیں",
+    "versesDue": "آیات دہرانے کے لیے واجب",
+    "todayProgress": "آج کی پیشرفت",
+    "overdue": "واجب الادا",
+    "due": "واجب",
+    "allCaughtUp": "سب مکمل!",
+    "noVersesDue": "ابھی دہرائی کے لیے کوئی آیات واجب نہیں",
+    "completedToday": "آج مکمل",
+    "startSession": "دہرائی کا سیشن شروع کریں",
+    "howWell": "آپ کو کتنا یاد تھا",
+    "forgot": "بھول گئے",
+    "hard": "مشکل",
+    "okay": "ٹھیک",
+    "good": "اچھا",
+    "easy": "آسان",
+    "perfect": "بہترین",
+    "dAgo": "دن پہلے"
+  },
+  "repeatControls": {
+    "title": "آڈیو دہرانے کی ترتیبات",
+    "subtitle": "حفظ کی مشق کے لیے",
+    "timesToRepeat": "دہرانے کی تعداد",
+    "timesHint": "آیت اتنی مرتبہ چلے گی",
+    "gapBetween": "دہرانے کے درمیان وقفہ",
+    "gapHint": "اگلی مرتبہ چلنے سے پہلے ساتھ پڑھنے کا وقت",
+    "recitationSpeed": "تلاوت کی رفتار",
+    "speedHint": "آہستہ تلفظ سیکھنے میں مدد کرتا ہے",
+    "stopRepeating": "دہرانا بند کریں"
+  },
+  "calendarGrid": {
+    "whiteDay": "ایام بیض",
+    "event": "واقعہ",
+    "fasting": "روزہ"
+  },
+  "hifzProgress": {
+    "title": "حفظ کی پیشرفت",
+    "exportFailed": "برآمد ناکام",
+    "exportError": "پیشرفت کا ڈیٹا برآمد نہیں ہو سکا",
+    "resetProgress": "پیشرفت ری سیٹ کریں",
+    "resetConfirm": "کیا آپ واقعی تمام حفظ کی پیشرفت ری سیٹ کرنا چاہتے ہیں؟",
+    "resetSuccess": "پیشرفت ری سیٹ ہو گئی",
+    "resetError": "پیشرفت ری سیٹ کرنے میں ناکامی",
+    "cancel": "منسوخ",
+    "reset": "ری سیٹ",
+    "success": "کامیاب",
+    "error": "خرابی"
+  },
+  "reciterSelection": {
+    "title": "قاری منتخب کریں",
+    "recitersAvailable": "قاری دستیاب",
+    "downloaded": "ڈاؤن لوڈ شدہ",
+    "infoBanner": "ڈاؤن لوڈ بیج والے قاریوں کی آڈیو فائلیں آپ کے آلے پر محفوظ ہیں"
+  },
+  "wordByWord": {
+    "title": "لفظ بلفظ",
+    "infoHint": "مصحف میں کسی بھی لفظ پر دیر تک دبائیں اس کا معنی دیکھنے اور تلفظ سننے کے لیے۔",
+    "translationLanguage": "ترجمے کی زبان",
+    "arabicMeanings": "مشکل الفاظ کے عربی معانی",
+    "tapToDownload": "ڈاؤن لوڈ کے لیے ٹیپ کریں",
+    "downloading": "ڈاؤن لوڈ ہو رہا ہے...",
+    "audio": "آڈیو",
+    "playPronunciation": "لفظ کا تلفظ چلائیں",
+    "audioHint": "انگلی اٹھانے پر لفظ سنیں"
+  },
+  "errorFallback": {
+    "title": "کچھ غلط ہو گیا",
+    "message": "براہ کرم جاری رکھنے کے لیے ایپ دوبارہ لوڈ کریں۔",
+    "tryAgain": "دوبارہ کوشش کریں",
+    "errorDetails": "خرابی کی تفصیلات"
+  },
+  "downloadProgress": {
+    "downloading": "ڈاؤن لوڈ ہو رہا ہے",
+    "paused": "موقوف",
+    "failed": "ناکام",
+    "pending": "زیر التوا"
+  },
+  "duaOfDay": {
+    "title": "آج کی دعا",
+    "islamicSupplication": "اسلامی دعا",
+    "tapToRead": "مکمل دعا پڑھنے کے لیے ٹیپ کریں"
+  },
+  "dailyDhikr": {
+    "title": "روزانہ ذکر",
+    "subtitle": "آج کا نمایاں ذکر"
+  },
+  "surahDownload": {
+    "queued": "قطار میں"
+  },
+  "hifzConstants": {
+    "fullVerse": "مکمل آیت",
+    "fullVerseDesc": "پوری آیت چھپائیں، ظاہر کرنے کے لیے ٹیپ کریں",
+    "wordByWord": "لفظ بلفظ",
+    "wordByWordDesc": "پڑھتے وقت ایک ایک لفظ ظاہر کریں",
+    "manual": "دستی",
+    "none": "کوئی نہیں",
+    "sec2": "2 سیکنڈ",
+    "sec5": "5 سیکنڈ",
+    "slow": "آہستہ",
+    "medium": "درمیانی",
+    "normal": "عام"
+  },
+  "calculationMethods": {
+    "shia": "شیعہ اثنا عشری",
+    "karachi": "جامعہ العلوم الاسلامیہ، کراچی",
+    "isna": "اسلامک سوسائٹی آف نارتھ امریکہ",
+    "mwl": "مسلم ورلڈ لیگ",
+    "ummAlQura": "ام القری یونیورسٹی، مکہ",
+    "egypt": "مصری جنرل اتھارٹی آف سروے",
+    "tehran": "انسٹیٹیوٹ آف جیوفزکس، یونیورسٹی آف تہران",
+    "gulf": "خلیجی علاقہ",
+    "kuwait": "کویت",
+    "qatar": "قطر",
+    "muis": "مجلس اوگاما اسلام سنگاپور",
+    "uoif": "یونین آرگنائزیشن اسلامک دی فرانس",
+    "diyanet": "دیانت ایشلری باشکانلیغی، ترکی",
+    "russia": "روس کے مسلمانوں کی روحانی انتظامیہ",
+    "moonsighting": "مون سائٹنگ کمیٹی ورلڈ وائیڈ",
+    "jordan": "وزارت اوقاف، اسلامی امور، اردن"
+  },
+  "loopRange": {
+    "start": "شروع",
+    "end": "ختم",
+    "notSet": "مقرر نہیں",
+    "clear": "صاف کریں",
+    "playLoop": "لوپ چلائیں",
+    "stopLoop": "لوپ بند کریں",
+    "helpText": "آیت پر دیر تک دبائیں اور \"لوپ شروع مقرر کریں\" یا \"لوپ ختم مقرر کریں\" ٹیپ کریں"
+  },
+  "azkarCategories": {
+    "morning": "صبح کے اذکار",
+    "evening": "شام کے اذکار",
+    "after-prayer": "نماز کے بعد",
+    "sleep": "سونے کے اذکار",
+    "waking": "بیدار ہونے پر",
+    "general": "عمومی اذکار"
+  },
+  "duaCategories": {
+    "travel": "سفر",
+    "eating": "کھانا اور پینا",
+    "sleeping": "سونا اور جاگنا",
+    "places": "آنا اور جانا",
+    "weather": "موسم اور فطرت",
+    "health": "صحت اور شفا",
+    "protection": "حفاظت",
+    "gratitude": "شکر",
+    "forgiveness": "مغفرت",
+    "guidance": "ہدایت",
+    "family": "خاندان اور بچے",
+    "general": "عمومی"
+  },
+  "guideCategories": {
+    "worship": "عبادت اور نماز",
+    "purification": "طہارت",
+    "hajj": "حج اور عمرہ",
+    "charity": "صدقہ اور زکوٰة",
+    "fasting": "روزہ",
+    "funeral": "جنازے کی رسومات",
+    "character": "اخلاق اور آداب",
+    "knowledge": "علم اور روحانیت",
+    "finance": "اسلامی مالیات"
+  },
+  "islamicEvents": {
+    "new_year": "اسلامی نیا سال",
+    "ashura": "یوم عاشورا",
+    "mawlid": "میلاد النبی",
+    "isra_miraj": "اسراء و معراج",
+    "mid_shaban": "شب برات",
+    "ramadan_start": "رمضان کی شروعات",
+    "laylat_qadr": "لیلة القدر",
+    "eid_fitr": "عید الفطر",
+    "arafah": "یوم عرفہ",
+    "eid_adha": "عید الاضحی",
+    "new_year_desc": "محرم کا پہلا دن اسلامی کیلنڈر سال کے آغاز کی نشاندہی کرتا ہے۔",
+    "ashura_desc": "10 محرم۔ اس دن روزہ رکھنا پچھلے سال کے گناہوں کا کفارہ ہے۔",
+    "mawlid_desc": "نبی محمد ﷺ کی ولادت کی یاد۔",
+    "isra_miraj_desc": "نبی محمد ﷺ کا شب معراج اور آسمانی سفر۔",
+    "mid_shaban_desc": "وہ رات جب اللہ آسمان دنیا پر نزول فرماتا ہے اور بہتوں کو معاف کرتا ہے۔",
+    "ramadan_start_desc": "روزوں کا مبارک مہینہ شروع ہوتا ہے۔",
+    "laylat_qadr_desc": "شب قدر، ہزار مہینوں سے بہتر۔",
+    "eid_fitr_desc": "عید الفطر، رمضان کے اختتام کی خوشی منانا۔",
+    "arafah_desc": "اس دن روزہ رکھنا پچھلے اور آنے والے سال کے گناہوں کا کفارہ ہے۔",
+    "eid_adha_desc": "عید الاضحی، ابراہیم علیہ السلام کی قربانی دینے کی آمادگی کی یاد۔"
+  },
+  "countdown": {
+    "today": "آج",
+    "tomorrow": "کل",
+    "inDays": "%{count} دنوں میں",
+    "inWeek": "%{count} ہفتے میں",
+    "inWeeks": "%{count} ہفتوں میں",
+    "inMonth": "%{count} مہینے میں",
+    "inMonths": "%{count} مہینوں میں"
+  },
+  "fastingLabels": {
+    "monday": "پیر کا روزہ",
+    "thursday": "جمعرات کا روزہ",
+    "white_day": "ایام بیض",
+    "ashura": "عاشورا کا روزہ",
+    "arafah": "عرفہ کا روزہ",
+    "shawwal": "شوال کا روزہ"
+  },
+  "prayerStatus": {
+    "prayed": "پڑھی",
+    "late": "تاخیر سے",
+    "missed": "قضا"
+  },
+  "guides": {
+    "how-to-perform-salah": {
+      "title": "نماز ادا کرنے کا طریقہ",
+      "description": "نبوی طریقے کے مطابق پانچ وقت کی نمازیں ادا کرنے کی جامع رہنمائی",
+      "steps": {
+        "0": {
+          "title": "1. نیت کریں",
+          "content": "دل میں نیت کریں کہ کون سی نماز ادا کر رہے ہیں۔ نیت دل میں ہوتی ہے، زبان سے کہنا ضروری نہیں۔"
+        },
+        "1": {
+          "title": "2. تکبیر تحریمہ",
+          "content": "ہاتھ کندھوں یا کانوں تک اٹھائیں اور 'اللہ اکبر' کہیں۔ یہ نماز کی شروعات ہے۔"
+        },
+        "2": {
+          "title": "3. دعائے استفتاح",
+          "content": "دائیں ہاتھ کو بائیں پر سینے پر رکھیں اور پڑھیں: 'سبحانك اللهم وبحمدك وتبارك اسمك وتعالى جدك ولا إله غيرك'۔"
+        },
+        "3": {
+          "title": "4. سورۃ الفاتحہ",
+          "content": "سورۃ الفاتحہ پڑھیں۔ یہ ہر رکعت میں فرض ہے۔ ختم ہونے پر آہستہ سے 'آمین' کہیں۔"
+        },
+        "4": {
+          "title": "5. اضافی سورۃ",
+          "content": "پہلی دو رکعتوں میں الفاتحہ کے بعد قرآن کی کوئی اور سورۃ یا آیات پڑھیں۔"
+        },
+        "5": {
+          "title": "6. رکوع",
+          "content": "'اللہ اکبر' کہیں اور جھکیں، ہاتھ گھٹنوں پر رکھیں۔ 'سبحان ربی العظیم' تین مرتبہ کہیں۔"
+        },
+        "6": {
+          "title": "7. رکوع سے اٹھنا",
+          "content": "'سمع اللہ لمن حمدہ' کہتے ہوئے اٹھیں۔ کھڑے ہو کر 'ربنا ولک الحمد' کہیں۔"
+        },
+        "7": {
+          "title": "8. سجدہ",
+          "content": "'اللہ اکبر' کہیں اور سجدے میں جائیں۔ 'سبحان ربی الاعلیٰ' تین مرتبہ کہیں۔ دو سجدے کریں۔"
+        },
+        "8": {
+          "title": "9. تشہد",
+          "content": "ہر دو رکعت کے بعد بیٹھیں اور تشہد پڑھیں۔ دائیں شہادت کی انگلی سے اشارہ کریں۔"
+        },
+        "9": {
+          "title": "10. سلام",
+          "content": "دائیں طرف سر پھیریں اور 'السلام علیکم ورحمة اللہ' کہیں، پھر بائیں طرف دہرائیں۔"
+        }
+      }
+    },
+    "how-to-perform-istikhara": {
+      "title": "استخارہ نماز کا طریقہ",
+      "description": "اہم فیصلوں میں اللہ سے رہنمائی طلب کرنے کی رہنمائی",
+      "steps": {
+        "0": {
+          "title": "1. اپنا معاملہ پہچانیں",
+          "content": "ایک مخصوص معاملہ ذہن میں رکھیں جس پر رہنمائی چاہیے۔ استخارہ جائز معاملات کے لیے ہے جہاں آپ کو یقین نہ ہو کہ کون سا اختیار بہتر ہے۔"
+        },
+        "1": {
+          "title": "2. دو رکعت پڑھیں",
+          "content": "نفل کی دو رکعت پڑھیں۔ پہلی رکعت میں الفاتحہ کے بعد سورۃ الکافرون اور دوسری میں سورۃ الاخلاص پڑھیں۔"
+        },
+        "2": {
+          "title": "3. استخارہ کی دعا",
+          "content": "نماز مکمل کرنے کے بعد ہاتھ اٹھائیں اور پڑھیں: 'اللهم إني أستخيرك بعلمك وأستقدرك بقدرتك...'۔"
+        },
+        "3": {
+          "title": "4. اپنا معاملہ بیان کریں",
+          "content": "جب 'في هذا الأمر' (اس معاملے میں) پر پہنچیں، تو واضح کریں کس بارے میں رہنمائی چاہتے ہیں۔"
+        },
+        "4": {
+          "title": "5. اللہ کے فیصلے پر بھروسہ",
+          "content": "دعا کے بعد اپنے فیصلے پر عمل کریں۔ بھروسہ رکھیں کہ اللہ بہتر اختیار آسان کر دے گا۔"
+        }
+      }
+    },
+    "how-to-perform-tahajjud": {
+      "title": "تہجد نماز کا طریقہ",
+      "description": "رات کے آخری حصے میں تہجد نماز ادا کرنے کی رہنمائی",
+      "steps": {
+        "0": {
+          "title": "1. رات کے آخری تہائی میں اٹھیں",
+          "content": "رات کے آخری تہائی حصے میں اٹھیں (فجر سے تقریباً 1-2 گھنٹے پہلے)۔ تہجد کے لیے یہ سب سے بابرکت وقت ہے۔"
+        },
+        "1": {
+          "title": "2. وضو کریں",
+          "content": "وضو کریں اور ذہنی اور روحانی طور پر اللہ کے سامنے کھڑے ہونے کے لیے تیار ہوں۔"
+        },
+        "2": {
+          "title": "3. جوڑوں میں پڑھیں",
+          "content": "کم از کم 2 رکعت پڑھیں، مگر آپ جوڑوں میں زیادہ پڑھ سکتے ہیں (2، 4، 6، 8 وغیرہ)۔ نبی ﷺ 11 رکعت پڑھا کرتے تھے۔"
+        },
+        "3": {
+          "title": "4. لمبی تلاوت کریں",
+          "content": "تلاوت، رکوع اور سجدے میں وقت لگائیں۔ عام نمازوں سے زیادہ طویل تلاوت کریں۔"
+        },
+        "4": {
+          "title": "5. دعا کریں",
+          "content": "نماز مکمل کرنے کے بعد دل سے دعا کریں۔ یہ وہ وقت ہے جب اللہ آسمان دنیا پر نزول فرماتا ہے اور دعائیں قبول کرتا ہے۔"
+        },
+        "5": {
+          "title": "6. وتر سے ختم کریں",
+          "content": "اپنی رات کی نماز وتر سے ختم کریں (طاق رکعت، عام طور پر 1 یا 3)۔"
+        }
+      }
+    },
+    "how-to-perform-eid-prayer": {
+      "title": "عید کی نماز کا طریقہ",
+      "description": "عید الفطر اور عید الاضحی کی نماز ادا کرنے کی رہنمائی",
+      "steps": {
+        "0": {
+          "title": "1. عید کی تیاری",
+          "content": "غسل کریں، بہترین لباس پہنیں، خوشبو لگائیں۔ عید الفطر پر جانے سے پہلے کھجوریں کھائیں۔ عید الاضحی پر نماز تک انتظار کریں۔"
+        },
+        "1": {
+          "title": "2. عیدگاہ جائیں",
+          "content": "عید کی نماز گاہ جلدی جائیں۔ سنت ہے کہ ایک راستے سے جائیں اور دوسرے سے واپس آئیں۔"
+        },
+        "2": {
+          "title": "3. پہلی رکعت",
+          "content": "تکبیر تحریمہ کے بعد 7 اضافی تکبیریں ہیں۔ ہر تکبیر کے ساتھ ہاتھ اٹھائیں۔ پھر الفاتحہ اور سورۃ الاعلیٰ پڑھیں۔"
+        },
+        "3": {
+          "title": "4. دوسری رکعت",
+          "content": "سجدے سے کھڑے ہونے کے بعد 5 اضافی تکبیریں ہیں۔ پھر الفاتحہ اور سورۃ الغاشیہ پڑھیں۔"
+        },
+        "4": {
+          "title": "5. خطبہ سنیں",
+          "content": "نماز کے بعد امام دو خطبے دیتا ہے۔ سننا مستحب ہے، اگرچہ واجب نہیں۔"
+        },
+        "5": {
+          "title": "6. مبارکباد دیں",
+          "content": "ساتھی مسلمانوں کو 'عید مبارک' یا 'تقبل اللہ منا ومنکم' کہہ کر مبارکباد دیں۔"
+        }
+      }
+    },
+    "morning-evening-adhkar": {
+      "title": "صبح و شام کے اذکار",
+      "description": "صبح و شام پڑھنے کے ضروری اذکار",
+      "steps": {
+        "0": {
+          "title": "1. آیت الکرسی",
+          "content": "آیت الکرسی (قرآن 2:255) پڑھیں۔ نبی ﷺ نے فرمایا جو صبح پڑھے شام تک محفوظ رہے گا۔"
+        },
+        "1": {
+          "title": "2. سورۃ البقرۃ کی آخری دو آیات",
+          "content": "سورۃ البقرۃ کی آخری دو آیات (2:285-286) پڑھیں۔ یہ حفاظت کے لیے کافی ہیں۔"
+        },
+        "2": {
+          "title": "3. سورۃ الاخلاص، الفلق، الناس",
+          "content": "یہ تینوں سورتیں تین تین مرتبہ پڑھیں۔ یہ مکمل حفاظت فراہم کرتی ہیں۔"
+        },
+        "3": {
+          "title": "4. تسبیح، تحمید، تکبیر",
+          "content": "'سبحان اللہ' (33 مرتبہ)، 'الحمدللہ' (33 مرتبہ)، 'اللہ اکبر' (34 مرتبہ) کہیں۔"
+        },
+        "4": {
+          "title": "5. سید الاستغفار",
+          "content": "استغفار کی سردار دعا پڑھیں: 'اللهم أنت ربي لا إله إلا أنت...'۔"
+        },
+        "5": {
+          "title": "6. حفاظت کی دعا",
+          "content": "کہیں: 'بسم اللہ الذی لا یضر مع اسمہ شیء فی الارض ولا فی السماء' (تین مرتبہ)۔"
+        }
+      }
+    },
+    "how-to-perform-wudu": {
+      "title": "وضو کا طریقہ",
+      "description": "صحیح طریقے سے وضو کرنے کی تفصیلی رہنمائی",
+      "steps": {
+        "0": {
+          "title": "1. نیت کریں",
+          "content": "دل میں وضو کرنے کی نیت کریں۔ 'بسم اللہ' کہیں۔"
+        },
+        "1": {
+          "title": "2. ہاتھ دھوئیں",
+          "content": "دونوں ہاتھ کلائیوں تک تین مرتبہ دھوئیں۔"
+        },
+        "2": {
+          "title": "3. کلی کریں",
+          "content": "منہ میں اچھی طرح تین مرتبہ کلی کریں۔"
+        },
+        "3": {
+          "title": "4. ناک صاف کریں",
+          "content": "تین مرتبہ ناک میں پانی ڈالیں اور صاف کریں۔"
+        },
+        "4": {
+          "title": "5. چہرہ دھوئیں",
+          "content": "پورا چہرہ تین مرتبہ دھوئیں، بالوں سے ٹھوڑی تک اور کان سے کان تک۔"
+        },
+        "5": {
+          "title": "6. بازو دھوئیں",
+          "content": "دایاں بازو کہنی تک تین مرتبہ دھوئیں، پھر بایاں۔"
+        },
+        "6": {
+          "title": "7. سر کا مسح",
+          "content": "گیلے ہاتھوں سے سر پر ایک مرتبہ مسح کریں۔"
+        },
+        "7": {
+          "title": "8. کانوں کا مسح",
+          "content": "شہادت کی انگلیوں سے کانوں کے اندر اور انگوٹھوں سے باہر مسح کریں۔"
+        },
+        "8": {
+          "title": "9. پاؤں دھوئیں",
+          "content": "دایاں پاؤں ٹخنے تک تین مرتبہ دھوئیں، پھر بایاں۔"
+        },
+        "9": {
+          "title": "10. دعا پڑھیں",
+          "content": "کہیں: 'أشهد أن لا إله إلا الله وحده لا شريك له وأشهد أن محمداً عبده ورسوله'۔"
+        }
+      }
+    },
+    "how-to-perform-ghusl": {
+      "title": "How to Perform Ghusl (Full Ritual Purification)",
+      "description": "Comprehensive guide for performing full ritual bath",
+      "steps": {
+        "0": {
+          "title": "1. Make Intention",
+          "content": "Make the intention to purify yourself from major impurity. Say 'Bismillah'."
+        },
+        "1": {
+          "title": "2. Wash Hands",
+          "content": "Wash both hands up to the wrists three times."
+        },
+        "2": {
+          "title": "3. Wash Private Parts",
+          "content": "Wash the private parts thoroughly."
+        },
+        "3": {
+          "title": "4. Perform Wudu",
+          "content": "Perform complete wudu as you would for prayer."
+        },
+        "4": {
+          "title": "5. Pour Water Over Head",
+          "content": "Pour water over your head three times, ensuring it reaches the roots of your hair."
+        },
+        "5": {
+          "title": "6. Wash Right Side",
+          "content": "Pour water over your entire right side of the body."
+        },
+        "6": {
+          "title": "7. Wash Left Side",
+          "content": "Pour water over your entire left side of the body."
+        },
+        "7": {
+          "title": "8. Wash Entire Body",
+          "content": "Ensure water has reached every part of your body."
+        }
+      }
+    },
+    "how-to-perform-tayammum": {
+      "title": "How to Perform Tayammum (Dry Ablution)",
+      "description": "Guide for performing dry ablution when water is unavailable",
+      "steps": {
+        "0": {
+          "title": "1. Make Intention",
+          "content": "Make the intention to perform Tayammum as a substitute for wudu or ghusl."
+        },
+        "1": {
+          "title": "2. Say Bismillah",
+          "content": "Begin by saying 'Bismillah' (In the name of Allah)."
+        },
+        "2": {
+          "title": "3. Strike Clean Earth",
+          "content": "Strike your hands on clean earth, sand, or dust once."
+        },
+        "3": {
+          "title": "4. Wipe Face",
+          "content": "Wipe your entire face with both palms once."
+        },
+        "4": {
+          "title": "5. Wipe Hands",
+          "content": "Wipe your right hand with your left palm, then wipe your left hand with your right palm, up to the wrists."
+        },
+        "5": {
+          "title": "6. Complete",
+          "content": "Your Tayammum is now complete and valid for one prayer. Repeat for each prayer time."
+        }
+      }
+    },
+    "how-to-perform-umrah": {
+      "title": "How to Perform Umrah",
+      "description": "Complete guide for performing the lesser pilgrimage",
+      "steps": {
+        "0": {
+          "title": "1. Enter Ihram",
+          "content": "Before reaching the Miqat, make intention for Umrah, perform ghusl, and wear Ihram garments. Say the Talbiyah: 'Labbayk Allahumma Umrah'."
+        },
+        "1": {
+          "title": "2. Enter Masjid al-Haram",
+          "content": "Enter with your right foot and say the dua for entering the mosque."
+        },
+        "2": {
+          "title": "3. Perform Tawaf",
+          "content": "Circle the Ka'bah seven times counterclockwise, starting from the Black Stone. Men should uncover their right shoulder (Idtiba) and walk briskly in the first three circuits (Raml)."
+        },
+        "3": {
+          "title": "4. Pray Two Rak'ahs",
+          "content": "After Tawaf, pray two rak'ahs behind Maqam Ibrahim if possible, or anywhere in the Haram."
+        },
+        "4": {
+          "title": "5. Drink Zamzam",
+          "content": "Drink Zamzam water and make dua."
+        },
+        "5": {
+          "title": "6. Perform Sa'i",
+          "content": "Walk between Safa and Marwah seven times, starting at Safa. Men should jog between the green lights."
+        },
+        "6": {
+          "title": "7. Shave or Trim Hair",
+          "content": "Men should shave their heads or trim hair. Women should cut a fingertip's length from their hair. This completes your Umrah."
+        }
+      }
+    },
+    "how-to-perform-tawaf": {
+      "title": "How to Perform Tawaf",
+      "description": "Detailed guide for circling the Ka'bah",
+      "steps": {
+        "0": {
+          "title": "1. Face the Black Stone",
+          "content": "Stand facing the Black Stone (Hajar al-Aswad) with the Ka'bah on your left."
+        },
+        "1": {
+          "title": "2. Make Intention",
+          "content": "Make intention for Tawaf in your heart."
+        },
+        "2": {
+          "title": "3. Touch or Point",
+          "content": "If possible, touch and kiss the Black Stone. If not, point to it and say 'Bismillah, Allahu Akbar'."
+        },
+        "3": {
+          "title": "4. Begin Circling",
+          "content": "Walk counterclockwise around the Ka'bah, keeping it on your left. Men should uncover their right shoulder."
+        },
+        "4": {
+          "title": "5. Recite Dhikr and Dua",
+          "content": "There are no specific duas for Tawaf. Recite Quran, make dhikr, or make personal duas."
+        },
+        "5": {
+          "title": "6. Touch Yemeni Corner",
+          "content": "If possible, touch the Yemeni Corner (Rukn Yamani) with your right hand without kissing it."
+        },
+        "6": {
+          "title": "7. Complete Seven Circuits",
+          "content": "Complete seven full circuits. Each time you pass the Black Stone, point to it and say 'Allahu Akbar'."
+        },
+        "7": {
+          "title": "8. Pray Two Rak'ahs",
+          "content": "After completing Tawaf, pray two rak'ahs behind Maqam Ibrahim or anywhere in the Haram."
+        }
+      }
+    },
+    "how-to-calculate-zakat": {
+      "title": "How to Calculate and Pay Zakat",
+      "description": "Comprehensive guide for calculating and paying obligatory charity",
+      "steps": {
+        "0": {
+          "title": "1. Understand Nisab",
+          "content": "Nisab is the minimum amount of wealth one must have before Zakat is due. It's equivalent to 85 grams of gold or 595 grams of silver."
+        },
+        "1": {
+          "title": "2. Calculate Your Wealth",
+          "content": "Add up all your zakatable assets: cash, bank savings, gold, silver, business inventory, stocks, and money owed to you."
+        },
+        "2": {
+          "title": "3. Deduct Debts",
+          "content": "Subtract any debts you owe that are due within the year."
+        },
+        "3": {
+          "title": "4. Check if Above Nisab",
+          "content": "If your net zakatable wealth is above the Nisab threshold, Zakat is obligatory."
+        },
+        "4": {
+          "title": "5. Calculate 2.5%",
+          "content": "Multiply your zakatable wealth by 0.025 (2.5%). This is your Zakat amount."
+        },
+        "5": {
+          "title": "6. Pay to Eligible Recipients",
+          "content": "Distribute your Zakat to the eight categories mentioned in Quran 9:60: the poor, needy, Zakat collectors, those whose hearts are to be reconciled, slaves, debtors, in the cause of Allah, and travelers."
+        },
+        "6": {
+          "title": "7. Make Intention",
+          "content": "When paying, make the intention that this is your obligatory Zakat."
+        }
+      }
+    },
+    "how-to-pay-zakat-al-fitr": {
+      "title": "How to Pay Zakat al-Fitr",
+      "description": "Guide for paying the obligatory charity at the end of Ramadan",
+      "steps": {
+        "0": {
+          "title": "1. Understand the Purpose",
+          "content": "Zakat al-Fitr purifies the fasting person from idle talk and obscene speech, and provides food for the poor on Eid day."
+        },
+        "1": {
+          "title": "2. Who Must Pay",
+          "content": "Every Muslim who has food in excess of their needs for one day and night must pay Zakat al-Fitr for themselves and their dependents."
+        },
+        "2": {
+          "title": "3. Calculate the Amount",
+          "content": "The amount is one Sa' (approximately 3 kg or 2.5 liters) of staple food (wheat, barley, dates, raisins, or rice), or its monetary equivalent."
+        },
+        "3": {
+          "title": "4. Timing",
+          "content": "It must be paid before the Eid prayer. It's best to pay it 1-2 days before Eid. Paying after Eid prayer is considered late charity, not Zakat al-Fitr."
+        },
+        "4": {
+          "title": "5. Give to the Poor",
+          "content": "Give it directly to poor and needy Muslims in your community, or through a trusted organization."
+        }
+      }
+    },
+    "how-to-give-sadaqah": {
+      "title": "How to Give Sadaqah (Voluntary Charity)",
+      "description": "Guide for giving voluntary charity with sincerity",
+      "steps": {
+        "0": {
+          "title": "1. Make Pure Intention",
+          "content": "Give charity solely for Allah's pleasure, not for recognition or praise from people."
+        },
+        "1": {
+          "title": "2. Give from Halal Wealth",
+          "content": "Ensure your charity comes from lawfully earned money. Allah only accepts what is pure."
+        },
+        "2": {
+          "title": "3. Give Secretly When Possible",
+          "content": "The Prophet (ﷺ) said the best charity is that given secretly. However, public charity can inspire others."
+        },
+        "3": {
+          "title": "4. Give Regularly",
+          "content": "Even small amounts given regularly are better than large amounts given occasionally. The Prophet (ﷺ) said the most beloved deeds to Allah are those done consistently."
+        },
+        "4": {
+          "title": "5. Don't Remind Recipients",
+          "content": "Never remind people of your charity or hurt them with words. This nullifies the reward."
+        },
+        "5": {
+          "title": "6. Smile is Charity",
+          "content": "Remember that charity isn't just money. A smile, helping someone, removing harm from the road, and kind words are all forms of Sadaqah."
+        }
+      }
+    },
+    "how-to-fast-ramadan": {
+      "title": "How to Fast in Ramadan",
+      "description": "Complete guide for observing the obligatory fast",
+      "steps": {
+        "0": {
+          "title": "1. Make Intention at Night",
+          "content": "Make the intention to fast before Fajr. The Prophet (ﷺ) said: 'Whoever does not intend to fast before Fajr, there is no fast for him.'"
+        },
+        "1": {
+          "title": "2. Eat Suhoor",
+          "content": "Eat the pre-dawn meal (Suhoor). The Prophet (ﷺ) said: 'Eat Suhoor, for there is blessing in it.' Stop eating before Fajr begins."
+        },
+        "2": {
+          "title": "3. Abstain from Food, Drink, and Relations",
+          "content": "From Fajr until Maghrib, abstain from food, drink, smoking, and marital relations."
+        },
+        "3": {
+          "title": "4. Guard Your Tongue",
+          "content": "Avoid lying, backbiting, arguing, and foul language. The Prophet (ﷺ) said: 'Whoever does not give up false speech and acting upon it, Allah has no need for him to give up his food and drink.'"
+        },
+        "4": {
+          "title": "5. Increase Good Deeds",
+          "content": "Increase prayer, Quran recitation, dhikr, and charity. Ramadan is the month of the Quran and generosity."
+        },
+        "5": {
+          "title": "6. Break Fast at Maghrib",
+          "content": "Break your fast immediately when Maghrib enters. The Prophet (ﷺ) would break his fast with dates and water, then pray Maghrib."
+        },
+        "6": {
+          "title": "7. Make Dua Before Breaking",
+          "content": "The dua of the fasting person is accepted. Say: 'Allahumma laka sumtu wa 'ala rizqika aftartu' (O Allah, for You I have fasted and with Your provision I break my fast)."
+        }
+      }
+    },
+    "how-to-fast-voluntarily": {
+      "title": "How to Perform Voluntary Fasting",
+      "description": "Guide for recommended voluntary fasts throughout the year",
+      "steps": {
+        "0": {
+          "title": "1. Mondays and Thursdays",
+          "content": "The Prophet (ﷺ) used to fast Mondays and Thursdays. He said deeds are presented to Allah on these days."
+        },
+        "1": {
+          "title": "2. Three Days Each Month",
+          "content": "Fast the 13th, 14th, and 15th of each lunar month (the white days). This is equivalent to fasting the entire year."
+        },
+        "2": {
+          "title": "3. Day of Arafah",
+          "content": "Fast on the 9th of Dhul-Hijjah (for non-pilgrims). The Prophet (ﷺ) said it expiates sins of the previous and coming year."
+        },
+        "3": {
+          "title": "4. Day of Ashura",
+          "content": "Fast on the 10th of Muharram, and it's recommended to fast the 9th or 11th with it. It expiates sins of the previous year."
+        },
+        "4": {
+          "title": "5. Six Days of Shawwal",
+          "content": "Fast six days in Shawwal after Ramadan. The Prophet (ﷺ) said it's like fasting the entire year."
+        },
+        "5": {
+          "title": "6. Make Intention",
+          "content": "For voluntary fasts, you can make the intention even during the day, as long as you haven't eaten anything."
+        }
+      }
+    },
+    "how-to-perform-janazah-prayer": {
+      "title": "How to Perform Janazah Prayer",
+      "description": "Guide for performing the funeral prayer",
+      "steps": {
+        "0": {
+          "title": "1. Stand in Rows",
+          "content": "Form rows behind the Imam. The deceased is placed in front, with men standing closer to the Imam."
+        },
+        "1": {
+          "title": "2. First Takbir",
+          "content": "Raise your hands and say 'Allahu Akbar', then recite Al-Fatiha silently."
+        },
+        "2": {
+          "title": "3. Second Takbir",
+          "content": "Say 'Allahu Akbar' (without raising hands) and send blessings upon the Prophet: 'Allahumma salli 'ala Muhammad...'"
+        },
+        "3": {
+          "title": "4. Third Takbir",
+          "content": "Say 'Allahu Akbar' and make dua for the deceased: 'Allahumma ighfir lahu warhamhu...'"
+        },
+        "4": {
+          "title": "5. Fourth Takbir",
+          "content": "Say 'Allahu Akbar' and make a brief dua for yourself and all Muslims."
+        },
+        "5": {
+          "title": "6. Give Tasleem",
+          "content": "Turn your head to the right and say 'As-salamu alaykum', then to the left and repeat."
+        }
+      }
+    },
+    "how-to-offer-condolences": {
+      "title": "How to Offer Condolences",
+      "description": "Islamic etiquette for consoling the bereaved",
+      "steps": {
+        "0": {
+          "title": "1. Visit Promptly",
+          "content": "Visit the family soon after hearing the news, but be mindful of their need for space and privacy."
+        },
+        "1": {
+          "title": "2. Say Appropriate Words",
+          "content": "Say: 'Inna lillahi wa inna ilayhi raji'un' (To Allah we belong and to Him we return). Remind them that Allah will reward their patience."
+        },
+        "2": {
+          "title": "3. Make Dua",
+          "content": "Make dua for the deceased and for the family: 'May Allah forgive them, have mercy on them, and grant you patience and reward.'"
+        },
+        "3": {
+          "title": "4. Offer Practical Help",
+          "content": "Offer specific help like preparing food, running errands, or helping with funeral arrangements."
+        },
+        "4": {
+          "title": "5. Be Brief",
+          "content": "Keep your visit short unless the family specifically asks you to stay longer."
+        },
+        "5": {
+          "title": "6. Avoid Excessive Wailing",
+          "content": "Maintain composure and avoid loud wailing or excessive displays of grief, as this is discouraged in Islam."
+        }
+      }
+    },
+    "how-to-control-anger": {
+      "title": "How to Control Anger",
+      "description": "Islamic guidance for managing anger",
+      "steps": {
+        "0": {
+          "title": "1. Seek Refuge in Allah",
+          "content": "When you feel anger rising, say: 'A'udhu billahi min ash-shaytan ir-rajeem' (I seek refuge in Allah from Satan the accursed)."
+        },
+        "1": {
+          "title": "2. Stay Silent",
+          "content": "The Prophet (ﷺ) said: 'If one of you becomes angry, let him be silent.' Silence prevents you from saying things you'll regret."
+        },
+        "2": {
+          "title": "3. Change Position",
+          "content": "If standing, sit down. If sitting, lie down. The Prophet (ﷺ) taught this to change your physical state."
+        },
+        "3": {
+          "title": "4. Perform Wudu",
+          "content": "Make ablution with cold water. The Prophet (ﷺ) said anger is from Satan, and Satan is created from fire, which is extinguished by water."
+        },
+        "4": {
+          "title": "5. Remember Allah's Forgiveness",
+          "content": "Reflect on how Allah forgives you despite your mistakes. This should make you more forgiving of others."
+        },
+        "5": {
+          "title": "6. Think of Consequences",
+          "content": "Consider the negative consequences of acting on anger: broken relationships, regretful words, and loss of respect."
+        }
+      }
+    },
+    "how-to-practice-humility": {
+      "title": "How to Practice Humility",
+      "description": "Guide for developing humility in Islam",
+      "steps": {
+        "0": {
+          "title": "1. Remember Your Origin",
+          "content": "Reflect that you were created from dust and will return to dust. This reality should humble anyone."
+        },
+        "1": {
+          "title": "2. Acknowledge Allah's Favors",
+          "content": "Recognize that all your blessings, talents, and achievements are gifts from Allah, not your own doing."
+        },
+        "2": {
+          "title": "3. Serve Others",
+          "content": "The Prophet (ﷺ) served his family, mended his clothes, and helped with household chores despite being the leader of the Muslims."
+        },
+        "3": {
+          "title": "4. Avoid Boasting",
+          "content": "Don't boast about your wealth, knowledge, lineage, or accomplishments. The Prophet (ﷺ) said: 'Whoever has pride in his heart equal to an atom shall not enter Paradise.'"
+        },
+        "4": {
+          "title": "5. Accept Advice",
+          "content": "Be open to criticism and advice from others, regardless of their status. Truth can come from anyone."
+        },
+        "5": {
+          "title": "6. Treat Everyone Equally",
+          "content": "Show respect to the poor, elderly, and those of lower social status. The Prophet (ﷺ) said: 'The best of you are those who are best to their families.'"
+        }
+      }
+    },
+    "how-to-forgive-others": {
+      "title": "How to Forgive Others",
+      "description": "Islamic teachings on forgiveness and pardon",
+      "steps": {
+        "0": {
+          "title": "1. Remember Allah's Forgiveness",
+          "content": "Allah forgives you for countless sins. The Quran says: 'Let them pardon and overlook. Would you not like that Allah should forgive you?' (24:22)"
+        },
+        "1": {
+          "title": "2. Understand the Reward",
+          "content": "The Prophet (ﷺ) said: 'Charity does not decrease wealth, and Allah increases the honor of one who forgives.'"
+        },
+        "2": {
+          "title": "3. Put Yourself in Their Shoes",
+          "content": "Try to understand why the person wronged you. Perhaps they were going through difficulties or didn't realize the impact of their actions."
+        },
+        "3": {
+          "title": "4. Make Dua for Them",
+          "content": "Pray for the person who wronged you. This softens your heart and helps you let go of resentment."
+        },
+        "4": {
+          "title": "5. Let Go of Grudges",
+          "content": "Holding grudges only hurts you. The Prophet (ﷺ) said: 'Do not hate one another, do not envy one another, and be servants of Allah as brothers.'"
+        },
+        "5": {
+          "title": "6. Reconcile When Possible",
+          "content": "If appropriate, reach out to reconcile. The Prophet (ﷺ) said: 'It is not permissible for a Muslim to forsake his brother for more than three days.'"
+        }
+      }
+    },
+    "how-to-seek-knowledge": {
+      "title": "How to Seek Islamic Knowledge",
+      "description": "Guide for pursuing Islamic knowledge properly",
+      "steps": {
+        "0": {
+          "title": "1. Purify Your Intention",
+          "content": "Seek knowledge for Allah's sake, not for worldly gain or recognition. The Prophet (ﷺ) warned against seeking knowledge for show."
+        },
+        "1": {
+          "title": "2. Start with Basics",
+          "content": "Begin with fundamental knowledge: correct belief (Aqeedah), how to pray, basic Islamic rulings, and Quran recitation."
+        },
+        "2": {
+          "title": "3. Find Qualified Teachers",
+          "content": "Learn from knowledgeable, trustworthy scholars who follow the Quran and Sunnah. The Prophet (ﷺ) said: 'This knowledge will be carried by the trustworthy ones of every generation.'"
+        },
+        "3": {
+          "title": "4. Be Consistent",
+          "content": "Study regularly, even if it's just a little each day. The Prophet (ﷺ) said: 'The most beloved deeds to Allah are those done consistently.'"
+        },
+        "4": {
+          "title": "5. Practice What You Learn",
+          "content": "Apply your knowledge in your life. Knowledge without action is like a tree without fruit."
+        },
+        "5": {
+          "title": "6. Teach Others",
+          "content": "Share beneficial knowledge with others. The Prophet (ﷺ) said: 'The best of you are those who learn the Quran and teach it.'"
+        }
+      }
+    },
+    "how-to-make-tawbah": {
+      "title": "How to Make Tawbah (Repentance)",
+      "description": "Guide for sincere repentance from sins",
+      "steps": {
+        "0": {
+          "title": "1. Stop the Sin Immediately",
+          "content": "The first step is to stop committing the sin right away. You cannot repent while continuing the sin."
+        },
+        "1": {
+          "title": "2. Feel Genuine Remorse",
+          "content": "Feel sincere regret in your heart for having disobeyed Allah. The Prophet (ﷺ) said: 'Remorse is repentance.'"
+        },
+        "2": {
+          "title": "3. Seek Allah's Forgiveness",
+          "content": "Ask Allah to forgive you. Say: 'Astaghfirullah' (I seek Allah's forgiveness) and make sincere dua."
+        },
+        "3": {
+          "title": "4. Firmly Resolve Not to Return",
+          "content": "Make a firm intention never to return to that sin. This determination is essential for valid repentance."
+        },
+        "4": {
+          "title": "5. Make Amends if Needed",
+          "content": "If your sin involved wronging someone, seek their forgiveness and make amends. Return stolen property, apologize for harm caused, etc."
+        },
+        "5": {
+          "title": "6. Replace Bad with Good",
+          "content": "Follow up your sin with good deeds. Allah says: 'Indeed, good deeds do away with misdeeds' (Quran 11:114)."
+        },
+        "6": {
+          "title": "7. Never Despair",
+          "content": "No matter how great your sins, never lose hope in Allah's mercy. He says: 'Say, O My servants who have transgressed against themselves, do not despair of the mercy of Allah' (Quran 39:53)."
+        }
+      }
+    },
+    "understanding-riba": {
+      "title": "Understanding Riba (Interest)",
+      "description": "Learn about the prohibition of interest in Islam",
+      "steps": {
+        "0": {
+          "title": "1. What is Riba?",
+          "content": "Riba means 'increase' or 'excess'. In Islamic finance, it refers to any guaranteed interest on loaned money, regardless of the amount."
+        },
+        "1": {
+          "title": "2. Why is it Prohibited?",
+          "content": "Allah says: 'Allah has permitted trade and forbidden riba' (Quran 2:275). Riba exploits the needy and creates wealth without productive effort."
+        },
+        "2": {
+          "title": "3. Types of Riba",
+          "content": "Riba al-Nasiah: Interest on loans. Riba al-Fadl: Exchanging same commodities in unequal amounts (e.g., gold for gold with excess)."
+        },
+        "3": {
+          "title": "4. Severity of the Sin",
+          "content": "The Prophet (ﷺ) said riba has 73 types, the least of which is like committing adultery with one's own mother. Both the giver and taker are cursed."
+        },
+        "4": {
+          "title": "5. Alternatives",
+          "content": "Use Islamic banks, profit-sharing arrangements (Mudarabah), or interest-free loans (Qard Hasan) instead of conventional interest-based loans."
+        }
+      }
+    },
+    "halal-income": {
+      "title": "Earning Halal Income",
+      "description": "Guidelines for lawful earnings in Islam",
+      "steps": {
+        "0": {
+          "title": "1. Importance of Halal Income",
+          "content": "The Prophet (ﷺ) said: 'No one has ever eaten better food than what he earns from the work of his own hands.' Halal income is essential for accepted worship."
+        },
+        "1": {
+          "title": "2. Prohibited Industries",
+          "content": "Avoid income from: alcohol, gambling, pork, interest-based banking, adult entertainment, and anything harmful to society."
+        },
+        "2": {
+          "title": "3. Honest Dealings",
+          "content": "Be truthful in business. The Prophet (ﷺ) said: 'The truthful, trustworthy merchant will be with the prophets, truthful ones, and martyrs.'"
+        },
+        "3": {
+          "title": "4. Fair Pricing",
+          "content": "Don't exploit customers or hoard goods to raise prices. The Prophet (ﷺ) cursed those who hoard food to increase prices."
+        },
+        "4": {
+          "title": "5. Fulfill Contracts",
+          "content": "Honor all agreements and contracts. Allah says: 'O you who believe, fulfill your contracts' (Quran 5:1)."
+        },
+        "5": {
+          "title": "6. Pay Workers Promptly",
+          "content": "The Prophet (ﷺ) said: 'Give the worker his wages before his sweat dries.' Delaying payment is oppression."
+        }
+      }
+    },
+    "islamic-banking": {
+      "title": "Islamic Banking Basics",
+      "description": "Understanding Sharia-compliant banking",
+      "steps": {
+        "0": {
+          "title": "1. Core Principles",
+          "content": "Islamic banking prohibits interest (riba), excessive uncertainty (gharar), and gambling (maysir). Profits must come from real economic activity."
+        },
+        "1": {
+          "title": "2. Murabaha (Cost-Plus)",
+          "content": "The bank buys an asset and sells it to you at a disclosed profit margin. You pay in installments. The profit is fixed upfront, not interest."
+        },
+        "2": {
+          "title": "3. Mudarabah (Profit-Sharing)",
+          "content": "You provide capital, the bank manages it. Profits are shared according to agreed ratios; losses are borne by the capital provider."
+        },
+        "3": {
+          "title": "4. Musharakah (Partnership)",
+          "content": "Both parties contribute capital and share profits and losses according to their investment ratio."
+        },
+        "4": {
+          "title": "5. Ijara (Leasing)",
+          "content": "The bank buys an asset and leases it to you. You may have the option to purchase it at the end of the lease term."
+        },
+        "5": {
+          "title": "6. Choosing a Bank",
+          "content": "Look for banks with a Sharia supervisory board. Research their products and ensure they're genuinely compliant, not just rebranded conventional products."
+        }
+      }
+    },
+    "halal-investing": {
+      "title": "Halal Investing Guidelines",
+      "description": "How to invest in a Sharia-compliant manner",
+      "steps": {
+        "0": {
+          "title": "1. Screen for Prohibited Industries",
+          "content": "Avoid companies involved in: alcohol, tobacco, gambling, conventional banking/insurance, pork, weapons, and adult entertainment."
+        },
+        "1": {
+          "title": "2. Financial Ratios",
+          "content": "Many scholars require: debt-to-assets ratio below 33%, interest income below 5% of revenue, and cash/receivables below 50% of assets."
+        },
+        "2": {
+          "title": "3. Purification of Returns",
+          "content": "If a small portion of company income is from non-compliant sources, calculate and donate that percentage of your dividends to charity."
+        },
+        "3": {
+          "title": "4. Islamic Funds",
+          "content": "Consider Sharia-compliant mutual funds and ETFs that are pre-screened by Islamic scholars."
+        },
+        "4": {
+          "title": "5. Real Estate",
+          "content": "Property investment is generally halal. Avoid financing with conventional mortgages; use Islamic home financing instead."
+        },
+        "5": {
+          "title": "6. Consult Scholars",
+          "content": "When in doubt, consult knowledgeable scholars or use established Islamic finance screening services."
+        }
+      }
+    },
+    "debt-management": {
+      "title": "Islamic Debt Management",
+      "description": "Managing debt according to Islamic principles",
+      "steps": {
+        "0": {
+          "title": "1. Avoid Unnecessary Debt",
+          "content": "The Prophet (ﷺ) sought refuge from debt. Only borrow when truly necessary and have a clear plan to repay."
+        },
+        "1": {
+          "title": "2. Document All Debts",
+          "content": "Allah commands: 'When you contract a debt for a specified term, write it down' (Quran 2:282). This protects both parties."
+        },
+        "2": {
+          "title": "3. Intend to Repay",
+          "content": "The Prophet (ﷺ) said: 'Whoever takes people's money intending to repay it, Allah will help him repay. Whoever takes it intending to waste it, Allah will waste him.'"
+        },
+        "3": {
+          "title": "4. Repay Promptly",
+          "content": "Don't delay repayment if you have the means. The Prophet (ﷺ) said: 'Delay in payment by a wealthy person is injustice.'"
+        },
+        "4": {
+          "title": "5. Be Lenient as a Creditor",
+          "content": "If your debtor is struggling, give them time. Allah says: 'If someone is in hardship, then let there be postponement until ease' (Quran 2:280)."
+        },
+        "5": {
+          "title": "6. Forgive if Possible",
+          "content": "Forgiving a debt is highly rewarded. Allah says: 'And if you give charity, it is better for you' (Quran 2:280)."
+        }
+      }
+    }
+  },
+  "duaTranslations": {
+    "q1": "اے ہمارے رب! ہمیں دنیا میں بھلائی دے اور آخرت میں بھلائی دے اور ہمیں آگ کے عذاب سے بچا۔",
+    "q2": "اے ہمارے رب! ہم نے اپنی جانوں پر ظلم کیا، اور اگر تو ہمیں نہ بخشے اور ہم پر رحم نہ کرے تو ہم ضرور نقصان اٹھانے والوں میں سے ہوں گے۔",
+    "q3": "اے میرے رب! میرا سینہ کھول دے، اور میرا کام آسان کر دے، اور میری زبان کی گرہ کھول دے تاکہ وہ میری بات سمجھ سکیں۔",
+    "q4": "اے میرے رب! مجھے علم میں اضافہ عطا فرما۔",
+    "q5": "اے میرے رب! میں شیطانوں کے وسوسوں سے تیری پناہ مانگتا ہوں، اور اے میرے رب! میں تیری پناہ مانگتا ہوں کہ وہ میرے پاس آئیں۔",
+    "q6": "اے ہمارے رب! ہمارے گناہ معاف فرما اور ہمارے معاملات میں ہماری زیادتیاں بخش دے، اور ہمارے قدم جما دے، اور ہمیں کافر قوم پر غلبہ عطا فرما۔",
+    "q7": "اے ہمارے رب! ہمیں ہماری بیویوں اور اولاد سے آنکھوں کی ٹھنڈک عطا فرما اور ہمیں متقیوں کا امام بنا۔",
+    "q8": "اے میرے رب! مجھے توفیق دے کہ میں تیری اس نعمت کا شکر ادا کروں جو تو نے مجھ پر اور میرے والدین پر کی ہے اور یہ کہ میں ایسا نیک عمل کروں جو تجھے پسند ہو۔",
+    "q9": "اے ہمارے رب! جب تو نے ہمیں ہدایت دے دی ہے تو ہمارے دلوں کو ٹیڑھا نہ کر اور ہمیں اپنے پاس سے رحمت عطا فرما۔ بے شک تو ہی بڑا عطا کرنے والا ہے۔",
+    "q10": "اے ہمارے رب! مجھے، میرے والدین کو اور مومنوں کو اس دن بخش دے جب حساب قائم ہوگا۔",
+    "q11": "اے ہمارے رب! ہم پر صبر نازل فرما اور ہمارے قدم جما دے اور ہمیں کافر قوم پر غلبہ عطا فرما۔",
+    "q12": "اے ہمارے رب! ہم پر صبر نازل فرما اور ہمیں مسلمان ہونے کی حالت میں وفات دے۔",
+    "q13": "اے ہمارے رب! ہمیں ظالم قوم کے لیے آزمائش نہ بنا اور اپنی رحمت سے ہمیں کافر قوم سے نجات دے۔",
+    "q14": "اے میرے رب! میں تیری پناہ مانگتا ہوں کہ تجھ سے وہ چیز مانگوں جس کا مجھے علم نہیں۔",
+    "q15": "اے ہمارے رب! ہمیں کافروں کے لیے آزمائش نہ بنا اور ہمیں بخش دے، اے ہمارے رب! بے شک تو ہی غالب، حکمت والا ہے۔",
+    "q16": "اے ہمارے رب! ہم ایمان لائے، پس ہمیں بخش دے اور ہم پر رحم فرما، اور تو سب سے بہتر رحم کرنے والا ہے۔",
+    "q17": "اے میرے رب! بخش دے اور رحم فرما، اور تو سب سے بہتر رحم کرنے والا ہے۔",
+    "q18": "اے ہمارے رب! ہمیں بخش دے اور ہمارے ان بھائیوں کو بھی جو ہم سے پہلے ایمان لائے، اور ہمارے دلوں میں ایمان والوں کے لیے کینہ نہ رکھ۔ اے ہمارے رب! بے شک تو بڑا شفیق، رحم والا ہے۔",
+    "q19": "اے میرے رب! مجھے اپنے پاس سے پاکیزہ اولاد عطا فرما۔ بے شک تو دعا سننے والا ہے۔",
+    "q20": "اے میرے رب! مجھے نماز قائم کرنے والا بنا اور میری اولاد کو بھی۔ اے ہمارے رب! میری دعا قبول فرما۔",
+    "q21": "اے میرے رب! مجھے اکیلا نہ چھوڑ اور تو سب سے بہتر وارث ہے۔",
+    "q22": "اے میرے رب! مجھے توفیق دے کہ میں تیری اس نعمت کا شکر ادا کروں جو تو نے مجھ پر اور میرے والدین پر کی ہے اور یہ کہ میں ایسا نیک عمل کروں جو تجھے پسند ہو اور مجھے اپنی رحمت سے اپنے نیک بندوں میں داخل فرما۔",
+    "q23": "تمام تعریفیں اللہ کے لیے ہیں جس نے ہمیں اس کی ہدایت دی، اور اگر اللہ ہمیں ہدایت نہ دیتا تو ہم ہرگز ہدایت نہ پاتے۔",
+    "q24": "اے ہمارے رب! ہمیں اپنے پاس سے رحمت عطا فرما اور ہمارے معاملے میں ہمارے لیے رشد و ہدایت مہیا فرما۔",
+    "q25": "اے میرے رب! مجھے سچائی کے ساتھ داخل کر اور سچائی کے ساتھ نکال اور اپنے پاس سے میرے لیے مددگار قوت عطا فرما۔",
+    "q26": "اے ہمارے رب! ہمارے لیے ہمارا نور مکمل فرما اور ہمیں بخش دے۔ بے شک تو ہر چیز پر قادر ہے۔",
+    "q27": "اے ہمارے رب! ہم نے تجھ پر بھروسہ کیا اور تیری طرف رجوع کیا اور تیری ہی طرف لوٹنا ہے۔",
+    "q28": "اے ہمارے رب! اگر ہم بھول جائیں یا غلطی کریں تو ہماری پکڑ نہ فرما۔",
+    "q29": "اے ہمارے رب! ہم پر ایسا بوجھ نہ ڈال جیسا تو نے ہم سے پہلے لوگوں پر ڈالا تھا۔",
+    "q30": "اے ہمارے رب! ہم پر وہ بوجھ نہ ڈال جس کی ہم میں طاقت نہیں، اور ہمیں معاف فرما، اور ہمیں بخش دے، اور ہم پر رحم فرما۔ تو ہمارا مولا ہے، پس ہمیں کافر قوم پر غلبہ عطا فرما۔",
+    "q31": "اے میرے رب! اس شہر کو امن والا بنا دے اور مجھے اور میرے بیٹوں کو بت پرستی سے بچا۔",
+    "q32": "اے ہمارے رب! ہم دونوں کو اپنا فرمانبردار بنا اور ہماری نسل سے ایک ایسی امت بنا جو تیری فرمانبردار ہو، اور ہمیں ہمارے مناسک دکھا اور ہماری توبہ قبول فرما۔ بے شک تو بہت توبہ قبول کرنے والا، رحم والا ہے۔",
+    "q33": "اے میرے رب! بے شک میں نے اپنی جان پر ظلم کیا، پس مجھے بخش دے۔",
+    "q34": "اے میرے رب! بے شک جو بھی بھلائی تو مجھ پر نازل فرمائے، میں اس کا محتاج ہوں۔",
+    "q35": "تیرے سوا کوئی معبود نہیں، تو پاک ہے، بے شک میں ظالموں میں سے تھا۔",
+    "q36": "بے شک مجھے تکلیف پہنچی ہے اور تو سب سے زیادہ رحم کرنے والا ہے۔",
+    "q37": "اے میرے رب! مجھے توفیق دے کہ میں تیری اس نعمت کا شکر ادا کروں جو تو نے مجھ پر اور میرے والدین پر کی ہے۔",
+    "q38": "اے میرے رب! مجھے اور میرے والدین کو اور جو میرے گھر میں مومن ہو کر داخل ہو اسے اور تمام مومن مردوں اور مومن عورتوں کو بخش دے۔",
+    "q39": "اے ہمارے رب! ہم سے جہنم کا عذاب ٹال دے، بے شک اس کا عذاب ہمیشہ چمٹنے والا ہے۔",
+    "q40": "اے ہمارے رب! بے شک ہم ایمان لائے، پس ہمارے گناہ بخش دے اور ہمیں آگ کے عذاب سے بچا۔",
+    "q41": "اے ہمارے رب! تو نے یہ بے مقصد نہیں بنایا، تو پاک ہے، پس ہمیں آگ کے عذاب سے بچا۔",
+    "q42": "اے ہمارے رب! بے شک تو لوگوں کو اس دن جمع کرنے والا ہے جس میں کوئی شک نہیں۔ بے شک اللہ وعدہ خلافی نہیں کرتا۔",
+    "h1": "اللہ کے نام سے جس کے نام کے ساتھ زمین اور آسمان میں کوئی چیز نقصان نہیں پہنچا سکتی، اور وہ سب سننے والا، سب جاننے والا ہے۔",
+    "h2": "میں اللہ عظیم سے معافی مانگتا ہوں جس کے سوا کوئی معبود نہیں، وہ زندہ ہے، قائم رکھنے والا ہے، اور میں اس کی طرف توبہ کرتا ہوں۔",
+    "h3": "اے اللہ! میں تجھ سے ہدایت، تقویٰ، پاکدامنی اور بے نیازی کا سوال کرتا ہوں۔",
+    "h4": "اے اللہ! میں تیری پناہ مانگتا ہوں فکر اور غم سے، عاجزی اور سستی سے، بزدلی اور بخل سے، اور قرض کے بوجھ اور لوگوں کے غلبے سے۔",
+    "h5": "اے اللہ! مجھے میرے جسم میں عافیت دے۔ اے اللہ! مجھے میری سماعت میں عافیت دے۔ اے اللہ! مجھے میری بصارت میں عافیت دے۔ تیرے سوا کوئی معبود نہیں۔",
+    "h6": "پاک ہے وہ ذات جس نے یہ ہمارے لیے مسخر کر دیا اور ہم میں اس کی طاقت نہ تھی، اور بے شک ہمیں اپنے رب کی طرف لوٹنا ہے۔",
+    "h7": "اللہ کے نام سے اور اللہ کی برکت پر۔",
+    "h8": "تمام تعریفیں اللہ کے لیے ہیں جس نے ہمیں کھلایا، پلایا اور ہمیں مسلمان بنایا۔",
+    "h9": "اے اللہ! تیرے نام سے میں مرتا ہوں اور جیتا ہوں۔",
+    "h10": "تمام تعریفیں اللہ کے لیے ہیں جس نے ہمیں موت دینے کے بعد زندہ کیا اور اسی کی طرف دوبارہ اٹھنا ہے۔",
+    "h11": "ہم نے صبح کی اور تمام بادشاہت اللہ کی ہوئی، اور تمام تعریف اللہ کے لیے ہے، اللہ کے سوا کوئی معبود نہیں وہ اکیلا ہے اس کا کوئی شریک نہیں۔",
+    "h12": "اے اللہ! تیری مدد سے ہم نے صبح کی اور تیری مدد سے شام کی، تیری مدد سے ہم جیتے ہیں اور تیری مدد سے مرتے ہیں، اور تیری ہی طرف دوبارہ اٹھنا ہے۔",
+    "h13": "اے اللہ! میں تجھ سے دنیا اور آخرت میں عافیت کا سوال کرتا ہوں۔",
+    "h14": "اے اللہ! میں تیری پناہ مانگتا ہوں کفر اور فقر سے، اور قبر کے عذاب سے تیری پناہ مانگتا ہوں۔",
+    "h15": "اے اللہ! میری کمزوریاں چھپا دے اور میرے خوف کو امن میں بدل دے۔",
+    "h16": "اے اللہ! تو میرا رب ہے، تیرے سوا کوئی معبود نہیں۔ تو نے مجھے پیدا کیا اور میں تیرا بندہ ہوں، اور میں تیرے عہد اور وعدے پر ہوں جتنا مجھ سے ہو سکے۔",
+    "h17": "میں اللہ سے معافی مانگتا ہوں اور اس کی طرف توبہ کرتا ہوں۔",
+    "h18": "اے میرے رب! مجھے بخش دے اور میری توبہ قبول فرما۔ بے شک تو بہت توبہ قبول کرنے والا، رحم والا ہے۔",
+    "h19": "اے اللہ! مجھے ہدایت دے اور مجھے سیدھے راستے پر رکھ۔",
+    "h20": "اے اللہ! میں تجھ سے نفع بخش علم، پاکیزہ رزق اور قبول ہونے والے عمل کا سوال کرتا ہوں۔",
+    "h21": "اے اللہ! جو تو نے مجھے سکھایا ہے اس سے مجھے نفع دے، جو مجھے نفع دے وہ مجھے سکھا، اور مجھے علم میں اضافہ عطا فرما۔",
+    "h22": "اے اللہ! اے لوگوں کے رب! تکلیف دور فرما، شفا دے تو ہی شفا دینے والا ہے، تیری شفا کے سوا کوئی شفا نہیں، ایسی شفا جو کوئی بیماری باقی نہ چھوڑے۔",
+    "h23": "میں اللہ عظیم سے جو عرش عظیم کا رب ہے سوال کرتا ہوں کہ وہ تمہیں شفا دے۔",
+    "h24": "اے اللہ! ہم تجھ سے اس سفر میں نیکی اور تقویٰ اور ایسے عمل کا سوال کرتے ہیں جو تجھے پسند ہو۔",
+    "h25": "اے اللہ! ہمارا یہ سفر ہم پر آسان فرما اور اس کی دوری ہمارے لیے کم کر دے۔",
+    "h26": "تمام تعریفیں اللہ کے لیے ہیں جس نے مجھے یہ کھلایا اور بغیر میری کسی طاقت اور قوت کے مجھے یہ رزق دیا۔",
+    "h27": "اے اللہ! ہمارے لیے اس میں برکت ڈال اور ہمیں اس سے بہتر کھلا۔",
+    "h28": "اے اللہ! مجھے اپنے عذاب سے بچا اس دن جب تو اپنے بندوں کو اٹھائے گا۔",
+    "h29": "اے اللہ! میں نے اپنے آپ کو تیرے سپرد کیا، اپنا معاملہ تیرے حوالے کیا، اپنا رخ تیری طرف کیا، اور اپنی پشت تیرے سہارے لگائی۔",
+    "h30": "اللہ کے نام سے ہم داخل ہوئے اور اللہ کے نام سے ہم نکلے اور اللہ اپنے رب پر ہم نے بھروسہ کیا۔",
+    "h31": "اے اللہ! میرے لیے اپنی رحمت کے دروازے کھول دے۔",
+    "h32": "اے اللہ! میں تجھ سے تیرا فضل مانگتا ہوں۔",
+    "h33": "اللہ کے نام سے، میں نے اللہ پر بھروسہ کیا، اور اللہ کے بغیر نہ کوئی طاقت ہے نہ قوت۔",
+    "h34": "اے اللہ! اسے نفع بخش بارش بنا۔",
+    "h35": "پاک ہے وہ ذات جس کی حمد کے ساتھ بادل گرجتا ہے اور فرشتے اس کے خوف سے تسبیح کرتے ہیں۔",
+    "h36": "اے اللہ! ہمارے ارد گرد برسا، ہم پر نہیں۔",
+    "h37": "اے اللہ! اپنے ذکر، شکر اور حسن عبادت پر میری مدد فرما۔",
+    "h38": "ہر حال میں اللہ کا شکر ہے۔",
+    "h39": "اے اللہ! ان دونوں کو برکت عطا فرما اور ان پر برکت نازل فرما اور انہیں رزق عطا فرما۔",
+    "h40": "اللہ تمہارے لیے برکت دے، اور تم پر برکت نازل فرمائے، اور تم دونوں کو خیر میں جمع فرمائے۔",
+    "h41": "اللہ ہمارے لیے کافی ہے اور وہ بہترین کارساز ہے۔",
+    "h42": "اللہ کے بغیر نہ کوئی طاقت ہے نہ قوت۔",
+    "h43": "اے اللہ! میں تجھ سے جنت کا سوال کرتا ہوں اور آگ سے تیری پناہ مانگتا ہوں۔",
+    "h44": "میں اللہ کے مکمل کلمات سے اس کی مخلوق کے شر سے پناہ مانگتا ہوں۔",
+    "h45": "اے اللہ! میں تیری پناہ مانگتا ہوں اپنے نفس کے شر سے اور ہر اس جاندار کے شر سے جس کی پیشانی تیرے ہاتھ میں ہے۔",
+    "h46": "اے اللہ! میرا دین درست کر دے جو میرے معاملے کی حفاظت ہے، اور میری دنیا درست کر دے جس میں میری معیشت ہے، اور میری آخرت درست کر دے جہاں مجھے لوٹنا ہے۔",
+    "h47": "اے اللہ! میرے تمام گناہ بخش دے، چھوٹے اور بڑے، پہلے اور بعد کے، ظاہر اور پوشیدہ۔",
+    "h48": "اے اللہ! میں تیری پناہ مانگتا ہوں برص، جنون، کوڑھ اور بری بیماریوں سے۔",
+    "h49": "اے اللہ! تیرے نام سے میں جیتا ہوں اور مرتا ہوں۔",
+    "h50": "اے اللہ! تو سفر میں ساتھی ہے اور گھر والوں میں نگہبان۔",
+    "h51": "میں اللہ عظیم کی، اس کے کریم چہرے کی اور اس کی قدیم سلطنت کی پناہ مانگتا ہوں شیطان مردود سے۔",
+    "h52": "اے اللہ! میں تجھ سے معاملات میں ثابت قدمی اور ہدایت پر عزم کا سوال کرتا ہوں۔",
+    "c1": "ہم لوٹنے والے ہیں، توبہ کرنے والے ہیں، عبادت کرنے والے ہیں، اپنے رب کی حمد کرنے والے ہیں۔",
+    "c2": "میں اللہ کے مکمل کلمات سے اس کی مخلوق کے شر سے پناہ مانگتا ہوں۔",
+    "c3": "ہمیں اللہ کے فضل اور رحمت سے بارش ملی۔",
+    "c4": "کوئی حرج نہیں، یہ پاکیزگی ہے ان شاء اللہ۔",
+    "c5": "اے دلوں کو پھیرنے والے! میرے دل کو اپنے دین پر ثابت رکھ۔",
+    "c6": "اے اللہ! میں تیری پناہ مانگتا ہوں تیری نعمت کے زوال سے، تیری عافیت کے بدلنے سے، تیرے عذاب کے اچانک آنے سے اور تیری تمام ناراضی سے۔",
+    "c7": "تمام تعریفیں اللہ کے لیے ہیں جس کی نعمت سے نیک کام مکمل ہوتے ہیں۔",
+    "c8": "اے اللہ! میری حفاظت فرما میرے آگے سے، میرے پیچھے سے، میرے دائیں سے، میرے بائیں سے اور میرے اوپر سے۔"
+  },
+  "azkarTranslations": {
+    "m1": "آیت الکرسی - اللہ! اس کے سوا کوئی معبود نہیں، وہ زندہ ہے، سب کو قائم رکھنے والا ہے۔ نہ اسے اونگھ آتی ہے نہ نیند۔ جو کچھ آسمانوں میں ہے اور جو کچھ زمین میں ہے سب اسی کا ہے۔ کون ہے جو اس کی اجازت کے بغیر اس کے سامنے سفارش کرے؟ وہ جانتا ہے جو ان کے آگے ہے اور جو ان کے پیچھے ہے، اور وہ اس کے علم میں سے کسی چیز کا احاطہ نہیں کر سکتے مگر جتنا وہ چاہے۔ اس کی کرسی آسمانوں اور زمین پر محیط ہے، اور ان کی حفاظت اسے نہیں تھکاتی۔ وہ بلند مرتبہ، عظیم ہے۔",
+    "m2": "سورۃ الاخلاص - کہو: وہ اللہ ایک ہے۔ اللہ بے نیاز ہے۔ نہ اس سے کوئی پیدا ہوا نہ وہ پیدا ہوا۔ اور نہ کوئی اس کا ہمسر ہے۔",
+    "m3": "سورۃ الفلق - کہو: میں صبح کے رب کی پناہ مانگتا ہوں، اس کی مخلوق کے شر سے، اندھیری رات کے شر سے جب وہ چھا جائے، گرہوں میں پھونکنے والیوں کے شر سے، اور حسد کرنے والے کے شر سے جب وہ حسد کرے۔",
+    "m4": "سورۃ الناس - کہو: میں لوگوں کے رب کی پناہ مانگتا ہوں، لوگوں کے بادشاہ کی، لوگوں کے معبود کی، وسوسہ ڈالنے والے پیچھے ہٹ جانے والے کے شر سے، جو لوگوں کے سینوں میں وسوسہ ڈالتا ہے، جنوں اور انسانوں میں سے۔",
+    "m5": "ہم نے اسلام کی فطرت پر صبح کی، اخلاص کے کلمے پر، اپنے نبی محمد ﷺ کے دین پر، اور اپنے باپ ابراہیم کی ملت پر جو سیدھے مسلمان تھے اور مشرکوں میں سے نہ تھے۔",
+    "m6": "اے اللہ! میں تجھ سے نفع بخش علم، پاکیزہ رزق اور قبول ہونے والے عمل کا سوال کرتا ہوں۔",
+    "m7": "میں اللہ سے معافی مانگتا ہوں اور اس کی طرف توبہ کرتا ہوں۔",
+    "m8": "اے اللہ! میں تیری پناہ مانگتا ہوں فکر اور غم سے، کمزوری اور سستی سے، بزدلی اور بخل سے، اور قرض کے بوجھ اور لوگوں کے غلبے سے۔",
+    "m9": "اے میرے رب! تیری ہی حمد ہے جیسا کہ تیرے چہرے کی عظمت اور تیری سلطنت کی بڑائی کے شایان شان ہے۔",
+    "m10": "اے اللہ! تو میرا رب ہے، تیرے سوا کوئی معبود نہیں۔ تجھ پر میں نے بھروسہ کیا اور تو عرش عظیم کا رب ہے۔ جو اللہ چاہے ہو اور جو نہ چاہے نہ ہو۔ اللہ بلند و عظیم کے بغیر نہ کوئی طاقت ہے نہ قوت۔ میں جانتا ہوں کہ اللہ ہر چیز پر قادر ہے اور اللہ نے ہر چیز کو علم میں گھیر رکھا ہے۔ اے اللہ! میں تیری پناہ مانگتا ہوں اپنے نفس کے شر سے اور ہر جاندار کے شر سے جس کی پیشانی تیرے ہاتھ میں ہے۔ بے شک میرا رب سیدھے راستے پر ہے۔",
+    "m11": "ہم نے صبح کی اور تمام بادشاہت اللہ کی ہوئی، اور تمام تعریف اللہ کے لیے ہے۔ اللہ کے سوا کوئی معبود نہیں وہ اکیلا ہے اس کا کوئی شریک نہیں، اسی کی بادشاہت ہے اور اسی کے لیے تعریف ہے، اور وہ ہر چیز پر قادر ہے۔ اے میرے رب! میں تجھ سے آج کے دن کی بھلائی اور اس کے بعد کی بھلائی مانگتا ہوں، اور آج کے دن کے شر اور اس کے بعد کے شر سے تیری پناہ مانگتا ہوں۔ اے میرے رب! سستی اور بڑھاپے کی برائی سے تیری پناہ مانگتا ہوں۔ اے میرے رب! آگ کے عذاب اور قبر کے عذاب سے تیری پناہ مانگتا ہوں۔",
+    "m12": "اے اللہ! تو میرا رب ہے۔ تیرے سوا کوئی معبود نہیں۔ تو نے مجھے پیدا کیا اور میں تیرا بندہ ہوں۔ میں تیرے عہد اور وعدے پر ہوں جتنا مجھ سے ہو سکے۔ میں اپنے کیے سے تیری پناہ مانگتا ہوں۔ میں تیری نعمتوں کا اقرار کرتا ہوں اور اپنے گناہوں کا اعتراف کرتا ہوں۔ پس مجھے بخش دے کیونکہ تیرے سوا گناہ کوئی نہیں بخشتا۔ (سید الاستغفار)",
+    "m13": "میں اللہ کو رب مان کر، اسلام کو دین مان کر اور محمد ﷺ کو نبی مان کر راضی ہوں۔",
+    "m14": "اے اللہ! میں نے صبح کی اور میں تجھے، تیرے عرش کے اٹھانے والوں کو، تیرے فرشتوں کو اور تیری تمام مخلوق کو گواہ بناتا ہوں کہ تو ہی اللہ ہے، تیرے سوا کوئی معبود نہیں، تو اکیلا ہے تیرا کوئی شریک نہیں، اور محمد تیرے بندے اور رسول ہیں۔",
+    "m15": "اے اللہ! جو بھی نعمت مجھے یا تیری کسی مخلوق کو ملی ہے وہ صرف تیری طرف سے ہے، تو اکیلا ہے تیرا کوئی شریک نہیں۔ پس تیرے ہی لیے حمد ہے اور تیرا ہی شکر ہے۔",
+    "m16": "اللہ مجھے کافی ہے، اس کے سوا کوئی معبود نہیں، اسی پر میں نے بھروسہ کیا اور وہ عرش عظیم کا رب ہے۔",
+    "m17": "اللہ کے نام سے جس کے نام کے ساتھ زمین اور آسمان میں کوئی چیز نقصان نہیں پہنچا سکتی، اور وہ سب سننے والا، سب جاننے والا ہے۔",
+    "m18": "اے اللہ! تیری مدد سے ہم نے صبح کی اور تیری مدد سے شام کی، تیری مدد سے ہم جیتے ہیں اور تیری مدد سے مرتے ہیں، اور تیری ہی طرف آخری لوٹنا ہے۔",
+    "m19": "اللہ پاک ہے اور اس کی حمد ہے، اس کی مخلوق کی تعداد کے برابر، اس کی رضا کے برابر، اس کے عرش کے وزن کے برابر اور اس کے کلمات کی روشنائی کے برابر۔",
+    "m20": "اے اللہ! مجھے میرے جسم میں عافیت دے۔ اے اللہ! مجھے میری سماعت میں عافیت دے۔ اے اللہ! مجھے میری بصارت میں عافیت دے۔ تیرے سوا کوئی معبود نہیں۔",
+    "m21": "اے اللہ! میں تیری پناہ مانگتا ہوں کفر اور فقر سے، اور قبر کے عذاب سے تیری پناہ مانگتا ہوں۔ تیرے سوا کوئی معبود نہیں۔",
+    "m22": "اے اللہ! میں تجھ سے دنیا اور آخرت میں معافی اور عافیت مانگتا ہوں۔ اے اللہ! میں تجھ سے اپنے دین، دنیا، اہل اور مال میں معافی اور عافیت مانگتا ہوں۔ اے اللہ! میری کمزوریاں چھپا دے اور میرے خوف کو امن میں بدل دے۔ اے اللہ! میری حفاظت فرما میرے آگے سے، پیچھے سے، دائیں سے، بائیں سے اور اوپر سے۔ اور میں تیری عظمت کی پناہ مانگتا ہوں کہ نیچے سے ہلاک کیا جاؤں۔",
+    "m23": "اے زندہ! اے قائم رکھنے والے! تیری رحمت سے میں مدد مانگتا ہوں، میرے تمام معاملات درست کر دے اور مجھے پل بھر کے لیے بھی میرے نفس کے حوالے نہ کر۔",
+    "m24": "ہم نے صبح کی اور تمام بادشاہت اللہ رب العالمین کی ہوئی۔ اے اللہ! میں تجھ سے آج کے دن کی بھلائی مانگتا ہوں، اس کی فتح، مدد، نور، برکت اور ہدایت۔ اور اس میں جو شر ہے اور اس کے بعد جو شر ہے اس سے تیری پناہ مانگتا ہوں۔",
+    "m25": "اے اللہ! غیب اور حاضر کے جاننے والے، آسمانوں اور زمین کے پیدا کرنے والے، ہر چیز کے رب اور مالک! میں گواہی دیتا ہوں کہ تیرے سوا کوئی معبود نہیں۔ میں اپنے نفس کے شر سے، شیطان کے شر اور اس کے شرک سے، اور اپنے آپ پر برائی کرنے یا کسی مسلمان تک پہنچانے سے تیری پناہ مانگتا ہوں۔",
+    "m26": "میں اللہ کے مکمل کلمات سے اس کی مخلوق کے شر سے پناہ مانگتا ہوں۔",
+    "m27": "اے اللہ! ہمارے نبی محمد پر درود، سلام اور برکت نازل فرما۔",
+    "m28": "اے اللہ! ہم تیری پناہ مانگتے ہیں جانتے بوجھتے تیرے ساتھ کسی کو شریک کرنے سے، اور جو ہم نہیں جانتے اس کے لیے تجھ سے معافی مانگتے ہیں۔",
+    "m29": "اللہ کے سوا کوئی معبود نہیں وہ اکیلا ہے اس کا کوئی شریک نہیں۔ اسی کی بادشاہت ہے اور اسی کے لیے تعریف ہے اور وہ ہر چیز پر قادر ہے۔",
+    "m30": "اللہ پاک ہے اور اس کی حمد ہے۔",
+    "e1": "آیت الکرسی - جو شام کو پڑھے وہ صبح تک جنوں سے محفوظ رہے گا۔",
+    "e2": "سورۃ الاخلاص - صبح و شام پڑھنا ہر چیز سے کافی ہے۔",
+    "e3": "سورۃ الفلق - صبح کے رب کی پناہ مانگو۔",
+    "e4": "سورۃ الناس - لوگوں کے رب کی پناہ مانگو۔",
+    "e5": "ہم نے شام کی اور تمام بادشاہت اللہ کی ہوئی۔ اے میرے رب! میں تجھ سے آج کی رات کی بھلائی اور اس کے بعد کی بھلائی مانگتا ہوں، اور آج کی رات کے شر اور اس کے بعد کے شر سے تیری پناہ مانگتا ہوں۔",
+    "e6": "اے اللہ! تو میرا رب ہے۔ تیرے سوا کوئی معبود نہیں۔ تو نے مجھے پیدا کیا اور میں تیرا بندہ ہوں۔ (سید الاستغفار) - جو یقین کے ساتھ شام کو پڑھے اور اس رات فوت ہو جائے تو جنت میں داخل ہوگا۔",
+    "e7": "میں اللہ کو رب مان کر، اسلام کو دین مان کر اور محمد کو نبی مان کر راضی ہوں۔ جو صبح و شام کہے، قیامت کے دن اللہ اسے راضی کرے گا۔",
+    "e8": "اے اللہ! میں نے شام کی اور میں تجھے، تیرے عرش کے اٹھانے والوں کو، تیرے فرشتوں کو اور تیری تمام مخلوق کو گواہ بناتا ہوں کہ تو ہی اللہ ہے۔ جو کہے اسے آگ سے آزاد کیا جائے گا۔",
+    "e9": "اے اللہ! آج شام جو بھی نعمت مجھے یا تیری کسی مخلوق کو ملی ہے وہ صرف تیری طرف سے ہے۔ جو کہے اس نے اس دن کا شکر ادا کر دیا۔",
+    "e10": "اللہ مجھے کافی ہے، اس کے سوا کوئی معبود نہیں، اسی پر میں نے بھروسہ کیا اور وہ عرش عظیم کا رب ہے۔ اللہ اسے ہر معاملے میں کافی ہو جائے گا۔",
+    "e11": "اللہ کے نام سے جس کے نام کے ساتھ زمین اور آسمان میں کوئی چیز نقصان نہیں پہنچا سکتی۔ اسے کوئی چیز نقصان نہیں پہنچائے گی۔",
+    "e12": "اے اللہ! تیری مدد سے ہم نے شام کی اور تیری مدد سے صبح کی، تیری مدد سے ہم جیتے ہیں اور تیری مدد سے مرتے ہیں، اور تیری ہی طرف آخری لوٹنا ہے۔",
+    "e13": "ہم نے اسلام کی فطرت پر شام کی، اخلاص کے کلمے پر، اپنے نبی محمد ﷺ کے دین پر، اور اپنے باپ ابراہیم کی ملت پر۔",
+    "e14": "اللہ پاک ہے اور اس کی حمد ہے، اس کی مخلوق کی تعداد کے برابر، اس کی رضا کے برابر، اس کے عرش کے وزن کے برابر اور اس کے کلمات کی روشنائی کے برابر۔",
+    "e15": "اے اللہ! مجھے میرے جسم میں عافیت دے۔ اے اللہ! مجھے میری سماعت میں عافیت دے۔ اے اللہ! مجھے میری بصارت میں عافیت دے۔ تیرے سوا کوئی معبود نہیں۔",
+    "e16": "اے اللہ! میں تیری پناہ مانگتا ہوں کفر اور فقر سے، اور قبر کے عذاب سے تیری پناہ مانگتا ہوں۔ تیرے سوا کوئی معبود نہیں۔",
+    "e17": "اے اللہ! میں تجھ سے دنیا اور آخرت میں معافی اور عافیت مانگتا ہوں۔ اے اللہ! میری کمزوریاں چھپا دے اور میرے خوف کو امن میں بدل دے۔ اے اللہ! ہر طرف سے میری حفاظت فرما۔",
+    "e18": "اے زندہ! اے قائم رکھنے والے! تیری رحمت سے میں مدد مانگتا ہوں، میرے تمام معاملات درست کر دے اور مجھے پل بھر کے لیے بھی میرے نفس کے حوالے نہ کر۔",
+    "e19": "ہم نے شام کی اور تمام بادشاہت اللہ رب العالمین کی ہوئی۔ اے اللہ! میں تجھ سے آج کی رات کی بھلائی مانگتا ہوں، اس کی فتح، مدد، نور، برکت اور ہدایت۔",
+    "e20": "اے اللہ! غیب اور حاضر کے جاننے والے، آسمانوں اور زمین کے پیدا کرنے والے! میں اپنے نفس کے شر سے اور شیطان کے شر اور اس کے شرک سے تیری پناہ مانگتا ہوں۔",
+    "e21": "میں اللہ کے مکمل کلمات سے اس کی مخلوق کے شر سے پناہ مانگتا ہوں۔",
+    "e22": "اے اللہ! ہمارے نبی محمد پر درود، سلام اور برکت نازل فرما۔ جو صبح و شام درود بھیجے اسے نبی ﷺ کی شفاعت ملے گی۔",
+    "e23": "اے اللہ! ہم تیری پناہ مانگتے ہیں جانتے بوجھتے تیرے ساتھ کسی کو شریک کرنے سے، اور جو ہم نہیں جانتے اس کے لیے تجھ سے معافی مانگتے ہیں۔",
+    "e24": "اے اللہ! میں تیری پناہ مانگتا ہوں فکر اور غم سے، کمزوری اور سستی سے، بزدلی اور بخل سے، اور قرض کے بوجھ اور لوگوں کے غلبے سے۔",
+    "e25": "میں اللہ عظیم سے معافی مانگتا ہوں جس کے سوا کوئی معبود نہیں، وہ زندہ ہے، قائم رکھنے والا ہے، اور میں اس کی طرف توبہ کرتا ہوں۔",
+    "e26": "اے میرے رب! تیری ہی حمد ہے جیسا کہ تیرے چہرے کی عظمت اور تیری سلطنت کی بڑائی کے شایان شان ہے۔",
+    "e27": "اے اللہ! تو میرا رب ہے، تیرے سوا کوئی معبود نہیں۔ تجھ پر میں نے بھروسہ کیا۔ جو اللہ چاہے ہو اور جو نہ چاہے نہ ہو۔ اللہ کے بغیر نہ کوئی طاقت ہے نہ قوت۔",
+    "e28": "اللہ کے سوا کوئی معبود نہیں وہ اکیلا ہے اس کا کوئی شریک نہیں۔ اسی کی بادشاہت ہے اور اسی کے لیے تعریف ہے اور وہ ہر چیز پر قادر ہے۔ دس غلام آزاد کرنے کے برابر ہے، سو نیکیاں ملتی ہیں، شیطان سے حفاظت ہوتی ہے۔",
+    "e29": "اللہ پاک ہے اور اس کی حمد ہے۔ اس کے گناہ بخش دیے جائیں گے چاہے سمندر کی جھاگ کے برابر ہوں۔",
+    "ap1": "میں اللہ عظیم سے معافی مانگتا ہوں۔",
+    "ap2": "اے اللہ! تو سلامتی والا ہے اور تجھ سے ہی سلامتی ہے۔ تو بابرکت ہے اے عظمت و بزرگی والے!",
+    "ap3": "اللہ کے سوا کوئی معبود نہیں وہ اکیلا ہے اس کا کوئی شریک نہیں۔ اسی کی بادشاہت ہے اور اسی کے لیے حمد ہے اور وہ ہر چیز پر قادر ہے۔ اے اللہ! جو تو دے اسے کوئی روک نہیں سکتا اور جو تو روکے اسے کوئی دے نہیں سکتا۔ اور کسی بڑی شان والے کو اس کی شان تیرے سامنے فائدہ نہیں دے سکتی۔",
+    "ap4": "اللہ کے سوا کوئی معبود نہیں وہ اکیلا ہے اس کا کوئی شریک نہیں۔ اسی کی بادشاہت ہے اور اسی کے لیے حمد ہے اور وہ ہر چیز پر قادر ہے۔ اللہ کے بغیر نہ کوئی طاقت ہے نہ قوت۔ اللہ ہی معبود ہے، ہم صرف اسی کی عبادت کرتے ہیں۔ نعمت اسی کی ہے، فضل اسی کا ہے اور بہترین تعریف اسی کے لیے ہے۔ اللہ کے سوا کوئی معبود نہیں، ہم اسی کے لیے دین کو خالص کرتے ہیں اگرچہ کافر ناخوش ہوں۔",
+    "ap5": "اللہ پاک ہے (33 بار)، الحمد للہ (33 بار)، اللہ اکبر (33 بار)، اللہ کے سوا کوئی معبود نہیں وہ اکیلا ہے، اسی کی بادشاہت ہے اور اسی کے لیے حمد ہے اور وہ ہر چیز پر قادر ہے۔",
+    "ap6": "آیت الکرسی - ہر فرض نماز کے بعد پڑھنے والے کو جنت سے صرف موت ہی روکتی ہے۔",
+    "ap7": "اے اللہ! مجھے آگ سے بچا۔",
+    "ap8": "اے اللہ! اپنے ذکر، شکر اور حسن عبادت پر میری مدد فرما۔",
+    "s1": "تیرے نام سے اے اللہ میں سوتا ہوں اور اٹھتا ہوں۔",
+    "s2": "اے اللہ! تو نے میری جان پیدا کی اور تو ہی اسے واپس لے گا۔ اس کی موت اور زندگی تیرے ہاتھ میں ہے۔ اے اللہ! اگر تو اسے روکے تو اس کی حفاظت فرما اور اگر تو اسے چھوڑ دے تو اسے معاف فرما جیسے تو اپنے نیک بندوں کو معاف کرتا ہے۔",
+    "s3": "اے اللہ! مجھ پر اپنے عذاب سے بچا اس دن جب تو اپنے بندوں کو دوبارہ اٹھائے گا۔",
+    "s4": "تیرے نام سے اے میرے رب! میں نے اپنا پہلو رکھا اور تیرے ہی نام سے اسے اٹھاؤں گا۔ اگر تو میری جان روک لے تو اس پر رحم فرما، اور اگر تو اسے چھوڑ دے تو اس کی حفاظت فرما جیسے تو اپنے نیک بندوں کی حفاظت کرتا ہے۔",
+    "s5": "اے اللہ! میں نے اپنے آپ کو تیرے سپرد کیا، اپنا رخ تیری طرف کیا، اپنا معاملہ تیرے حوالے کیا، اور اپنی پشت تیرے سہارے لگائی، تیری چاہت اور تیرے خوف سے۔ تیرے سوا نہ کوئی پناہ ہے اور نہ کوئی بچاؤ مگر تیرے ہی پاس۔ میں ایمان لایا تیری اتاری ہوئی کتاب پر اور تیرے بھیجے ہوئے نبی پر۔",
+    "s6": "اللہ پاک ہے (33 بار)، الحمد للہ (33 بار)، اللہ اکبر (34 بار)۔",
+    "w1": "تمام تعریفیں اللہ کے لیے ہیں جس نے ہمیں موت دینے کے بعد زندہ کیا اور اسی کی طرف دوبارہ اٹھنا ہے۔",
+    "w2": "اللہ کے سوا کوئی معبود نہیں وہ اکیلا ہے اس کا کوئی شریک نہیں۔ اسی کی بادشاہت ہے اور اسی کے لیے تعریف ہے اور وہ ہر چیز پر قادر ہے۔ اللہ پاک ہے۔ اللہ کا شکر ہے۔ اللہ کے سوا کوئی معبود نہیں۔ اللہ سب سے بڑا ہے۔ اللہ کے بغیر نہ کوئی طاقت ہے نہ قوت۔",
+    "w3": "تمام تعریفیں اللہ کے لیے ہیں جس نے مجھے عافیت دی، میری روح واپس کی، اور مجھے اپنا ذکر کرنے کی اجازت دی۔",
+    "w4": "رات کو بیدار ہونے پر پڑھنے سے دعا قبول ہوتی ہے اور نماز پڑھے تو قبول ہوتی ہے۔",
+    "g1": "اللہ کے سوا کوئی معبود نہیں وہ اکیلا ہے، اس کا کوئی شریک نہیں، اسی کی بادشاہت ہے اور اسی کے لیے حمد ہے اور وہ ہر چیز پر قادر ہے۔",
+    "g2": "اللہ پاک ہے اور اس کی حمد ہے۔ اللہ عظیم پاک ہے۔",
+    "g3": "اللہ پاک ہے، اللہ کا شکر ہے، اللہ کے سوا کوئی معبود نہیں، اللہ سب سے بڑا ہے۔",
+    "g4": "اے اللہ! ہمارے نبی محمد پر درود اور سلام بھیج۔",
+    "g5": "میں اللہ عظیم سے معافی مانگتا ہوں جس کے سوا کوئی معبود نہیں، وہ زندہ ہے، قائم رکھنے والا ہے، اور میں اس کی طرف توبہ کرتا ہوں۔",
+    "g6": "اللہ کے بغیر نہ کوئی طاقت ہے نہ قوت۔",
+    "g7": "اے اللہ! ہمارے نبی محمد پر، ان کی آل پر اور ان کے اصحاب پر درود و سلام بھیج۔",
+    "g8": "اے اللہ! میں تیری پناہ مانگتا ہوں فکر اور غم سے۔",
+    "g9": "اے اللہ! میں تجھ سے ہدایت، تقویٰ، پاکدامنی اور بے نیازی کا سوال کرتا ہوں۔",
+    "g10": "اے اللہ! میرے دل کو نور سے بھر دے، میری نظر کو نور دے، میری سماعت کو نور دے، میرے دائیں نور ہو، میرے بائیں نور ہو، میرے اوپر نور ہو، میرے نیچے نور ہو، میرے آگے نور ہو، میرے پیچھے نور ہو، اور میرے لیے نور بنا دے۔",
+    "g11": "اے اللہ! مجھے اپنے حلال سے کفایت دے اپنے حرام سے، اور اپنے فضل سے مجھے سب سے بے نیاز کر دے۔",
+    "g12": "اے اللہ! بے شک میں تیرا بندہ ہوں، تیرے بندے کا بیٹا ہوں، تیری بندی کا بیٹا ہوں۔ میری پیشانی تیرے ہاتھ میں ہے۔ مجھ میں تیرا حکم نافذ ہے۔ میرے بارے میں تیرا فیصلہ عدل ہے۔ میں تجھ سے ہر اس نام کے ذریعے سوال کرتا ہوں جو تیرا ہے، جو تو نے اپنے لیے رکھا، یا اپنی مخلوق میں سے کسی کو سکھایا، یا اپنی کتاب میں نازل کیا، یا اپنے علم غیب میں رکھا، کہ تو قرآن کو میرے دل کی بہار بنا۔"
+  }
+}

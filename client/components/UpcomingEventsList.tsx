@@ -39,6 +39,7 @@ function EventItem({ event, showDescription, isDark, theme, locale, t }: { event
   // Map app locale to BCP 47 locale tag for date formatting
   const dateLocaleMap: Record<string, string> = {
     en: 'en-US', ar: 'ar-SA', fr: 'fr-FR', de: 'de-DE', ru: 'ru-RU', zh: 'zh-CN',
+    bn: 'bn-BD', tr: 'tr-TR', id: 'id-ID', ur: 'ur-PK',
   };
   const dateLocale = dateLocaleMap[locale] || 'en-US';
 
@@ -63,7 +64,7 @@ function EventItem({ event, showDescription, isDark, theme, locale, t }: { event
           </Text>
         </View>
         <Text style={[styles.eventDate, { color: theme.textSecondary }]}>
-          {event.hijriDate.day} {isArabic ? event.hijriDate.monthNameAr : event.hijriDate.monthNameEn} • {' '}
+          {event.hijriDate.day} {t(`hijri.months.${event.hijriDate.month}`)} • {' '}
           {event.gregorianDate.toLocaleDateString(dateLocale, { month: 'short', day: 'numeric' })}
         </Text>
         {showDescription && event.description && (

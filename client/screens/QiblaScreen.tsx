@@ -23,6 +23,8 @@ import { useKeepAwake } from "expo-keep-awake";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
+  withTiming,
+  Easing,
 } from "react-native-reanimated";
 import { useTranslation } from "@/hooks/useTranslation";
 
@@ -59,6 +61,7 @@ export default function QiblaScreen() {
   const wasAlignedRef = useRef(false);
   const compassInitializedRef = useRef(false);
   const prevHeadingRef = useRef<number | null>(null);
+  const targetRotationRef = useRef(0); // Track target independently from animation
   const [showCalibrationHint, setShowCalibrationHint] = React.useState(false);
   const [isLocked, setIsLocked] = React.useState(false);
   const [lockedHeading, setLockedHeading] = React.useState<number | null>(null);
@@ -174,7 +177,8 @@ export default function QiblaScreen() {
     if (isLocked) return;
 
     if (prevHeadingRef.current === null) {
-      // First heading - set directly
+      // First heading - set directly (no animation for initial position)
+      targetRotationRef.current = -heading;
       smoothRotation.value = -heading;
     } else {
       // Calculate delta with wraparound handling
@@ -184,8 +188,19 @@ export default function QiblaScreen() {
       if (delta > 180) delta -= 360;
       if (delta < -180) delta += 360;
 
-      // Apply delta to smooth rotation
-      smoothRotation.value = smoothRotation.value - delta;
+      // Use the ref target (not smoothRotation.value which may be mid-animation)
+      targetRotationRef.current = targetRotationRef.current - delta;
+
+      if (Platform.OS === 'android') {
+        // Android: animate with withTiming for buttery smooth visual interpolation
+        smoothRotation.value = withTiming(targetRotationRef.current, {
+          duration: 120,
+          easing: Easing.out(Easing.quad),
+        });
+      } else {
+        // iOS: direct assignment — CoreLocation data is already smooth
+        smoothRotation.value = targetRotationRef.current;
+      }
     }
 
     prevHeadingRef.current = heading;

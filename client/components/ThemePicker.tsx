@@ -9,10 +9,18 @@ import type { ThemeId, ColorMode } from "@/types/theme";
 
 const themeOrder: ThemeId[] = ["default", "roseGold", "lavender", "sagePeach", "oceanBreeze"];
 
+const themeNameKeys: Record<ThemeId, string> = {
+  default: "themePicker.themeDefault",
+  roseGold: "themePicker.themeRoseGold",
+  lavender: "themePicker.themeLavender",
+  sagePeach: "themePicker.themeSagePeach",
+  oceanBreeze: "themePicker.themeOceanBreeze",
+};
+
 export function ThemePicker() {
   const { themeId, colorMode, setThemeId, setColorMode, isDark } = useThemeContext();
   const { theme } = useTheme();
-  const { t, locale } = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <View style={styles.container}>
@@ -109,7 +117,7 @@ export function ThemePicker() {
               {/* Theme Name */}
               <View style={styles.themeInfo}>
                 <Text style={[styles.themeName, { color: theme.text }]} numberOfLines={1}>
-                  {locale === 'ar' ? config.nameAr : config.name}
+                  {t(themeNameKeys[id])}
                 </Text>
               </View>
 

@@ -26,7 +26,7 @@ interface CalendarGridProps {
   onMonthChange?: (month: number, year: number) => void;
 }
 
-const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const WEEKDAYS_EN = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const DAY_SIZE = Math.floor((SCREEN_WIDTH - 48) / 7);
 
@@ -141,7 +141,14 @@ export function CalendarGrid({
     }
   }, [onDayPress]);
 
-  const monthName = hijriDateService.getMonthName(month, 'en');
+  const monthName = t(`hijri.months.${month}`);
+
+  // Get localized weekday abbreviations from i18n, fall back to English
+  const weekdays: string[] = (() => {
+    const translated = t('calendar.weekdays');
+    if (Array.isArray(translated) && translated.length === 7) return translated;
+    return WEEKDAYS_EN;
+  })();
 
   return (
     <View style={[styles.container, { backgroundColor: theme.cardBackground }]}>
@@ -163,8 +170,8 @@ export function CalendarGrid({
 
       {/* Weekday Headers */}
       <View style={styles.weekdayRow}>
-        {WEEKDAYS.map((day, index) => (
-          <View key={day} style={styles.weekdayCell}>
+        {weekdays.map((day: string, index: number) => (
+          <View key={index} style={styles.weekdayCell}>
             <Text style={[
               styles.weekdayText,
               { color: theme.textSecondary },

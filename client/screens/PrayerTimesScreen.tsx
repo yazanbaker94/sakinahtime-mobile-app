@@ -494,7 +494,7 @@ export default function PrayerTimesScreen() {
                   >
                     <Feather name="calendar" size={14} color="#FFFFFF" />
                     <ThemedText type="caption" style={styles.compactButtonText}>
-                      {toArabicNumerals(Number(prayerData.date.hijri.day) || 0)} {prayerData.date.hijri.month?.ar || ''}
+                      {toArabicNumerals(Number(prayerData.date.hijri.day) || 0)} {t(`hijri.months.${prayerData.date.hijri.month?.number || 1}`)}
                     </ThemedText>
                   </Pressable>
                 )}

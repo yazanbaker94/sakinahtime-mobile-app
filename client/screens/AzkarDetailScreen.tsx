@@ -291,9 +291,6 @@ export default function AzkarDetailScreen() {
             <ThemedText type="h3" style={{ fontWeight: "700", flex: 1 }} numberOfLines={1}>
               {t(`azkarCategories.${category.id}`)}
             </ThemedText>
-            <ThemedText type="arabic" secondary style={{ fontSize: 16, fontFamily: 'AlMushafQuran', marginLeft: Spacing.sm }}>
-              {category.titleAr}
-            </ThemedText>
           </View>
         </View>
         <View style={styles.toggleContainer}>

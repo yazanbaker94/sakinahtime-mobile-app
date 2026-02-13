@@ -1025,7 +1025,12 @@
     "theme": "السمة",
     "light": "فاتح",
     "dark": "داكن",
-    "auto": "تلقائي"
+    "auto": "تلقائي",
+    "themeDefault": "زمردي",
+    "themeRoseGold": "وردي ذهبي",
+    "themeLavender": "لافندر",
+    "themeSagePeach": "أخضر وخوخي",
+    "themeOceanBreeze": "نسيم البحر"
   },
   "storageOverview": {
     "storageUsed": "التخزين المستخدم",

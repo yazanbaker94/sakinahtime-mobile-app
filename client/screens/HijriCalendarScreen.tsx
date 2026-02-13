@@ -54,10 +54,10 @@ function DayDetailModal({ visible, day, onClose, isDark, theme, t, locale }: Day
       >
         <View style={[styles.modalContent, { backgroundColor: theme.backgroundDefault }]}>
           <Text style={[styles.modalTitle, { color: theme.text }]}>
-            {day.hijriDate.day} {day.hijriDate.monthNameEn} {day.hijriDate.year}
+            {day.hijriDate.day} {t(`hijri.months.${day.hijriDate.month}`)} {day.hijriDate.year}
           </Text>
           <Text style={[styles.modalSubtitle, { color: theme.textSecondary }]}>
-            {day.gregorianDate.toLocaleDateString(locale === 'ar' ? 'ar-SA' : locale === 'fr' ? 'fr-FR' : locale === 'de' ? 'de-DE' : locale === 'ru' ? 'ru-RU' : locale === 'zh' ? 'zh-CN' : 'en-US', {
+            {day.gregorianDate.toLocaleDateString(({ en: 'en-US', ar: 'ar-SA', fr: 'fr-FR', de: 'de-DE', ru: 'ru-RU', zh: 'zh-CN', bn: 'bn-BD', tr: 'tr-TR', id: 'id-ID', ur: 'ur-PK' } as Record<string, string>)[locale] || 'en-US', {
               weekday: 'long',
               year: 'numeric',
               month: 'long',

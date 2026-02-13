@@ -1025,7 +1025,12 @@
     "theme": "Theme",
     "light": "Light",
     "dark": "Dark",
-    "auto": "Auto"
+    "auto": "Auto",
+    "themeDefault": "Emerald",
+    "themeRoseGold": "Rose Gold",
+    "themeLavender": "Lavender",
+    "themeSagePeach": "Sage & Peach",
+    "themeOceanBreeze": "Ocean Breeze"
   },
   "storageOverview": {
     "storageUsed": "Storage Used",

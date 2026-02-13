@@ -46,6 +46,7 @@ export function HijriDateHeader({
   // Map app locale to BCP 47 locale tag for date formatting
   const dateLocaleMap: Record<string, string> = {
     en: 'en-US', ar: 'ar-SA', fr: 'fr-FR', de: 'de-DE', ru: 'ru-RU', zh: 'zh-CN',
+    bn: 'bn-BD', tr: 'tr-TR', id: 'id-ID', ur: 'ur-PK',
   };
   const dateLocale = dateLocaleMap[locale] || 'en-US';
 
@@ -70,7 +71,7 @@ export function HijriDateHeader({
         )}
         <View style={styles.compactContent}>
           <Text style={styles.compactHijri}>
-            {hijriDate.day} {isArabic ? hijriDate.monthNameAr : hijriDate.monthNameEn} {hijriDate.year}
+            {hijriDate.day} {t(`hijri.months.${hijriDate.month}`)} {hijriDate.year}
           </Text>
           {showGregorian && (
             <Text style={[styles.compactGregorian, { color: secondaryTextColor }]}>{gregorianFormatted}</Text>
@@ -91,7 +92,7 @@ export function HijriDateHeader({
 
       {/* Hijri date centered */}
       <Text style={styles.hijriDate}>
-        {hijriDate.day} {isArabic ? hijriDate.monthNameAr : hijriDate.monthNameEn} {hijriDate.year} {t('hijriCalendar.ah')}
+        {hijriDate.day} {t(`hijri.months.${hijriDate.month}`)} {hijriDate.year} {t('hijriCalendar.ah')}
       </Text>
 
       {/* Gregorian date */}

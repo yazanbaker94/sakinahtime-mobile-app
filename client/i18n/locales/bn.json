@@ -1,0 +1,2542 @@
+{
+  "tabs": {
+    "qibla": "কিবলা",
+    "prayer": "নামাজ",
+    "quran": "কুরআন",
+    "azkar": "আযকার",
+    "settings": "সেটিংস"
+  },
+  "settings": {
+    "title": "সেটিংস",
+    "appearance": "থিম",
+    "customizeTheme": "আপনার থিম কাস্টমাইজ করুন",
+    "language": "ভাষা",
+    "chooseLanguage": "আপনার ভাষা নির্বাচন করুন",
+    "prayerFasting": "নামাজ ও রোজা",
+    "notificationsAzanReminders": "বিজ্ঞপ্তি, আযান ও রিমাইন্ডার",
+    "storageDownloads": "স্টোরেজ ও ডাউনলোড",
+    "manageOfflineContent": "অফলাইন কন্টেন্ট পরিচালনা করুন",
+    "wordByWord": "শব্দে শব্দে",
+    "translationLanguage": "অনুবাদের ভাষা",
+    "dhikrReminders": "যিকর রিমাইন্ডার",
+    "floatingOverlay": "ফ্লোটিং ওভারলে রিমাইন্ডার",
+    "feedbackSuggestions": "মতামত ও পরামর্শ",
+    "helpImprove": "অ্যাপটি উন্নত করতে সাহায্য করুন",
+    "colorMode": "কালার মোড",
+    "theme": "থিম",
+    "light": "লাইট",
+    "dark": "ডার্ক",
+    "auto": "অটো"
+  },
+  "prayer": {
+    "title": "নামাজের সময়সূচী",
+    "fajr": "ফজর",
+    "sunrise": "সূর্যোদয়",
+    "dhuhr": "যুহর",
+    "asr": "আসর",
+    "maghrib": "মাগরিব",
+    "isha": "ইশা",
+    "nextPrayer": "পরবর্তী নামাজ",
+    "timeRemaining": "অবশিষ্ট সময়",
+    "prayerCalendar": "নামাজের ক্যালেন্ডার",
+    "prayerStats": "নামাজের পরিসংখ্যান",
+    "progress": "অগ্রগতি",
+    "hijriCalendar": "হিজরী ক্যালেন্ডার",
+    "calculationMethod": "গণনা পদ্ধতি",
+    "prayed": "পড়া হয়েছে",
+    "missed": "কাযা",
+    "late": "বিলম্বে",
+    "onTime": "সময়মতো",
+    "notLogged": "রেকর্ড করা হয়নি",
+    "logPrayer": "নামাজ রেকর্ড করুন",
+    "currentStreak": "বর্তমান ধারা",
+    "days": "দিন",
+    "day": "দিন",
+    "today": "আজ",
+    "yesterday": "গতকাল",
+    "location": "অবস্থান",
+    "setLocation": "আপনার অবস্থান সেট করুন",
+    "tapToSetLocation": "সঠিক নামাজের সময়ের জন্য আপনার অবস্থান সেট করতে ট্যাপ করুন",
+    "noLocation": "কোনো অবস্থান সেট করা হয়নি",
+    "checkingPermission": "অবস্থানের অনুমতি যাচাই হচ্ছে...",
+    "locationRequired": "অবস্থানের অ্যাক্সেস প্রয়োজন",
+    "locationExplanation": "আপনার এলাকার জন্য সঠিক নামাজের সময় গণনা করতে আমাদের আপনার অবস্থান প্রয়োজন।",
+    "browserLocationHint": "অনুগ্রহ করে আপনার ব্রাউজার সেটিংসে অবস্থান সক্রিয় করুন।",
+    "enableLocation": "অবস্থান সক্রিয় করুন",
+    "openSettings": "সেটিংস খুলুন",
+    "loadingPrayerTimes": "নামাজের সময় লোড হচ্ছে...",
+    "failedToLoad": "নামাজের সময় লোড করা যায়নি",
+    "hours": "ঘণ্টা",
+    "minutes": "মিনিট",
+    "seconds": "সেকেন্ড",
+    "min": "মিনিট"
+  },
+  "qibla": {
+    "title": "কিবলা",
+    "direction": "দিক",
+    "degrees": "ডিগ্রি",
+    "compass": "কম্পাস",
+    "distance": "দূরত্ব",
+    "toKaaba": "কাবা পর্যন্ত",
+    "facingQibla": "কিবলামুখী",
+    "turnLeft": "বামে ঘুরুন",
+    "turnRight": "ডানে ঘুরুন",
+    "directionLocked": "দিক লক করা হয়েছে",
+    "tapToUnlock": "আনলক করতে ট্যাপ করুন",
+    "lockDirection": "দিক লক করুন",
+    "compassNotAvailable": "কম্পাস পাওয়া যাচ্ছে না",
+    "compassNotAvailableWeb": "ওয়েবে কম্পাস উপলব্ধ নেই। মোবাইল ডিভাইসে ব্যবহার করুন।",
+    "calibrate": "আপনার ফোন ৮-আকৃতিতে নাড়িয়ে কম্পাস ক্যালিব্রেট করুন",
+    "calibrateShort": "ক্যালিব্রেট করতে ফোন ৮-আকৃতিতে নাড়ান",
+    "heading": "দিকনির্দেশ",
+    "qiblaLabel": "কিবলা",
+    "km": "কিমি",
+    "mosques": "মসজিদ",
+    "gettingLocation": "আপনার অবস্থান নির্ণয় হচ্ছে...",
+    "initializingCompass": "কম্পাস শুরু হচ্ছে...",
+    "locationRequiredQibla": "আপনার বর্তমান অবস্থান থেকে কিবলার দিক গণনা করতে আমাদের আপনার অবস্থান প্রয়োজন।"
+  },
+  "quran": {
+    "title": "কুরআন",
+    "surah": "সূরা",
+    "juz": "পারা",
+    "page": "পৃষ্ঠা",
+    "verse": "আয়াত",
+    "verses": "আয়াত",
+    "search": "অনুসন্ধান",
+    "searchQuran": "কুরআনে অনুসন্ধান",
+    "bookmark": "বুকমার্ক",
+    "bookmarks": "বুকমার্কসমূহ",
+    "bookmarked": "বুকমার্ক করা হয়েছে",
+    "addNote": "নোট যোগ করুন",
+    "notes": "নোটসমূহ",
+    "highlight": "হাইলাইট",
+    "highlights": "হাইলাইটসমূহ",
+    "copy": "কপি",
+    "share": "শেয়ার",
+    "play": "চালান",
+    "pause": "বিরতি",
+    "stop": "থামুন",
+    "continue": "চালিয়ে যান",
+    "tafsir": "তাফসীর",
+    "translation": "অনুবাদ",
+    "translations": "অনুবাদসমূহ",
+    "transliteration": "প্রতিবর্ণীকরণ",
+    "reciter": "ক্বারী",
+    "lastRead": "সর্বশেষ পড়া",
+    "continueLast": "যেখানে ছেড়েছিলেন সেখান থেকে চালিয়ে যান",
+    "meccan": "মাক্কী",
+    "medinan": "মাদানী",
+    "save": "সংরক্ষণ",
+    "delete": "মুছুন",
+    "cancel": "বাতিল",
+    "savedVerses": "সংরক্ষিত আয়াত",
+    "all": "সকল",
+    "recent": "সাম্প্রতিক",
+    "tafsirTranslations": "তাফসীর ও অনুবাদ",
+    "download": "ডাউনলোড",
+    "downloaded": "ডাউনলোড হয়েছে",
+    "downloading": "ডাউনলোড হচ্ছে",
+    "readMode": "পড়ার মোড",
+    "mushafMode": "মুসহাফ মোড",
+    "surahReader": "সূরা রিডার",
+    "goToPage": "পৃষ্ঠায় যান",
+    "goToSurah": "সূরায় যান",
+    "goToJuz": "পারায় যান",
+    "wordByWord": "শব্দে শব্দে",
+    "audio": "অডিও",
+    "settings": "সেটিংস"
+  },
+  "azkar": {
+    "title": "আযকার ও দু'আ",
+    "morningAzkar": "সকালের আযকার",
+    "eveningAzkar": "সন্ধ্যার আযকার",
+    "afterPrayer": "নামাজের পর",
+    "sleep": "ঘুম",
+    "wakeUp": "ঘুম থেকে ওঠা",
+    "dailyTip": "দৈনিক টিপস",
+    "categories": "বিভাগসমূহ",
+    "duas": "দু'আসমূহ",
+    "guides": "গাইড",
+    "all": "সকল",
+    "favorites": "প্রিয়",
+    "count": "গণনা",
+    "completed": "সম্পন্ন",
+    "repeat": "পুনরাবৃত্তি",
+    "times": "বার",
+    "time": "বার",
+    "remaining": "অবশিষ্ট",
+    "reset": "রিসেট",
+    "duaOfTheDay": "আজকের দু'আ",
+    "dailyDhikr": "দৈনিক যিকর",
+    "dhikrGoal": "যিকরের লক্ষ্য",
+    "worship": "ইবাদত ও নামাজ",
+    "dailyLife": "দৈনন্দিন জীবন",
+    "travel": "ভ্রমণ",
+    "food": "খাদ্য ও পানীয়",
+    "protection": "সুরক্ষা",
+    "hadith": "হাদীস",
+    "islamicGuides": "ইসলামী গাইড",
+    "search": "আযকার ও দু'আ অনুসন্ধান...",
+    "searchDuas": "দু'আ অনুসন্ধান...",
+    "quranic": "কুরআনিক",
+    "prophetic": "নববী",
+    "custom": "কাস্টম",
+    "customDuas": "কাস্টম দু'আ",
+    "addCustomDua": "কাস্টম দু'আ যোগ করুন",
+    "noDuasYet": "এখনো কোনো কাস্টম দু'আ নেই",
+    "noFavorites": "এখনো কোনো প্রিয় নেই",
+    "noResults": "কোনো ফলাফল পাওয়া যায়নি",
+    "deleteConfirm": "আপনি কি এই দু'আটি মুছে ফেলতে চান?",
+    "tapToStart": "শুরু করতে ট্যাপ করুন",
+    "target": "লক্ষ্য",
+    "progress": "অগ্রগতি",
+    "allCategories": "সকল বিভাগ",
+    "deleteDua": "দু'আ মুছুন",
+    "deleteDuaConfirm": "আপনি কি এই দু'আটি মুছে ফেলতে চান?",
+    "myDuas": "আমার দু'আসমূহ",
+    "result": "ফলাফল",
+    "results": "ফলাফল",
+    "noDuasFound": "কোনো দু'আ পাওয়া যায়নি",
+    "searchGuides": "গাইড অনুসন্ধান...",
+    "noGuidesFound": "কোনো গাইড পাওয়া যায়নি",
+    "back": "ফিরে যান",
+    "addPersonalSupplications": "এখনো কোনো কাস্টম দু'আ নেই।\nআপনার ব্যক্তিগত দু'আ যোগ করুন।",
+    "tapHeartTip": "এখনো কোনো প্রিয় দু'আ নেই।\nযেকোনো দু'আতে হার্ট আইকনে ট্যাপ করুন।",
+    "noQuranicDuas": "কোনো কুরআনিক দু'আ উপলব্ধ নেই",
+    "noPropheticDuas": "কোনো নববী দু'আ উপলব্ধ নেই",
+    "adhkarCount": "আযকার",
+    "dailyTips": [
+      {
+        "text": "নবী ﷺ বলেছেন: \"সর্বোত্তম যিকর হলো লা ইলাহা ইল্লাল্লাহ (আল্লাহ ছাড়া কোনো ইলাহ নেই)।\"",
+        "source": "তিরমিযী"
+      },
+      {
+        "text": "নবী ﷺ বলেছেন: \"যে ব্যক্তি সুবহানাল্লাহি ওয়া বিহামদিহি ১০০ বার বলবে, তার গুনাহ ক্ষমা করে দেওয়া হবে, যদি তা সমুদ্রের ফেনার মতোও হয়।\"",
+        "source": "বুখারী ও মুসলিম"
+      },
+      {
+        "text": "নবী ﷺ বলেছেন: \"দুটি কালিমা এমন যা জিহ্বায় হালকা, মীযানে ভারী, রহমানের নিকট প্রিয়: সুবহানাল্লাহি ওয়া বিহামদিহি, সুবহানাল্লাহিল আযীম।\"",
+        "source": "বুখারী ও মুসলিম"
+      },
+      {
+        "text": "নবী ﷺ বলেছেন: \"যে ব্যক্তি প্রতি ফরজ নামাজের পর আয়াতুল কুরসী পড়বে, জান্নাতে প্রবেশ করা থেকে তাকে কেবল মৃত্যুই আটকে রাখবে।\"",
+        "source": "আন-নাসাঈ"
+      },
+      {
+        "text": "নবী ﷺ বলেছেন: \"বান্দা তার রবের সবচেয়ে নিকটে থাকে যখন সে সিজদায় থাকে, তাই বেশি বেশি দু'আ করো।\"",
+        "source": "মুসলিম"
+      },
+      {
+        "text": "নবী ﷺ বলেছেন: \"তোমাদের কেউ প্রকৃত মু'মিন হতে পারবে না যতক্ষণ না সে তার ভাইয়ের জন্য তাই পছন্দ করবে যা সে নিজের জন্য পছন্দ করে।\"",
+        "source": "বুখারী ও মুসলিম"
+      },
+      {
+        "text": "নবী ﷺ বলেছেন: \"যে ব্যক্তি আল্লাহ ও পরকালে বিশ্বাস করে, সে যেন ভালো কথা বলে অথবা চুপ থাকে।\"",
+        "source": "বুখারী ও মুসলিম"
+      },
+      {
+        "text": "নবী ﷺ বলেছেন: \"তোমাদের মধ্যে সর্বোত্তম সেই ব্যক্তি যে কুরআন শেখে এবং শেখায়।\"",
+        "source": "বুখারী"
+      },
+      {
+        "text": "নবী ﷺ বলেছেন: \"তোমার ভাইয়ের প্রতি হাসিমুখে তাকানোও সদকা।\"",
+        "source": "তিরমিযী"
+      },
+      {
+        "text": "নবী ﷺ বলেছেন: \"যে ব্যক্তি ইলম অন্বেষণে পথ চলে, আল্লাহ তার জন্য জান্নাতের পথ সহজ করে দেন।\"",
+        "source": "মুসলিম"
+      },
+      {
+        "text": "নবী ﷺ বলেছেন: \"আযান ও ইক্বামাতের মধ্যবর্তী সময়ের দু'আ ফেরত দেওয়া হয় না।\"",
+        "source": "আবু দাউদ ও তিরমিযী"
+      }
+    ]
+  },
+  "azkarDetail": {
+    "quran": "কুরআন",
+    "translit": "প্রতিবর্ণীকরণ",
+    "english": "ইংরেজি",
+    "counter": "কাউন্টার"
+  },
+  "duaCollection": {
+    "title": "দু'আসমূহ",
+    "searchPlaceholder": "দু'আ অনুসন্ধান...",
+    "categories": "বিভাগসমূহ",
+    "quranic": "কুরআনিক",
+    "prophetic": "নববী",
+    "favorites": "প্রিয়",
+    "myDuas": "আমার দু'আসমূহ",
+    "deleteDua": "দু'আ মুছুন",
+    "deleteConfirm": "আপনি কি এই দু'আটি মুছে ফেলতে চান?",
+    "deleteFailed": "দু'আ মুছতে ব্যর্থ",
+    "duasCount": "দু'আ",
+    "noResultsFor": "\"{{query}}\" এর জন্য কোনো দু'আ পাওয়া যায়নি",
+    "results": "ফলাফল",
+    "result": "ফলাফল",
+    "forQuery": "এর জন্য",
+    "noQuranic": "কোনো কুরআনিক দু'আ উপলব্ধ নেই",
+    "noProphetic": "কোনো নববী দু'আ উপলব্ধ নেই",
+    "noFavorites": "এখনো কোনো প্রিয় দু'আ নেই।\nযেকোনো দু'আতে হার্ট আইকনে ট্যাপ করে এখানে যোগ করুন।",
+    "noCustom": "এখনো কোনো কাস্টম দু'আ নেই।\nএখানে আপনার ব্যক্তিগত দু'আ যোগ করুন।",
+    "addCustom": "কাস্টম দু'আ যোগ করুন"
+  },
+  "progress": {
+    "title": "অগ্রগতি",
+    "readingProgress": "পড়ার অগ্রগতি",
+    "overallProgress": "সামগ্রিক অগ্রগতি",
+    "complete": "সম্পন্ন",
+    "pagesRead": "পৃষ্ঠা পড়া হয়েছে",
+    "juzComplete": "পারা সম্পন্ন",
+    "khatm": "খতম",
+    "todaysProgress": "আজকের অগ্রগতি",
+    "versesRead": "আয়াত পড়া হয়েছে",
+    "pagesReadToday": "পৃষ্ঠা পড়া হয়েছে",
+    "readingStreak": "পড়ার ধারা",
+    "currentStreak": "বর্তমান ধারা",
+    "longestStreak": "সর্বোচ্চ ধারা",
+    "bestStreak": "সর্বোচ্চ ধারা",
+    "thisWeek": "এই সপ্তাহ",
+    "average": "গড়",
+    "pagesPerDay": "পৃষ্ঠা/দিন",
+    "dailyGoalSettings": "দৈনিক লক্ষ্য সেটিংস",
+    "enableDailyGoal": "দৈনিক লক্ষ্য সক্রিয় করুন",
+    "goalType": "লক্ষ্যের ধরন",
+    "pages": "পৃষ্ঠা",
+    "verses": "আয়াত",
+    "target": "লক্ষ্য",
+    "saveGoal": "লক্ষ্য সংরক্ষণ করুন",
+    "readingReminder": "পড়ার রিমাইন্ডার",
+    "enableReminder": "রিমাইন্ডার সক্রিয় করুন",
+    "reminderTime": "রিমাইন্ডারের সময়",
+    "resetAllProgress": "সকল অগ্রগতি রিসেট করুন",
+    "resetConfirm": "আপনি কি সকল পড়ার অগ্রগতি রিসেট করতে চান? এটি পূর্বাবস্থায় ফেরানো যাবে না।",
+    "resetButton": "রিসেট",
+    "noGoalSet": "কোনো দৈনিক লক্ষ্য সেট করা হয়নি",
+    "invalidGoal": "অবৈধ লক্ষ্য",
+    "invalidGoalMessage": "অনুগ্রহ করে একটি সঠিক সংখ্যা দিন",
+    "goalRange": "লক্ষ্য অবশ্যই এর মধ্যে হতে হবে",
+    "and": "এবং",
+    "permissionRequired": "অনুমতি প্রয়োজন",
+    "permissionMessage": "পড়ার রিমাইন্ডার ব্যবহার করতে অনুগ্রহ করে আপনার ডিভাইস সেটিংসে বিজ্ঞপ্তি সক্রিয় করুন।",
+    "errorSavingGoal": "লক্ষ্য সেটিংস সংরক্ষণ করতে ব্যর্থ",
+    "errorResetting": "অগ্রগতি রিসেট করতে ব্যর্থ",
+    "loadingProgress": "অগ্রগতি লোড হচ্ছে...",
+    "done": "সম্পন্ন",
+    "goal": "লক্ষ্য",
+    "weeklyOverview": "সাপ্তাহিক সারাংশ",
+    "monthlyOverview": "মাসিক সারাংশ",
+    "streak": "ধারা",
+    "totalPrayers": "মোট নামাজ",
+    "completionRate": "সম্পন্নতার হার",
+    "prayerLog": "নামাজের রেকর্ড",
+    "weekly": "সাপ্তাহিক",
+    "monthly": "মাসিক",
+    "allTime": "সর্বকালীন",
+    "exportStats": "পরিসংখ্যান রপ্তানি",
+    "qadaTracker": "কাযা ট্র্যাকার",
+    "qadaRemaining": "কাযা বাকি",
+    "taraweeh": "তারাবীহ",
+    "charity": "দান-খয়রাত",
+    "zakatCalculator": "যাকাত ক্যালকুলেটর",
+    "hifzProgress": "হিফয অগ্রগতি",
+    "quranSchedule": "কুরআন সময়সূচী"
+  },
+  "notifications": {
+    "title": "বিজ্ঞপ্তি সেটিংস",
+    "prayerNotifications": "নামাজের বিজ্ঞপ্তি",
+    "getNotified": "নামাজের সময় হলে বিজ্ঞপ্তি পান",
+    "prayerAlarms": "নামাজের অ্যালার্ম",
+    "azanSettings": "আযান সেটিংস",
+    "azan": "আযান",
+    "azanSound": "আযানের শব্দ",
+    "playHayaAlSalat": "নামাজের আগে \"হাইয়া আলাস সালাহ\" চালান",
+    "silentMode": "সাইলেন্ট মোড",
+    "flipToSilence": "উল্টিয়ে সাইলেন্ট করুন",
+    "flipToSilenceDesc": "আযান সাইলেন্ট করতে ফোন উল্টে রাখুন",
+    "testAzan": "আযান টেস্ট করুন",
+    "vibration": "ভাইব্রেশন",
+    "iqama": "ইক্বামাত",
+    "iqamaReminder": "ইক্বামাত রিমাইন্ডার",
+    "iqamaWait": "ইক্বামাত অপেক্ষা",
+    "iqamaDelay": "ইক্বামাত বিলম্ব",
+    "minutesAfterAzan": "আযানের পর মিনিট",
+    "minutes": "মিনিট",
+    "enabled": "সক্রিয়",
+    "disabled": "নিষ্ক্রিয়",
+    "timeAdjustments": "সময় সমন্বয়",
+    "adjustPrayerTimes": "নামাজের সময় সমন্বয় (মিনিট)",
+    "calculationMethod": "গণনা পদ্ধতি",
+    "highLatitude": "উচ্চ অক্ষাংশ নিয়ম",
+    "asrCalculation": "আসর গণনা",
+    "standard": "স্ট্যান্ডার্ড",
+    "hanafi": "হানাফী",
+    "prayerTracking": "নামাজ ট্র্যাকিং",
+    "enableTracking": "ট্র্যাকিং সক্রিয় করুন",
+    "trackDailyPrayers": "আপনার দৈনিক নামাজ ট্র্যাক করুন",
+    "missedPrayerReminder": "কাযা নামাজের রিমাইন্ডার",
+    "reminderAfterPrayer": "নামাজের সময় শেষ হলে রিমাইন্ড করুন",
+    "reminderDelay": "রিমাইন্ডার বিলম্ব",
+    "minutesAfterPrayer": "নামাজের পর মিনিট",
+    "fasting": "রোজা",
+    "suhoorReminder": "সেহরি রিমাইন্ডার",
+    "iftarReminder": "ইফতার রিমাইন্ডার",
+    "beforeSuhoor": "সেহরির আগে মিনিট",
+    "beforeIftar": "ইফতারের আগে মিনিট",
+    "fastingReminders": "রোজার রিমাইন্ডার",
+    "enableFastingReminders": "রোজার রিমাইন্ডার সক্রিয় করুন",
+    "playAzanWhenPrayerTime": "নামাজের সময় হলে আযান চালান",
+    "selectPrayersForAzan": "কোন নামাজে আযান বাজবে তা নির্বাচন করুন",
+    "prayerSelection": "নামাজ নির্বাচন",
+    "choosePrayersForIqama": "কোন নামাজে ইক্বামাত হবে তা নির্বাচন করুন",
+    "testIqama": "ইক্বামাত টেস্ট করুন",
+    "testIqamaPlaying": "ইক্বামাতের শব্দ বাজছে। যদি শুনতে না পান, আপনার ভলিউম চেক করুন।",
+    "timeAdjustmentsFineTune": "নামাজের সময় সূক্ষ্ম সমন্বয় (±৩০ মিনিট)",
+    "min": "মিনিট",
+    "autoDetectByLocation": "অবস্থান অনুযায়ী স্বয়ংক্রিয়",
+    "recommended": "প্রস্তাবিত",
+    "active": "সক্রিয়",
+    "useAuto": "অটো ব্যবহার করুন",
+    "autoDetectedFor": "স্বয়ংক্রিয়ভাবে নির্ণীত"
+  },
+  "qadaTracker": {
+    "title": "কাযা ট্র্যাকার",
+    "totalRemaining": "মোট কাযা নামাজ বাকি",
+    "hint": "সরাসরি সম্পাদনা করতে গণনা সংখ্যায় ট্যাপ করুন। কাযা আদায়ের পর 'রেকর্ড' ব্যবহার করুন।"
+  },
+  "location": {
+    "title": "অবস্থান সেটিংস",
+    "searchCity": "শহর অনুসন্ধান...",
+    "currentLocation": "বর্তমান অবস্থান",
+    "useCurrentLocation": "বর্তমান অবস্থান ব্যবহার করুন",
+    "manualEntry": "ম্যানুয়াল এন্ট্রি",
+    "latitude": "অক্ষাংশ",
+    "longitude": "দ্রাঘিমাংশ",
+    "save": "সংরক্ষণ",
+    "detectingLocation": "অবস্থান নির্ণয় হচ্ছে...",
+    "locationSaved": "অবস্থান সংরক্ষিত",
+    "invalidCoordinates": "অবৈধ স্থানাঙ্ক",
+    "detecting": "অবস্থান নির্ণয় হচ্ছে...",
+    "unavailable": "অবস্থান পাওয়া যাচ্ছে না",
+    "permissionRequired": "অনুমতি প্রয়োজন",
+    "manual": "ম্যানুয়াল",
+    "locationSource": "অবস্থানের উৎস",
+    "useGPS": "জিপিএস অবস্থান ব্যবহার করুন",
+    "setManually": "ম্যানুয়ালি অবস্থান সেট করুন",
+    "searchWorldwide": "বিশ্বের যেকোনো শহর অনুসন্ধান করুন",
+    "recentLocations": "সাম্প্রতিক অবস্থান",
+    "info": "আপনার অবস্থান সঠিক নামাজের সময় ও কিবলার দিক গণনায় ব্যবহৃত হয়। জিপিএস অনুপলব্ধ বা ভুল হলে ম্যানুয়াল অবস্থান কার্যকর।"
+  },
+  "qada": {
+    "title": "কাযা ট্র্যাকার",
+    "totalRemaining": "মোট বাকি",
+    "addMissed": "কাযা যোগ করুন",
+    "prayersMadeUp": "আদায়কৃত নামাজ",
+    "prayersRemaining": "বাকি",
+    "hint": "কমাতে নামাজের গণনায় দীর্ঘক্ষণ চাপুন",
+    "noQada": "কোনো কাযা নামাজ বাকি নেই। মাশাআল্লাহ!",
+    "fajr": "ফজর",
+    "dhuhr": "যুহর",
+    "asr": "আসর",
+    "maghrib": "মাগরিব",
+    "isha": "ইশা",
+    "prayers": "নামাজ"
+  },
+  "zakat": {
+    "title": "যাকাত ক্যালকুলেটর",
+    "totalWealth": "মোট সম্পদ",
+    "enterWealth": "মোট সম্পদের পরিমাণ দিন",
+    "calculate": "গণনা করুন",
+    "zakatDue": "প্রদেয় যাকাত",
+    "nisab": "নিসাব",
+    "meetsNisab": "নিসাব পরিমাণ পূরণ হয়েছে",
+    "doesNotMeetNisab": "নিসাব পরিমাণ পূরণ হয়নি",
+    "goldNisab": "স্বর্ণের নিসাব",
+    "silverNisab": "রৌপ্যের নিসাব",
+    "info": "যাকাত হলো এক চান্দ্র বছর ধরে রক্ষিত মোট যোগ্য সম্পদের ২.৫%।",
+    "gold": "স্বর্ণ",
+    "silver": "রৌপ্য",
+    "cash": "নগদ ও ব্যাংক ব্যালেন্স",
+    "stocks": "শেয়ার ও বিনিয়োগ",
+    "property": "ভাড়ার সম্পত্তি",
+    "totalAssets": "মোট সম্পদ",
+    "zakatPayable": "প্রদেয় যাকাত",
+    "reset": "রিসেট",
+    "currency": "মুদ্রা"
+  },
+  "charity": {
+    "title": "দান ট্র্যাকার",
+    "totalDonated": "মোট দান",
+    "addDonation": "দান যোগ করুন",
+    "setGoal": "লক্ষ্য সেট করুন",
+    "goal": "লক্ষ্য",
+    "recentDonations": "সাম্প্রতিক দান",
+    "noDonations": "এখনো কোনো দান নেই",
+    "amount": "পরিমাণ",
+    "type": "ধরন",
+    "category": "বিভাগ",
+    "date": "তারিখ",
+    "deleteConfirm": "আপনি কি এই দানটি মুছে ফেলতে চান?",
+    "enterAmount": "পরিমাণ দিন",
+    "selectCategory": "বিভাগ নির্বাচন করুন",
+    "sadaqah": "সদকা",
+    "zakatPayment": "যাকাত",
+    "waqf": "ওয়াকফ",
+    "other": "অন্যান্য",
+    "goalAmount": "লক্ষ্যমাত্রা",
+    "goalProgress": "লক্ষ্য অগ্রগতি",
+    "to": "প্রতি",
+    "totalGiven": "মোট প্রদান",
+    "editGoal": "লক্ষ্য সম্পাদনা",
+    "zakatStatus": "যাকাত অবস্থা",
+    "paid": "পরিশোধিত",
+    "notYetPaid": "এই বছর এখনো পরিশোধ হয়নি",
+    "breakdownByType": "ধরন অনুযায়ী বিশ্লেষণ"
+  },
+  "ramadan": {
+    "title": "রমজান ড্যাশবোর্ড",
+    "daysRemaining": "দিন বাকি",
+    "fastingToday": "আজকের রোজা",
+    "taraweeh": "তারাবীহ",
+    "logTaraweeh": "তারাবীহ রেকর্ড করুন",
+    "suhoor": "সেহরি",
+    "iftar": "ইফতার",
+    "fastingDays": "রোজার দিন",
+    "completed": "সম্পন্ন",
+    "remaining": "বাকি",
+    "ramadanMode": "রমজান মোড",
+    "activateMessage": "বরকতময় রমজান মাসে রমজান মোড স্বয়ংক্রিয়ভাবে সক্রিয় হবে।",
+    "checkBackMessage": "সেহরি/ইফতারের সময়, কুরআন পড়ার সূচি, তারাবীহ ট্র্যাকিং এবং আরও অনেক কিছুতে প্রবেশ করতে রমজান শুরু হলে ফিরে আসুন।"
+  },
+  "hifz": {
+    "title": "হিফয অগ্রগতি",
+    "memorized": "মুখস্থ",
+    "inProgress": "চলমান",
+    "notStarted": "শুরু হয়নি",
+    "totalMemorized": "মোট মুখস্থ",
+    "markMemorized": "মুখস্থ হিসেবে চিহ্নিত করুন",
+    "markInProgress": "চলমান হিসেবে চিহ্নিত করুন",
+    "resetSurah": "সূরা রিসেট করুন",
+    "versesMemorized": "মুখস্থ আয়াত",
+    "dueToday": "আজ দেওয়",
+    "revisedToday": "আজ মুরাজাআ",
+    "dailyGoal": "দৈনিক লক্ষ্য",
+    "overallProgress": "সামগ্রিক অগ্রগতি",
+    "verses": "আয়াত",
+    "pages": "পৃষ্ঠা",
+    "juz": "পারা",
+    "dueForRevision": "মুরাজাআ বাকি",
+    "last": "সর্বশেষ",
+    "ease": "সহজতা",
+    "moreVersesDue": "আরও আয়াত বাকি",
+    "statusLegend": "অবস্থা সূচক",
+    "notifications": "বিজ্ঞপ্তি",
+    "dailyReminders": "দৈনিক রিমাইন্ডার",
+    "reminderHint": "আপনার মুখস্থ মুরাজাআ করতে রিমাইন্ডার পান",
+    "resetAllProgress": "সকল অগ্রগতি রিসেট করুন"
+  },
+  "storage": {
+    "title": "স্টোরেজ ও ডাউনলোড",
+    "totalUsed": "মোট ব্যবহৃত স্টোরেজ",
+    "audioFiles": "অডিও ফাইল",
+    "clearAllDownloads": "সকল ডাউনলোড মুছুন",
+    "clearConfirm": "আপনি কি সকল ডাউনলোড করা কন্টেন্ট মুছতে চান?",
+    "confirm": "নিশ্চিত করুন",
+    "cancel": "বাতিল",
+    "reciterAudio": "ক্বারীর অডিও",
+    "mushafPages": "মুসহাফ পৃষ্ঠা",
+    "totalSize": "মোট আকার",
+    "noDownloads": "এখনো কোনো ডাউনলোড নেই",
+    "loadingInfo": "স্টোরেজ তথ্য লোড হচ্ছে...",
+    "quickActions": "দ্রুত কাজ",
+    "manageAudio": "অডিও পরিচালনা",
+    "downloadQuran": "কুরআন ডাউনলোড",
+    "clearAll": "সব মুছুন",
+    "freeUpSpace": "জায়গা খালি করুন",
+    "refreshInfo": "স্টোরেজ তথ্য রিফ্রেশ করুন"
+  },
+  "onboarding": {
+    "welcome": "সাকিনাহটাইমে স্বাগতম",
+    "welcomeDesc": "আপনার আধ্যাত্মিক যাত্রার সঙ্গী",
+    "skip": "এড়িয়ে যান",
+    "next": "পরবর্তী",
+    "getStarted": "শুরু করুন",
+    "done": "সম্পন্ন",
+    "prayerTimesTitle": "সঠিক নামাজের সময়",
+    "prayerTimesDesc": "আপনার অবস্থানের উপর ভিত্তি করে সুন্দর আযান বিজ্ঞপ্তিসহ সঠিক নামাজের সময় পান",
+    "quranTitle": "সুন্দর কুরআন অভিজ্ঞতা",
+    "quranDesc": "একাধিক অনুবাদ, শব্দে শব্দে এবং অডিও তিলাওয়াতসহ কুরআন পড়ুন",
+    "azkarTitle": "দৈনিক আযকার ও দু'আ",
+    "azkarDesc": "সকাল-সন্ধ্যার আযকার, সকল উপলক্ষের দু'আ এবং যিকর কাউন্টার",
+    "notificationsDesc": "কাস্টমাইজযোগ্য বিজ্ঞপ্তি এবং আযান অ্যালার্মের মাধ্যমে কোনো নামাজ মিস করবেন না",
+    "widgetDesc": "নামাজের সময়ে দ্রুত প্রবেশের জন্য আপনার হোম স্ক্রিনে একটি উইজেট যোগ করুন",
+    "welcomeTitle": "আসসালামু আলাইকুম",
+    "welcomeSubtitle": "সাকিনাহটাইমে স্বাগতম",
+    "welcomeDescription": "নামাজের সময়, কুরআন পড়া এবং আধ্যাত্মিক উন্নয়নে আপনার সঙ্গী।",
+    "locationTitle": "সঠিক নামাজের সময়",
+    "locationSubtitle": "অবস্থান অ্যাক্সেস",
+    "locationDescription": "আপনার এলাকার জন্য সঠিক নামাজের সময় গণনা করতে আমরা আপনার অবস্থান ব্যবহার করি।",
+    "notificationsTitle": "কোনো নামাজ মিস করবেন না",
+    "notificationsSubtitle": "বিজ্ঞপ্তি রিমাইন্ডার",
+    "notificationsDescription": "নামাজের সময় হলে সুন্দর আযান শব্দে বিজ্ঞপ্তি পান।",
+    "widgetTitle": "উইজেট যোগ করুন",
+    "widgetSubtitle": "নির্ভরযোগ্য আযান",
+    "widgetDescription": "ফোন রিস্টার্টের পরেও নির্ভরযোগ্য আযান বিজ্ঞপ্তির জন্য আপনার হোম স্ক্রিনে নামাজের সময়ের উইজেট যোগ করুন।",
+    "doneTitle": "আপনি প্রস্তুত!",
+    "doneSubtitle": "শুরু করতে প্রস্তুত",
+    "doneDescription": "আরও মননশীল আধ্যাত্মিক অনুশীলনের দিকে আপনার যাত্রা শুরু করুন।",
+    "locationEnabled": "অবস্থান সক্রিয়",
+    "notificationsEnabled": "বিজ্ঞপ্তি সক্রিয়",
+    "enable": "সক্রিয় করুন",
+    "continue": "চালিয়ে যান",
+    "notNow": "এখন নয়",
+    "enableExactAlarms": "সঠিক অ্যালার্ম সক্রিয় করুন",
+    "exactAlarmsDescription": "সাকিনাহটাইমের সঠিক নামাজের সময়ের অ্যালার্ম নির্ধারণে অনুমতি প্রয়োজন।\n\nঅনুগ্রহ করে পরবর্তী স্ক্রিনে \"অ্যালার্ম ও রিমাইন্ডার\" সক্রিয় করুন।",
+    "openSettings": "সেটিংস খুলুন",
+    "enableReliableAzan": "নির্ভরযোগ্য আযান সক্রিয় করুন",
+    "reliableAzanDescription": "ফোন রিস্টার্টের পর আযান বাজানো নিশ্চিত করতে, অনুগ্রহ করে ট্যাপ করুন:\n\nব্যাটারি → সীমাহীন\n\nএটি অ্যাপকে নামাজের সময় আপনার ফোন জাগাতে সক্ষম করবে।"
+  },
+  "mosque": {
+    "title": "কাছের মসজিদ",
+    "findMosques": "মসজিদ খুঁজুন",
+    "distance": "দূরত্ব",
+    "directions": "দিকনির্দেশনা",
+    "noMosques": "কাছাকাছি কোনো মসজিদ পাওয়া যায়নি",
+    "searchMosques": "মসজিদ অনুসন্ধান...",
+    "openInMaps": "মানচিত্রে খুলুন"
+  },
+  "hijri": {
+    "title": "হিজরী ক্যালেন্ডার",
+    "today": "আজ",
+    "months": {
+      "1": "মুহাররম",
+      "2": "সফর",
+      "3": "রবিউল আউয়াল",
+      "4": "রবিউস সানী",
+      "5": "জুমাদাল উলা",
+      "6": "জুমাদাস সানী",
+      "7": "রজব",
+      "8": "শাবান",
+      "9": "রমজান",
+      "10": "শাওয়াল",
+      "11": "যিলক্বদ",
+      "12": "যিলহজ্জ"
+    }
+  },
+  "prayerStats": {
+    "title": "নামাজের পরিসংখ্যান",
+    "overview": "সারাংশ",
+    "totalPrayed": "মোট আদায়",
+    "totalMissed": "মোট কাযা",
+    "onTimeRate": "সময়মতো হার",
+    "weeklyBreakdown": "সাপ্তাহিক বিশ্লেষণ",
+    "monthlyBreakdown": "মাসিক বিশ্লেষণ",
+    "bestDay": "সেরা দিন",
+    "prayerBreakdown": "নামাজ বিশ্লেষণ",
+    "noData": "এখনো কোনো নামাজের তথ্য নেই। আপনার নামাজ ট্র্যাক করা শুরু করুন!",
+    "loadingStats": "পরিসংখ্যান লোড হচ্ছে...",
+    "prayerTracking": "নামাজ ট্র্যাকিং",
+    "tapToMark": "পড়া হয়েছে চিহ্নিত করতে নামাজে ট্যাপ করুন",
+    "enableToTrack": "আপনার নামাজ ট্র্যাক করতে সক্রিয় করুন",
+    "tapToMarkStatus": "নামাজের অবস্থা চিহ্নিত করতে একটি বাটনে ট্যাপ করুন:",
+    "prayed": "পড়া হয়েছে",
+    "missed": "কাযা",
+    "late": "বিলম্বে",
+    "missedReminder": "কাযা নামাজের রিমাইন্ডার",
+    "remindAfter": "চিহ্নিত না করলে {{minutes}} মিনিট পর রিমাইন্ড করুন",
+    "getReminded": "আপনার নামাজ চিহ্নিত করতে রিমাইন্ডার পান",
+    "remindAfterLabel": "রিমাইন্ড করুন:",
+    "totalLogged": "মোট রেকর্ড",
+    "qadaDue": "কাযা বাকি",
+    "weekly": "সাপ্তাহিক",
+    "monthly": "মাসিক",
+    "exportFailed": "রপ্তানি ব্যর্থ",
+    "exportError": "নামাজের পরিসংখ্যান শেয়ার করা যায়নি।"
+  },
+  "prayerCalendar": {
+    "title": "নামাজের ক্যালেন্ডার",
+    "monthlyView": "মাসিক দৃশ্য",
+    "allPrayed": "সব পড়া হয়েছে",
+    "someMissed": "কিছু কাযা",
+    "notTracked": "ট্র্যাক করা হয়নি",
+    "today": "আজ",
+    "unableToLoad": "নামাজের সময় লোড করা যায়নি",
+    "selectMonthYear": "মাস ও বছর নির্বাচন করুন",
+    "year": "বছর",
+    "month": "মাস"
+  },
+  "audioDownload": {
+    "title": "অডিও ডাউনলোড",
+    "downloadAll": "সব ডাউনলোড",
+    "deleteAll": "সব মুছুন",
+    "downloading": "ডাউনলোড হচ্ছে...",
+    "downloaded": "ডাউনলোড হয়েছে",
+    "notDownloaded": "ডাউনলোড হয়নি",
+    "surahAudio": "সূরার অডিও",
+    "offline": "অফলাইন",
+    "needInternet": "অডিও ডাউনলোড করতে ইন্টারনেট সংযোগ প্রয়োজন।",
+    "downloadAllSurahs": "সব সূরা ডাউনলোড করুন",
+    "deleteAllAudio": "সব অডিও মুছুন",
+    "download": "ডাউনলোড",
+    "delete": "মুছুন",
+    "deleteAudio": "অডিও মুছুন",
+    "cancelDownloads": "ডাউনলোড বাতিল করুন",
+    "cancelAllDesc": "সব পেন্ডিং ডাউনলোড বাতিল করবেন? আংশিক ডাউনলোড হওয়া সূরা মুছে যাবে।",
+    "keepDownloading": "ডাউনলোড চালিয়ে যান",
+    "cancelAll": "সব বাতিল",
+    "deleteConfirmMessage": "এর জন্য ডাউনলোড করা অডিও মুছুন"
+  },
+  "reciter": {
+    "title": "ক্বারী নির্বাচন করুন",
+    "currentReciter": "বর্তমান ক্বারী",
+    "popular": "জনপ্রিয়",
+    "allReciters": "সকল ক্বারী"
+  },
+  "duaDetail": {
+    "reference": "রেফারেন্স",
+    "benefits": "উপকারিতা",
+    "occasion": "উপলক্ষ",
+    "shareAsDua": "দু'আ শেয়ার করুন",
+    "notFound": "দু'আ পাওয়া যায়নি",
+    "notFoundMessage": "এই দু'আটি পাওয়া যায়নি।",
+    "listenPronunciation": "উচ্চারণ শুনুন",
+    "viewInQuran": "কুরআনে দেখুন",
+    "ayah": "আয়াত",
+    "benefitsVirtues": "উপকারিতা ও ফযীলত"
+  },
+  "customDuaForm": {
+    "editDua": "দু'আ সম্পাদনা",
+    "addCustomDua": "কাস্টম দু'আ যোগ করুন",
+    "saving": "সংরক্ষণ হচ্ছে...",
+    "saveFailed": "দু'আ সংরক্ষণ করতে ব্যর্থ। অনুগ্রহ করে আবার চেষ্টা করুন।",
+    "deleteConfirm": "আপনি কি এই দু'আটি মুছে ফেলতে চান? এটি পূর্বাবস্থায় ফেরানো যাবে না।",
+    "deleteFailed": "দু'আ মুছতে ব্যর্থ। অনুগ্রহ করে আবার চেষ্টা করুন।",
+    "arabicText": "আরবি টেক্সট",
+    "optional": "ঐচ্ছিক",
+    "transliteration": "প্রতিবর্ণীকরণ",
+    "transliterationPlaceholder": "প্রতিবর্ণীকরণ দিন (যেমন, আল্লাহুম্মা...)",
+    "translationMeaning": "অনুবাদ / অর্থ",
+    "translationPlaceholder": "অর্থ বা অনুবাদ দিন",
+    "personalNotes": "ব্যক্তিগত নোট",
+    "notesPlaceholder": "ব্যক্তিগত নোট বা রিমাইন্ডার যোগ করুন",
+    "deleteThisDua": "এই দু'আ মুছুন"
+  },
+  "islamicGuide": {
+    "title": "ইসলামী গাইড",
+    "steps": "ধাপসমূহ",
+    "references": "রেফারেন্সসমূহ"
+  },
+  "dhikrOverlay": {
+    "title": "যিকর ওভারলে সেটিংস",
+    "enableOverlay": "ওভারলে সক্রিয় করুন",
+    "overlayDesc": "ফ্লোটিং যিকর রিমাইন্ডার দেখান",
+    "frequency": "ফ্রিকোয়েন্সি",
+    "everyMinutes": "প্রতি {{count}} মিনিটে",
+    "style": "স্টাইল",
+    "position": "অবস্থান"
+  },
+  "wordByWordSettings": {
+    "title": "শব্দে শব্দে সেটিংস",
+    "translationLang": "অনুবাদের ভাষা",
+    "showTransliteration": "প্রতিবর্ণীকরণ দেখান",
+    "fontSize": "ফন্ট সাইজ"
+  },
+  "quranSchedule": {
+    "title": "কুরআন সময়সূচী",
+    "createSchedule": "সূচি তৈরি করুন",
+    "completionDate": "লক্ষ্য সম্পন্নের তারিখ",
+    "pagesPerDay": "প্রতিদিন পৃষ্ঠা",
+    "startDate": "শুরুর তারিখ",
+    "daysDone": "সম্পন্ন দিন",
+    "day": "দিন",
+    "pages": "পৃষ্ঠা",
+    "completed": "সম্পন্ন",
+    "pending": "মুলতবি",
+    "openInMushaf": "মুসহাফে খুলুন",
+    "today": "আজ",
+    "juz": "পারা",
+    "surahs": "সূরাসমূহ:",
+    "openMushaf": "মুসহাফ খুলুন",
+    "markComplete": "সম্পন্ন চিহ্নিত করুন",
+    "completedAt": "সম্পন্ন:",
+    "remaining": "বাকি",
+    "complete": "সম্পন্ন",
+    "behindSchedule": "সূচির পিছনে"
+  },
+  "zakatCalculator": {
+    "title": "যাকাত ক্যালকুলেটর",
+    "totalWealth": "মোট সম্পদ (USD)",
+    "enterWealth": "আপনার মোট সম্পদ দিন",
+    "calculate": "যাকাত গণনা করুন",
+    "results": "গণনার ফলাফল",
+    "nisabGold": "নিসাব (স্বর্ণ)",
+    "nisabSilver": "নিসাব (রৌপ্য)",
+    "meetsNisab": "নিসাব পূরণ হয়েছে",
+    "zakatDue": "প্রদেয় যাকাত (২.৫%)",
+    "info": "যাকাত হলো নিসাব সীমার উপরে এক চান্দ্র বছর ধরে রক্ষিত সম্পদের ২.৫%। নিসাব ৮৭.৪৮ গ্রাম স্বর্ণ বা ৬১২.৩৬ গ্রাম রৌপ্যের মূল্যের উপর ভিত্তি করে।"
+  },
+  "hijriCalendar": {
+    "title": "ইসলামী ক্যালেন্ডার",
+    "event": "অনুষ্ঠান",
+    "fasting": "রোজা",
+    "ah": "হি.",
+    "fastingProhibited": "আজ রোজা নিষিদ্ধ",
+    "eventIn": "{{name}} {{count}} দিনে",
+    "eventIn_plural": "{{name}} {{count}} দিনে"
+  },
+  "common": {
+    "loading": "লোড হচ্ছে...",
+    "error": "ত্রুটি",
+    "retry": "পুনরায় চেষ্টা",
+    "ok": "ঠিক আছে",
+    "cancel": "বাতিল",
+    "save": "সংরক্ষণ",
+    "delete": "মুছুন",
+    "edit": "সম্পাদনা",
+    "close": "বন্ধ",
+    "back": "ফিরে যান",
+    "done": "সম্পন্ন",
+    "search": "অনুসন্ধান",
+    "share": "শেয়ার",
+    "copy": "কপি",
+    "copied": "কপি হয়েছে!",
+    "noResults": "কোনো ফলাফল পাওয়া যায়নি",
+    "offline": "আপনি অফলাইনে আছেন",
+    "yes": "হ্যাঁ",
+    "no": "না",
+    "confirm": "নিশ্চিত করুন",
+    "reset": "রিসেট",
+    "add": "যোগ করুন",
+    "remove": "সরান",
+    "enable": "সক্রিয়",
+    "disable": "নিষ্ক্রিয়",
+    "on": "চালু",
+    "off": "বন্ধ",
+    "yourRegion": "আপনার অঞ্চল",
+    "goBack": "ফিরে যান",
+    "skip": "এড়িয়ে যান"
+  },
+  "components": {
+    "streakDays": "দিনের ধারা",
+    "streakDaysPlural": "দিনের ধারা",
+    "perfectDay": "পারফেক্ট দিন",
+    "offlineMode": "অফলাইন মোড",
+    "usingCachedData": "ক্যাশ করা তথ্য ব্যবহার হচ্ছে",
+    "lastSynced": "সর্বশেষ সিঙ্ক",
+    "somethingWentWrong": "কিছু ভুল হয়েছে",
+    "tryAgain": "আবার চেষ্টা করুন"
+  },
+  "streak": {
+    "prayerStreak": "নামাজের ধারা",
+    "currentStreak": "বর্তমান ধারা",
+    "longestStreak": "সর্বোচ্চ ধারা",
+    "days": "দিন",
+    "day": "দিন",
+    "startToday": "আজ থেকে আপনার ধারা শুরু করুন!",
+    "greatStart": "দারুণ শুরু! চালিয়ে যান!",
+    "buildingMomentum": "আপনি গতি পাচ্ছেন!",
+    "amazingConsistency": "অসাধারণ ধারাবাহিকতা!",
+    "incredibleDedication": "অবিশ্বাস্য নিষ্ঠা!",
+    "trulyInspiring": "মাশাআল্লাহ! সত্যিই অনুপ্রেরণাদায়ক!"
+  },
+  "fasting": {
+    "fastingReminders": "রোজার রিমাইন্ডার",
+    "getNotifiedFasting": "আসন্ন রোজার দিনগুলোর বিজ্ঞপ্তি পান",
+    "receiveReminders": "সুন্নত রোজার দিনগুলোর রিমাইন্ডার পান",
+    "reminderTime": "রিমাইন্ডারের সময়",
+    "eveningBefore": "আগের সন্ধ্যায়",
+    "beforeFajr": "ফজরের আগে",
+    "thirtyMinBefore": "৩০ মিনিট আগে",
+    "fastingDays": "রোজার দিন",
+    "monday": "সোমবার",
+    "thursday": "বৃহস্পতিবার",
+    "whiteDays": "আইয়ামে বীয",
+    "ashura": "আশুরা",
+    "dayOfArafah": "আরাফার দিন",
+    "shawwal": "শাওয়াল",
+    "weeklySunnahFast": "সাপ্তাহিক সুন্নত রোজা",
+    "whiteDaysDesc": "প্রতি মাসের ১৩, ১৪, ১৫ তারিখ",
+    "ashuraDesc": "মুহাররমের ১০ তারিখ",
+    "arafahDesc": "যিলহজ্জের ৯ তারিখ",
+    "shawwalDesc": "রমজানের পর ৬ দিন",
+    "notificationPermissionRequired": "⚠️ বিজ্ঞপ্তির অনুমতি প্রয়োজন"
+  },
+  "storageAlerts": {
+    "quranAudio": "কুরআন অডিও",
+    "tafsir": "তাফসীর",
+    "prayerTimesCache": "নামাজের সময়ের ক্যাশ",
+    "otherCache": "অন্যান্য ক্যাশ",
+    "allCachedData": "সকল ক্যাশ করা তথ্য",
+    "clearConfirm": "{{category}} মুছবেন?",
+    "clearAllDesc": "এটি সকল ডাউনলোড করা কুরআন অডিও ও তাফসীর মুছে ফেলবে। অফলাইনে ব্যবহারের জন্য পুনরায় ডাউনলোড করতে হবে।",
+    "clearCategoryDesc": "এটি সকল {{category}} মুছে ফেলবে। অফলাইনে ব্যবহারের জন্য পুনরায় ডাউনলোড করতে হতে পারে।",
+    "cancel": "বাতিল",
+    "clear": "মুছুন",
+    "error": "ত্রুটি",
+    "failedToClear": "ক্যাশ মুছতে ব্যর্থ। অনুগ্রহ করে আবার চেষ্টা করুন।"
+  },
+  "mushaf": {
+    "notes": "নোট ও হাইলাইট",
+    "bookmarks": "বুকমার্কসমূহ",
+    "highlights": "হাইলাইটসমূহ",
+    "addNote": "নোট যোগ করুন",
+    "save": "সংরক্ষণ",
+    "delete": "মুছুন",
+    "noNotesYet": "এখনো কোনো নোট বা হাইলাইট নেই",
+    "tapToAddNote": "নোট বা হাইলাইট যোগ করতে যেকোনো আয়াতে দীর্ঘক্ষণ চাপুন",
+    "noBookmarksYet": "এখনো কোনো বুকমার্ক নেই",
+    "tapToBookmark": "বুকমার্ক করতে যেকোনো আয়াতে ট্যাপ করুন",
+    "editNote": "নোট সম্পাদনা",
+    "writeNoteHere": "এখানে আপনার নোট লিখুন...",
+    "hifzModeActivated": "হিফয মোড সক্রিয়",
+    "hifzModeDesc": "আয়াত প্রকাশ করতে ট্যাপ করুন। মুখস্থ অপশনের জন্য আয়াতে দীর্ঘক্ষণ চাপুন। সেটিংসের জন্য হিফয বাটন ধরে রাখুন।",
+    "wordByWordHighlighting": "শব্দে শব্দে হাইলাইটিং",
+    "wordByWordDesc": "পৃষ্ঠার যেকোনো জায়গায় দীর্ঘক্ষণ চেপে অডিওতে স্ক্রাব করতে টেনে আনুন। হাইলাইটেড শব্দ আপনার আঙুল অনুসরণ করবে।",
+    "justNow": "এইমাত্র",
+    "minutesAgo": "{{count}} মিনিট আগে",
+    "hoursAgo": "{{count}} ঘণ্টা আগে",
+    "daysAgo": "{{count}} দিন আগে",
+    "noBookmarks": "এখনো কোনো বুকমার্ক নেই",
+    "noResults": "কোনো ফলাফল পাওয়া যায়নি",
+    "tryDifferent": "ভিন্ন কীওয়ার্ড ব্যবহার করে দেখুন",
+    "search": "অনুসন্ধান...",
+    "writeNote": "এখানে আপনার নোট লিখুন...",
+    "quarterHizb": "চতুর্থাংশ হিযব",
+    "halfHizb": "অর্ধ হিযব",
+    "fullJuzOnly": "শুধু পূর্ণ পারা",
+    "copyVerse": "আয়াত কপি",
+    "shareVerse": "আয়াত শেয়ার",
+    "chooseHighlight": "হাইলাইট রঙ নির্বাচন করুন",
+    "removeHighlight": "হাইলাইট সরান",
+    "highlight": "হাইলাইট",
+    "selectReciter": "ক্বারী নির্বাচন করুন",
+    "audioSettings": "অডিও সেটিংস",
+    "noTafsir": "কোনো তাফসীর উপলব্ধ নেই",
+    "noTafsirVerse": "এই আয়াতের জন্য কোনো তাফসীর উপলব্ধ নেই",
+    "recently": "সম্প্রতি",
+    "earlier": "আগে",
+    "deleteFailed": "মুছতে ব্যর্থ। অনুগ্রহ করে আবার চেষ্টা করুন।",
+    "quran": "কুরআন",
+    "surahs114": "১১৪ সূরা",
+    "juz30": "৩০ পারা",
+    "recentCount": "সাম্প্রতিক",
+    "surahTab": "সূরা",
+    "juzTab": "পারা",
+    "recentTab": "সাম্প্রতিক",
+    "searchPlaceholder": "অনুসন্ধান...",
+    "includeTafsir": "অনুসন্ধানে তাফসীর/অনুবাদ অন্তর্ভুক্ত করুন",
+    "notesSection": "নোট",
+    "highlightsSection": "হাইলাইট",
+    "tafsirTranslation": "তাফসীর/অনুবাদ",
+    "nowPlaying": "এখন চলছে",
+    "paused": "বিরতি",
+    "verse": "আয়াত",
+    "repeat": "পুনরাবৃত্তি",
+    "loop": "লুপ",
+    "remaining": "বাকি",
+    "surah": "সূরা",
+    "noTafsirAvailable": "এই আয়াতের জন্য কোনো তাফসীর উপলব্ধ নেই",
+    "noteInputPlaceholder": "এখানে আপনার নোট লিখুন...",
+    "juzLabel": "পারা",
+    "hizbLabel": "হিযব",
+    "searching": "অনুসন্ধান হচ্ছে...",
+    "resultsCount": "ফলাফল",
+    "recentlyViewed": "সম্প্রতি দেখা",
+    "allSurahs": "সকল সূরা",
+    "recentlyViewedLabel": "সম্প্রতি দেখা",
+    "quartersLabel": "চতুর্থাংশ",
+    "halvesLabel": "অর্ধাংশ",
+    "pagesYouVisit": "আপনি যে পৃষ্ঠাগুলো দেখবেন সেগুলো এখানে দেখাবে",
+    "noRecentPages": "এখনো কোনো সাম্প্রতিক পৃষ্ঠা নেই",
+    "verses": "আয়াত",
+    "pageNumber": "পৃষ্ঠা",
+    "loadingVerses": "আয়াত লোড হচ্ছে...",
+    "bookmark": "বুকমার্ক",
+    "removeBookmark": "বুকমার্ক সরান",
+    "tafsirAndTranslations": "তাফসীর ও অনুবাদ",
+    "downloadedCount": "ডাউনলোড হয়েছে",
+    "playUntil": "পর্যন্ত চালান",
+    "page": "পৃষ্ঠা",
+    "juz": "পারা",
+    "reciterLabel": "ক্বারী",
+    "play": "চালান",
+    "playCount": "{{count}}× চালান",
+    "setLoopStart": "লুপ শুরু সেট করুন",
+    "setLoopEnd": "লুপ শেষ সেট করুন",
+    "playLoop": "লুপ চালান",
+    "tapToReveal": "প্রকাশ করতে ট্যাপ করুন",
+    "notStarted": "শুরু হয়নি",
+    "inProgress": "চলমান",
+    "memorized": "মুখস্থ",
+    "all": "সকল",
+    "tapToMinimize": "ছোট করতে ট্যাপ করুন",
+    "myTranslations": "আমার অনুবাদ",
+    "myTafsirs": "আমার তাফসীর",
+    "tafsirBadge": "তাফসীর",
+    "translationBadge": "অনুবাদ",
+    "currentlyActive": "বর্তমানে সক্রিয়",
+    "select": "নির্বাচন করুন",
+    "availableToDownload": "ডাউনলোডের জন্য উপলব্ধ",
+    "translationsCount": "অনুবাদ",
+    "tafsirsCount": "তাফসীর",
+    "tapToDownload": "ডাউনলোড করতে ট্যাপ করুন",
+    "deleteTafsir": "তাফসীর মুছুন",
+    "deleteTafsirConfirm": "{{name}} মুছবেন?",
+    "storageFull": "স্টোরেজ পূর্ণ। অনুগ্রহ করে আপনার ডিভাইসে জায়গা খালি করে আবার চেষ্টা করুন।",
+    "downloadFailed": "ডাউনলোড ব্যর্থ। অনুগ্রহ করে আপনার সংযোগ ও স্টোরেজ স্পেস চেক করুন।",
+    "tafsirNotAvailable": "কোনো তাফসীর উপলব্ধ নেই",
+    "tafsirNotAvailableVerse": "এই আয়াতের জন্য কোনো তাফসীর উপলব্ধ নেই"
+  },
+  "mosqueFinder": {
+    "nearbyMosques": "কাছের মসজিদ",
+    "searchPlaceholder": "মসজিদ অনুসন্ধান...",
+    "radius1km": "১ কিমি",
+    "radius5km": "৫ কিমি",
+    "radius10km": "১০ কিমি",
+    "radius25km": "২৫ কিমি"
+  },
+  "calendar": {
+    "months": [
+      "জান",
+      "ফেব",
+      "মার্চ",
+      "এপ্রি",
+      "মে",
+      "জুন",
+      "জুল",
+      "আগ",
+      "সেপ",
+      "অক্টো",
+      "নভে",
+      "ডিসে"
+    ],
+    "weekdays": [
+      "র",
+      "সো",
+      "ম",
+      "বু",
+      "বৃ",
+      "শু",
+      "শ"
+    ]
+  },
+  "themePicker": {
+    "colorMode": "কালার মোড",
+    "theme": "থিম",
+    "light": "লাইট",
+    "dark": "ডার্ক",
+    "auto": "অটো",
+    "themeDefault": "এমারেল্ড",
+    "themeRoseGold": "রোজ গোল্ড",
+    "themeLavender": "ল্যাভেন্ডার",
+    "themeSagePeach": "সেজ অ্যান্ড পিচ",
+    "themeOceanBreeze": "ওশান ব্রিজ"
+  },
+  "storageOverview": {
+    "storageUsed": "ব্যবহৃত স্টোরেজ",
+    "manage": "পরিচালনা",
+    "storageFull": "স্টোরেজ প্রায় পূর্ণ। ডাউনলোড চালিয়ে যেতে কিছু তথ্য মুছুন।",
+    "availableOnDevice": "ডিভাইসে উপলব্ধ"
+  },
+  "storageBreakdown": {
+    "title": "স্টোরেজ বিশ্লেষণ",
+    "quranAudio": "কুরআন অডিও",
+    "tafsir": "তাফসীর",
+    "prayerTimes": "নামাজের সময়",
+    "otherCache": "অন্যান্য ক্যাশ"
+  },
+  "storageSettings": {
+    "downloadSettings": "ডাউনলোড সেটিংস",
+    "storageLimit": "স্টোরেজ সীমা",
+    "maxSpace": "অফলাইন কন্টেন্টের জন্য সর্বোচ্চ জায়গা",
+    "wifiOnly": "শুধু ওয়াইফাইতে ডাউনলোড",
+    "wifiOnlyDesc": "শুধু ওয়াইফাইতে ডাউনলোড করে মোবাইল ডেটা সাশ্রয় করুন",
+    "autoDelete": "পুরনো ক্যাশ স্বয়ংক্রিয় মুছুন",
+    "autoDeleteDesc": "সীমায় পৌঁছালে স্বয়ংক্রিয়ভাবে পুরনো ক্যাশ তথ্য মুছুন"
+  },
+  "dhikrReminders": {
+    "title": "যিকর রিমাইন্ডার",
+    "floatingReminders": "ফ্লোটিং রিমাইন্ডার",
+    "dhikrNotifications": "যিকর বিজ্ঞপ্তি",
+    "showOverlay": "অন্য অ্যাপের উপরে যিকর ওভারলে দেখান",
+    "receiveNotifications": "পর্যায়ক্রমিক যিকর বিজ্ঞপ্তি পান",
+    "grantPermission": "ওভারলে অনুমতি দিন",
+    "previewOverlay": "ওভারলে প্রিভিউ",
+    "reminderInterval": "রিমাইন্ডার ব্যবধান",
+    "dhikrCategories": "যিকর বিভাগ",
+    "chooseTypes": "কোন ধরনের যিকর অন্তর্ভুক্ত করতে চান নির্বাচন করুন",
+    "quietHours": "শান্ত সময়",
+    "pauseSleep": "ঘুমের সময় রিমাইন্ডার বিরতি দিন",
+    "startAt": "শুরু",
+    "endAt": "শেষ",
+    "autoDismiss": "স্বয়ংক্রিয় বাতিল",
+    "overlayDisappears": "এই সময়ের পর ওভারলে অদৃশ্য হবে",
+    "iosNotice": "ফ্লোটিং ওভারলে শুধু অ্যান্ড্রয়েডে উপলব্ধ। iOS-এ সাধারণ বিজ্ঞপ্তি পাবেন।",
+    "noCategories": "অনুগ্রহ করে কমপক্ষে একটি যিকর বিভাগ সক্রিয় করুন",
+    "previewFailed": "ওভারলে প্রিভিউ দেখানো যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।",
+    "noDhikr": "নির্বাচিত বিভাগের জন্য যিকর কন্টেন্ট পাওয়া যায়নি",
+    "error": "ত্রুটি",
+    "serviceFailed": "যিকর রিমাইন্ডার সেবা চালু করতে ব্যর্থ",
+    "interval30min": "৩০ মিনিট",
+    "interval1hour": "১ ঘণ্টা",
+    "interval2hours": "২ ঘণ্টা",
+    "interval3hours": "৩ ঘণ্টা",
+    "interval4hours": "৪ ঘণ্টা",
+    "autoDismiss5s": "৫সে.",
+    "autoDismiss10s": "১০সে.",
+    "autoDismiss15s": "১৫সে.",
+    "autoDismiss20s": "২০সে.",
+    "autoDismiss30s": "৩০সে.",
+    "quiet9pm": "রাত ৯টা",
+    "quiet10pm": "রাত ১০টা",
+    "quiet11pm": "রাত ১১টা",
+    "quiet12am": "রাত ১২টা",
+    "wake5am": "ভোর ৫টা",
+    "wake6am": "সকাল ৬টা",
+    "wake7am": "সকাল ৭টা",
+    "wake8am": "সকাল ৮টা"
+  },
+  "quickAccess": {
+    "title": "দ্রুত প্রবেশ",
+    "morning": "সকাল",
+    "evening": "সন্ধ্যা",
+    "prayer": "নামাজ",
+    "sleep": "ঘুম",
+    "wake": "জাগরণ",
+    "general": "সাধারণ"
+  },
+  "tasbih": {
+    "title": "তাসবীহ কাউন্টার",
+    "target": "লক্ষ্য",
+    "tapToCount": "গণনা করতে ট্যাপ করুন • রিসেট করতে ধরে রাখুন",
+    "targetReached": "লক্ষ্য অর্জিত!",
+    "resetCounter": "কাউন্টার রিসেট",
+    "resetConfirm": "আপনি কি কাউন্টার ০-তে রিসেট করতে চান?",
+    "cancel": "বাতিল",
+    "reset": "রিসেট"
+  },
+  "weeklyChart": {
+    "title": "এই সপ্তাহ",
+    "prayed": "পড়া হয়েছে",
+    "missed": "কাযা",
+    "late": "বিলম্বে",
+    "noData": "কোনো তথ্য নেই",
+    "sun": "রবি",
+    "mon": "সোম",
+    "tue": "মঙ্গল",
+    "wed": "বুধ",
+    "thu": "বৃহ",
+    "fri": "শুক্র",
+    "sat": "শনি"
+  },
+  "citySearch": {
+    "selectCity": "শহর নির্বাচন করুন",
+    "searchPlaceholder": "বিশ্বের যেকোনো শহর অনুসন্ধান...",
+    "recent": "সাম্প্রতিক",
+    "popularCities": "জনপ্রিয় শহর",
+    "noCities": "কোনো শহর পাওয়া যায়নি",
+    "tryDifferent": "ভিন্ন বানান বা কাছের বড় শহর অনুসন্ধান করুন",
+    "offline": "অফলাইন",
+    "offlineMessage": "আপনি বর্তমানে অফলাইনে আছেন। নতুন শহরে যেতে নামাজের সময় আনতে ইন্টারনেট প্রয়োজন। সম্প্রতি দেখা শহর ব্যবহার করুন বা অনলাইন হলে আবার চেষ্টা করুন।",
+    "networkError": "নেটওয়ার্ক ত্রুটি। স্থানীয় ফলাফল দেখানো হচ্ছে।"
+  },
+  "upcomingEvents": {
+    "title": "আসন্ন অনুষ্ঠান",
+    "noEvents": "কোনো আসন্ন অনুষ্ঠান নেই"
+  },
+  "hifzControls": {
+    "title": "হিফয নিয়ন্ত্রণ",
+    "hideTab": "লুকান",
+    "repeatTab": "পুনরাবৃত্তি",
+    "loopTab": "লুপ",
+    "progressTab": "অগ্রগতি",
+    "hideMode": "লুকানো মোড",
+    "wordAudio": "শব্দের অডিও",
+    "requiresInternet": "ইন্টারনেট প্রয়োজন",
+    "playPronunciation": "শব্দ প্রকাশ করলে উচ্চারণ চালান",
+    "quickActions": "দ্রুত কাজ",
+    "revealAll": "সব প্রকাশ করুন",
+    "hideAll": "সব লুকান",
+    "autoHideDelay": "স্বয়ংক্রিয় লুকানো বিলম্ব",
+    "autoHideAfter": "প্রকাশের পর স্বয়ংক্রিয়ভাবে লুকান",
+    "markCurrentVerse": "বর্তমান আয়াত চিহ্নিত করুন",
+    "verse": "আয়াত",
+    "notStarted": "শুরু হয়নি",
+    "inProgress": "চলমান",
+    "memorized": "মুখস্থ",
+    "longPressToMark": "মুখস্থ অবস্থা চিহ্নিত করতে আয়াতে দীর্ঘক্ষণ চাপুন",
+    "bulkMarking": "গ্রুপ চিহ্নিতকরণ",
+    "page": "পৃষ্ঠা",
+    "juz": "পারা",
+    "clear": "মুছুন",
+    "clearPageMarkings": "পৃষ্ঠার চিহ্ন মুছুন",
+    "markEntirePage": "সম্পূর্ণ পৃষ্ঠা চিহ্নিত করুন",
+    "clearJuzMarkings": "পারার চিহ্ন মুছুন",
+    "markEntireJuz": "সম্পূর্ণ পারা চিহ্নিত করুন",
+    "cancel": "বাতিল",
+    "confirm": "নিশ্চিত করুন"
+  },
+  "taraweeh": {
+    "title": "তারাবীহ ট্র্যাকার",
+    "ramadanCalendar": "রমজান ক্যালেন্ডার",
+    "locationBreakdown": "স্থান বিশ্লেষণ",
+    "completionRate": "সম্পন্নতার হার",
+    "logNight": "রাত রেকর্ড করুন",
+    "edit": "সম্পাদনা",
+    "night": "রাত",
+    "nights": "রাত",
+    "streak": "ধারা",
+    "best": "সেরা",
+    "atMosque": "মসজিদে",
+    "atHome": "বাড়িতে"
+  },
+  "mosqueDetail": {
+    "title": "মসজিদের বিবরণ",
+    "openingHours": "খোলার সময়",
+    "directions": "দিকনির্দেশনা",
+    "call": "কল করুন",
+    "website": "ওয়েবসাইট",
+    "rating": "রেটিং",
+    "reviews": "রিভিউ",
+    "failedToLoad": "বিবরণ লোড করতে ব্যর্থ",
+    "tryAgain": "আবার চেষ্টা করুন",
+    "openNow": "এখন খোলা",
+    "closed": "বন্ধ",
+    "address": "ঠিকানা",
+    "contact": "যোগাযোগ",
+    "getDirections": "দিকনির্দেশনা পান",
+    "away": "দূরে"
+  },
+  "donation": {
+    "addTitle": "দান যোগ করুন",
+    "type": "ধরন",
+    "amount": "পরিমাণ",
+    "recipientOptional": "প্রাপক (ঐচ্ছিক)",
+    "recipientPlaceholder": "সংস্থা বা ব্যক্তি",
+    "notesOptional": "নোট (ঐচ্ছিক)",
+    "notesPlaceholder": "নোট যোগ করুন...",
+    "addButton": "দান যোগ করুন",
+    "sadaqah": "সদকা",
+    "zakat": "যাকাত",
+    "fidya": "ফিদয়া",
+    "kaffarah": "কাফফারা",
+    "other": "অন্যান্য"
+  },
+  "setGoal": {
+    "title": "লক্ষ্য সেট করুন",
+    "goalAmount": "লক্ষ্যমাত্রা (USD)",
+    "setButton": "লক্ষ্য সেট করুন",
+    "infoText": "দানের লক্ষ্য সেট করলে রমজান জুড়ে আপনার অগ্রগতি ট্র্যাক করতে সাহায্য করে। আপনি যেকোনো সময় এই লক্ষ্য আপডেট করতে পারেন।"
+  },
+  "logTaraweeh": {
+    "editTitle": "সম্পাদনা",
+    "logTitle": "রেকর্ড",
+    "night": "রাত",
+    "rakaat": "রাকাত",
+    "location": "স্থান",
+    "mosque": "মসজিদ",
+    "home": "বাড়ি",
+    "notesOptional": "নোট (ঐচ্ছিক)",
+    "notesPlaceholder": "নোট যোগ করুন...",
+    "delete": "মুছুন",
+    "save": "সংরক্ষণ"
+  },
+  "suhoorIftar": {
+    "suhoorReminder": "সেহরি রিমাইন্ডার",
+    "iftarReminder": "ইফতার রিমাইন্ডার"
+  },
+  "ramadanCountdown": {
+    "daysLeft": "দিন বাকি"
+  },
+  "quranProgress": {
+    "title": "কুরআন অগ্রগতি"
+  },
+  "monthlyCalendar": {
+    "noData": "কোনো তথ্য নেই"
+  },
+  "savedLoops": {
+    "title": "সংরক্ষিত লুপ",
+    "enterName": "লুপের নাম দিন...",
+    "noName": "অনুগ্রহ করে লুপের একটি নাম দিন",
+    "noRange": "অনুগ্রহ করে প্রথমে একটি লুপ পরিসীমা সেট করুন",
+    "saveLoop": "বর্তমান লুপ সংরক্ষণ করুন",
+    "saveCurrent": "বর্তমান সংরক্ষণ",
+    "delete": "মুছুন",
+    "deleteLoop": "লুপ মুছুন",
+    "deleteConfirm": "আপনি কি মুছে ফেলতে চান",
+    "cancel": "বাতিল",
+    "save": "সংরক্ষণ",
+    "noLoops": "এখনো কোনো সংরক্ষিত লুপ নেই",
+    "error": "ত্রুটি",
+    "plays": "বার বাজানো"
+  },
+  "revision": {
+    "title": "দৈনিক মুরাজাআ",
+    "dueNow": "এখন দেও",
+    "noRevision": "কোনো মুরাজাআ বাকি নেই",
+    "startReview": "মুরাজাআ শুরু করুন",
+    "markReviewed": "মুরাজাআ হিসেবে চিহ্নিত করুন",
+    "versesDue": "মুরাজাআ বাকি আয়াত",
+    "todayProgress": "আজকের অগ্রগতি",
+    "overdue": "বিলম্বিত",
+    "due": "বাকি",
+    "allCaughtUp": "সব হয়ে গেছে!",
+    "noVersesDue": "এখন কোনো মুরাজাআ বাকি নেই",
+    "completedToday": "আজ সম্পন্ন",
+    "startSession": "মুরাজাআ সেশন শুরু করুন",
+    "howWell": "কতটা ভালো মনে আছে",
+    "forgot": "ভুলে গেছি",
+    "hard": "কঠিন",
+    "okay": "ঠিক আছে",
+    "good": "ভালো",
+    "easy": "সহজ",
+    "perfect": "পারফেক্ট",
+    "dAgo": "দিন আগে"
+  },
+  "repeatControls": {
+    "title": "অডিও পুনরাবৃত্তি সেটিংস",
+    "subtitle": "মুখস্থ অনুশীলনের জন্য",
+    "timesToRepeat": "পুনরাবৃত্তির সংখ্যা",
+    "timesHint": "আয়াত এতবার বাজবে",
+    "gapBetween": "পুনরাবৃত্তির মধ্যে বিরতি",
+    "gapHint": "পরবর্তী বাজানোর আগে তিলাওয়াতের সময়",
+    "recitationSpeed": "তিলাওয়াতের গতি",
+    "speedHint": "ধীরগতি উচ্চারণ শিখতে সাহায্য করে",
+    "stopRepeating": "পুনরাবৃত্তি বন্ধ করুন"
+  },
+  "calendarGrid": {
+    "whiteDay": "আইয়ামে বীয",
+    "event": "অনুষ্ঠান",
+    "fasting": "রোজা"
+  },
+  "hifzProgress": {
+    "title": "হিফয অগ্রগতি",
+    "exportFailed": "রপ্তানি ব্যর্থ",
+    "exportError": "অগ্রগতি তথ্য রপ্তানি করা যায়নি",
+    "resetProgress": "অগ্রগতি রিসেট",
+    "resetConfirm": "আপনি কি সকল মুখস্থ অগ্রগতি রিসেট করতে চান?",
+    "resetSuccess": "অগ্রগতি রিসেট হয়েছে",
+    "resetError": "অগ্রগতি রিসেট করতে ব্যর্থ",
+    "cancel": "বাতিল",
+    "reset": "রিসেট",
+    "success": "সফল",
+    "error": "ত্রুটি"
+  },
+  "reciterSelection": {
+    "title": "ক্বারী নির্বাচন করুন",
+    "recitersAvailable": "ক্বারী উপলব্ধ",
+    "downloaded": "ডাউনলোড হয়েছে",
+    "infoBanner": "ডাউনলোড ব্যাজযুক্ত ক্বারীদের অডিও আপনার ডিভাইসে সংরক্ষিত আছে"
+  },
+  "wordByWord": {
+    "title": "শব্দে শব্দে",
+    "infoHint": "অর্থ দেখতে ও উচ্চারণ শুনতে মুসহাফের যেকোনো শব্দে দীর্ঘক্ষণ চাপুন।",
+    "translationLanguage": "অনুবাদের ভাষা",
+    "arabicMeanings": "কঠিন শব্দের আরবি অর্থ",
+    "tapToDownload": "ডাউনলোড করতে ট্যাপ করুন",
+    "downloading": "ডাউনলোড হচ্ছে...",
+    "audio": "অডিও",
+    "playPronunciation": "শব্দের উচ্চারণ চালান",
+    "audioHint": "আঙুল তুললে শব্দ শুনতে পাবেন"
+  },
+  "errorFallback": {
+    "title": "কিছু ভুল হয়েছে",
+    "message": "চালিয়ে যেতে অনুগ্রহ করে অ্যাপ পুনরায় লোড করুন।",
+    "tryAgain": "আবার চেষ্টা করুন",
+    "errorDetails": "ত্রুটির বিবরণ"
+  },
+  "downloadProgress": {
+    "downloading": "ডাউনলোড হচ্ছে",
+    "paused": "বিরতি",
+    "failed": "ব্যর্থ",
+    "pending": "মুলতবি"
+  },
+  "duaOfDay": {
+    "title": "আজকের দু'আ",
+    "islamicSupplication": "ইসলামী দু'আ",
+    "tapToRead": "সম্পূর্ণ দু'আ পড়তে ট্যাপ করুন"
+  },
+  "dailyDhikr": {
+    "title": "দৈনিক যিকর",
+    "subtitle": "আজকের বিশেষ যিকর"
+  },
+  "surahDownload": {
+    "queued": "সারিবদ্ধ"
+  },
+  "hifzConstants": {
+    "fullVerse": "সম্পূর্ণ আয়াত",
+    "fullVerseDesc": "সম্পূর্ণ আয়াত লুকান, প্রকাশ করতে ট্যাপ করুন",
+    "wordByWord": "শব্দে শব্দে",
+    "wordByWordDesc": "তিলাওয়াত করার সাথে সাথে একটি একটি শব্দ প্রকাশ করুন",
+    "manual": "ম্যানুয়াল",
+    "none": "কিছু না",
+    "sec2": "২ সে.",
+    "sec5": "৫ সে.",
+    "slow": "ধীর",
+    "medium": "মাঝারি",
+    "normal": "স্বাভাবিক"
+  },
+  "calculationMethods": {
+    "shia": "শিয়া ইসনা-আশারী",
+    "karachi": "করাচি ইসলামী বিজ্ঞান বিশ্ববিদ্যালয়",
+    "isna": "ইসলামিক সোসাইটি অফ নর্থ আমেরিকা",
+    "mwl": "মুসলিম ওয়ার্ল্ড লীগ",
+    "ummAlQura": "উম্মুল কুরা বিশ্ববিদ্যালয়, মক্কা",
+    "egypt": "মিশর জেনারেল সার্ভে কর্তৃপক্ষ",
+    "tehran": "তেহরান বিশ্ববিদ্যালয় ভূপদার্থবিদ্যা ইনস্টিটিউট",
+    "gulf": "উপসাগরীয় অঞ্চল",
+    "kuwait": "কুয়েত",
+    "qatar": "কাতার",
+    "muis": "মজলিস উগামা ইসলাম সিঙ্গাপুর",
+    "uoif": "ইউনিয়ন অর্গানাইজেশন ইসলামিক দে ফ্রান্স",
+    "diyanet": "দিয়ানেত ইশলেরি বাশকানলিঘি, তুরস্ক",
+    "russia": "রাশিয়া মুসলিম আধ্যাত্মিক প্রশাসন",
+    "moonsighting": "মুনসাইটিং কমিটি ওয়ার্ল্ডওয়াইড",
+    "jordan": "জর্দান আওকাফ ও ইসলামী বিষয়ক মন্ত্রণালয়"
+  },
+  "loopRange": {
+    "start": "শুরু",
+    "end": "শেষ",
+    "notSet": "সেট করা হয়নি",
+    "clear": "মুছুন",
+    "playLoop": "লুপ চালান",
+    "stopLoop": "লুপ বন্ধ করুন",
+    "helpText": "একটি আয়াতে দীর্ঘক্ষণ চেপে \"লুপ শুরু সেট করুন\" বা \"লুপ শেষ সেট করুন\" ট্যাপ করে পরিসীমা নির্ধারণ করুন"
+  },
+  "azkarCategories": {
+    "morning": "সকালের আযকার",
+    "evening": "সন্ধ্যার আযকার",
+    "after-prayer": "নামাজের পর",
+    "sleep": "ঘুমের আযকার",
+    "waking": "ঘুম থেকে ওঠা",
+    "general": "সাধারণ আযকার"
+  },
+  "duaCategories": {
+    "travel": "ভ্রমণ",
+    "eating": "খাওয়া ও পান",
+    "sleeping": "ঘুম ও জাগরণ",
+    "places": "প্রবেশ ও প্রস্থান",
+    "weather": "আবহাওয়া ও প্রকৃতি",
+    "health": "স্বাস্থ্য ও আরোগ্য",
+    "protection": "সুরক্ষা",
+    "gratitude": "কৃতজ্ঞতা",
+    "forgiveness": "ক্ষমা",
+    "guidance": "হিদায়াত",
+    "family": "পরিবার ও সন্তান",
+    "general": "সাধারণ"
+  },
+  "guideCategories": {
+    "worship": "ইবাদত ও নামাজ",
+    "purification": "পবিত্রতা",
+    "hajj": "হজ্জ ও উমরা",
+    "charity": "দান ও যাকাত",
+    "fasting": "রোজা",
+    "funeral": "জানাযা",
+    "character": "চরিত্র ও আচরণ",
+    "knowledge": "জ্ঞান ও আধ্যাত্মিকতা",
+    "finance": "ইসলামী অর্থব্যবস্থা"
+  },
+  "guides": {
+    "how-to-perform-salah": {
+      "title": "নামাজ (সালাত) আদায়ের নিয়ম",
+      "description": "নবীর সুন্নত অনুযায়ী পাঁচ ওয়াক্ত নামাজ আদায়ের বিস্তারিত গাইড",
+      "steps": {
+        "0": {
+          "title": "১. নিয়্যত করুন",
+          "content": "কোন নামাজ পড়বেন তা অন্তরে নিয়্যত করুন। নিয়্যত অন্তরে হয় এবং মুখে উচ্চারণ করার প্রয়োজন নেই।"
+        },
+        "1": {
+          "title": "২. তাকবীর (শুরু)",
+          "content": "দুই হাত কাঁধ বা কান পর্যন্ত তুলুন এবং 'আল্লাহু আকবার' বলুন। এটি নামাজের সূচনা চিহ্নিত করে।"
+        },
+        "2": {
+          "title": "৩. উদ্বোধনী দু'আ পড়ুন",
+          "content": "ডান হাত বামের উপর বুকে রাখুন এবং পড়ুন: 'সুবহানাকা আল্লাহুম্মা ওয়া বিহামদিকা, ওয়া তাবারাকাসমুকা, ওয়া তা'আলা জাদ্দুকা, ওয়া লা ইলাহা গাইরুক'।"
+        },
+        "3": {
+          "title": "৪. সূরা আল-ফাতিহা পড়ুন",
+          "content": "সূরা আল-ফাতিহা পড়ুন। প্রতি রাকাতে এটি ফরজ। শেষ করে চুপে চুপে 'আমীন' বলুন।"
+        },
+        "4": {
+          "title": "৫. অতিরিক্ত সূরা পড়ুন",
+          "content": "প্রথম দুই রাকাতে আল-ফাতিহার পর কুরআন থেকে আরেকটি সূরা বা কিছু আয়াত পড়ুন।"
+        },
+        "5": {
+          "title": "৬. রুকু করুন",
+          "content": "'আল্লাহু আকবার' বলে ঝুঁকে পড়ুন, হাঁটুতে হাত রাখুন। তিনবার 'সুবহানা রাব্বিয়াল আযীম' বলুন।"
+        },
+        "6": {
+          "title": "৭. রুকু থেকে দাঁড়ান",
+          "content": "রুকু থেকে উঠতে 'সামিআল্লাহু লিমান হামিদাহ' বলুন। দাঁড়িয়ে 'রাব্বানা ওয়া লাকাল হামদ' বলুন।"
+        },
+        "7": {
+          "title": "৮. সিজদা করুন",
+          "content": "'আল্লাহু আকবার' বলে সিজদা করুন। তিনবার 'সুবহানা রাব্বিয়াল আ'লা' বলুন। দুটি সিজদা করুন।"
+        },
+        "8": {
+          "title": "৯. তাশাহহুদের জন্য বসুন",
+          "content": "প্রতি দুই রাকাতের পর বসে তাশাহহুদ পড়ুন। ডান হাতের তর্জনী দিয়ে ইশারা করুন।"
+        },
+        "9": {
+          "title": "১০. সালাম ফেরান",
+          "content": "মাথা ডানে ঘুরিয়ে 'আসসালামু আলাইকুম ওয়া রাহমাতুল্লাহ' বলুন, তারপর বামে ঘুরিয়ে পুনরায় বলুন।"
+        }
+      }
+    },
+    "how-to-perform-istikhara": {
+      "title": "ইস্তিখারা নামাজের নিয়ম",
+      "description": "গুরুত্বপূর্ণ সিদ্ধান্তে আল্লাহর নিকট হিদায়াত চাওয়ার গাইড",
+      "steps": {
+        "0": {
+          "title": "১. আপনার সিদ্ধান্ত চিহ্নিত করুন",
+          "content": "একটি নির্দিষ্ট বিষয় মনে রাখুন যেখানে আপনার হিদায়াত প্রয়োজন। ইস্তিখারা বৈধ বিষয়ের জন্য যেখানে কোন পথটি ভালো তা নিয়ে আপনি অনিশ্চিত।"
+        },
+        "1": {
+          "title": "২. দুই রাকাত নামাজ পড়ুন",
+          "content": "দুই রাকাত নফল নামাজ পড়ুন। প্রথম রাকাতে আল-ফাতিহার পর সূরা আল-কাফিরূন এবং দ্বিতীয়তে সূরা আল-ইখলাস পড়ুন।"
+        },
+        "2": {
+          "title": "৩. ইস্তিখারার দু'আ পড়ুন",
+          "content": "নামাজ শেষে হাত তুলে পড়ুন: 'আল্লাহুম্মা ইন্নী আস্তাখীরুকা বি'ইলমিকা, ওয়া আস্তাকদিরুকা বিকুদরাতিকা...' (হে আল্লাহ, আমি তোমার ইলমের মাধ্যমে হিদায়াত চাই...)।"
+        },
+        "3": {
+          "title": "৪. আপনার বিষয় উল্লেখ করুন",
+          "content": "যখন 'ফী হাযাল আমর' (আমার এই বিষয়ে) অংশে পৌঁছবেন, তখন আপনি যে বিষয়ে হিদায়াত চাইছেন তা নির্দিষ্ট করে বলুন।"
+        },
+        "4": {
+          "title": "৫. আল্লাহর পরিকল্পনায় ভরসা রাখুন",
+          "content": "দু'আ করার পর আপনার সিদ্ধান্ত নিয়ে এগিয়ে যান। বিশ্বাস রাখুন যে আল্লাহ উত্তম পথ আপনার জন্য সহজ করে দেবেন এবং যা ভালো নয় তাতে বাধা দেবেন।"
+        }
+      }
+    },
+    "how-to-perform-tahajjud": {
+      "title": "তাহাজ্জুদ নামাজের নিয়ম",
+      "description": "রাতের শেষ তৃতীয়াংশে রাতের নামাজ আদায়ের গাইড",
+      "steps": {
+        "0": {
+          "title": "১. শেষ তৃতীয়াংশে জাগুন",
+          "content": "রাতের শেষ তৃতীয়াংশে জাগুন (ফজরের আনুমানিক ১-২ ঘণ্টা আগে)। এটি তাহাজ্জুদের সবচেয়ে বরকতময় সময়।"
+        },
+        "1": {
+          "title": "২. ওযু করুন",
+          "content": "ওযু করুন এবং আল্লাহর সামনে দাঁড়ানোর জন্য মানসিক ও আধ্যাত্মিকভাবে প্রস্তুত হন।"
+        },
+        "2": {
+          "title": "৩. জোড়ায় জোড়ায় পড়ুন",
+          "content": "কমপক্ষে ২ রাকাত পড়ুন, তবে জোড়ায় (২, ৪, ৬, ৮ ইত্যাদি) আরও পড়তে পারেন। নবী ﷺ ১১ রাকাত পড়তেন।"
+        },
+        "3": {
+          "title": "৪. দীর্ঘ অংশ তিলাওয়াত করুন",
+          "content": "তিলাওয়াত, রুকু ও সিজদায় সময় নিন। সাধারণ নামাজের চেয়ে কুরআনের দীর্ঘ অংশ তিলাওয়াত করুন।"
+        },
+        "4": {
+          "title": "৫. দু'আ করুন",
+          "content": "নামাজ শেষে আন্তরিক দু'আ করুন। এটি সেই সময় যখন আল্লাহ নিকটতম আসমানে নেমে আসেন এবং দু'আ কবুল করেন।"
+        },
+        "5": {
+          "title": "৬. বিতরে শেষ করুন",
+          "content": "রাতের নামাজ বিতর দিয়ে শেষ করুন (বেজোড় সংখ্যক রাকাত, সাধারণত ১ বা ৩)।"
+        }
+      }
+    },
+    "how-to-perform-eid-prayer": {
+      "title": "ঈদের নামাজের নিয়ম",
+      "description": "ঈদুল ফিতর ও ঈদুল আযহার নামাজ আদায়ের গাইড",
+      "steps": {
+        "0": {
+          "title": "১. ঈদের জন্য প্রস্তুতি",
+          "content": "গোসল করুন, সবচেয়ে ভালো পোশাক পরুন এবং সুগন্ধি লাগান। ঈদুল ফিতরে যাওয়ার আগে খেজুর খান। ঈদুল আযহায় নামাজের পর পর্যন্ত অপেক্ষা করুন।"
+        },
+        "1": {
+          "title": "২. ঈদগাহে যান",
+          "content": "ঈদের নামাজের জায়গায় তাড়াতাড়ি যান। একটি পথে যাওয়া এবং ভিন্ন পথে ফেরা সুন্নত।"
+        },
+        "2": {
+          "title": "৩. প্রথম রাকাত",
+          "content": "প্রথম তাকবীরের পর অতিরিক্ত ৭টি তাকবীর। প্রতিটি তাকবীরে হাত তুলুন। তারপর আল-ফাতিহা ও অন্য সূরা (সাধারণত আল-আ'লা) পড়ুন।"
+        },
+        "3": {
+          "title": "৪. দ্বিতীয় রাকাত",
+          "content": "সিজদা থেকে দাঁড়ানোর পর অতিরিক্ত ৫টি তাকবীর। তারপর আল-ফাতিহা ও অন্য সূরা (সাধারণত আল-গাশিয়া) পড়ুন।"
+        },
+        "4": {
+          "title": "৫. খুতবা শুনুন",
+          "content": "নামাজের পর ইমাম দুটি খুতবা দেন। থাকা ও শোনা মুস্তাহাব, তবে ওয়াজিব নয়।"
+        },
+        "5": {
+          "title": "৬. শুভেচ্ছা বিনিময়",
+          "content": "সহমুসলিমদের 'ঈদ মুবারাক' বা 'তাকাব্বালাল্লাহু মিন্না ওয়া মিনকুম' (আল্লাহ আমাদের ও আপনাদের থেকে কবুল করুন) বলে শুভেচ্ছা জানান।"
+        }
+      }
+    },
+    "morning-evening-adhkar": {
+      "title": "সকাল-সন্ধ্যার আযকার",
+      "description": "সকাল ও সন্ধ্যায় পড়ার অত্যাবশ্যক যিকরসমূহ",
+      "steps": {
+        "0": {
+          "title": "১. আয়াতুল কুরসী",
+          "content": "আয়াতুল কুরসী (কুরআন ২:২৫৫) পড়ুন। নবী ﷺ বলেছেন যে সকালে পড়লে সন্ধ্যা পর্যন্ত সুরক্ষিত থাকবে।"
+        },
+        "1": {
+          "title": "২. সূরা আল-বাকারার শেষ দুই আয়াত",
+          "content": "সূরা আল-বাকারার শেষ দুই আয়াত (২:২৮৫-২৮৬) পড়ুন। এগুলো সুরক্ষার জন্য যথেষ্ট।"
+        },
+        "2": {
+          "title": "৩. সূরা আল-ইখলাস, আল-ফালাক, আন-নাস",
+          "content": "এই তিনটি সূরা তিনবার করে পড়ুন। এগুলো পূর্ণ সুরক্ষা প্রদান করে।"
+        },
+        "3": {
+          "title": "৪. তাসবীহ, তাহমীদ, তাকবীর",
+          "content": "'সুবহান আল্লাহ' (৩৩ বার), 'আলহামদুলিল্লাহ' (৩৩ বার), 'আল্লাহু আকবার' (৩৪ বার) বলুন।"
+        },
+        "4": {
+          "title": "৫. সাইয়িদুল ইস্তিগফার",
+          "content": "ক্ষমা প্রার্থনার শ্রেষ্ঠ দু'আ পড়ুন: 'আল্লাহুম্মা আনতা রাব্বী, লা ইলাহা ইল্লা আনত...'।"
+        },
+        "5": {
+          "title": "৬. সুরক্ষার দু'আ",
+          "content": "বলুন: 'বিসমিল্লাহিল্লাযী লা ইয়াদুররু মা'আসমিহী শাইউন ফিল আরদি ওয়া লা ফিস সামা' (তিনবার)।"
+        }
+      }
+    },
+    "how-to-perform-wudu": {
+      "title": "ওযু (আবলুশন) করার নিয়ম",
+      "description": "সঠিকভাবে ওযু করার বিস্তারিত গাইড",
+      "steps": {
+        "0": {
+          "title": "১. নিয়্যত করুন",
+          "content": "অন্তরে ওযু করার নিয়্যত করুন। 'বিসমিল্লাহ' বলুন।"
+        },
+        "1": {
+          "title": "২. হাত ধুয়ুন",
+          "content": "দুই হাত কব্জি পর্যন্ত তিনবার ধুয়ুন।"
+        },
+        "2": {
+          "title": "৩. কুলি করুন",
+          "content": "তিনবার ভালোভাবে কুলি করুন।"
+        },
+        "3": {
+          "title": "৪. নাক পরিষ্কার করুন",
+          "content": "তিনবার নাকে পানি দিন এবং ঝেড়ে ফেলুন।"
+        },
+        "4": {
+          "title": "৫. মুখ ধুয়ুন",
+          "content": "তিনবার পুরো মুখ ধুয়ুন — কপালের চুলের রেখা থেকে থুতনি এবং কান থেকে কান পর্যন্ত।"
+        },
+        "5": {
+          "title": "৬. বাহু ধুয়ুন",
+          "content": "ডান বাহু কনুই পর্যন্ত তিনবার ধুয়ুন, তারপর বাম বাহু।"
+        },
+        "6": {
+          "title": "৭. মাথা মাসাহ করুন",
+          "content": "ভেজা হাত দিয়ে একবার মাথা মাসাহ করুন।"
+        },
+        "7": {
+          "title": "৮. কান মাসাহ করুন",
+          "content": "তর্জনী দিয়ে কানের ভেতর এবং বৃদ্ধাঙ্গুল দিয়ে বাইরে মাসাহ করুন।"
+        },
+        "8": {
+          "title": "৯. পা ধুয়ুন",
+          "content": "ডান পা গোড়ালি পর্যন্ত তিনবার ধুয়ুন, তারপর বাম পা।"
+        },
+        "9": {
+          "title": "১০. দু'আ পড়ুন",
+          "content": "বলুন: 'আশহাদু আন লা ইলাহা ইল্লাল্লাহু ওয়াহদাহু লা শারীকা লাহু, ওয়া আশহাদু আন্না মুহাম্মাদান আবদুহু ওয়া রাসূলুহু'।"
+        }
+      }
+    },
+    "how-to-perform-ghusl": {
+      "title": "গোসল (পূর্ণ পবিত্রতা) করার নিয়ম",
+      "description": "পূর্ণ গোসলের বিস্তারিত গাইড",
+      "steps": {
+        "0": {
+          "title": "১. নিয়্যত করুন",
+          "content": "বড় অপবিত্রতা থেকে পবিত্র হওয়ার নিয়্যত করুন। 'বিসমিল্লাহ' বলুন।"
+        },
+        "1": {
+          "title": "২. হাত ধুয়ুন",
+          "content": "দুই হাত কব্জি পর্যন্ত তিনবার ধুয়ুন।"
+        },
+        "2": {
+          "title": "৩. গোপনাঙ্গ ধুয়ুন",
+          "content": "গোপনাঙ্গ ভালোভাবে ধুয়ে নিন।"
+        },
+        "3": {
+          "title": "৪. ওযু করুন",
+          "content": "নামাজের জন্য যেভাবে ওযু করেন সেভাবে পূর্ণ ওযু করুন।"
+        },
+        "4": {
+          "title": "৫. মাথায় পানি ঢালুন",
+          "content": "মাথায় তিনবার পানি ঢালুন, যাতে চুলের গোড়ায় পানি পৌঁছায়।"
+        },
+        "5": {
+          "title": "৬. ডান পাশ ধুয়ুন",
+          "content": "শরীরের সম্পূর্ণ ডান পাশে পানি ঢালুন।"
+        },
+        "6": {
+          "title": "৭. বাম পাশ ধুয়ুন",
+          "content": "শরীরের সম্পূর্ণ বাম পাশে পানি ঢালুন।"
+        },
+        "7": {
+          "title": "৮. সম্পূর্ণ শরীর ধুয়ুন",
+          "content": "নিশ্চিত করুন যে শরীরের প্রতিটি অংশে পানি পৌঁছেছে।"
+        }
+      }
+    },
+    "how-to-perform-tayammum": {
+      "title": "তায়াম্মুম (শুষ্ক আবলুশন) করার নিয়ম",
+      "description": "পানি পাওয়া না গেলে শুষ্ক আবলুশনের গাইড",
+      "steps": {
+        "0": {
+          "title": "১. নিয়্যত করুন",
+          "content": "ওযু বা গোসলের বিকল্প হিসেবে তায়াম্মুম করার নিয়্যত করুন।"
+        },
+        "1": {
+          "title": "২. বিসমিল্লাহ বলুন",
+          "content": "'বিসমিল্লাহ' (আল্লাহর নামে) বলে শুরু করুন।"
+        },
+        "2": {
+          "title": "৩. পরিষ্কার মাটিতে হাত মারুন",
+          "content": "পরিষ্কার মাটি, বালু বা ধুলোয় একবার হাত মারুন।"
+        },
+        "3": {
+          "title": "৪. মুখ মাসাহ করুন",
+          "content": "দুই তালু দিয়ে একবার পুরো মুখ মাসাহ করুন।"
+        },
+        "4": {
+          "title": "৫. হাত মাসাহ করুন",
+          "content": "বাম তালু দিয়ে ডান হাত এবং ডান তালু দিয়ে বাম হাত কব্জি পর্যন্ত মাসাহ করুন।"
+        },
+        "5": {
+          "title": "৬. সম্পন্ন",
+          "content": "আপনার তায়াম্মুম সম্পন্ন এবং একটি নামাজের জন্য বৈধ। প্রতি নামাজের সময় পুনরায় করুন।"
+        }
+      }
+    },
+    "how-to-perform-umrah": {
+      "title": "উমরা পালনের নিয়ম",
+      "description": "উমরা পালনের সম্পূর্ণ গাইড",
+      "steps": {
+        "0": {
+          "title": "১. ইহরাম বাঁধুন",
+          "content": "মীকাতে পৌঁছানোর আগে উমরার নিয়্যত করুন, গোসল করুন এবং ইহরামের পোশাক পরুন। তালবিয়া বলুন: 'লাব্বাইকা আল্লাহুম্মা উমরাহ'।"
+        },
+        "1": {
+          "title": "২. মসজিদুল হারামে প্রবেশ",
+          "content": "ডান পা দিয়ে প্রবেশ করুন এবং মসজিদে প্রবেশের দু'আ পড়ুন।"
+        },
+        "2": {
+          "title": "৩. তাওয়াফ করুন",
+          "content": "হাজরে আসওয়াদ থেকে শুরু করে কাবার চারপাশে ঘড়ির কাঁটার বিপরীত দিকে সাতবার চক্কর দিন। পুরুষদের ডান কাঁধ খোলা রাখুন (ইদতিবা) এবং প্রথম তিন চক্করে দ্রুত হাঁটুন (রমল)।"
+        },
+        "3": {
+          "title": "৪. দুই রাকাত নামাজ পড়ুন",
+          "content": "তাওয়াফের পর মাকামে ইব্রাহীমের পেছনে সম্ভব হলে, বা হারামের যেকোনো স্থানে দুই রাকাত পড়ুন।"
+        },
+        "4": {
+          "title": "৫. যমযম পান করুন",
+          "content": "যমযম পানি পান করুন এবং দু'আ করুন।"
+        },
+        "5": {
+          "title": "৬. সা'ঈ করুন",
+          "content": "সাফা থেকে শুরু করে সাফা ও মারওয়ার মধ্যে সাতবার হাঁটুন। পুরুষরা সবুজ বাতির মধ্যে দৌড়ান।"
+        },
+        "6": {
+          "title": "৭. চুল কাটুন বা ছাঁটুন",
+          "content": "পুরুষদের মাথা মুণ্ডন বা চুল ছাঁটা উচিত। মহিলারা চুলের এক আঙুলের ডগা পরিমাণ কাটবেন। এতে আপনার উমরা সম্পন্ন।"
+        }
+      }
+    },
+    "how-to-perform-tawaf": {
+      "title": "তাওয়াফ করার নিয়ম",
+      "description": "কাবা প্রদক্ষিণের বিস্তারিত গাইড",
+      "steps": {
+        "0": {
+          "title": "১. হাজরে আসওয়াদের মুখোমুখি দাঁড়ান",
+          "content": "কাবা বামে রেখে হাজরে আসওয়াদের (কালো পাথর) মুখোমুখি দাঁড়ান।"
+        },
+        "1": {
+          "title": "২. নিয়্যত করুন",
+          "content": "অন্তরে তাওয়াফের নিয়্যত করুন।"
+        },
+        "2": {
+          "title": "৩. স্পর্শ বা ইশারা করুন",
+          "content": "সম্ভব হলে হাজরে আসওয়াদ স্পর্শ করুন ও চুমু দিন। না পারলে ইশারা করে 'বিসমিল্লাহ, আল্লাহু আকবার' বলুন।"
+        },
+        "3": {
+          "title": "৪. চক্কর শুরু করুন",
+          "content": "কাবা বামে রেখে ঘড়ির কাঁটার বিপরীত দিকে হাঁটুন। পুরুষদের ডান কাঁধ খোলা রাখুন।"
+        },
+        "4": {
+          "title": "৫. যিকর ও দু'আ পড়ুন",
+          "content": "তাওয়াফে নির্দিষ্ট কোনো দু'আ নেই। কুরআন তিলাওয়াত করুন, যিকর করুন বা ব্যক্তিগত দু'আ করুন।"
+        },
+        "5": {
+          "title": "৬. ইয়ামানী কোণ স্পর্শ করুন",
+          "content": "সম্ভব হলে ডান হাত দিয়ে রুকনে ইয়ামানী স্পর্শ করুন, চুমু দেবেন না।"
+        },
+        "6": {
+          "title": "৭. সাত চক্কর সম্পন্ন করুন",
+          "content": "সাতটি পূর্ণ চক্কর সম্পন্ন করুন। প্রতিবার হাজরে আসওয়াদ অতিক্রম করার সময় ইশারা করে 'আল্লাহু আকবার' বলুন।"
+        },
+        "7": {
+          "title": "৮. দুই রাকাত পড়ুন",
+          "content": "তাওয়াফ সম্পন্ন হলে মাকামে ইব্রাহীমের পেছনে বা হারামের যেকোনো স্থানে দুই রাকাত পড়ুন।"
+        }
+      }
+    },
+    "how-to-calculate-zakat": {
+      "title": "যাকাত গণনা ও প্রদানের নিয়ম",
+      "description": "ফরজ দান গণনা ও প্রদানের বিস্তারিত গাইড",
+      "steps": {
+        "0": {
+          "title": "১. নিসাব বুঝুন",
+          "content": "নিসাব হলো যাকাত ফরজ হওয়ার জন্য সর্বনিম্ন সম্পদের পরিমাণ। এটি ৮৫ গ্রাম স্বর্ণ বা ৫৯৫ গ্রাম রৌপ্যের সমপরিমাণ।"
+        },
+        "1": {
+          "title": "২. আপনার সম্পদ গণনা করুন",
+          "content": "আপনার সকল যাকাতযোগ্য সম্পদ যোগ করুন: নগদ, ব্যাংকে সঞ্চয়, স্বর্ণ, রৌপ্য, ব্যবসায়িক পণ্য, শেয়ার এবং পাওনা।"
+        },
+        "2": {
+          "title": "৩. ঋণ বাদ দিন",
+          "content": "এক বছরের মধ্যে পরিশোধযোগ্য ঋণ বাদ দিন।"
+        },
+        "3": {
+          "title": "৪. নিসাবের ঊর্ধ্বে কিনা যাচাই করুন",
+          "content": "আপনার নিট যাকাতযোগ্য সম্পদ নিসাব সীমার ঊর্ধ্বে হলে যাকাত ফরজ।"
+        },
+        "4": {
+          "title": "৫. ২.৫% গণনা করুন",
+          "content": "আপনার যাকাতযোগ্য সম্পদকে ০.০২৫ (২.৫%) দিয়ে গুণ করুন। এটি আপনার যাকাতের পরিমাণ।"
+        },
+        "5": {
+          "title": "৬. যোগ্য প্রাপকদের প্রদান করুন",
+          "content": "কুরআন ৯:৬০-এ উল্লেখিত আটটি খাতে আপনার যাকাত বিতরণ করুন: ফকির, মিসকিন, যাকাত কর্মী, মুয়াল্লাফাতুল কুলূব, দাস মুক্তি, ঋণগ্রস্ত, আল্লাহর পথে এবং মুসাফির।"
+        },
+        "6": {
+          "title": "৭. নিয়্যত করুন",
+          "content": "প্রদানের সময় নিয়্যত করুন যে এটি আপনার ফরজ যাকাত।"
+        }
+      }
+    },
+    "how-to-pay-zakat-al-fitr": {
+      "title": "যাকাতুল ফিতর প্রদানের নিয়ম",
+      "description": "রমজান শেষে ফরজ দান প্রদানের গাইড",
+      "steps": {
+        "0": {
+          "title": "১. উদ্দেশ্য বুঝুন",
+          "content": "যাকাতুল ফিতর রোজাদারকে অহেতুক কথা ও অশ্লীলতা থেকে পবিত্র করে এবং ঈদের দিনে গরিবদের খাবারের ব্যবস্থা করে।"
+        },
+        "1": {
+          "title": "২. কাদের দিতে হয়",
+          "content": "যে মুসলিমের কাছে একদিন একরাতের প্রয়োজনের অতিরিক্ত খাদ্য আছে, তাকে নিজের ও তার নির্ভরশীলদের পক্ষ থেকে যাকাতুল ফিতর দিতে হয়।"
+        },
+        "2": {
+          "title": "৩. পরিমাণ নির্ধারণ",
+          "content": "পরিমাণ হলো এক সা' (প্রায় ৩ কেজি বা ২.৫ লিটার) প্রধান খাদ্যদ্রব্য (গম, যব, খেজুর, কিশমিশ বা চাল), বা এর সমপরিমাণ অর্থ।"
+        },
+        "3": {
+          "title": "৪. সময়",
+          "content": "ঈদের নামাজের আগে দিতে হয়। ঈদের ১-২ দিন আগে দেওয়া উত্তম। ঈদের নামাজের পর দিলে তা বিলম্বিত দান, যাকাতুল ফিতর নয়।"
+        },
+        "4": {
+          "title": "৫. গরিবদের দিন",
+          "content": "আপনার সম্প্রদায়ের গরিব ও অভাবী মুসলিমদের সরাসরি দিন, বা বিশ্বস্ত সংস্থার মাধ্যমে দিন।"
+        }
+      }
+    },
+    "how-to-give-sadaqah": {
+      "title": "সদকা (ঐচ্ছিক দান) দেওয়ার নিয়ম",
+      "description": "ইখলাসের সাথে ঐচ্ছিক দান দেওয়ার গাইড",
+      "steps": {
+        "0": {
+          "title": "১. বিশুদ্ধ নিয়্যত করুন",
+          "content": "শুধুমাত্র আল্লাহর সন্তুষ্টির জন্য দান করুন, মানুষের প্রশংসা বা স্বীকৃতির জন্য নয়।"
+        },
+        "1": {
+          "title": "২. হালাল সম্পদ থেকে দিন",
+          "content": "নিশ্চিত করুন আপনার দান বৈধ উপার্জন থেকে। আল্লাহ শুধু পবিত্র জিনিসই কবুল করেন।"
+        },
+        "2": {
+          "title": "৩. সম্ভব হলে গোপনে দিন",
+          "content": "নবী ﷺ বলেছেন সর্বোত্তম দান গোপনে দেওয়া। তবে প্রকাশ্য দান অন্যদের অনুপ্রাণিত করতে পারে।"
+        },
+        "3": {
+          "title": "৪. নিয়মিত দিন",
+          "content": "নিয়মিত ছোট পরিমাণে দান মাঝে মাঝে বড় অঙ্কের চেয়ে উত্তম। নবী ﷺ বলেছেন আল্লাহর কাছে সবচেয়ে প্রিয় আমল যা ধারাবাহিকভাবে করা হয়।"
+        },
+        "4": {
+          "title": "৫. খোঁটা দেবেন না",
+          "content": "কখনো কাউকে আপনার দানের কথা মনে করিয়ে দেবেন না বা কথায় কষ্ট দেবেন না। এতে সওয়াব নষ্ট হয়ে যায়।"
+        },
+        "5": {
+          "title": "৬. হাসিও সদকা",
+          "content": "মনে রাখুন দান শুধু টাকা নয়। হাসি, কাউকে সাহায্য করা, রাস্তা থেকে ক্ষতিকর জিনিস সরানো এবং ভালো কথা সবই সদকা।"
+        }
+      }
+    },
+    "how-to-fast-ramadan": {
+      "title": "রমজানের রোজার নিয়ম",
+      "description": "ফরজ রোজা পালনের সম্পূর্ণ গাইড",
+      "steps": {
+        "0": {
+          "title": "১. রাতে নিয়্যত করুন",
+          "content": "ফজরের আগে রোজার নিয়্যত করুন। নবী ﷺ বলেছেন: 'যে ফজরের আগে রোজার নিয়্যত করবে না, তার রোজা হবে না।'"
+        },
+        "1": {
+          "title": "২. সেহরি খান",
+          "content": "ভোরের খাবার (সেহরি) খান। নবী ﷺ বলেছেন: 'সেহরি খাও, কারণ এতে বরকত আছে।' ফজর শুরুর আগে খাওয়া বন্ধ করুন।"
+        },
+        "2": {
+          "title": "৩. পানাহার ও সম্পর্ক থেকে বিরত থাকুন",
+          "content": "ফজর থেকে মাগরিব পর্যন্ত খাদ্য, পানীয়, ধূমপান এবং দাম্পত্য সম্পর্ক থেকে বিরত থাকুন।"
+        },
+        "3": {
+          "title": "৪. জিহ্বা সংযত রাখুন",
+          "content": "মিথ্যা, গীবত, ঝগড়া ও অশালীন ভাষা থেকে বিরত থাকুন। নবী ﷺ বলেছেন: 'যে মিথ্যা কথা ও কাজ ত্যাগ করে না, তার পানাহার ত্যাগে আল্লাহর কোনো প্রয়োজন নেই।'"
+        },
+        "4": {
+          "title": "৫. নেক আমল বাড়ান",
+          "content": "নামাজ, কুরআন তিলাওয়াত, যিকর ও দান বাড়ান। রমজান কুরআন ও দানশীলতার মাস।"
+        },
+        "5": {
+          "title": "৬. মাগরিবে ইফতার করুন",
+          "content": "মাগরিবের সময় হলে সাথে সাথে ইফতার করুন। নবী ﷺ খেজুর ও পানি দিয়ে ইফতার করতেন, তারপর মাগরিব পড়তেন।"
+        },
+        "6": {
+          "title": "৭. ইফতারের আগে দু'আ করুন",
+          "content": "রোজাদারের দু'আ কবুল হয়। বলুন: 'আল্লাহুম্মা লাকা সুমতু ওয়া আলা রিযকিকা আফতারতু' (হে আল্লাহ, তোমার জন্য রোজা রেখেছি এবং তোমার রিযিক দিয়ে ইফতার করছি)।"
+        }
+      }
+    },
+    "how-to-fast-voluntarily": {
+      "title": "নফল রোজার নিয়ম",
+      "description": "সারা বছর সুন্নত নফল রোজার গাইড",
+      "steps": {
+        "0": {
+          "title": "১. সোম ও বৃহস্পতিবার",
+          "content": "নবী ﷺ সোম ও বৃহস্পতিবার রোজা রাখতেন। তিনি বলেছেন এই দিনগুলোতে আমল আল্লাহর কাছে পেশ করা হয়।"
+        },
+        "1": {
+          "title": "২. প্রতি মাসে তিন দিন",
+          "content": "প্রতি চান্দ্র মাসের ১৩, ১৪, ১৫ তারিখ (আইয়ামে বীয) রোজা রাখুন। এটি পুরো বছর রোজা রাখার সমান।"
+        },
+        "2": {
+          "title": "৩. আরাফার দিন",
+          "content": "যিলহজ্জের ৯ তারিখ (হাজী ছাড়া) রোজা রাখুন। নবী ﷺ বলেছেন এটি বিগত ও আগামী বছরের গুনাহ মাফ করে।"
+        },
+        "3": {
+          "title": "৪. আশুরার দিন",
+          "content": "মুহাররমের ১০ তারিখ রোজা রাখুন, এবং এর সাথে ৯ বা ১১ তারিখও রাখা মুস্তাহাব। এটি বিগত বছরের গুনাহ মাফ করে।"
+        },
+        "4": {
+          "title": "৫. শাওয়ালের ছয় দিন",
+          "content": "রমজানের পর শাওয়ালে ছয় দিন রোজা রাখুন। নবী ﷺ বলেছেন এটি পুরো বছর রোজা রাখার সমান।"
+        },
+        "5": {
+          "title": "৬. নিয়্যত করুন",
+          "content": "নফল রোজায় দিনের মধ্যেও নিয়্যত করা যায়, যদি কিছু না খেয়ে থাকেন।"
+        }
+      }
+    },
+    "how-to-perform-janazah-prayer": {
+      "title": "জানাযার নামাজের নিয়ম",
+      "description": "জানাযার নামাজ আদায়ের গাইড",
+      "steps": {
+        "0": {
+          "title": "১. কাতারে দাঁড়ান",
+          "content": "ইমামের পেছনে কাতার বাঁধুন। মৃত ব্যক্তি সামনে রাখা হয়, পুরুষরা ইমামের কাছে দাঁড়ান।"
+        },
+        "1": {
+          "title": "২. প্রথম তাকবীর",
+          "content": "হাত তুলে 'আল্লাহু আকবার' বলুন, তারপর চুপে সূরা আল-ফাতিহা পড়ুন।"
+        },
+        "2": {
+          "title": "৩. দ্বিতীয় তাকবীর",
+          "content": "'আল্লাহু আকবার' বলুন (হাত না তুলে) এবং নবীর ﷺ উপর দরূদ পড়ুন: 'আল্লাহুম্মা সাল্লি আলা মুহাম্মাদ...'।"
+        },
+        "3": {
+          "title": "৪. তৃতীয় তাকবীর",
+          "content": "'আল্লাহু আকবার' বলুন এবং মৃত ব্যক্তির জন্য দু'আ করুন: 'আল্লাহুম্মাগফির লাহু ওয়ারহামহু...'।"
+        },
+        "4": {
+          "title": "৫. চতুর্থ তাকবীর",
+          "content": "'আল্লাহু আকবার' বলুন এবং নিজের ও সকল মুসলিমের জন্য সংক্ষিপ্ত দু'আ করুন।"
+        },
+        "5": {
+          "title": "৬. সালাম ফেরান",
+          "content": "মাথা ডানে ঘুরিয়ে 'আসসালামু আলাইকুম' বলুন, তারপর বামে ঘুরিয়ে পুনরায় বলুন।"
+        }
+      }
+    },
+    "how-to-offer-condolences": {
+      "title": "সমবেদনা জানানোর নিয়ম",
+      "description": "শোকাহত ব্যক্তিদের সান্ত্বনা দেওয়ার ইসলামী শিষ্টাচার",
+      "steps": {
+        "0": {
+          "title": "১. দ্রুত দেখা করুন",
+          "content": "খবর পাওয়ার পর শীঘ্রই পরিবারের সাথে দেখা করুন, তবে তাদের একান্ত সময়ের প্রয়োজনীয়তা মনে রাখুন।"
+        },
+        "1": {
+          "title": "২. যথাযথ কথা বলুন",
+          "content": "বলুন: 'ইন্না লিল্লাহি ওয়া ইন্না ইলাইহি রাজিউন' (নিশ্চয়ই আমরা আল্লাহর এবং আল্লাহর কাছেই আমাদের ফিরে যেতে হবে)। তাদের মনে করিয়ে দিন আল্লাহ তাদের ধৈর্যের প্রতিদান দেবেন।"
+        },
+        "2": {
+          "title": "৩. দু'আ করুন",
+          "content": "মৃত ব্যক্তি ও পরিবারের জন্য দু'আ করুন: 'আল্লাহ তাকে ক্ষমা করুন, তার উপর রহম করুন এবং আপনাদের ধৈর্য ও প্রতিদান দান করুন।'"
+        },
+        "3": {
+          "title": "৪. ব্যবহারিক সাহায্য করুন",
+          "content": "নির্দিষ্ট সাহায্যের প্রস্তাব দিন — খাবার তৈরি, কাজকর্ম করে দেওয়া বা জানাযার ব্যবস্থায় সহায়তা।"
+        },
+        "4": {
+          "title": "৫. সংক্ষেপে থাকুন",
+          "content": "পরিবার বিশেষভাবে না বললে আপনার দেখা সংক্ষিপ্ত রাখুন।"
+        },
+        "5": {
+          "title": "৬. অতিরিক্ত বিলাপ এড়িয়ে চলুন",
+          "content": "সংযম বজায় রাখুন এবং উচ্চস্বরে কান্না বা অতিরিক্ত শোক প্রকাশ এড়িয়ে চলুন, কারণ ইসলামে এটি নিরুৎসাহিত।"
+        }
+      }
+    },
+    "how-to-control-anger": {
+      "title": "রাগ নিয়ন্ত্রণের উপায়",
+      "description": "রাগ নিয়ন্ত্রণে ইসলামী দিকনির্দেশনা",
+      "steps": {
+        "0": {
+          "title": "১. আল্লাহর আশ্রয় নিন",
+          "content": "রাগ অনুভব করলে বলুন: 'আউযুবিল্লাহি মিনাশ শাইতানির রাজীম' (আমি অভিশপ্ত শয়তান থেকে আল্লাহর আশ্রয় চাই)।"
+        },
+        "1": {
+          "title": "২. চুপ থাকুন",
+          "content": "নবী ﷺ বলেছেন: 'তোমাদের কেউ রাগান্বিত হলে চুপ থাকুক।' নীরবতা আপনাকে অনুতাপযোগ্য কথা বলতে বাধা দেয়।"
+        },
+        "2": {
+          "title": "৩. অবস্থান পরিবর্তন করুন",
+          "content": "দাঁড়িয়ে থাকলে বসুন। বসে থাকলে শুয়ে পড়ুন। নবী ﷺ শারীরিক অবস্থা পরিবর্তনের শিক্ষা দিয়েছেন।"
+        },
+        "3": {
+          "title": "৪. ওযু করুন",
+          "content": "ঠান্ডা পানিতে ওযু করুন। নবী ﷺ বলেছেন রাগ শয়তান থেকে, এবং শয়তান আগুন থেকে সৃষ্ট যা পানি দিয়ে নিভে যায়।"
+        },
+        "4": {
+          "title": "৫. আল্লাহর ক্ষমা স্মরণ করুন",
+          "content": "ভাবুন আল্লাহ আপনার অগণিত ভুল সত্ত্বেও আপনাকে ক্ষমা করেন। এটি আপনাকে অন্যদের ক্ষমা করতে উৎসাহিত করবে।"
+        },
+        "5": {
+          "title": "৬. পরিণতি ভাবুন",
+          "content": "রাগে কাজ করার নেতিবাচক পরিণতি বিবেচনা করুন: সম্পর্ক ভাঙা, অনুতাপযোগ্য কথা এবং সম্মান হারানো।"
+        }
+      }
+    },
+    "how-to-practice-humility": {
+      "title": "বিনয় অনুশীলনের উপায়",
+      "description": "ইসলামে বিনয় গড়ে তোলার গাইড",
+      "steps": {
+        "0": {
+          "title": "১. আপনার উৎপত্তি স্মরণ করুন",
+          "content": "ভাবুন আপনি মৃত্তিকা থেকে সৃষ্ট এবং মৃত্তিকায় ফিরে যাবেন। এই বাস্তবতা যে কাউকে বিনয়ী করবে।"
+        },
+        "1": {
+          "title": "২. আল্লাহর নেয়ামত স্বীকার করুন",
+          "content": "স্বীকার করুন আপনার সকল নেয়ামত, প্রতিভা ও অর্জন আল্লাহর দান, আপনার নিজের কারণে নয়।"
+        },
+        "2": {
+          "title": "৩. অন্যদের সেবা করুন",
+          "content": "নবী ﷺ পরিবারের সেবা করতেন, জামা সেলাই করতেন এবং ঘরের কাজে সাহায্য করতেন — মুসলিমদের নেতা হওয়া সত্ত্বেও।"
+        },
+        "3": {
+          "title": "৪. গর্ব এড়িয়ে চলুন",
+          "content": "সম্পদ, জ্ঞান, বংশ বা অর্জন নিয়ে গর্ব করবেন না। নবী ﷺ বলেছেন: 'যার অন্তরে অণু পরিমাণ অহংকার আছে সে জান্নাতে প্রবেশ করবে না।'"
+        },
+        "4": {
+          "title": "৫. উপদেশ গ্রহণ করুন",
+          "content": "অন্যদের সমালোচনা ও উপদেশের প্রতি উন্মুক্ত থাকুন, তাদের মর্যাদা যাই হোক। সত্য যেকোনো জায়গা থেকে আসতে পারে।"
+        },
+        "5": {
+          "title": "৬. সবার সাথে সমান আচরণ করুন",
+          "content": "গরিব, বয়স্ক এবং নিম্ন সামাজিক মর্যাদার মানুষদের সম্মান দেখান। নবী ﷺ বলেছেন: 'তোমাদের মধ্যে সর্বোত্তম সেই যে তার পরিবারের কাছে সবচেয়ে ভালো।'"
+        }
+      }
+    },
+    "how-to-forgive-others": {
+      "title": "অন্যদের ক্ষমা করার উপায়",
+      "description": "ক্ষমা ও মার্জনা সম্পর্কে ইসলামী শিক্ষা",
+      "steps": {
+        "0": {
+          "title": "১. আল্লাহর ক্ষমা স্মরণ করুন",
+          "content": "আল্লাহ আপনার অগণিত গুনাহ ক্ষমা করেন। কুরআনে আছে: 'তারা ক্ষমা করুক ও উপেক্ষা করুক। তোমরা কি চাও না যে আল্লাহ তোমাদের ক্ষমা করুন?' (২৪:২২)"
+        },
+        "1": {
+          "title": "২. প্রতিদান বুঝুন",
+          "content": "নবী ﷺ বলেছেন: 'দান সম্পদ কমায় না, এবং আল্লাহ ক্ষমাকারীর সম্মান বৃদ্ধি করেন।'"
+        },
+        "2": {
+          "title": "৩. তাদের জায়গায় নিজেকে রাখুন",
+          "content": "বোঝার চেষ্টা করুন কেন সে আপনার সাথে অন্যায় করেছে। হয়তো সে কঠিন সময়ের মধ্য দিয়ে যাচ্ছিল বা তার কাজের প্রভাব বুঝতে পারেনি।"
+        },
+        "3": {
+          "title": "৪. তাদের জন্য দু'আ করুন",
+          "content": "যে আপনার সাথে অন্যায় করেছে তার জন্য দু'আ করুন। এটি আপনার অন্তর নরম করে এবং বিদ্বেষ দূর করতে সাহায্য করে।"
+        },
+        "4": {
+          "title": "৫. ক্ষোভ ত্যাগ করুন",
+          "content": "ক্ষোভ ধরে রাখা শুধু আপনার ক্ষতি করে। নবী ﷺ বলেছেন: 'একে অপরকে ঘৃণা করো না, ঈর্ষা করো না এবং আল্লাহর বান্দা হিসেবে ভাই হয়ে যাও।'"
+        },
+        "5": {
+          "title": "৬. সম্ভব হলে মিলিত হন",
+          "content": "উচিত হলে মিলিত হওয়ার চেষ্টা করুন। নবী ﷺ বলেছেন: 'কোনো মুসলিমের জন্য তিন দিনের বেশি ভাইকে ত্যাগ করা বৈধ নয়।'"
+        }
+      }
+    },
+    "how-to-seek-knowledge": {
+      "title": "ইসলামী ইলম অন্বেষণের উপায়",
+      "description": "সঠিকভাবে ইসলামী জ্ঞান অন্বেষণের গাইড",
+      "steps": {
+        "0": {
+          "title": "১. নিয়্যত বিশুদ্ধ করুন",
+          "content": "আল্লাহর সন্তুষ্টির জন্য ইলম অন্বেষণ করুন, দুনিয়াবি লাভ বা পরিচিতির জন্য নয়। নবী ﷺ দেখানোর জন্য ইলম অন্বেষণ থেকে সতর্ক করেছেন।"
+        },
+        "1": {
+          "title": "২. মূল বিষয় দিয়ে শুরু করুন",
+          "content": "মৌলিক জ্ঞান দিয়ে শুরু করুন: সঠিক আকীদা, নামাজের পদ্ধতি, মৌলিক ইসলামী বিধান এবং কুরআন তিলাওয়াত।"
+        },
+        "2": {
+          "title": "৩. যোগ্য শিক্ষক খুঁজুন",
+          "content": "জ্ঞানী, বিশ্বস্ত আলেমদের কাছ থেকে শিখুন যারা কুরআন ও সুন্নাহ অনুসরণ করেন।"
+        },
+        "3": {
+          "title": "৪. ধারাবাহিক থাকুন",
+          "content": "নিয়মিত পড়ুন, প্রতিদিন অল্প হলেও। নবী ﷺ বলেছেন: 'আল্লাহর কাছে সবচেয়ে প্রিয় আমল যা ধারাবাহিকভাবে করা হয়।'"
+        },
+        "4": {
+          "title": "৫. শিখে আমল করুন",
+          "content": "জীবনে আপনার জ্ঞান প্রয়োগ করুন। আমলবিহীন ইলম ফলবিহীন গাছের মতো।"
+        },
+        "5": {
+          "title": "৬. অন্যদের শেখান",
+          "content": "উপকারী জ্ঞান অন্যদের সাথে শেয়ার করুন। নবী ﷺ বলেছেন: 'তোমাদের মধ্যে সর্বোত্তম সেই যে কুরআন শেখে এবং শেখায়।'"
+        }
+      }
+    },
+    "how-to-make-tawbah": {
+      "title": "তাওবা (অনুতাপ) করার নিয়ম",
+      "description": "গুনাহ থেকে আন্তরিক তাওবার গাইড",
+      "steps": {
+        "0": {
+          "title": "১. তৎক্ষণাৎ গুনাহ ছাড়ুন",
+          "content": "প্রথম পদক্ষেপ হলো সাথে সাথে গুনাহ ত্যাগ করা। গুনাহ চালিয়ে যেতে যেতে তাওবা করা যায় না।"
+        },
+        "1": {
+          "title": "২. সত্যিকার অনুতাপ অনুভব করুন",
+          "content": "আল্লাহর অবাধ্যতায় অন্তরে আন্তরিক অনুতাপ অনুভব করুন। নবী ﷺ বলেছেন: 'অনুতাপই তাওবা।'"
+        },
+        "2": {
+          "title": "৩. আল্লাহর ক্ষমা চান",
+          "content": "আল্লাহর কাছে ক্ষমা চান। 'আস্তাগফিরুল্লাহ' (আমি আল্লাহর ক্ষমা চাই) বলুন এবং আন্তরিক দু'আ করুন।"
+        },
+        "3": {
+          "title": "৪. দৃঢ় সংকল্প করুন",
+          "content": "আর কখনো সেই গুনাহে ফিরে না যাওয়ার দৃঢ় সংকল্প করুন। এই সংকল্প বৈধ তাওবার জন্য অপরিহার্য।"
+        },
+        "4": {
+          "title": "৫. প্রয়োজনে প্রতিকার করুন",
+          "content": "গুনাহে কারো হক নষ্ট হলে তার কাছে ক্ষমা চান ও প্রতিকার করুন। চুরি করা সম্পদ ফেরত দিন, ক্ষতির জন্য ক্ষমা চান ইত্যাদি।"
+        },
+        "5": {
+          "title": "৬. মন্দকে ভালো দিয়ে প্রতিস্থাপন করুন",
+          "content": "গুনাহের পর নেক আমল করুন। আল্লাহ বলেন: 'নিশ্চয়ই ভালো কাজ মন্দ কাজকে দূর করে দেয়' (কুরআন ১১:১১৪)।"
+        },
+        "6": {
+          "title": "৭. কখনো হতাশ হবেন না",
+          "content": "আপনার গুনাহ যত বড়ই হোক, আল্লাহর রহমত থেকে কখনো হতাশ হবেন না। তিনি বলেন: 'বলো, হে আমার বান্দারা যারা নিজেদের উপর বাড়াবাড়ি করেছ, আল্লাহর রহমত থেকে নিরাশ হয়ো না' (কুরআন ৩৯:৫৩)।"
+        }
+      }
+    },
+    "understanding-riba": {
+      "title": "রিবা (সুদ) সম্পর্কে জানুন",
+      "description": "ইসলামে সুদের নিষিদ্ধতা সম্পর্কে জানুন",
+      "steps": {
+        "0": {
+          "title": "১. রিবা কী?",
+          "content": "রিবা অর্থ 'বৃদ্ধি' বা 'অতিরিক্ত'। ইসলামী অর্থব্যবস্থায়, এটি ঋণের টাকায় যেকোনো নিশ্চিত সুদকে বোঝায়, পরিমাণ যাই হোক।"
+        },
+        "1": {
+          "title": "২. কেন নিষিদ্ধ?",
+          "content": "আল্লাহ বলেন: 'আল্লাহ ব্যবসাকে হালাল করেছেন এবং সুদকে হারাম করেছেন' (কুরআন ২:২৭৫)। সুদ অভাবীদের শোষণ করে এবং উৎপাদনশীল প্রচেষ্টা ছাড়া সম্পদ তৈরি করে।"
+        },
+        "2": {
+          "title": "৩. রিবার প্রকার",
+          "content": "রিবা আল-নাসীআহ: ঋণের সুদ। রিবা আল-ফদল: একই পণ্য অসমান পরিমাণে বিনিময় (যেমন, অতিরিক্ত স্বর্ণের বিনিময়ে স্বর্ণ)।"
+        },
+        "3": {
+          "title": "৪. গুনাহের গুরুত্ব",
+          "content": "নবী ﷺ বলেছেন রিবার ৭৩ প্রকার, যার সর্বনিম্ন নিজের মায়ের সাথে ব্যভিচারের সমান। দাতা ও গ্রহীতা উভয়ই অভিশপ্ত।"
+        },
+        "4": {
+          "title": "৫. বিকল্প",
+          "content": "প্রচলিত সুদভিত্তিক ঋণের পরিবর্তে ইসলামী ব্যাংক, মুদারাবা (মুনাফা ভাগাভাগি) বা কর্যে হাসানা (সুদমুক্ত ঋণ) ব্যবহার করুন।"
+        }
+      }
+    },
+    "halal-income": {
+      "title": "হালাল আয়",
+      "description": "ইসলামে বৈধ উপার্জনের নির্দেশিকা",
+      "steps": {
+        "0": {
+          "title": "১. হালাল আয়ের গুরুত্ব",
+          "content": "নবী ﷺ বলেছেন: 'কেউ নিজ হাতের উপার্জনের চেয়ে ভালো খাবার খায়নি।' হালাল আয় ইবাদত কবুলের জন্য অপরিহার্য।"
+        },
+        "1": {
+          "title": "২. নিষিদ্ধ খাত",
+          "content": "এগুলো থেকে আয় এড়িয়ে চলুন: মদ, জুয়া, শূকর, সুদভিত্তিক ব্যাংকিং, অশ্লীলতা এবং সমাজের জন্য ক্ষতিকর সবকিছু।"
+        },
+        "2": {
+          "title": "৩. সৎ লেনদেন",
+          "content": "ব্যবসায় সত্যবাদী হন। নবী ﷺ বলেছেন: 'সত্যবাদী, বিশ্বস্ত ব্যবসায়ী নবী, সিদ্দিক ও শহীদদের সাথে থাকবে।'"
+        },
+        "3": {
+          "title": "৪. ন্যায্য মূল্য",
+          "content": "ক্রেতাদের শোষণ করবেন না বা দাম বাড়ানোর জন্য পণ্য মজুত করবেন না। নবী ﷺ দাম বাড়ানোর জন্য খাদ্য মজুতকারীদের অভিশাপ দিয়েছেন।"
+        },
+        "4": {
+          "title": "৫. চুক্তি পূরণ করুন",
+          "content": "সকল চুক্তি ও সমঝোতা সম্মান করুন। আল্লাহ বলেন: 'হে যারা ঈমান এনেছ, তোমরা চুক্তিসমূহ পূরণ করো' (কুরআন ৫:১)।"
+        },
+        "5": {
+          "title": "৬. শ্রমিকদের দ্রুত বেতন দিন",
+          "content": "নবী ﷺ বলেছেন: 'শ্রমিকের ঘাম শুকানোর আগেই তার মজুরি দিয়ে দাও।' বেতন বিলম্বিত করা জুলুম।"
+        }
+      }
+    },
+    "islamic-banking": {
+      "title": "ইসলামী ব্যাংকিংয়ের মূলনীতি",
+      "description": "শরীয়াহসম্মত ব্যাংকিং বোঝার গাইড",
+      "steps": {
+        "0": {
+          "title": "১. মূল নীতি",
+          "content": "ইসলামী ব্যাংকিং সুদ (রিবা), অতিরিক্ত অনিশ্চয়তা (গারার) এবং জুয়া (মাইসির) নিষিদ্ধ করে। মুনাফা অবশ্যই প্রকৃত অর্থনৈতিক কর্মকাণ্ড থেকে আসতে হবে।"
+        },
+        "1": {
+          "title": "২. মুরাবাহা (খরচ-প্লাস)",
+          "content": "ব্যাংক একটি সম্পদ কিনে এবং ঘোষিত মুনাফা মার্জিনে আপনার কাছে বিক্রি করে। আপনি কিস্তিতে পরিশোধ করেন। মুনাফা আগেই নির্ধারিত, সুদ নয়।"
+        },
+        "2": {
+          "title": "৩. মুদারাবা (মুনাফা ভাগাভাগি)",
+          "content": "আপনি পুঁজি দেন, ব্যাংক পরিচালনা করে। মুনাফা সম্মত অনুপাতে ভাগ হয়; ক্ষতি পুঁজি প্রদানকারী বহন করে।"
+        },
+        "3": {
+          "title": "৪. মুশারাকা (অংশীদারিত্ব)",
+          "content": "উভয় পক্ষ পুঁজি দেয় এবং বিনিয়োগ অনুপাতে মুনাফা ও ক্ষতি ভাগাভাগি করে।"
+        },
+        "4": {
+          "title": "৫. ইজারা (লিজিং)",
+          "content": "ব্যাংক একটি সম্পদ কিনে এবং আপনার কাছে ভাড়া দেয়। লিজের মেয়াদ শেষে আপনি কেনার অপশন পেতে পারেন।"
+        },
+        "5": {
+          "title": "৬. ব্যাংক নির্বাচন",
+          "content": "শরীয়াহ তত্ত্বাবধান বোর্ডযুক্ত ব্যাংক খুঁজুন। তাদের পণ্য গবেষণা করুন এবং নিশ্চিত করুন এগুলো সত্যিই শরীয়াহসম্মত।"
+        }
+      }
+    },
+    "halal-investing": {
+      "title": "হালাল বিনিয়োগ নির্দেশিকা",
+      "description": "শরীয়াহসম্মত উপায়ে বিনিয়োগের গাইড",
+      "steps": {
+        "0": {
+          "title": "১. নিষিদ্ধ শিল্প বাছাই করুন",
+          "content": "এই কোম্পানিগুলো এড়িয়ে চলুন: মদ, তামাক, জুয়া, প্রচলিত ব্যাংকিং/বীমা, শূকর, অস্ত্র এবং অশ্লীলতা।"
+        },
+        "1": {
+          "title": "২. আর্থিক অনুপাত",
+          "content": "অনেক আলেমের শর্ত: ঋণ-সম্পদ অনুপাত ৩৩%-এর নিচে, সুদ আয় রাজস্বের ৫%-এর নিচে, এবং নগদ/প্রাপ্য সম্পদের ৫০%-এর নিচে।"
+        },
+        "2": {
+          "title": "৩. রিটার্ন পরিশুদ্ধি",
+          "content": "কোম্পানির আয়ের ক্ষুদ্র অংশ অসম্মত উৎস থেকে হলে, আপনার ডিভিডেন্ডের সেই শতাংশ গণনা করে দান করুন।"
+        },
+        "3": {
+          "title": "৪. ইসলামী ফান্ড",
+          "content": "ইসলামী আলেমদের দ্বারা পূর্ব-বাছাই করা শরীয়াহসম্মত মিউচুয়াল ফান্ড ও ETF বিবেচনা করুন।"
+        },
+        "4": {
+          "title": "৫. রিয়েল এস্টেট",
+          "content": "সম্পত্তি বিনিয়োগ সাধারণত হালাল। প্রচলিত মর্টগেজ এড়িয়ে ইসলামী গৃহ অর্থায়ন ব্যবহার করুন।"
+        },
+        "5": {
+          "title": "৬. আলেমদের পরামর্শ নিন",
+          "content": "সন্দেহ হলে জ্ঞানী আলেমদের পরামর্শ নিন বা প্রতিষ্ঠিত ইসলামী অর্থ বাছাই সেবা ব্যবহার করুন।"
+        }
+      }
+    },
+    "debt-management": {
+      "title": "ইসলামী ঋণ ব্যবস্থাপনা",
+      "description": "ইসলামী নীতি অনুযায়ী ঋণ ব্যবস্থাপনা",
+      "steps": {
+        "0": {
+          "title": "১. অপ্রয়োজনীয় ঋণ এড়িয়ে চলুন",
+          "content": "নবী ﷺ ঋণ থেকে আশ্রয় চেয়েছেন। সত্যিকার প্রয়োজনে এবং পরিশোধের স্পষ্ট পরিকল্পনা থাকলেই ঋণ নিন।"
+        },
+        "1": {
+          "title": "২. সকল ঋণ লিপিবদ্ধ করুন",
+          "content": "আল্লাহ আদেশ করেছেন: 'যখন তোমরা নির্দিষ্ট মেয়াদের জন্য ঋণের চুক্তি করো, তখন তা লিখে রাখো' (কুরআন ২:২৮২)। এটি উভয় পক্ষকে রক্ষা করে।"
+        },
+        "2": {
+          "title": "৩. পরিশোধের নিয়্যত রাখুন",
+          "content": "নবী ﷺ বলেছেন: 'যে পরিশোধের নিয়্যতে মানুষের সম্পদ নেয়, আল্লাহ তাকে পরিশোধে সাহায্য করেন। আর যে নষ্ট করার নিয়্যতে নেয়, আল্লাহ তাকে ধ্বংস করেন।'"
+        },
+        "3": {
+          "title": "৪. দ্রুত পরিশোধ করুন",
+          "content": "সামর্থ্য থাকলে পরিশোধে বিলম্ব করবেন না। নবী ﷺ বলেছেন: 'সক্ষম ব্যক্তির পরিশোধে বিলম্ব জুলুম।'"
+        },
+        "4": {
+          "title": "৫. পাওনাদার হিসেবে নম্র হন",
+          "content": "আপনার ঋণগ্রহীতা কষ্টে থাকলে তাকে সময় দিন। আল্লাহ বলেন: 'কারো অভাব থাকলে স্বচ্ছলতা পর্যন্ত অবকাশ দাও' (কুরআন ২:২৮০)।"
+        },
+        "5": {
+          "title": "৬. সম্ভব হলে ক্ষমা করুন",
+          "content": "ঋণ মাফ করা অত্যন্ত সওয়াবের। আল্লাহ বলেন: 'যদি তোমরা দান করো, তাহলে তোমাদের জন্য উত্তম' (কুরআন ২:২৮০)।"
+        }
+      }
+    }
+  },
+  "islamicEvents": {
+    "new_year": "ইসলামী নববর্ষ",
+    "ashura": "আশুরার দিন",
+    "mawlid": "ঈদে মিলাদুন্নবী",
+    "isra_miraj": "ইসরা ও মি'রাজ",
+    "mid_shaban": "শবে বরাত",
+    "ramadan_start": "রমজান শুরু",
+    "laylat_qadr": "লাইলাতুল কদর",
+    "eid_fitr": "ঈদুল ফিতর",
+    "arafah": "আরাফার দিন",
+    "eid_adha": "ঈদুল আযহা",
+    "new_year_desc": "মুহাররমের প্রথম দিন ইসলামী ক্যালেন্ডার বর্ষের সূচনা চিহ্নিত করে।",
+    "ashura_desc": "মুহাররমের ১০ তারিখ। এই দিনে রোজা রাখলে বিগত বছরের গুনাহ মাফ হয়।",
+    "mawlid_desc": "নবী মুহাম্মদ ﷺ-এর জন্মদিনের স্মরণ।",
+    "isra_miraj_desc": "নবী মুহাম্মদ ﷺ-এর রাত্রিকালীন ভ্রমণ ও উর্ধ্বারোহণ।",
+    "mid_shaban_desc": "যে রাতে আল্লাহ নিকটতম আসমানে নেমে আসেন এবং অনেককে ক্ষমা করেন।",
+    "ramadan_start_desc": "বরকতময় রোজার মাস শুরু হয়।",
+    "laylat_qadr_desc": "ভাগ্যের রাত, হাজার মাসের চেয়ে উত্তম।",
+    "eid_fitr_desc": "রোজা ভাঙার উৎসব, রমজান শেষের উদযাপন।",
+    "arafah_desc": "এই দিনে রোজা রাখলে বিগত ও আগামী বছরের গুনাহ মাফ হয়।",
+    "eid_adha_desc": "কুরবানীর উৎসব, ইব্রাহীম (আ.)-এর তাঁর পুত্রকে কুরবানী করার ইচ্ছার স্মরণ।"
+  },
+  "countdown": {
+    "today": "আজ",
+    "tomorrow": "আগামীকাল",
+    "inDays": "%{count} দিনে",
+    "inWeek": "%{count} সপ্তাহে",
+    "inWeeks": "%{count} সপ্তাহে",
+    "inMonth": "%{count} মাসে",
+    "inMonths": "%{count} মাসে"
+  },
+  "fastingLabels": {
+    "monday": "সোমবারের রোজা",
+    "thursday": "বৃহস্পতিবারের রোজা",
+    "white_day": "আইয়ামে বীয",
+    "ashura": "আশুরার রোজা",
+    "arafah": "আরাফার রোজা",
+    "shawwal": "শাওয়ালের রোজা"
+  },
+  "prayerStatus": {
+    "prayed": "পড়া হয়েছে",
+    "late": "বিলম্বে",
+    "missed": "কাযা"
+  },
+  "duaTranslations": {
+    "q1": "হে আমাদের রব, আমাদেরকে দুনিয়াতে কল্যাণ দিন এবং আখিরাতেও কল্যাণ দিন, আর আমাদেরকে জাহান্নামের আযাব থেকে রক্ষা করুন।",
+    "q2": "হে আমাদের রব, আমরা নিজেদের প্রতি জুলুম করেছি। আপনি যদি আমাদের ক্ষমা না করেন এবং আমাদের প্রতি দয়া না করেন, তবে আমরা অবশ্যই ক্ষতিগ্রস্তদের অন্তর্ভুক্ত হবো।",
+    "q3": "হে আমার রব, আমার বক্ষ প্রশস্ত করে দিন, আমার কাজ সহজ করে দিন এবং আমার জিহ্বার জড়তা দূর করে দিন, যাতে তারা আমার কথা বুঝতে পারে।",
+    "q4": "হে আমার রব, আমার জ্ঞান বৃদ্ধি করে দিন।",
+    "q5": "হে আমার রব, আমি শয়তানদের প্ররোচনা থেকে আপনার আশ্রয় চাই এবং হে আমার রব, তাদের আমার কাছে উপস্থিত হওয়া থেকেও আপনার আশ্রয় চাই।",
+    "q6": "হে আমাদের রব, আমাদের পাপসমূহ এবং আমাদের কাজকর্মে আমাদের বাড়াবাড়ি ক্ষমা করুন, আমাদের পদক্ষেপ দৃঢ় রাখুন এবং কাফির সম্প্রদায়ের বিরুদ্ধে আমাদের বিজয়ী করুন।",
+    "q7": "হে আমাদের রব, আমাদের স্ত্রীদের ও সন্তানদের থেকে আমাদের চোখের শীতলতা দান করুন এবং আমাদেরকে মুত্তাকীদের জন্য আদর্শ বানিয়ে দিন।",
+    "q8": "হে আমার রব, আমাকে তাওফীক দিন যেন আমি আপনার সেই নেয়ামতের শোকর আদায় করতে পারি যা আপনি আমাকে ও আমার পিতামাতাকে দান করেছেন, এবং যেন আমি এমন সৎকর্ম করতে পারি যা আপনাকে সন্তুষ্ট করে।",
+    "q9": "হে আমাদের রব, আমাদের হেদায়াত দানের পর আমাদের অন্তরসমূহ বিচ্যুত করবেন না এবং আপনার পক্ষ থেকে আমাদের রহমত দান করুন। নিশ্চয়ই আপনি মহাদাতা।",
+    "q10": "হে আমাদের রব, আমাকে, আমার পিতামাতাকে এবং সকল মুমিনকে সেদিন ক্ষমা করুন যেদিন হিসাব প্রতিষ্ঠিত হবে।",
+    "q11": "হে আমাদের রব, আমাদের ওপর ধৈর্য ঢেলে দিন, আমাদের পা দৃঢ় রাখুন এবং কাফির সম্প্রদায়ের বিরুদ্ধে আমাদের বিজয়ী করুন।",
+    "q12": "হে আমাদের রব, আমাদের ওপর ধৈর্য ঢেলে দিন এবং আমাদেরকে মুসলিম হিসেবে মৃত্যু দান করুন।",
+    "q13": "হে আমাদের রব, আমাদেরকে জালিম সম্প্রদায়ের জন্য পরীক্ষার বিষয় বানাবেন না এবং আপনার রহমতে আমাদেরকে কাফির সম্প্রদায় থেকে রক্ষা করুন।",
+    "q14": "হে আমার রব, আমি আপনার কাছে আশ্রয় চাই এমন বিষয়ে প্রশ্ন করা থেকে যার সম্পর্কে আমার জ্ঞান নেই।",
+    "q15": "হে আমাদের রব, আমাদেরকে কাফিরদের জন্য পরীক্ষার বিষয় বানাবেন না এবং আমাদের ক্ষমা করুন, হে আমাদের রব। নিশ্চয়ই আপনি পরাক্রমশালী, প্রজ্ঞাময়।",
+    "q16": "হে আমাদের রব, আমরা ঈমান এনেছি, অতএব আমাদের ক্ষমা করুন এবং আমাদের প্রতি দয়া করুন, আর আপনিই সর্বশ্রেষ্ঠ দয়ালু।",
+    "q17": "হে আমার রব, ক্ষমা করুন ও দয়া করুন, আর আপনিই সর্বশ্রেষ্ঠ দয়ালু।",
+    "q18": "হে আমাদের রব, আমাদের ও আমাদের সেই ভাইদের ক্ষমা করুন যারা আমাদের আগে ঈমান এনেছে এবং যারা ঈমান এনেছে তাদের প্রতি আমাদের অন্তরে কোনো বিদ্বেষ রাখবেন না। হে আমাদের রব, নিশ্চয়ই আপনি স্নেহশীল, দয়ালু।",
+    "q19": "হে আমার রব, আপনার পক্ষ থেকে আমাকে পবিত্র সন্তান দান করুন। নিশ্চয়ই আপনি দু'আর শ্রোতা।",
+    "q20": "হে আমার রব, আমাকে নামাজ প্রতিষ্ঠাকারী বানান এবং আমার বংশধরদেরও। হে আমাদের রব, আমার দু'আ কবুল করুন।",
+    "q21": "হে আমার রব, আমাকে একা রাখবেন না, আর আপনিই সর্বোত্তম উত্তরাধিকারী।",
+    "q22": "হে আমার রব, আমাকে তাওফীক দিন যেন আমি আপনার সেই নেয়ামতের শোকর আদায় করি যা আপনি আমাকে ও আমার পিতামাতাকে দান করেছেন এবং এমন সৎকর্ম করি যা আপনার পছন্দ, আর আপনার রহমতে আমাকে আপনার সৎকর্মশীল বান্দাদের অন্তর্ভুক্ত করুন।",
+    "q23": "সমস্ত প্রশংসা আল্লাহর, যিনি আমাদের এই পথে পরিচালিত করেছেন; আল্লাহ যদি আমাদের হেদায়াত না করতেন তবে আমরা কখনোই হেদায়াত পেতাম না।",
+    "q24": "হে আমাদের রব, আপনার পক্ষ থেকে আমাদের রহমত দান করুন এবং আমাদের বিষয়ে সঠিক পথনির্দেশের ব্যবস্থা করুন।",
+    "q25": "হে আমার রব, আমাকে সত্যের সাথে প্রবেশ করান এবং সত্যের সাথে বের করুন এবং আপনার পক্ষ থেকে আমাকে সাহায্যকারী ক্ষমতা দান করুন।",
+    "q26": "হে আমাদের রব, আমাদের জন্য আমাদের নূর পূর্ণ করে দিন এবং আমাদের ক্ষমা করুন। নিশ্চয়ই আপনি সবকিছুর ওপর ক্ষমতাবান।",
+    "q27": "হে আমাদের রব, আপনার ওপরই আমরা ভরসা করেছি, আপনারই দিকে আমরা প্রত্যাবর্তন করেছি এবং আপনারই কাছে আমাদের ফিরে যেতে হবে।",
+    "q28": "হে আমাদের রব, আমরা যদি ভুলে যাই বা ভুল করি তবে আমাদের পাকড়াও করবেন না।",
+    "q29": "হে আমাদের রব, আমাদের ওপর এমন বোঝা চাপিয়ে দেবেন না যেমন আমাদের পূর্ববর্তীদের ওপর চাপিয়েছিলেন।",
+    "q30": "হে আমাদের রব, আমাদের সাধ্যের বাইরে বোঝা আমাদের ওপর চাপাবেন না। আমাদের মাফ করুন, আমাদের ক্ষমা করুন এবং আমাদের প্রতি দয়া করুন। আপনিই আমাদের অভিভাবক, অতএব কাফির সম্প্রদায়ের বিরুদ্ধে আমাদের সাহায্য করুন।",
+    "q31": "হে আমার রব, এই নগরীকে নিরাপদ করুন এবং আমাকে ও আমার সন্তানদের মূর্তিপূজা থেকে দূরে রাখুন।",
+    "q32": "হে আমাদের রব, আমাদের উভয়কে আপনার অনুগত মুসলিম বানান এবং আমাদের বংশধরদের মধ্য থেকেও আপনার অনুগত একটি উম্মত তৈরি করুন। আমাদের ইবাদতের নিয়ম-কানুন দেখিয়ে দিন এবং আমাদের তাওবা কবুল করুন। নিশ্চয়ই আপনি তাওবা কবুলকারী, দয়ালু।",
+    "q33": "হে আমার রব, নিশ্চয়ই আমি নিজের ওপর জুলুম করেছি, অতএব আমাকে ক্ষমা করুন।",
+    "q34": "হে আমার রব, আপনি আমার প্রতি যে কল্যাণই অবতীর্ণ করবেন, আমি তার মুখাপেক্ষী।",
+    "q35": "আপনি ছাড়া কোনো ইলাহ নেই; আপনি পবিত্র। নিশ্চয়ই আমি জালিমদের অন্তর্ভুক্ত ছিলাম।",
+    "q36": "নিশ্চয়ই আমাকে কষ্ট স্পর্শ করেছে এবং আপনি সর্বশ্রেষ্ঠ দয়ালু।",
+    "q37": "হে আমার রব, আমাকে তাওফীক দিন যেন আমি আপনার সেই নেয়ামতের শোকর আদায় করি যা আপনি আমাকে ও আমার পিতামাতাকে দান করেছেন।",
+    "q38": "হে আমার রব, আমাকে, আমার পিতামাতাকে এবং যে আমার ঘরে মুমিন হয়ে প্রবেশ করে তাকে ক্ষমা করুন এবং সকল মুমিন পুরুষ ও মুমিন নারীকে ক্ষমা করুন।",
+    "q39": "হে আমাদের রব, আমাদের থেকে জাহান্নামের আযাব সরিয়ে দিন। নিশ্চয়ই তার আযাব অবিচ্ছেদ্য।",
+    "q40": "হে আমাদের রব, নিশ্চয়ই আমরা ঈমান এনেছি, অতএব আমাদের পাপসমূহ ক্ষমা করুন এবং আমাদেরকে জাহান্নামের আযাব থেকে রক্ষা করুন।",
+    "q41": "হে আমাদের রব, আপনি এসব অনর্থক সৃষ্টি করেননি; আপনি পবিত্র; অতএব আমাদেরকে জাহান্নামের আযাব থেকে রক্ষা করুন।",
+    "q42": "হে আমাদের রব, নিশ্চয়ই আপনি মানুষকে একত্রিত করবেন এমন একদিনে যাতে কোনো সন্দেহ নেই। নিশ্চয়ই আল্লাহ প্রতিশ্রুতি ভঙ্গ করেন না।",
+    "h1": "আল্লাহর নামে, যার নামের সাথে আসমান ও যমীনে কোনো কিছুই ক্ষতি করতে পারে না এবং তিনি সর্বশ্রোতা, সর্বজ্ঞ।",
+    "h2": "আমি মহান আল্লাহর কাছে ক্ষমা চাই, যিনি ছাড়া কোনো ইলাহ নেই, তিনি চিরঞ্জীব, সর্বসংরক্ষক, এবং আমি তাঁর কাছে তাওবা করি।",
+    "h3": "হে আল্লাহ, আমি আপনার কাছে হেদায়াত, তাকওয়া, পবিত্রতা ও স্বনির্ভরতা চাই।",
+    "h4": "হে আল্লাহ, আমি দুশ্চিন্তা ও দুঃখ থেকে, অক্ষমতা ও অলসতা থেকে, ভীরুতা ও কৃপণতা থেকে এবং ঋণের বোঝা ও মানুষের পরাভব থেকে আপনার আশ্রয় চাই।",
+    "h5": "হে আল্লাহ, আমার শরীরে সুস্থতা দিন। হে আল্লাহ, আমার শ্রবণে সুস্থতা দিন। হে আল্লাহ, আমার দৃষ্টিতে সুস্থতা দিন। আপনি ছাড়া কোনো ইলাহ নেই।",
+    "h6": "পবিত্র সেই সত্তা যিনি এটি আমাদের অধীন করে দিয়েছেন, আমরা নিজেরা একে বশে আনতে সক্ষম ছিলাম না। আর আমাদেরকে আমাদের রবের কাছেই ফিরে যেতে হবে।",
+    "h7": "আল্লাহর নামে এবং আল্লাহর বরকতের সাথে।",
+    "h8": "সকল প্রশংসা আল্লাহর যিনি আমাদের খাইয়েছেন, পান করিয়েছেন এবং আমাদের মুসলিম বানিয়েছেন।",
+    "h9": "আপনার নামে, হে আল্লাহ, আমি মৃত্যুবরণ করি এবং জীবিত হই।",
+    "h10": "সকল প্রশংসা আল্লাহর যিনি আমাদের মৃত্যুর পর আমাদের জীবিত করেছেন এবং তাঁরই কাছে পুনরুত্থান।",
+    "h11": "আমরা সকালে উপনীত হয়েছি এবং সকল সাম্রাজ্য আল্লাহর। সকল প্রশংসা আল্লাহর। আল্লাহ ছাড়া কোনো ইলাহ নেই, তিনি একক, তাঁর কোনো শরীক নেই।",
+    "h12": "হে আল্লাহ, আপনার অনুগ্রহে আমরা সকাল করেছি, আপনার অনুগ্রহে সন্ধ্যা করেছি, আপনার দ্বারা আমরা জীবিত থাকি, আপনার দ্বারা আমরা মৃত্যুবরণ করি এবং আপনার কাছেই পুনরুত্থান।",
+    "h13": "হে আল্লাহ, আমি আপনার কাছে দুনিয়া ও আখিরাতে সুস্থতা প্রার্থনা করি।",
+    "h14": "হে আল্লাহ, আমি কুফর ও দারিদ্র্য থেকে আপনার আশ্রয় চাই এবং কবরের আযাব থেকে আপনার আশ্রয় চাই।",
+    "h15": "হে আল্লাহ, আমার দোষত্রুটি ঢেকে রাখুন এবং আমার ভয় দূর করুন।",
+    "h16": "হে আল্লাহ, আপনি আমার রব, আপনি ছাড়া কোনো ইলাহ নেই। আপনি আমাকে সৃষ্টি করেছেন এবং আমি আপনার বান্দা, আর আমি আপনার সাথে কৃত অঙ্গীকার ও প্রতিশ্রুতির ওপর আমার সাধ্যমতো আছি।",
+    "h17": "আমি আল্লাহর কাছে ক্ষমা চাই এবং তাঁর কাছে তাওবা করি।",
+    "h18": "হে আমার রব, আমাকে ক্ষমা করুন এবং আমার তাওবা কবুল করুন। নিশ্চয়ই আপনি তাওবা কবুলকারী, দয়ালু।",
+    "h19": "হে আল্লাহ, আমাকে হেদায়াত দিন এবং সঠিক পথে রাখুন।",
+    "h20": "হে আল্লাহ, আমি আপনার কাছে উপকারী জ্ঞান, পবিত্র রিযক এবং কবুলযোগ্য আমল চাই।",
+    "h21": "হে আল্লাহ, আপনি আমাকে যা শিখিয়েছেন তা দ্বারা আমাকে উপকৃত করুন, আমাকে এমন কিছু শেখান যা আমার উপকারে আসবে এবং আমার জ্ঞান বৃদ্ধি করুন।",
+    "h22": "হে আল্লাহ, মানবজাতির রব, কষ্ট দূর করুন। আরোগ্য দিন, কেননা আপনিই আরোগ্যদাতা। আপনার আরোগ্য ছাড়া কোনো আরোগ্য নেই, এমন আরোগ্য যা কোনো রোগ অবশিষ্ট রাখে না।",
+    "h23": "আমি মহান আল্লাহর কাছে, মহান আরশের রবের কাছে প্রার্থনা করি তিনি যেন আপনাকে সুস্থ করেন।",
+    "h24": "হে আল্লাহ, আমরা আমাদের এই সফরে আপনার কাছে নেকী ও তাকওয়া এবং এমন আমল চাই যা আপনাকে সন্তুষ্ট করে।",
+    "h25": "হে আল্লাহ, আমাদের এই সফর সহজ করে দিন এবং এর দূরত্ব কমিয়ে দিন।",
+    "h26": "সকল প্রশংসা আল্লাহর যিনি আমাকে এই খাবার খাইয়েছেন এবং আমার কোনো শক্তি বা সামর্থ্য ছাড়াই এটি দান করেছেন।",
+    "h27": "হে আল্লাহ, এতে আমাদের জন্য বরকত দিন এবং এর চেয়ে ভালো কিছু আমাদের খাওয়ান।",
+    "h28": "হে আল্লাহ, আপনি যেদিন আপনার বান্দাদের পুনরুত্থিত করবেন সেদিন আপনার শাস্তি থেকে আমাকে রক্ষা করুন।",
+    "h29": "হে আল্লাহ, আমি আমার আত্মাকে আপনার কাছে সমর্পণ করেছি, আমার বিষয়সমূহ আপনার কাছে সোপর্দ করেছি, আমার মুখ আপনার দিকে ফিরিয়েছি এবং আমার পিঠ আপনার ওপর ঠেস দিয়েছি।",
+    "h30": "আল্লাহর নামে আমরা প্রবেশ করলাম, আল্লাহর নামে আমরা বের হলাম এবং আমাদের রব আল্লাহর ওপর আমরা ভরসা করলাম।",
+    "h31": "হে আল্লাহ, আমার জন্য আপনার রহমতের দরজাসমূহ খুলে দিন।",
+    "h32": "হে আল্লাহ, আমি আপনার অনুগ্রহ প্রার্থনা করি।",
+    "h33": "আল্লাহর নামে, আমি আল্লাহর ওপর ভরসা করলাম এবং আল্লাহ ছাড়া কোনো শক্তি বা সামর্থ্য নেই।",
+    "h34": "হে আল্লাহ, এটিকে উপকারী বৃষ্টি বানান।",
+    "h35": "পবিত্র সেই সত্তা যাঁর প্রশংসার সাথে বজ্র তাসবীহ পড়ে এবং ফেরেশতারা তাঁর ভয়ে কাঁপে।",
+    "h36": "হে আল্লাহ, আমাদের আশপাশে বর্ষণ করুন, আমাদের ওপর নয়।",
+    "h37": "হে আল্লাহ, আপনার যিকর করতে, আপনার শোকর আদায় করতে এবং সুন্দরভাবে আপনার ইবাদত করতে আমাকে সাহায্য করুন।",
+    "h38": "সর্বাবস্থায় সকল প্রশংসা আল্লাহর।",
+    "h39": "হে আল্লাহ, তাদের উভয়কে বরকত দিন এবং তাদের ওপর বরকত বর্ষণ করুন এবং তাদের রিযক দান করুন।",
+    "h40": "আল্লাহ আপনাকে বরকত দিন, আপনার ওপর বরকত বর্ষণ করুন এবং আপনাদের উভয়কে কল্যাণে একত্রিত করুন।",
+    "h41": "আল্লাহ আমাদের জন্য যথেষ্ট এবং তিনি সর্বোত্তম কর্মবিধায়ক।",
+    "h42": "আল্লাহ ছাড়া কোনো শক্তি বা সামর্থ্য নেই।",
+    "h43": "হে আল্লাহ, আমি আপনার কাছে জান্নাত চাই এবং জাহান্নাম থেকে আপনার আশ্রয় চাই।",
+    "h44": "আমি আল্লাহর পরিপূর্ণ বাণীসমূহের আশ্রয় নিচ্ছি তাঁর সৃষ্টির সকল অনিষ্ট থেকে।",
+    "h45": "হে আল্লাহ, আমি আমার আত্মার অনিষ্ট থেকে এবং প্রতিটি প্রাণীর অনিষ্ট থেকে আপনার আশ্রয় চাই যার কপাল আপনি ধরে আছেন।",
+    "h46": "হে আল্লাহ, আমার দ্বীনকে সুদৃঢ় করুন যা আমার সকল বিষয়ের রক্ষাকবচ, আমার দুনিয়াকে সংশোধন করুন যেখানে আমার জীবিকা এবং আমার আখিরাতকে সংশোধন করুন যেখানে আমার প্রত্যাবর্তন।",
+    "h47": "হে আল্লাহ, আমার সকল গুনাহ ক্ষমা করুন — ক্ষুদ্র ও বৃহৎ, প্রথম ও শেষ, প্রকাশ্য ও গোপন।",
+    "h48": "হে আল্লাহ, আমি শ্বেতরোগ, পাগলামি, কুষ্ঠরোগ এবং মন্দ রোগসমূহ থেকে আপনার আশ্রয় চাই।",
+    "h49": "হে আল্লাহ, আপনার নামে আমি জীবিত থাকি এবং মৃত্যুবরণ করি।",
+    "h50": "হে আল্লাহ, আপনি সফরে সঙ্গী এবং পরিবারে রক্ষক।",
+    "h51": "আমি মহান আল্লাহর, তাঁর সম্মানিত চেহারার এবং তাঁর চিরন্তন কর্তৃত্বের আশ্রয় নিচ্ছি বিতাড়িত শয়তান থেকে।",
+    "h52": "হে আল্লাহ, আমি আপনার কাছে বিষয়ে দৃঢ়তা এবং সঠিক পথে অটলতা চাই।",
+    "c1": "আমরা প্রত্যাবর্তনকারী, তাওবাকারী, ইবাদতকারী, আমাদের রবের প্রশংসাকারী।",
+    "c2": "আমি আল্লাহর পরিপূর্ণ বাণীসমূহের আশ্রয় নিচ্ছি তাঁর সৃষ্টির সকল অনিষ্ট থেকে।",
+    "c3": "আল্লাহর অনুগ্রহ ও রহমতে আমরা বৃষ্টি পেয়েছি।",
+    "c4": "কোনো ক্ষতি নেই, এটি পবিত্রতা, ইনশাআল্লাহ।",
+    "c5": "হে অন্তরসমূহের পরিবর্তনকারী, আমার অন্তরকে আপনার দ্বীনের ওপর দৃঢ় রাখুন।",
+    "c6": "হে আল্লাহ, আমি আপনার নেয়ামত ছিনিয়ে নেওয়া, আপনার সুস্থতা পরিবর্তন হওয়া, আপনার আকস্মিক শাস্তি এবং আপনার সকল ক্রোধ থেকে আশ্রয় চাই।",
+    "c7": "সকল প্রশংসা আল্লাহর, যাঁর অনুগ্রহে সকল সৎকর্ম সম্পন্ন হয়।",
+    "c8": "হে আল্লাহ, আমাকে আমার সামনে থেকে, পেছন থেকে, ডান থেকে, বাম থেকে এবং ওপর থেকে রক্ষা করুন।"
+  },
+  "azkarTranslations": {
+    "m1": "আয়াতুল কুরসী — আল্লাহ! তিনি ছাড়া কোনো ইলাহ নেই, তিনি চিরঞ্জীব, সর্বসত্তার ধারক। তাঁকে তন্দ্রা ও নিদ্রা স্পর্শ করে না। আসমানসমূহ ও যমীনে যা কিছু আছে সব তাঁরই। কে আছে এমন যে তাঁর অনুমতি ছাড়া তাঁর কাছে সুপারিশ করবে? তিনি জানেন তাদের সামনে ও পেছনে যা আছে এবং তাঁর জ্ঞানের কোনো কিছুই তারা আয়ত্ত করতে পারে না, তিনি যতটুকু ইচ্ছা করেন তা ছাড়া। তাঁর কুরসী আসমানসমূহ ও যমীনকে পরিবেষ্টন করে আছে এবং উভয়ের সংরক্ষণ তাঁকে ক্লান্ত করে না। তিনি সর্বোচ্চ, সর্বমহান।",
+    "m2": "বলুন: তিনি আল্লাহ, একক। আল্লাহ অমুখাপেক্ষী। তিনি জন্ম দেননি এবং তাঁকে জন্ম দেওয়া হয়নি। তাঁর কোনো সমকক্ষ নেই।",
+    "m3": "বলুন: আমি প্রভাতের রবের আশ্রয় চাই, তিনি যা সৃষ্টি করেছেন তার অনিষ্ট থেকে, অন্ধকার হয়ে এলে রাতের অনিষ্ট থেকে, গ্রন্থিতে ফুঁকদানকারীদের অনিষ্ট থেকে এবং হিংসুকের হিংসার অনিষ্ট থেকে।",
+    "m4": "বলুন: আমি মানবজাতির রবের আশ্রয় চাই, মানবজাতির অধিপতির, মানবজাতির ইলাহর — আত্মগোপনকারী কুমন্ত্রণাদাতার অনিষ্ট থেকে, যে মানুষের অন্তরে কুমন্ত্রণা দেয়, জিনদের মধ্য থেকে হোক বা মানুষের মধ্য থেকে।",
+    "m5": "আমরা সকালে উপনীত হয়েছি এবং সকল সাম্রাজ্য আল্লাহর। সকল প্রশংসা আল্লাহর। আল্লাহ ছাড়া কোনো ইলাহ নেই, তিনি একক, তাঁর কোনো শরীক নেই। তাঁরই সাম্রাজ্য এবং তাঁরই সকল প্রশংসা এবং তিনি সবকিছুর ওপর ক্ষমতাবান।",
+    "m6": "হে আল্লাহ, আমি আপনার কাছে এই দিনে যা কল্যাণ আছে তা চাই — এর বিজয়, এর সাহায্য, এর নূর, এর বরকত এবং এর হেদায়াত। আর আমি এই দিনে ও এর পরে যা অনিষ্ট আছে তা থেকে আপনার আশ্রয় চাই।",
+    "m7": "হে আল্লাহ, আপনার অনুগ্রহে আমরা সকাল করেছি, আপনার অনুগ্রহে সন্ধ্যা করেছি, আপনার দ্বারা আমরা জীবিত থাকি, আপনার দ্বারা মৃত্যুবরণ করি এবং আপনার কাছেই প্রত্যাবর্তন।",
+    "m8": "হে আল্লাহ, আপনি আমার রব, আপনি ছাড়া কোনো ইলাহ নেই। আপনি আমাকে সৃষ্টি করেছেন এবং আমি আপনার বান্দা। আমি আপনার সাথে কৃত অঙ্গীকার ও প্রতিশ্রুতির ওপর আমার সাধ্যমতো আছি। আমি আমার কৃতকর্মের অনিষ্ট থেকে আপনার আশ্রয় চাই। আমি আমার ওপর আপনার নেয়ামত স্বীকার করি এবং আমার গুনাহ স্বীকার করি। অতএব আমাকে ক্ষমা করুন, কেননা আপনি ছাড়া গুনাহ ক্ষমা করার কেউ নেই।",
+    "m9": "হে আল্লাহ, আমি আপনার কাছে দুনিয়া ও আখিরাতে সুস্থতা ও ক্ষমা প্রার্থনা করি। হে আল্লাহ, আমি আমার দ্বীন, দুনিয়া, পরিবার ও সম্পদে সুস্থতা ও ক্ষমা প্রার্থনা করি। হে আল্লাহ, আমার দোষত্রুটি ঢেকে রাখুন এবং আমার ভয় নিরাপত্তায় পরিণত করুন।",
+    "m10": "হে আল্লাহ, আমাকে আমার সামনে থেকে, পেছন থেকে, ডান থেকে, বাম থেকে এবং ওপর থেকে রক্ষা করুন। আর আমার নিচ থেকে ধসিয়ে দেওয়া থেকে আপনার মহত্ত্বের আশ্রয় চাই।",
+    "m11": "হে আল্লাহ, গায়েবের জ্ঞানী ও আসমান-যমীনের সৃষ্টিকর্তা, সবকিছুর রব ও অধিপতি, আমি সাক্ষ্য দিচ্ছি আপনি ছাড়া কোনো ইলাহ নেই। আমি আমার নফসের অনিষ্ট থেকে, শয়তানের অনিষ্ট ও তার শিরক থেকে আপনার আশ্রয় চাই।",
+    "m12": "আল্লাহর নামে, যার নামের সাথে আসমান ও যমীনে কোনো কিছুই ক্ষতি করতে পারে না এবং তিনি সর্বশ্রোতা, সর্বজ্ঞ।",
+    "m13": "আমি আল্লাহকে আমার রব হিসেবে, ইসলামকে আমার দ্বীন হিসেবে এবং মুহাম্মদ ﷺ-কে আমার নবী ও রাসূল হিসেবে সন্তুষ্টচিত্তে গ্রহণ করেছি।",
+    "m14": "হে চিরঞ্জীব, হে সর্বসত্তার ধারক, আপনার রহমতের মাধ্যমে আমি সাহায্য প্রার্থনা করি। আমার সকল বিষয় সংশোধন করুন এবং আমাকে এক মুহূর্তের জন্যও আমার নফসের ওপর ছেড়ে দেবেন না।",
+    "m15": "আমরা ইসলামের ফিতরাতের (স্বভাবধর্মের) ওপর সকাল করেছি, ইখলাসের বাণীর ওপর, আমাদের নবী মুহাম্মদ ﷺ-এর দ্বীনের ওপর এবং আমাদের পিতা ইব্রাহীম (আ.)-এর মিল্লাতের ওপর, যিনি ছিলেন একনিষ্ঠ মুসলিম এবং মুশরিকদের অন্তর্ভুক্ত ছিলেন না।",
+    "m16": "আল্লাহ পবিত্র এবং তাঁর প্রশংসার সাথে।",
+    "m17": "আল্লাহ ছাড়া কোনো ইলাহ নেই, তিনি একক, তাঁর কোনো শরীক নেই। সাম্রাজ্য তাঁরই এবং প্রশংসা তাঁরই এবং তিনি সবকিছুর ওপর ক্ষমতাবান।",
+    "m18": "আল্লাহ পবিত্র এবং তাঁর প্রশংসার সাথে, সৃষ্টির সংখ্যা পরিমাণ, তাঁর সন্তুষ্টি পরিমাণ, তাঁর আরশের ওজন পরিমাণ এবং তাঁর বাণীসমূহের কালি পরিমাণ।",
+    "m19": "হে আল্লাহ, আমি আপনার কাছে উপকারী জ্ঞান, পবিত্র রিযক এবং কবুলযোগ্য আমল চাই।",
+    "m20": "আমি আল্লাহর কাছে ক্ষমা চাই এবং তাঁর কাছে তাওবা করি।",
+    "m21": "আমি আল্লাহর পরিপূর্ণ বাণীসমূহের আশ্রয় নিচ্ছি তাঁর সৃষ্টির সকল অনিষ্ট থেকে।",
+    "m22": "হে আল্লাহ, মুহাম্মদ ﷺ-এর ওপর এবং তাঁর পরিবারের ওপর রহমত বর্ষণ করুন, যেমন আপনি ইব্রাহীম (আ.) ও তাঁর পরিবারের ওপর রহমত বর্ষণ করেছিলেন। নিশ্চয়ই আপনি প্রশংসিত, মহিমান্বিত।",
+    "m23": "আল্লাহ পবিত্র, সকল প্রশংসা আল্লাহর, আল্লাহ ছাড়া কোনো ইলাহ নেই এবং আল্লাহ সর্বশ্রেষ্ঠ।",
+    "m24": "আল্লাহ ছাড়া কোনো ইলাহ নেই, তিনি একক, তাঁর কোনো শরীক নেই। সাম্রাজ্য তাঁরই, প্রশংসা তাঁরই এবং তিনি সবকিছুর ওপর ক্ষমতাবান।",
+    "m25": "আল্লাহ পবিত্র এবং তাঁর প্রশংসার সাথে। মহান আল্লাহ পবিত্র।",
+    "m26": "হে আল্লাহ, আমি দুশ্চিন্তা ও দুঃখ থেকে, অক্ষমতা ও অলসতা থেকে, ভীরুতা ও কৃপণতা থেকে এবং ঋণের বোঝা ও মানুষের পরাভব থেকে আপনার আশ্রয় চাই।",
+    "m27": "হে আল্লাহ, আমার শরীরে সুস্থতা দিন। হে আল্লাহ, আমার শ্রবণে সুস্থতা দিন। হে আল্লাহ, আমার দৃষ্টিতে সুস্থতা দিন। আপনি ছাড়া কোনো ইলাহ নেই।",
+    "m28": "আল্লাহ আমাদের জন্য যথেষ্ট এবং তিনি সর্বোত্তম কর্মবিধায়ক।",
+    "m29": "হে আল্লাহ, আমি কুফর ও দারিদ্র্য থেকে আপনার আশ্রয় চাই এবং কবরের আযাব থেকে আপনার আশ্রয় চাই। আপনি ছাড়া কোনো ইলাহ নেই।",
+    "m30": "হে আল্লাহ, আমি আপনার কাছে জান্নাত চাই এবং জাহান্নাম থেকে আপনার আশ্রয় চাই।",
+    "e1": "আয়াতুল কুরসী — আল্লাহ! তিনি ছাড়া কোনো ইলাহ নেই, তিনি চিরঞ্জীব, সর্বসত্তার ধারক। তাঁকে তন্দ্রা ও নিদ্রা স্পর্শ করে না। আসমানসমূহ ও যমীনে যা কিছু আছে সব তাঁরই। কে আছে এমন যে তাঁর অনুমতি ছাড়া তাঁর কাছে সুপারিশ করবে? তিনি জানেন তাদের সামনে ও পেছনে যা আছে এবং তাঁর জ্ঞানের কোনো কিছুই তারা আয়ত্ত করতে পারে না, তিনি যতটুকু ইচ্ছা করেন তা ছাড়া। তাঁর কুরসী আসমানসমূহ ও যমীনকে পরিবেষ্টন করে আছে এবং উভয়ের সংরক্ষণ তাঁকে ক্লান্ত করে না। তিনি সর্বোচ্চ, সর্বমহান।",
+    "e2": "বলুন: তিনি আল্লাহ, একক। আল্লাহ অমুখাপেক্ষী। তিনি জন্ম দেননি এবং তাঁকে জন্ম দেওয়া হয়নি। তাঁর কোনো সমকক্ষ নেই।",
+    "e3": "বলুন: আমি প্রভাতের রবের আশ্রয় চাই, তিনি যা সৃষ্টি করেছেন তার অনিষ্ট থেকে, অন্ধকার হয়ে এলে রাতের অনিষ্ট থেকে, গ্রন্থিতে ফুঁকদানকারীদের অনিষ্ট থেকে এবং হিংসুকের হিংসার অনিষ্ট থেকে।",
+    "e4": "বলুন: আমি মানবজাতির রবের আশ্রয় চাই, মানবজাতির অধিপতির, মানবজাতির ইলাহর — আত্মগোপনকারী কুমন্ত্রণাদাতার অনিষ্ট থেকে, যে মানুষের অন্তরে কুমন্ত্রণা দেয়, জিনদের মধ্য থেকে হোক বা মানুষের মধ্য থেকে।",
+    "e5": "আমরা সন্ধ্যায় উপনীত হয়েছি এবং সকল সাম্রাজ্য আল্লাহর। সকল প্রশংসা আল্লাহর। আল্লাহ ছাড়া কোনো ইলাহ নেই, তিনি একক, তাঁর কোনো শরীক নেই।",
+    "e6": "হে আল্লাহ, আমি আপনার কাছে এই রাতে যা কল্যাণ আছে তা চাই — এর বিজয়, এর সাহায্য, এর নূর, এর বরকত এবং এর হেদায়াত। আর আমি এই রাতে ও এর পরে যা অনিষ্ট আছে তা থেকে আপনার আশ্রয় চাই।",
+    "e7": "হে আল্লাহ, আপনার অনুগ্রহে আমরা সন্ধ্যা করেছি, আপনার অনুগ্রহে সকাল করেছি, আপনার দ্বারা আমরা জীবিত থাকি, আপনার দ্বারা মৃত্যুবরণ করি এবং আপনার কাছেই প্রত্যাবর্তন।",
+    "e8": "হে আল্লাহ, আপনি আমার রব, আপনি ছাড়া কোনো ইলাহ নেই। আপনি আমাকে সৃষ্টি করেছেন এবং আমি আপনার বান্দা। আমি আপনার সাথে কৃত অঙ্গীকার ও প্রতিশ্রুতির ওপর আমার সাধ্যমতো আছি। আমি আমার কৃতকর্মের অনিষ্ট থেকে আপনার আশ্রয় চাই। আমি আমার ওপর আপনার নেয়ামত স্বীকার করি এবং আমার গুনাহ স্বীকার করি। অতএব আমাকে ক্ষমা করুন, কেননা আপনি ছাড়া গুনাহ ক্ষমা করার কেউ নেই।",
+    "e9": "হে আল্লাহ, আমি আপনার কাছে দুনিয়া ও আখিরাতে সুস্থতা ও ক্ষমা প্রার্থনা করি।",
+    "e10": "হে আল্লাহ, আমাকে আমার সামনে থেকে, পেছন থেকে, ডান থেকে, বাম থেকে এবং ওপর থেকে রক্ষা করুন।",
+    "e11": "হে আল্লাহ, গায়েবের জ্ঞানী ও আসমান-যমীনের সৃষ্টিকর্তা, সবকিছুর রব ও অধিপতি। আমি সাক্ষ্য দিচ্ছি আপনি ছাড়া কোনো ইলাহ নেই। আমি আমার নফসের অনিষ্ট থেকে এবং শয়তানের অনিষ্ট ও তার শিরক থেকে আপনার আশ্রয় চাই।",
+    "e12": "আল্লাহর নামে, যার নামের সাথে আসমান ও যমীনে কোনো কিছুই ক্ষতি করতে পারে না এবং তিনি সর্বশ্রোতা, সর্বজ্ঞ।",
+    "e13": "আমি আল্লাহকে আমার রব হিসেবে, ইসলামকে আমার দ্বীন হিসেবে এবং মুহাম্মদ ﷺ-কে আমার নবী ও রাসূল হিসেবে সন্তুষ্টচিত্তে গ্রহণ করেছি।",
+    "e14": "হে চিরঞ্জীব, হে সর্বসত্তার ধারক, আপনার রহমতের মাধ্যমে আমি সাহায্য প্রার্থনা করি।",
+    "e15": "আমরা ইসলামের ফিতরাতের ওপর সন্ধ্যা করেছি, ইখলাসের বাণীর ওপর, আমাদের নবী মুহাম্মদ ﷺ-এর দ্বীনের ওপর এবং আমাদের পিতা ইব্রাহীম (আ.)-এর মিল্লাতের ওপর।",
+    "e16": "আল্লাহ পবিত্র এবং তাঁর প্রশংসার সাথে।",
+    "e17": "আল্লাহ ছাড়া কোনো ইলাহ নেই, তিনি একক, তাঁর কোনো শরীক নেই। সাম্রাজ্য তাঁরই এবং প্রশংসা তাঁরই এবং তিনি সবকিছুর ওপর ক্ষমতাবান।",
+    "e18": "আল্লাহ পবিত্র এবং তাঁর প্রশংসার সাথে, সৃষ্টির সংখ্যা পরিমাণ, তাঁর সন্তুষ্টি পরিমাণ, তাঁর আরশের ওজন পরিমাণ এবং তাঁর বাণীসমূহের কালি পরিমাণ।",
+    "e19": "আমি আল্লাহর কাছে ক্ষমা চাই এবং তাঁর কাছে তাওবা করি।",
+    "e20": "আমি আল্লাহর পরিপূর্ণ বাণীসমূহের আশ্রয় নিচ্ছি তাঁর সৃষ্টির সকল অনিষ্ট থেকে।",
+    "e21": "হে আল্লাহ, মুহাম্মদ ﷺ-এর ওপর এবং তাঁর পরিবারের ওপর রহমত বর্ষণ করুন।",
+    "e22": "আল্লাহ পবিত্র, সকল প্রশংসা আল্লাহর, আল্লাহ ছাড়া কোনো ইলাহ নেই এবং আল্লাহ সর্বশ্রেষ্ঠ।",
+    "e23": "আল্লাহ ছাড়া কোনো ইলাহ নেই, তিনি একক, তাঁর কোনো শরীক নেই। সাম্রাজ্য তাঁরই, প্রশংসা তাঁরই এবং তিনি সবকিছুর ওপর ক্ষমতাবান।",
+    "e24": "আল্লাহ পবিত্র এবং তাঁর প্রশংসার সাথে। মহান আল্লাহ পবিত্র।",
+    "e25": "হে আল্লাহ, আমি দুশ্চিন্তা ও দুঃখ থেকে, অক্ষমতা ও অলসতা থেকে, ভীরুতা ও কৃপণতা থেকে এবং ঋণের বোঝা ও মানুষের পরাভব থেকে আপনার আশ্রয় চাই।",
+    "e26": "হে আল্লাহ, আমার শরীরে সুস্থতা দিন। হে আল্লাহ, আমার শ্রবণে সুস্থতা দিন। হে আল্লাহ, আমার দৃষ্টিতে সুস্থতা দিন। আপনি ছাড়া কোনো ইলাহ নেই।",
+    "e27": "আল্লাহ আমাদের জন্য যথেষ্ট এবং তিনি সর্বোত্তম কর্মবিধায়ক।",
+    "e28": "হে আল্লাহ, আমি কুফর ও দারিদ্র্য থেকে আপনার আশ্রয় চাই এবং কবরের আযাব থেকে আপনার আশ্রয় চাই। আপনি ছাড়া কোনো ইলাহ নেই।",
+    "e29": "হে আল্লাহ, আমি আপনার কাছে জান্নাত চাই এবং জাহান্নাম থেকে আপনার আশ্রয় চাই।",
+    "ap1": "আমি আল্লাহর কাছে ক্ষমা চাই। আমি আল্লাহর কাছে ক্ষমা চাই। আমি আল্লাহর কাছে ক্ষমা চাই।",
+    "ap2": "হে আল্লাহ, আপনিই শান্তি এবং আপনার কাছ থেকেই শান্তি আসে। হে মহিমা ও সম্মানের অধিকারী, আপনি বরকতময়।",
+    "ap3": "আল্লাহ ছাড়া কোনো ইলাহ নেই, তিনি একক, তাঁর কোনো শরীক নেই। সাম্রাজ্য তাঁরই এবং প্রশংসা তাঁরই এবং তিনি সবকিছুর ওপর ক্ষমতাবান। হে আল্লাহ, আপনি যা দেন তা কেউ রোধ করতে পারে না এবং আপনি যা রোধ করেন তা কেউ দিতে পারে না। আপনার কাছে কোনো সম্পদশালীর সম্পদ কাজে আসে না।",
+    "ap4": "আল্লাহ ছাড়া কোনো শক্তি বা সামর্থ্য নেই।",
+    "ap5": "আল্লাহ পবিত্র।",
+    "ap6": "সকল প্রশংসা আল্লাহর।",
+    "ap7": "আল্লাহ সর্বশ্রেষ্ঠ।",
+    "ap8": "আল্লাহ ছাড়া কোনো ইলাহ নেই, তিনি একক, তাঁর কোনো শরীক নেই। সাম্রাজ্য তাঁরই এবং প্রশংসা তাঁরই এবং তিনি সবকিছুর ওপর ক্ষমতাবান।",
+    "s1": "আপনার নামে, হে আল্লাহ, আমি মৃত্যুবরণ করি এবং জীবিত হই।",
+    "s2": "আয়াতুল কুরসী — আল্লাহ! তিনি ছাড়া কোনো ইলাহ নেই, তিনি চিরঞ্জীব, সর্বসত্তার ধারক। তাঁকে তন্দ্রা ও নিদ্রা স্পর্শ করে না। তাঁর কুরসী আসমানসমূহ ও যমীনকে পরিবেষ্টন করে আছে।",
+    "s3": "হে আল্লাহ, আপনার নামেই আমি আমার পাশ রাখছি এবং আপনার নামেই আমি উঠবো। আপনি যদি আমার আত্মা নিয়ে নেন তবে তার ওপর দয়া করুন এবং আপনি যদি তা ফিরিয়ে দেন তবে সেভাবে রক্ষা করুন যেভাবে আপনি আপনার সৎকর্মশীল বান্দাদের রক্ষা করেন।",
+    "s4": "হে আল্লাহ, নিশ্চয়ই আপনি আমার আত্মা সৃষ্টি করেছেন এবং আপনিই তা নিয়ে নেবেন। তার মৃত্যু ও জীবন আপনারই হাতে। যদি জীবিত রাখেন তবে তাকে রক্ষা করুন, আর যদি মৃত্যু দেন তবে ক্ষমা করুন।",
+    "s5": "হে আল্লাহ, আমি আমার আত্মাকে আপনার কাছে সমর্পণ করেছি, আমার বিষয়সমূহ আপনার কাছে সোপর্দ করেছি, আমার মুখ আপনার দিকে ফিরিয়েছি এবং আমার পিঠ আপনার ওপর ঠেস দিয়েছি, আপনার প্রতি আকাঙ্ক্ষায় ও ভয়ে।",
+    "s6": "আল্লাহর নামে। হে আল্লাহ, আমি আপনার শাস্তি থেকে আশ্রয় চাই সেই দিন যখন আপনি আপনার বান্দাদের পুনরুত্থিত করবেন।",
+    "w1": "সকল প্রশংসা আল্লাহর যিনি আমাদের মৃত্যুর পর আমাদের জীবিত করেছেন এবং তাঁরই কাছে পুনরুত্থান।",
+    "w2": "আল্লাহ ছাড়া কোনো ইলাহ নেই, তিনি একক, তাঁর কোনো শরীক নেই। সাম্রাজ্য তাঁরই এবং প্রশংসা তাঁরই এবং তিনি সবকিছুর ওপর ক্ষমতাবান। আল্লাহ পবিত্র, সকল প্রশংসা আল্লাহর, আল্লাহ ছাড়া কোনো ইলাহ নেই, আল্লাহ সর্বশ্রেষ্ঠ এবং আল্লাহ ছাড়া কোনো শক্তি বা সামর্থ্য নেই।",
+    "w3": "সকল প্রশংসা আল্লাহর যিনি আমার শরীরে সুস্থতা ফিরিয়ে দিয়েছেন, আমার আত্মা ফিরিয়ে দিয়েছেন এবং আমাকে তাঁর যিকর করার অনুমতি দিয়েছেন।",
+    "w4": "আমরা সকালে উপনীত হয়েছি এবং সকল সাম্রাজ্য আল্লাহর, বিশ্বজগতের রবের।",
+    "g1": "আল্লাহ ছাড়া কোনো ইলাহ নেই, তিনি একক, তাঁর কোনো শরীক নেই। সাম্রাজ্য তাঁরই এবং প্রশংসা তাঁরই এবং তিনি সবকিছুর ওপর ক্ষমতাবান।",
+    "g2": "আল্লাহ পবিত্র এবং তাঁর প্রশংসার সাথে।",
+    "g3": "মহান আল্লাহ পবিত্র।",
+    "g4": "আল্লাহ ছাড়া কোনো ইলাহ নেই।",
+    "g5": "আল্লাহ সর্বশ্রেষ্ঠ।",
+    "g6": "আল্লাহ ছাড়া কোনো শক্তি বা সামর্থ্য নেই।",
+    "g7": "আমি মহান আল্লাহর কাছে ক্ষমা চাই এবং তাঁর কাছে তাওবা করি।",
+    "g8": "হে আল্লাহ, মুহাম্মদ ﷺ-এর ওপর এবং তাঁর পরিবারের ওপর রহমত বর্ষণ করুন।",
+    "g9": "আল্লাহ আমাদের জন্য যথেষ্ট এবং তিনি সর্বোত্তম কর্মবিধায়ক।",
+    "g10": "আমি আল্লাহর পরিপূর্ণ বাণীসমূহের আশ্রয় নিচ্ছি তাঁর সৃষ্টির সকল অনিষ্ট থেকে।",
+    "g11": "হে আল্লাহ, আপনার যিকর করতে, আপনার শোকর আদায় করতে এবং সুন্দরভাবে আপনার ইবাদত করতে আমাকে সাহায্য করুন।",
+    "g12": "হে আল্লাহ, আমি আপনার কাছে জান্নাত চাই এবং জাহান্নাম থেকে আপনার আশ্রয় চাই।"
+  }
+}
