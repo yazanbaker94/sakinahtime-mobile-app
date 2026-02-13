@@ -37,7 +37,7 @@ export function formatDuaForShare(dua: {
   surahName?: string;
   ayahNumber?: number;
   hadithSource?: string;
-}): string {
+}, translatedMeaning?: string): string {
   const parts: string[] = [];
 
   // Arabic text
@@ -49,7 +49,7 @@ export function formatDuaForShare(dua: {
   parts.push('');
 
   // Translation
-  parts.push(dua.translation);
+  parts.push(translatedMeaning || dua.translation);
   parts.push('');
 
   // Source reference
@@ -84,7 +84,8 @@ export function DuaDetailScreen() {
     if (!dua) return;
 
     try {
-      const message = formatDuaForShare(dua);
+      const translatedMeaning = t(`duaTranslations.${dua.id}`, { defaultValue: dua.translation });
+      const message = formatDuaForShare(dua, translatedMeaning);
       await Share.share({ message });
     } catch (err) {
       console.error('Error sharing dua:', err);

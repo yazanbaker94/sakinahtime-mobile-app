@@ -83,7 +83,7 @@ export function DuaOfTheDay({ dua, onPress }: DuaOfTheDayProps) {
         style={styles.translation}
         numberOfLines={2}
       >
-        {dua.translation}
+        {t(`duaTranslations.${dua.id}`, { defaultValue: dua.translation })}
       </ThemedText>
 
       {/* Tap hint */}

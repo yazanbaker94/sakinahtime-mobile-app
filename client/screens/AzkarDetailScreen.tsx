@@ -193,7 +193,7 @@ export default function AzkarDetailScreen() {
 
           {showTranslation ? (
             <ThemedText type="body" secondary style={styles.translation}>
-              {item.translation}
+              {t(`azkarTranslations.${item.id}`, { defaultValue: item.translation })}
             </ThemedText>
           ) : null}
 

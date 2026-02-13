@@ -74,7 +74,7 @@ export function DailyDhikrCard({ onPress }: DailyDhikrCardProps) {
         style={styles.translation}
         numberOfLines={2}
       >
-        {dhikr.translation}
+        {t(`azkarTranslations.${dhikr.id}`, { defaultValue: dhikr.translation })}
       </ThemedText>
 
       {/* Footer with source */}

@@ -9,6 +9,7 @@ import { View, StyleSheet, Pressable } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
+import { useTranslation } from '@/hooks/useTranslation';
 import { Spacing, BorderRadius } from '@/constants/theme';
 import { Dua, CustomDua } from '@/types/dua';
 import { FavoriteButton } from './FavoriteButton';
@@ -48,13 +49,14 @@ export function DuaCard({
   showShare = true,
 }: DuaCardProps) {
   const { isDark, theme } = useTheme();
+  const { t } = useTranslation();
   const isCompact = variant === 'compact';
   const isStandard = isStandardDua(dua);
 
   // Get source text
   const getSourceText = (): string => {
     if (!isStandard) return 'Personal Dua';
-    
+
     if (dua.source === 'quran' && dua.surahName && dua.ayahNumber) {
       return `${dua.surahName} ${dua.ayahNumber}`;
     }
@@ -74,8 +76,8 @@ export function DuaCard({
       {isCompact && showFavorite && onFavoriteToggle && (
         <View style={styles.compactHeader}>
           <View style={{ flex: 1 }} />
-          <FavoriteButton 
-            isFavorite={isFavorite} 
+          <FavoriteButton
+            isFavorite={isFavorite}
             onToggle={onFavoriteToggle}
             size={18}
           />
@@ -83,8 +85,8 @@ export function DuaCard({
       )}
 
       {/* Arabic Text */}
-      <ThemedText 
-        type="arabic" 
+      <ThemedText
+        type="arabic"
         style={[
           styles.arabicText,
           isCompact && styles.compactArabic,
@@ -96,8 +98,8 @@ export function DuaCard({
 
       {/* Transliteration */}
       {(isStandard ? dua.transliteration : dua.transliteration) && (
-        <ThemedText 
-          type="small" 
+        <ThemedText
+          type="small"
           style={[styles.transliteration, isCompact && styles.compactText]}
           secondary
         >
@@ -106,12 +108,12 @@ export function DuaCard({
       )}
 
       {/* Translation */}
-      <ThemedText 
-        type="body" 
+      <ThemedText
+        type="body"
         style={[styles.translation, isCompact && styles.compactText]}
         numberOfLines={isCompact ? 3 : undefined}
       >
-        {isStandard ? dua.translation : dua.translation}
+        {isStandard ? (t(`duaTranslations.${dua.id}`, { defaultValue: dua.translation })) : dua.translation}
       </ThemedText>
 
       {/* Source Reference */}
@@ -120,15 +122,15 @@ export function DuaCard({
           styles.sourceBadge,
           { backgroundColor: `${theme.primary}15` }
         ]}>
-          <Feather 
-            name={isStandard && dua.source === 'quran' ? 'book-open' : 'bookmark'} 
-            size={12} 
-            color={theme.primary} 
+          <Feather
+            name={isStandard && dua.source === 'quran' ? 'book-open' : 'bookmark'}
+            size={12}
+            color={theme.primary}
           />
-          <ThemedText 
-            type="caption" 
-            style={{ 
-              marginLeft: 4, 
+          <ThemedText
+            type="caption"
+            style={{
+              marginLeft: 4,
               color: theme.primary,
             }}
           >
@@ -142,8 +144,8 @@ export function DuaCard({
             styles.repetitionBadge,
             { backgroundColor: `${theme.gold}15` }
           ]}>
-            <ThemedText 
-              type="caption" 
+            <ThemedText
+              type="caption"
               style={{ color: theme.gold }}
             >
               ×{dua.repetitions}
@@ -156,18 +158,18 @@ export function DuaCard({
       {!isCompact && (
         <View style={styles.actionsRow}>
           {showAudio && isStandard && dua.hasAudio && onPlayAudio && (
-            <Pressable 
-              onPress={onPlayAudio} 
+            <Pressable
+              onPress={onPlayAudio}
               style={styles.actionButton}
               disabled={isAudioLoading}
             >
               {isAudioLoading ? (
                 <Feather name="loader" size={20} color={theme.textSecondary} />
               ) : (
-                <Feather 
-                  name={isPlaying ? 'pause-circle' : 'play-circle'} 
-                  size={20} 
-                  color={theme.primary} 
+                <Feather
+                  name={isPlaying ? 'pause-circle' : 'play-circle'}
+                  size={20}
+                  color={theme.primary}
                 />
               )}
             </Pressable>
@@ -180,8 +182,8 @@ export function DuaCard({
           )}
 
           {showFavorite && onFavoriteToggle && (
-            <FavoriteButton 
-              isFavorite={isFavorite} 
+            <FavoriteButton
+              isFavorite={isFavorite}
               onToggle={onFavoriteToggle}
               size={20}
             />
@@ -193,7 +195,7 @@ export function DuaCard({
 
   if (onPress && isCompact) {
     return (
-      <Pressable 
+      <Pressable
         onPress={onPress}
         style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
       >
