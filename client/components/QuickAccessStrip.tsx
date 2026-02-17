@@ -1,35 +1,25 @@
 /**
  * QuickAccessStrip Component
  * 
- * Horizontal scrollable row of category shortcuts for fast navigation.
+ * Horizontal scrollable row of category shortcuts with 3D icons and clay pill design.
  */
 
 import React from 'react';
-import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable, Image } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
-import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/hooks/useTranslation';
 import { Spacing, BorderRadius } from '@/constants/theme';
 import { AzkarCategory } from '@/data/azkar';
 
-const ICON_MAP: Record<string, keyof typeof Feather.glyphMap> = {
-  sunrise: 'sunrise',
-  sunset: 'sunset',
-  heart: 'heart',
-  moon: 'moon',
-  sun: 'sun',
-  star: 'star',
-};
-
-// Short titles for compact display
-const SHORT_TITLES: Record<string, string> = {
-  morning: 'Morning',
-  evening: 'Evening',
-  'after-prayer': 'Prayer',
-  sleep: 'Sleep',
-  waking: 'Wake',
-  general: 'General',
+// Map category IDs to 3D icon assets
+const CATEGORY_3D_ICONS: Record<string, any> = {
+  morning: require('../../assets/images/islamic-calendar-icons/dawn.png'),
+  evening: require('../../assets/images/islamic-calendar-icons/sunset.png'),
+  sleep: require('../../assets/images/islamic-calendar-icons/night.png'),
+  'after-prayer': require('../../assets/images/3d-images/AfterPrayer.png'),
+  waking: require('../../assets/images/3d-images/WakingUp.png'),
+  general: require('../../assets/images/3d-images/GeneralAzkar.png'),
 };
 
 interface QuickAccessStripProps {
@@ -38,16 +28,8 @@ interface QuickAccessStripProps {
 }
 
 export function QuickAccessStrip({ categories, onCategoryPress }: QuickAccessStripProps) {
-  const { theme } = useTheme();
+  const { isDark, theme } = useTheme();
   const { t } = useTranslation();
-
-  const getCategoryColor = (categoryId: string) => {
-    return theme.primary;
-  };
-
-  const getCategoryBgColor = (categoryId: string) => {
-    return `${theme.primary}15`;
-  };
 
   return (
     <View style={styles.container}>
@@ -66,29 +48,27 @@ export function QuickAccessStrip({ categories, onCategoryPress }: QuickAccessStr
             style={({ pressed }) => [
               styles.pill,
               {
-                backgroundColor: getCategoryBgColor(category.id),
+                backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#FFFFFF',
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.06,
+                shadowRadius: 12,
+                elevation: 2,
                 opacity: pressed ? 0.7 : 1,
                 transform: [{ scale: pressed ? 0.95 : 1 }],
               },
             ]}
           >
-            <View
-              style={[
-                styles.iconCircle,
-                { backgroundColor: getCategoryBgColor(category.id) },
-              ]}
-            >
-              <Feather
-                name={ICON_MAP[category.icon] || 'heart'}
-                size={18}
-                color={getCategoryColor(category.id)}
-              />
-            </View>
+            <Image
+              source={CATEGORY_3D_ICONS[category.id] || CATEGORY_3D_ICONS.general}
+              style={{ width: 26, height: 26 }}
+              resizeMode="contain"
+            />
             <ThemedText
               type="caption"
               style={[
                 styles.pillText,
-                { color: getCategoryColor(category.id) },
+                { color: theme.text },
               ]}
             >
               {t(`quickAccess.${category.id === 'after-prayer' ? 'prayer' : category.id === 'waking' ? 'wake' : category.id}`) || category.titleEn}
@@ -121,14 +101,8 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.md,
     borderRadius: BorderRadius.full,
+    borderWidth: 0,
     gap: Spacing.xs,
-  },
-  iconCircle: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   pillText: {
     fontWeight: '600',

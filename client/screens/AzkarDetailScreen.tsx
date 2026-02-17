@@ -128,6 +128,42 @@ export default function AzkarDetailScreen() {
     return quranSources.some(s => source.includes(s)) || /^\d+:\d+/.test(source);
   };
 
+  // Render a filter pill toggle
+  const renderTogglePill = (
+    label: string,
+    isActive: boolean,
+    onPress: () => void
+  ) => (
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [{
+        paddingHorizontal: Spacing.md,
+        paddingVertical: Spacing.sm,
+        borderRadius: BorderRadius.full,
+        borderWidth: 0,
+        backgroundColor: isActive
+          ? theme.primary
+          : (isDark ? 'rgba(255,255,255,0.08)' : '#FFFFFF'),
+        shadowColor: isActive ? 'transparent' : '#000',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: isActive ? 0 : 0.06,
+        shadowRadius: 8,
+        elevation: isActive ? 0 : 2,
+        opacity: pressed ? 0.7 : 1,
+      }]}
+    >
+      <ThemedText
+        type="caption"
+        style={{
+          color: isActive ? '#FFFFFF' : theme.textSecondary,
+          fontWeight: isActive ? '700' : '500',
+        }}
+      >
+        {label}
+      </ThemedText>
+    </Pressable>
+  );
+
   const renderDhikr = useCallback(
     ({ item, index }: { item: Dhikr; index: number }) => {
       const currentCount = counters[item.id] || 0;
@@ -142,7 +178,14 @@ export default function AzkarDetailScreen() {
           style={({ pressed }) => [
             styles.dhikrCard,
             {
-              backgroundColor: theme.cardBackground,
+              backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#FFFFFF',
+              // Floating clay card — borderless with drop shadow
+              borderWidth: 0,
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 6 },
+              shadowOpacity: 0.05,
+              shadowRadius: 20,
+              elevation: 3,
               opacity: pressed ? 0.7 : 1,
             },
             isQuran && {
@@ -156,7 +199,7 @@ export default function AzkarDetailScreen() {
               style={[
                 styles.dhikrNumber,
                 {
-                  backgroundColor: isQuran ? `${theme.gold}20` : theme.backgroundSecondary,
+                  backgroundColor: isQuran ? `${theme.gold}20` : (isDark ? 'rgba(255,255,255,0.08)' : `${theme.primary}10`),
                 },
               ]}
             >
@@ -213,35 +256,50 @@ export default function AzkarDetailScreen() {
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing.sm }}>
               {showCounter ? (
                 <View style={styles.counterContainer}>
+                  {/* Reset button — neutral grey, not red */}
                   <Pressable
                     onPress={(e) => {
                       e.stopPropagation();
                       resetCounter(item.id);
                     }}
-                    style={[styles.resetButton, {
-                      backgroundColor: isDark ? 'rgba(239, 68, 68, 0.15)' : 'rgba(220, 38, 38, 0.1)',
+                    style={({ pressed }) => [{
+                      width: 32,
+                      height: 32,
+                      borderRadius: 16,
+                      borderWidth: 0,
+                      alignItems: 'center' as const,
+                      justifyContent: 'center' as const,
+                      backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : `${theme.primary}10`,
+                      opacity: pressed ? 0.6 : 1,
                     }]}
                     hitSlop={8}
                   >
-                    <Feather name="rotate-ccw" size={12} color={isDark ? '#EF4444' : '#DC2626'} />
+                    <Feather name="rotate-ccw" size={13} color={theme.textSecondary} />
                   </Pressable>
+
+                  {/* Counter badge — Solid 3D Clay Button */}
                   <View style={[styles.counterBadge, {
-                    backgroundColor: `${theme.primary}20`,
-                    borderColor: theme.primary,
+                    backgroundColor: theme.primary,
+                    borderWidth: 0,
+                    shadowColor: theme.primary,
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 10,
+                    elevation: 4,
                   }]}>
                     {isComplete && (
                       <Feather
                         name="check"
                         size={14}
-                        color={theme.primary}
+                        color="#FFFFFF"
                         style={{ marginRight: 4 }}
                       />
                     )}
                     <ThemedText
                       type="body"
                       style={{
-                        color: theme.primary,
-                        fontWeight: '700',
+                        color: '#FFFFFF',
+                        fontWeight: '800',
                         fontSize: 16,
                       }}
                     >
@@ -251,9 +309,8 @@ export default function AzkarDetailScreen() {
                       <ThemedText
                         type="caption"
                         style={{
-                          color: theme.primary,
+                          color: 'rgba(255,255,255,0.8)',
                           marginLeft: 4,
-                          opacity: 0.7,
                         }}
                       >
                         / {targetCount}
@@ -293,87 +350,11 @@ export default function AzkarDetailScreen() {
             </ThemedText>
           </View>
         </View>
+        {/* Filter pills — filled clay pills */}
         <View style={styles.toggleContainer}>
-          <Pressable
-            onPress={toggleTransliteration}
-            style={({ pressed }) => [
-              styles.toggleButton,
-              {
-                backgroundColor: showTransliteration
-                  ? `${theme.primary}20`
-                  : theme.backgroundSecondary,
-                borderColor: showTransliteration
-                  ? theme.primary
-                  : 'transparent',
-                opacity: pressed ? 0.7 : 1,
-              },
-            ]}
-          >
-            <ThemedText
-              type="caption"
-              style={{
-                color: showTransliteration
-                  ? theme.primary
-                  : theme.textSecondary,
-              }}
-            >
-              {t('azkarDetail.translit')}
-            </ThemedText>
-          </Pressable>
-
-          <Pressable
-            onPress={toggleTranslation}
-            style={({ pressed }) => [
-              styles.toggleButton,
-              {
-                backgroundColor: showTranslation
-                  ? `${theme.primary}20`
-                  : theme.backgroundSecondary,
-                borderColor: showTranslation
-                  ? theme.primary
-                  : 'transparent',
-                opacity: pressed ? 0.7 : 1,
-              },
-            ]}
-          >
-            <ThemedText
-              type="caption"
-              style={{
-                color: showTranslation
-                  ? theme.primary
-                  : theme.textSecondary,
-              }}
-            >
-              {t('azkarDetail.english')}
-            </ThemedText>
-          </Pressable>
-
-          <Pressable
-            onPress={toggleCounter}
-            style={({ pressed }) => [
-              styles.toggleButton,
-              {
-                backgroundColor: showCounter
-                  ? `${theme.primary}20`
-                  : theme.backgroundSecondary,
-                borderColor: showCounter
-                  ? theme.primary
-                  : 'transparent',
-                opacity: pressed ? 0.7 : 1,
-              },
-            ]}
-          >
-            <ThemedText
-              type="caption"
-              style={{
-                color: showCounter
-                  ? theme.primary
-                  : theme.textSecondary,
-              }}
-            >
-              {t('azkarDetail.counter')}
-            </ThemedText>
-          </Pressable>
+          {renderTogglePill(t('azkarDetail.translit'), showTransliteration, toggleTransliteration)}
+          {renderTogglePill(t('azkarDetail.english'), showTranslation, toggleTranslation)}
+          {renderTogglePill(t('azkarDetail.counter'), showCounter, toggleCounter)}
         </View>
       </View>
 
@@ -419,14 +400,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: Spacing.sm,
   },
-  toggleButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.md,
-    borderWidth: 1,
-  },
   listContent: {
     padding: Spacing.lg,
   },
@@ -449,6 +422,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.sm,
     paddingVertical: 2,
     borderRadius: BorderRadius.sm,
+    borderWidth: 0,
   },
   dhikrNumber: {
     width: 28,
@@ -476,6 +450,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.md,
+    borderWidth: 0,
   },
   bottomRow: {
     flexDirection: "row",
@@ -488,19 +463,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: Spacing.sm,
   },
-  resetButton: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
-  },
   counterBadge: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.md,
-    borderWidth: 2,
+    borderRadius: BorderRadius.full,
   },
 });

@@ -157,7 +157,11 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      setLoading(true);
+      // Only show loading if we don't already have coordinates (cold start).
+      // If we have cached location, this is a silent background refresh.
+      if (!gpsStateRef.current.latitude) {
+        setLoading(true);
+      }
       setError(null);
 
       const location = await Location.getCurrentPositionAsync({

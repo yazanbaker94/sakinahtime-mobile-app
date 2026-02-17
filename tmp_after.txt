@@ -1,0 +1,12 @@
+25KB character.png
+52KB steps.png
+24KB palm_tree.png
+16KB tent.png
+22KB well.png
+20KB campfire.png
+18KB lantern.png
+50KB madinah.png
+228KB widget-image.png
+518KB compass-inner.png
+408KB compass-cover.png
+Total: 1384KB

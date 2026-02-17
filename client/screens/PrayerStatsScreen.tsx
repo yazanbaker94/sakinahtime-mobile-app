@@ -13,6 +13,7 @@ import {
   Share,
   Alert,
   Switch,
+  Image,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -31,6 +32,19 @@ import { usePrayerLog } from '@/hooks/usePrayerLog';
 import { PRAYER_NAMES, PrayerName, MISSED_REMINDER_DELAY_OPTIONS } from '@/types/prayerLog';
 import { Spacing, BorderRadius } from '@/constants/theme';
 import { useTranslation } from '@/hooks/useTranslation';
+
+// 3D clay badge icons
+const ICON_LOGGED = require('../../assets/images/progress-tracker/logged.png');
+const ICON_BELL = require('../../assets/images/progress-tracker/bell.png');
+const ICON_STREAK = require('../../assets/images/progress-tracker/lightning.png');
+const ICON_QADA = require('../../assets/images/progress-tracker/qada.png');
+
+// Pastel status colors (soft, non-alarming)
+const STATUS_COLORS = {
+  prayed: '#6DD5A0',   // soft mint green
+  missed: '#F5A5A5',   // pastel coral
+  late: '#F5D28B',      // warm pastel gold
+};
 
 export default function PrayerStatsScreen() {
   const insets = useSafeAreaInsets();
@@ -169,10 +183,17 @@ Tracked with SakinahTime 🌙`;
         {/* Tracking Toggle */}
         <View style={[
           styles.trackingToggle,
-          { backgroundColor: theme.cardBackground }
+          {
+            backgroundColor: isDark ? 'rgba(30,30,30,0.85)' : 'rgba(255,255,255,0.95)',
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 10 },
+            shadowOpacity: 0.04,
+            shadowRadius: 30,
+            elevation: 4,
+          }
         ]}>
           <View style={styles.trackingInfo}>
-            <Feather name="check-square" size={20} color={theme.primary} />
+            <Image source={ICON_LOGGED} style={{ width: 28, height: 28 }} resizeMode="contain" />
             <View style={styles.trackingText}>
               <ThemedText type="body" style={{ fontWeight: '600' }}>{t('prayerStats.prayerTracking')}</ThemedText>
               <ThemedText type="caption" secondary>
@@ -195,20 +216,27 @@ Tracked with SakinahTime 🌙`;
         {trackingEnabled && (
           <View style={[
             styles.legendCard,
-            { backgroundColor: theme.cardBackground }
+            {
+              backgroundColor: isDark ? 'rgba(30,30,30,0.85)' : 'rgba(255,255,255,0.95)',
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 10 },
+              shadowOpacity: 0.04,
+              shadowRadius: 30,
+              elevation: 4,
+            }
           ]}>
             <ThemedText type="caption" secondary style={{ marginBottom: Spacing.sm }}>{t('prayerStats.tapToMarkStatus')}</ThemedText>
             <View style={styles.legendRow}>
               <View style={styles.legendItem}>
-                <View style={[styles.legendDot, { backgroundColor: '#10B981' }]} />
+                <View style={[styles.legendDot, { backgroundColor: STATUS_COLORS.prayed }]} />
                 <ThemedText type="caption">{t('prayerStats.prayed')}</ThemedText>
               </View>
               <View style={styles.legendItem}>
-                <View style={[styles.legendDot, { backgroundColor: '#EF4444' }]} />
+                <View style={[styles.legendDot, { backgroundColor: STATUS_COLORS.missed }]} />
                 <ThemedText type="caption">{t('prayerStats.missed')}</ThemedText>
               </View>
               <View style={styles.legendItem}>
-                <View style={[styles.legendDot, { backgroundColor: '#F59E0B' }]} />
+                <View style={[styles.legendDot, { backgroundColor: STATUS_COLORS.late }]} />
                 <ThemedText type="caption">{t('prayerStats.late')}</ThemedText>
               </View>
             </View>
@@ -219,11 +247,18 @@ Tracked with SakinahTime 🌙`;
         {trackingEnabled && (
           <View style={[
             styles.reminderCard,
-            { backgroundColor: theme.cardBackground }
+            {
+              backgroundColor: isDark ? 'rgba(30,30,30,0.85)' : 'rgba(255,255,255,0.95)',
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 10 },
+              shadowOpacity: 0.04,
+              shadowRadius: 30,
+              elevation: 4,
+            }
           ]}>
             <View style={styles.reminderHeader}>
               <View style={styles.reminderInfo}>
-                <Feather name="bell" size={20} color={theme.primary} />
+                <Image source={ICON_BELL} style={{ width: 28, height: 28 }} resizeMode="contain" />
                 <View style={styles.reminderText}>
                   <ThemedText type="body" style={{ fontWeight: '600' }}>{t('prayerStats.missedReminder')}</ThemedText>
                   <ThemedText type="caption" secondary>
@@ -285,9 +320,16 @@ Tracked with SakinahTime 🌙`;
         <View style={styles.quickStatsRow}>
           <View style={[
             styles.quickStatCard,
-            { backgroundColor: theme.cardBackground }
+            {
+              backgroundColor: isDark ? 'rgba(30,30,30,0.85)' : 'rgba(255,255,255,0.95)',
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 10 },
+              shadowOpacity: 0.04,
+              shadowRadius: 30,
+              elevation: 4,
+            }
           ]}>
-            <Feather name="check-circle" size={20} color={theme.primary} />
+            <Image source={ICON_LOGGED} style={{ width: 32, height: 32 }} resizeMode="contain" />
             <ThemedText type="h3" style={{ color: theme.primary }}>{totalPrayersLogged}</ThemedText>
             <ThemedText type="caption" secondary>{t('prayerStats.totalLogged')}</ThemedText>
           </View>
@@ -295,12 +337,19 @@ Tracked with SakinahTime 🌙`;
           <Pressable
             style={[
               styles.quickStatCard,
-              { backgroundColor: theme.cardBackground }
+              {
+                backgroundColor: isDark ? 'rgba(30,30,30,0.85)' : 'rgba(255,255,255,0.95)',
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 10 },
+                shadowOpacity: 0.04,
+                shadowRadius: 30,
+                elevation: 4,
+              }
             ]}
             onPress={() => navigation.navigate('QadaTracker')}
           >
-            <Feather name="rotate-ccw" size={20} color="#EF4444" />
-            <ThemedText type="h3" style={{ color: '#EF4444' }}>{totalQada}</ThemedText>
+            <Image source={ICON_QADA} style={{ width: 32, height: 32 }} resizeMode="contain" />
+            <ThemedText type="h3" style={{ color: theme.primary }}>{totalQada}</ThemedText>
             <ThemedText type="caption" secondary>{t('prayerStats.qadaDue')}</ThemedText>
           </Pressable>
         </View>
@@ -311,7 +360,9 @@ Tracked with SakinahTime 🌙`;
         {/* View mode toggle */}
         <View style={[
           styles.toggleContainer,
-          { backgroundColor: theme.backgroundSecondary }
+          {
+            backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
+          }
         ]}>
           <Pressable
             style={[
@@ -369,12 +420,12 @@ Tracked with SakinahTime 🌙`;
           <View style={[
             styles.breakdownCard,
             {
-              backgroundColor: theme.cardBackground,
+              backgroundColor: isDark ? 'rgba(30,30,30,0.85)' : 'rgba(255,255,255,0.95)',
               shadowColor: '#000',
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: isDark ? 0.3 : 0.1,
-              shadowRadius: 8,
-              elevation: 3,
+              shadowOffset: { width: 0, height: 10 },
+              shadowOpacity: 0.04,
+              shadowRadius: 30,
+              elevation: 4,
             }
           ]}>
             <ThemedText type="h3" style={styles.breakdownTitle}>{t('prayerStats.prayerBreakdown')}</ThemedText>
@@ -445,13 +496,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: Spacing.lg,
-    borderRadius: BorderRadius.xl,
+    borderRadius: 20,
     marginBottom: Spacing.lg,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
   },
   trackingInfo: {
     flexDirection: 'row',
@@ -464,7 +510,7 @@ const styles = StyleSheet.create({
   },
   legendCard: {
     padding: Spacing.md,
-    borderRadius: BorderRadius.lg,
+    borderRadius: 20,
     marginBottom: Spacing.lg,
   },
   legendRow: {
@@ -484,13 +530,8 @@ const styles = StyleSheet.create({
   },
   reminderCard: {
     padding: Spacing.lg,
-    borderRadius: BorderRadius.xl,
+    borderRadius: 20,
     marginBottom: Spacing.lg,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
   },
   reminderHeader: {
     flexDirection: 'row',
@@ -509,8 +550,6 @@ const styles = StyleSheet.create({
   delayOptions: {
     marginTop: Spacing.md,
     paddingTop: Spacing.md,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(128, 128, 128, 0.2)',
   },
   delayButtonsRow: {
     flexDirection: 'row',
@@ -530,17 +569,12 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     padding: Spacing.lg,
-    borderRadius: BorderRadius.xl,
+    borderRadius: 20,
     gap: Spacing.xs,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
   },
   toggleContainer: {
     flexDirection: 'row',
-    borderRadius: BorderRadius.lg,
+    borderRadius: 16,
     padding: 4,
     marginBottom: Spacing.lg,
   },
@@ -555,7 +589,7 @@ const styles = StyleSheet.create({
   },
   breakdownCard: {
     padding: Spacing.lg,
-    borderRadius: BorderRadius.xl,
+    borderRadius: 20,
   },
   breakdownTitle: {
     fontWeight: '700',

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { View, StyleSheet, ScrollView, Pressable, ActivityIndicator, Dimensions, Modal } from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable, ActivityIndicator, Dimensions, Modal, Image, Platform } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -11,13 +11,23 @@ import { Feather } from '@expo/vector-icons';
 import { Spacing, BorderRadius } from '@/constants/theme';
 import { useTranslation } from '@/hooks/useTranslation';
 
+// 3D celestial icons
+const PRAYER_ICONS: Record<string, any> = {
+    Fajr: require('../../assets/images/islamic-calendar-icons/dawn.png'),
+    Sunrise: require('../../assets/images/islamic-calendar-icons/sunrise.png'),
+    Dhuhr: require('../../assets/images/islamic-calendar-icons/noon.png'),
+    Asr: require('../../assets/images/islamic-calendar-icons/afternoon.png'),
+    Maghrib: require('../../assets/images/islamic-calendar-icons/sunset.png'),
+    Isha: require('../../assets/images/islamic-calendar-icons/night.png'),
+};
+
 const PRAYERS = [
-    { key: 'Fajr', nameEn: 'Fajr', nameAr: 'الفجر', icon: 'sunrise' },
-    { key: 'Sunrise', nameEn: 'Sunrise', nameAr: 'الشروق', icon: 'sun' },
-    { key: 'Dhuhr', nameEn: 'Dhuhr', nameAr: 'الظهر', icon: 'sun' },
-    { key: 'Asr', nameEn: 'Asr', nameAr: 'العصر', icon: 'cloud' },
-    { key: 'Maghrib', nameEn: 'Maghrib', nameAr: 'المغرب', icon: 'sunset' },
-    { key: 'Isha', nameEn: 'Isha', nameAr: 'العشاء', icon: 'moon' },
+    { key: 'Fajr', nameEn: 'Fajr', nameAr: 'الفجر' },
+    { key: 'Sunrise', nameEn: 'Sunrise', nameAr: 'الشروق' },
+    { key: 'Dhuhr', nameEn: 'Dhuhr', nameAr: 'الظهر' },
+    { key: 'Asr', nameEn: 'Asr', nameAr: 'العصر' },
+    { key: 'Maghrib', nameEn: 'Maghrib', nameAr: 'المغرب' },
+    { key: 'Isha', nameEn: 'Isha', nameAr: 'العشاء' },
 ] as const;
 
 // Moved to component body to use translations
@@ -25,8 +35,9 @@ const WEEKDAYS_EN = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 const MONTHS_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 const screenWidth = Dimensions.get('window').width;
-const CALENDAR_PADDING = Spacing.lg * 2 + Spacing.sm * 2;
-const DAY_SIZE = (screenWidth - CALENDAR_PADDING) / 7;
+// Total horizontal inset: scrollContent paddingHorizontal (16*2) + calendarContainer padding (10*2) = 52
+const CALENDAR_PADDING = Spacing.lg * 2 + (Spacing.sm + 2) * 2;
+const DAY_SIZE = Math.floor((screenWidth - CALENDAR_PADDING) / 7);
 
 export default function PrayerCalendarScreen() {
     const insets = useSafeAreaInsets();
@@ -118,16 +129,41 @@ export default function PrayerCalendarScreen() {
     const selectYear = (year: number) => {
         const newDate = new Date(year, viewMonth.getMonth(), 1);
         setViewMonth(newDate);
-        // Don't close modal - user still needs to pick month
     };
 
     const selectMonth = (month: number) => {
         const newDate = new Date(viewMonth.getFullYear(), month, 1);
         setViewMonth(newDate);
-        setShowMonthYearPicker(false); // Close modal after month selection
+        setShowMonthYearPicker(false);
     };
 
     const isToday = isSameDay(selectedDate, today);
+
+    // Determine the currently active prayer window
+    const activePrayerKey = useMemo(() => {
+        if (!prayerData?.timings || !isSameDay(selectedDate, today)) return null;
+        const now = new Date();
+        const parseTime = (timeStr: string): Date => {
+            const [h, m] = timeStr.replace(/\s*\(.*\)/, '').split(':').map(Number);
+            const d = new Date(selectedDate);
+            d.setHours(h, m, 0, 0);
+            return d;
+        };
+        const timings = prayerData.timings;
+        const prayerOrder = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'] as const;
+        for (let i = prayerOrder.length - 1; i >= 0; i--) {
+            const key = prayerOrder[i];
+            const timeStr = timings[key as keyof typeof timings];
+            if (timeStr) {
+                const prayerTime = parseTime(timeStr);
+                if (now >= prayerTime) return key;
+            }
+        }
+        return null;
+    }, [prayerData, selectedDate, today]);
+
+    // Circle size for selected day
+    const circleSize = Math.min(DAY_SIZE * 0.85, DAY_SIZE) - 4;
 
     return (
         <ThemedView style={styles.container}>
@@ -154,37 +190,65 @@ export default function PrayerCalendarScreen() {
                 contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 20 }]}
                 showsVerticalScrollIndicator={false}
             >
-                {/* Compact Calendar */}
-                <View style={[styles.calendarContainer, { backgroundColor: isDark ? theme.cardBackground : theme.backgroundSecondary }]}>
-                    {/* Month Navigation - Compact */}
+                {/* ── Frosted Glass Calendar Card ── */}
+                <View style={[
+                    styles.calendarContainer,
+                    {
+                        backgroundColor: isDark ? 'rgba(30,30,30,0.85)' : 'rgba(255,255,255,0.95)',
+                        shadowColor: '#000',
+                        shadowOffset: { width: 0, height: 10 },
+                        shadowOpacity: 0.04,
+                        shadowRadius: 30,
+                        elevation: 4,
+                    }
+                ]}>
+                    {/* Month Navigation with Frosted Pill Chevrons */}
                     <View style={styles.monthNav}>
-                        <Pressable onPress={() => navigateMonth(-1)} style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}>
-                            <Feather name="chevron-left" size={22} color={theme.text} />
+                        <Pressable
+                            onPress={() => navigateMonth(-1)}
+                            style={({ pressed }) => [
+                                styles.chevronButton,
+                                {
+                                    backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)',
+                                    transform: [{ scale: pressed ? 0.92 : 1 }],
+                                },
+                            ]}
+                        >
+                            <Feather name="chevron-left" size={18} color={theme.text} />
                         </Pressable>
                         <Pressable
                             onPress={() => setShowMonthYearPicker(true)}
                             style={({ pressed }) => [styles.monthYearButton, { opacity: pressed ? 0.7 : 1 }]}
                         >
-                            <ThemedText type="body" style={{ fontWeight: '700' }}>
+                            <ThemedText type="body" style={{ fontWeight: '700', fontSize: 16 }}>
                                 {MONTHS[viewMonth.getMonth()]} {viewMonth.getFullYear()}
                             </ThemedText>
                             <Feather name="chevron-down" size={16} color={theme.textSecondary} style={{ marginLeft: 4 }} />
                         </Pressable>
-                        <Pressable onPress={() => navigateMonth(1)} style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}>
-                            <Feather name="chevron-right" size={22} color={theme.text} />
+                        <Pressable
+                            onPress={() => navigateMonth(1)}
+                            style={({ pressed }) => [
+                                styles.chevronButton,
+                                {
+                                    backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)',
+                                    transform: [{ scale: pressed ? 0.92 : 1 }],
+                                },
+                            ]}
+                        >
+                            <Feather name="chevron-right" size={18} color={theme.text} />
                         </Pressable>
                     </View>
 
-                    {/* Weekday Headers - Single letters */}
+                    {/* Weekday Headers */}
                     <View style={styles.weekdayRow}>
                         {WEEKDAYS.map((day, i) => (
                             <View key={i} style={[styles.weekdayCell, { width: DAY_SIZE }]}>
-                                <ThemedText type="caption" secondary style={{ fontWeight: '600', fontSize: 11 }}>{day}</ThemedText>
+                                <ThemedText type="caption" style={{ fontWeight: '700', fontSize: 11, color: isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.45)' }}>{day}</ThemedText>
                             </View>
                         ))}
                     </View>
 
-                    {/* Calendar Grid - Compact */}
+                    {/* Calendar Grid with Circle Selected Date */}
                     <View style={styles.calendarGrid}>
                         {calendarDays.map((day, index) => {
                             const isSelected = day && isSameDay(day, selectedDate);
@@ -198,21 +262,41 @@ export default function PrayerCalendarScreen() {
                                     style={[
                                         styles.dayCell,
                                         { width: DAY_SIZE, height: DAY_SIZE * 0.85 },
-                                        isSelected && { backgroundColor: theme.primary },
-                                        isDayToday && !isSelected && { borderWidth: 1.5, borderColor: theme.primary },
                                     ]}
                                 >
                                     {day && (
-                                        <ThemedText
-                                            type="caption"
-                                            style={{
-                                                fontWeight: isSelected || isDayToday ? '700' : '400',
-                                                color: isSelected ? '#fff' : theme.text,
-                                                fontSize: 13,
-                                            }}
-                                        >
-                                            {day.getDate()}
-                                        </ThemedText>
+                                        <View style={[
+                                            {
+                                                width: circleSize,
+                                                height: circleSize,
+                                                borderRadius: circleSize / 2,
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                            },
+                                            isSelected && {
+                                                backgroundColor: theme.primary,
+                                                shadowColor: theme.primary,
+                                                shadowOffset: { width: 0, height: 4 },
+                                                shadowOpacity: 0.35,
+                                                shadowRadius: 10,
+                                                elevation: 6,
+                                            },
+                                            isDayToday && !isSelected && {
+                                                borderWidth: 1.5,
+                                                borderColor: theme.primary,
+                                            },
+                                        ]}>
+                                            <ThemedText
+                                                type="caption"
+                                                style={{
+                                                    fontWeight: isSelected || isDayToday ? '700' : '400',
+                                                    color: isSelected ? '#fff' : theme.text,
+                                                    fontSize: 13,
+                                                }}
+                                            >
+                                                {day.getDate()}
+                                            </ThemedText>
+                                        </View>
                                     )}
                                 </Pressable>
                             );
@@ -220,18 +304,28 @@ export default function PrayerCalendarScreen() {
                     </View>
                 </View>
 
-                {/* Selected Date - Inline with Hijri */}
-                <View style={[styles.dateRow, { backgroundColor: isDark ? theme.cardBackground : theme.backgroundSecondary }]}>
-                    <View>
-                        <ThemedText type="body" style={{ fontWeight: '600' }}>
-                            {isToday ? t('prayerCalendar.today') : selectedDate.toLocaleDateString(dateLocale, { weekday: 'short', month: 'short', day: 'numeric' })}
-                        </ThemedText>
-                        {prayerData?.date?.hijri && (
-                            <ThemedText type="caption" secondary>
+                {/* ── Floating Frosted Glass "Today" Pill ── */}
+                <View style={[
+                    styles.todayPill,
+                    {
+                        backgroundColor: isDark ? 'rgba(30,30,30,0.85)' : 'rgba(255,255,255,0.92)',
+                        shadowColor: '#000',
+                        shadowOffset: { width: 0, height: 6 },
+                        shadowOpacity: 0.05,
+                        shadowRadius: 20,
+                        elevation: 3,
+                    }
+                ]}>
+                    <ThemedText type="body" style={{ fontWeight: '700', fontSize: 15 }}>
+                        {isToday ? t('prayerCalendar.today') : selectedDate.toLocaleDateString(dateLocale, { weekday: 'short', month: 'short', day: 'numeric' })}
+                    </ThemedText>
+                    {prayerData?.date?.hijri && (
+                        <View style={[styles.hijriBadge, { backgroundColor: `${theme.primary}15` }]}>
+                            <ThemedText type="caption" style={{ color: theme.primary, fontWeight: '600', fontSize: 12 }}>
                                 {prayerData.date.hijri.day} {t(`hijri.months.${prayerData.date.hijri.month?.number || 1}`)} {prayerData.date.hijri.year}
                             </ThemedText>
-                        )}
-                    </View>
+                        </View>
+                    )}
                 </View>
 
                 {/* Loading */}
@@ -248,22 +342,65 @@ export default function PrayerCalendarScreen() {
                     </View>
                 )}
 
-                {/* Compact Prayer Times Grid */}
+                {/* ── Prayer Times List (No Dividers, Active Highlight, 3D Icons) ── */}
                 {prayerData?.timings && !prayerLoading && (
-                    <View style={[styles.prayerGrid, { backgroundColor: isDark ? theme.cardBackground : theme.backgroundSecondary }]}>
-                        {PRAYERS.map((prayer) => {
+                    <View style={[
+                        styles.prayerGrid,
+                        {
+                            backgroundColor: isDark ? 'rgba(30,30,30,0.85)' : 'rgba(255,255,255,0.95)',
+                            shadowColor: '#000',
+                            shadowOffset: { width: 0, height: 10 },
+                            shadowOpacity: 0.04,
+                            shadowRadius: 30,
+                            elevation: 4,
+                        }
+                    ]}>
+                        {PRAYERS.map((prayer, index) => {
                             const time = prayerData.timings[prayer.key as keyof typeof prayerData.timings];
                             if (!time) return null;
+                            const isActive = activePrayerKey === prayer.key;
 
                             return (
-                                <View key={prayer.key} style={styles.prayerRow}>
+                                <View
+                                    key={prayer.key}
+                                    style={[
+                                        styles.prayerRow,
+                                        isActive && {
+                                            backgroundColor: `${theme.primary}1A`,
+                                            borderRadius: 14,
+                                            marginHorizontal: -4,
+                                            paddingHorizontal: 4,
+                                        },
+                                    ]}
+                                >
                                     <View style={styles.prayerInfo}>
-                                        <Feather name={prayer.icon as any} size={16} color={theme.primary} />
-                                        <ThemedText type="body" style={{ marginLeft: 8, fontWeight: '500' }}>
+                                        <Image
+                                            source={PRAYER_ICONS[prayer.key]}
+                                            style={{ width: 32, height: 32 }}
+                                            resizeMode="contain"
+                                        />
+                                        <ThemedText
+                                            type="body"
+                                            style={{
+                                                marginLeft: 10,
+                                                fontWeight: isActive ? '700' : '500',
+                                                fontSize: isActive ? 15 : 14,
+                                            }}
+                                        >
                                             {t(`prayer.${prayer.key.toLowerCase()}`)}
                                         </ThemedText>
+                                        {isActive && (
+                                            <View style={[styles.activeDot, { backgroundColor: theme.primary }]} />
+                                        )}
                                     </View>
-                                    <ThemedText type="body" style={{ fontWeight: '700', color: theme.primary }}>
+                                    <ThemedText
+                                        type="body"
+                                        style={{
+                                            fontWeight: '700',
+                                            color: isActive ? theme.primary : theme.text,
+                                            fontSize: isActive ? 16 : 14,
+                                        }}
+                                    >
                                         {formatTime(time)}
                                     </ThemedText>
                                 </View>
@@ -345,33 +482,77 @@ const styles = StyleSheet.create({
     headerContent: { flex: 1 },
     todayButton: { paddingHorizontal: 10, paddingVertical: 5, borderRadius: 14 },
     scrollContent: { paddingHorizontal: Spacing.lg },
-    calendarContainer: { borderRadius: 14, padding: Spacing.sm, marginBottom: Spacing.md },
-    monthNav: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 },
+
+    // ── Frosted Glass Calendar Card ──
+    calendarContainer: {
+        borderRadius: 20,
+        padding: Spacing.sm + 2,
+        marginBottom: Spacing.md,
+    },
+    monthNav: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: 10,
+        paddingHorizontal: 4,
+    },
+    chevronButton: {
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
     monthYearButton: { flexDirection: 'row', alignItems: 'center' },
     weekdayRow: { flexDirection: 'row' },
     weekdayCell: { alignItems: 'center', paddingVertical: 4 },
     calendarGrid: { flexDirection: 'row', flexWrap: 'wrap' },
-    dayCell: { alignItems: 'center', justifyContent: 'center', borderRadius: 14 },
-    dateRow: {
+    dayCell: { alignItems: 'center', justifyContent: 'center' },
+
+    // ── Floating Today Pill ──
+    todayPill: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: Spacing.md,
-        borderRadius: 12,
+        justifyContent: 'center',
+        alignSelf: 'center',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 50,
         marginBottom: Spacing.md,
+        gap: 10,
     },
+    hijriBadge: {
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+        borderRadius: 20,
+    },
+
     loadingContainer: { alignItems: 'center', paddingVertical: 20 },
     errorContainer: { alignItems: 'center', paddingVertical: 20 },
-    prayerGrid: { borderRadius: 14, padding: Spacing.md },
+
+    // ── Prayer List (No Dividers) ──
+    prayerGrid: {
+        borderRadius: 20,
+        paddingTop: Spacing.sm,
+        paddingBottom: Spacing.md + 4,
+        paddingHorizontal: Spacing.md,
+    },
     prayerRow: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingVertical: 10,
-        borderBottomWidth: StyleSheet.hairlineWidth,
-        borderBottomColor: 'rgba(128,128,128,0.2)',
+        paddingVertical: 12,
+        paddingHorizontal: 4,
+        // No borderBottom — separated by whitespace only
     },
     prayerInfo: { flexDirection: 'row', alignItems: 'center' },
+    activeDot: {
+        width: 6,
+        height: 6,
+        borderRadius: 3,
+        marginLeft: 8,
+    },
+
     modalOverlay: {
         flex: 1,
         backgroundColor: 'rgba(0,0,0,0.5)',

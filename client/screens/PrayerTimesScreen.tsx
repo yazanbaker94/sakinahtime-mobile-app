@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { View, StyleSheet, ScrollView, Pressable, Platform, useWindowDimensions } from "react-native";
 
 import { TravelerJourney } from '@/components/TravelerJourney';
@@ -35,6 +35,7 @@ import { LocationIndicator } from "@/components/LocationIndicator";
 import { Feather } from "@expo/vector-icons";
 import { PrayerName, PrayerStatus } from "@/types/prayerLog";
 import { useTranslation } from "@/hooks/useTranslation";
+import { usePrayerColor } from "@/contexts/PrayerColorContext";
 
 const PRAYERS = [
   { key: "Fajr", nameEn: "Fajr", nameAr: "الفجر", icon: "sunrise" },
@@ -83,6 +84,9 @@ export default function PrayerTimesScreen() {
   const [nextPrayer, setNextPrayer] = useState<{ name: string; time: string; nameAr: string } | null>(null);
   const [travelerProgress, setTravelerProgress] = useState(0);
   const [nextPrayerIndex, setNextPrayerIndex] = useState(0);
+  const [celebrateKey, setCelebrateKey] = useState(0);
+  const celebrateTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { setDynamicColor } = usePrayerColor();
   const { method: calculationMethod, isLoading: methodLoading } = useCalculationMethod();
 
   const {
@@ -165,6 +169,23 @@ export default function PrayerTimesScreen() {
       refetch();
     }
   }, [calculationMethod, latitude, longitude, refetch]);
+
+  // Sync tab bar color with current prayer's time-of-day palette
+  const PRAYER_COLORS: Record<string, string> = {
+    Fajr: '#5B8FB9',    // Dawn blue
+    Dhuhr: '#D4A017',   // Solar gold
+    Asr: '#CD853F',     // Amber
+    Maghrib: '#E06666', // Coral sunset
+    Isha: '#6C63AC',    // Deep indigo
+  };
+
+  useEffect(() => {
+    if (nextPrayer?.name) {
+      setDynamicColor(PRAYER_COLORS[nextPrayer.name] || theme.primary);
+    } else {
+      setDynamicColor(theme.primary);
+    }
+  }, [nextPrayer?.name, theme.primary, setDynamicColor]);
 
   useEffect(() => {
     if (!prayerData?.timings) return;
@@ -511,7 +532,7 @@ export default function PrayerTimesScreen() {
                   <ThemedText type="h2" style={{ color: "#FFFFFF", fontWeight: '800', fontSize: 28, letterSpacing: -1 }}>
                     {nextPrayer.name}
                   </ThemedText>
-                  <ThemedText type="arabic" style={{ fontFamily: 'AlMushafQuran', color: "rgba(255,255,255,0.9)", fontSize: 16, marginLeft: 10 }}>
+                  <ThemedText type="arabic" style={{ fontFamily: 'AlMushafQuran', color: "rgba(255,255,255,0.9)", fontSize: 20, marginLeft: 10, marginTop: 2 }}>
                     {nextPrayer.nameAr}
                   </ThemedText>
                 </View>
@@ -591,13 +612,42 @@ export default function PrayerTimesScreen() {
                 }}
                 progress={travelerProgress}
                 nextPrayerIndex={nextPrayerIndex}
+                celebrate={celebrateKey > 0}
               />
             )}
           </View>
         ) : null}
 
-        <View style={[styles.prayersList, { flex: 1, marginBottom: Spacing.md }]}>
-          {PRAYERS.map((prayer) => {
+        {/* Prayer list with vertical timeline */}
+        <View style={[styles.prayersList, { flex: 1, marginBottom: Spacing.md, position: 'relative' }]}>
+          {/* Vertical timeline line (unfilled background) */}
+          <View style={{
+            position: 'absolute',
+            left: 15,
+            top: 24,
+            bottom: 24,
+            width: 2,
+            backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
+            borderRadius: 1,
+            zIndex: 0,
+          }}>
+            {/* Filled portion - progresses between specific prayer dots */}
+            <View style={{
+              width: '100%',
+              height: `${Math.min(100, Math.max(0, (() => {
+                // Fill up to the current prayer dot, then progressively fill toward the next
+                const totalSegments = PRAYERS.length - 1;
+                if (totalSegments <= 0) return 0;
+                const completedSegments = nextPrayerIndex > 0 ? nextPrayerIndex - 1 : 0;
+                const partialFill = travelerProgress;
+                return ((completedSegments + partialFill) / totalSegments) * 100;
+              })()))}%`,
+              backgroundColor: theme.primary,
+              borderRadius: 1,
+              opacity: 0.8,
+            }} />
+          </View>
+          {PRAYERS.map((prayer, index) => {
             const originalTime = prayerData?.timings?.[prayer.key] || "";
             const adjustment = prayerAdjustments[prayer.key as keyof typeof prayerAdjustments] || 0;
             const adjustedTime = adjustment !== 0 ? applyAdjustment(originalTime, adjustment) : originalTime;
@@ -606,6 +656,10 @@ export default function PrayerTimesScreen() {
             const isPast = isPrayerPast(originalTime);
             const isNext = nextPrayer?.name === prayer.nameEn;
             const prayerStatus = getPrayerStatus(prayer.key as PrayerName);
+
+            // "Active Now" = this prayer's time has passed, and the NEXT prayer in list is the upcoming one
+            const nextPrayerIdx = PRAYERS.findIndex(p => p.nameEn === nextPrayer?.name);
+            const isCurrent = isPast && !isNext && index === nextPrayerIdx - 1;
 
             const handleStatusChange = (newStatus: PrayerStatus) => {
               markPrayer(prayer.key as PrayerName, newStatus, originalTime);
@@ -616,68 +670,121 @@ export default function PrayerTimesScreen() {
             };
 
             return (
-              <View
-                key={prayer.key}
-                style={[
-                  styles.prayerCard,
-                  {
-                    flex: 1,
-                    backgroundColor: isNext
-                      ? (isDark ? `${theme.primary}20` : theme.cardBackground)
-                      : (isDark ? theme.cardBackground : theme.cardBackground),
-                    opacity: isPast && !isNext ? 0.6 : 1,
-                    shadowColor: '#000',
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: isDark ? 0 : 0.08,
-                    shadowRadius: 8,
-                    elevation: isDark ? 0 : 3,
-                    borderWidth: isNext ? 2 : (isDark ? 1 : 0),
-                    borderColor: isNext ? theme.primary : (isDark ? theme.border : 'transparent'),
-                  },
-                ]}
-              >
-                {isNext && (
-                  <View style={[styles.activePrayerIndicator, {
-                    backgroundColor: theme.primary
-                  }]} />
-                )}
-
-                <View style={styles.prayerCardLeft}>
-                  {/* Status indicator - before the icon */}
-                  {trackingEnabled && (
-                    <PrayerStatusIndicator
-                      status={prayerStatus}
-                      onStatusChange={handleStatusChange}
-                      size="compact"
-                    />
+              <View key={prayer.key} style={{ flexDirection: 'row', alignItems: 'stretch', flex: 1 }}>
+                {/* Timeline dot — Y-centered with the card's status circle */}
+                <View style={{
+                  width: 20,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  zIndex: 2,
+                }}>
+                  <View style={{
+                    width: (isNext || isCurrent) ? 12 : 8,
+                    height: (isNext || isCurrent) ? 12 : 8,
+                    borderRadius: (isNext || isCurrent) ? 6 : 4,
+                    backgroundColor: (isPast || isCurrent || isNext) ? theme.primary : (isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.1)'),
+                    borderWidth: (isNext || isCurrent) ? 2.5 : 0,
+                    borderColor: (isNext || isCurrent) ? `${theme.primary}40` : 'transparent',
+                  }} />
+                </View>
+                <View
+                  style={[
+                    styles.prayerCard,
+                    { marginLeft: 8 },
+                    {
+                      flex: 1,
+                      backgroundColor: isNext
+                        ? (isDark ? `${theme.primary}20` : theme.cardBackground)
+                        : isCurrent
+                          ? (isDark ? `${theme.primary}10` : `${theme.primary}08`)
+                          : (isDark ? theme.cardBackground : theme.cardBackground),
+                      opacity: (isPast && !isNext && !isCurrent) ? 0.45 : 1,
+                      shadowColor: '#000',
+                      shadowOffset: { width: 0, height: 2 },
+                      shadowOpacity: isDark ? 0 : 0.08,
+                      shadowRadius: 8,
+                      elevation: isDark ? 0 : 3,
+                      borderWidth: isNext ? 2 : isCurrent ? 1 : (isDark ? 1 : 0),
+                      borderColor: isNext ? theme.primary : isCurrent ? `${theme.primary}40` : (isDark ? theme.border : 'transparent'),
+                    },
+                  ]}
+                >
+                  {isNext && (
+                    <View style={[styles.activePrayerIndicator, {
+                      backgroundColor: theme.primary
+                    }]} />
+                  )}
+                  {isCurrent && (
+                    <View style={[styles.activePrayerIndicator, {
+                      backgroundColor: theme.primary,
+                      opacity: 0.5,
+                    }]} />
                   )}
 
-                  <View style={styles.prayerNames}>
-                    <ThemedText type="body" style={{ fontWeight: isNext ? "700" : "500", fontSize: prayerNameFontSize }}>
-                      {t(`prayer.${prayer.key.toLowerCase()}`)}
-                    </ThemedText>
-                  </View>
-                </View>
-                <View style={styles.prayerCardRight}>
-                  <View style={styles.prayerTimeContainer}>
-                    <ThemedText type="h3" style={{
-                      color: isNext ? theme.primary : theme.text,
-                      fontWeight: '700',
-                      fontSize: timeFontSize,
-                      letterSpacing: -0.5
-                    }}>
-                      {formatTime(displayTime)}
-                    </ThemedText>
-                    {adjustment !== 0 && (
-                      <ThemedText type="caption" style={{
-                        color: adjustment > 0 ? theme.primary : theme.gold,
-                        fontSize: 10,
-                        fontWeight: '600',
-                        marginTop: 2,
-                      }}>
-                        {adjustment > 0 ? '+' : ''}{adjustment} min
-                      </ThemedText>
+                  <View style={styles.prayerCardLeft}>
+                    {/* Status indicator - shows auto-filled check for past unmarked prayers */}
+                    {trackingEnabled && (
+                      <PrayerStatusIndicator
+                        status={prayerStatus}
+                        onStatusChange={handleStatusChange}
+                        size="compact"
+                        isPastAndUnmarked={isPast && !isCurrent && prayerStatus === 'unmarked'}
+                        isCurrent={isCurrent && prayerStatus === 'unmarked'}
+                        onCelebrate={() => {
+                          setCelebrateKey(k => k + 1);
+                          // Reset after animation completes
+                          if (celebrateTimerRef.current) clearTimeout(celebrateTimerRef.current);
+                          celebrateTimerRef.current = setTimeout(() => setCelebrateKey(0), 1200);
+                        }}
+                      />
                     )}
+
+                    <View style={styles.prayerNames}>
+                      <ThemedText type="body" style={{ fontWeight: (isNext || isCurrent) ? "700" : "500", fontSize: prayerNameFontSize }}>
+                        {t(`prayer.${prayer.key.toLowerCase()}`)}
+                      </ThemedText>
+                    </View>
+                  </View>
+                  <View style={styles.prayerCardRight}>
+                    <View style={styles.prayerTimeContainer}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                        <ThemedText type="h3" style={{
+                          color: isNext ? theme.primary : isCurrent ? (isDark ? '#FFFFFF' : '#3D2E2E') : theme.text,
+                          fontWeight: '700',
+                          fontSize: timeFontSize,
+                          letterSpacing: -0.5
+                        }}>
+                          {formatTime(displayTime)}
+                        </ThemedText>
+                        {isCurrent && (
+                          <View style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            backgroundColor: `${theme.primary}25`,
+                            paddingHorizontal: 8,
+                            paddingVertical: 3,
+                            borderRadius: 10,
+                            gap: 4,
+                            marginLeft: 2,
+                          }}>
+                            <View style={{ width: 5, height: 5, borderRadius: 2.5, backgroundColor: isDark ? '#FFFFFF' : '#5A3D3D' }} />
+                            <ThemedText type="caption" style={{ color: isDark ? '#FFFFFF' : '#5A3D3D', fontSize: 9, fontWeight: '800', letterSpacing: 0.5 }}>
+                              {t('prayer.active') || 'ACTIVE'}
+                            </ThemedText>
+                          </View>
+                        )}
+                      </View>
+                      {adjustment !== 0 && (
+                        <ThemedText type="caption" style={{
+                          color: adjustment > 0 ? theme.primary : theme.gold,
+                          fontSize: 10,
+                          fontWeight: '600',
+                          marginTop: 2,
+                        }}>
+                          {adjustment > 0 ? '+' : ''}{adjustment} min
+                        </ThemedText>
+                      )}
+                    </View>
                   </View>
                 </View>
               </View>

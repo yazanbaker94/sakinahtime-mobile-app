@@ -5,13 +5,14 @@
  */
 
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import { View, StyleSheet, Image, Pressable } from 'react-native';
 import { ThemedText } from './ThemedText';
 import { useTheme } from '../hooks/useTheme';
 import { useTranslation } from '../hooks/useTranslation';
 import { PrayerStreakData } from '../types/prayerLog';
 import { Spacing, BorderRadius } from '../constants/theme';
+
+const ICON_STREAK = require('../../assets/images/progress-tracker/lightning.png');
 
 interface StreakCardProps {
   streak: PrayerStreakData | null;
@@ -47,8 +48,8 @@ export function StreakCard({ streak, compact = false }: StreakCardProps) {
         styles.compactContainer,
         { backgroundColor: isDark ? 'rgba(251, 191, 36, 0.15)' : 'rgba(251, 191, 36, 0.1)' }
       ]}>
-        <Feather name="zap" size={16} color="#FBBF24" />
-        <ThemedText type="body" style={styles.compactText}>
+        <Image source={ICON_STREAK} style={{ width: 18, height: 18 }} resizeMode="contain" />
+        <ThemedText type="body" style={[styles.compactText, { color: theme.primary }]}>
           {currentStreak} {currentStreak !== 1 ? t('streak.days') : t('streak.day')}
         </ThemedText>
       </View>
@@ -59,30 +60,28 @@ export function StreakCard({ streak, compact = false }: StreakCardProps) {
     <View style={[
       styles.container,
       {
-        backgroundColor: theme.cardBackground,
+        backgroundColor: isDark ? 'rgba(30,30,30,0.85)' : 'rgba(255,255,255,0.95)',
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: isDark ? 0.3 : 0.1,
-        shadowRadius: 8,
-        elevation: 3,
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.04,
+        shadowRadius: 30,
+        elevation: 4,
       }
     ]}>
       <View style={styles.header}>
-        <View style={[styles.iconContainer, { backgroundColor: 'rgba(251, 191, 36, 0.15)' }]}>
-          <Feather name="zap" size={24} color="#FBBF24" />
-        </View>
+        <Image source={ICON_STREAK} style={{ width: 36, height: 36 }} resizeMode="contain" />
         <ThemedText type="h3" style={styles.title}>{t('streak.prayerStreak')}</ThemedText>
       </View>
 
       <View style={styles.streakRow}>
         <View style={styles.streakItem}>
-          <ThemedText type="h1" style={[styles.streakNumber, { color: '#FBBF24' }]}>
+          <ThemedText type="h1" style={[styles.streakNumber, { color: theme.primary }]}>
             {currentStreak}
           </ThemedText>
           <ThemedText type="caption" secondary>{t('streak.currentStreak')}</ThemedText>
         </View>
 
-        <View style={[styles.divider, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }]} />
+        {/* No divider — whitespace separates */}
 
         <View style={styles.streakItem}>
           <ThemedText type="h1" style={[styles.streakNumber, { color: theme.primary }]}>
@@ -92,10 +91,20 @@ export function StreakCard({ streak, compact = false }: StreakCardProps) {
         </View>
       </View>
 
-      <View style={[styles.messageContainer, { backgroundColor: isDark ? 'rgba(251, 191, 36, 0.1)' : 'rgba(251, 191, 36, 0.08)' }]}>
-        <Feather name="star" size={14} color="#FBBF24" />
+      {/* Solid gold motivational button */}
+      <View style={[
+        styles.messageContainer,
+        {
+          backgroundColor: '#D4AF37',
+          shadowColor: '#D4AF37',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.3,
+          shadowRadius: 8,
+          elevation: 4,
+        }
+      ]}>
         <ThemedText type="small" style={styles.message}>
-          {t(getStreakMessageKey(currentStreak))}
+          ⭐ {t(getStreakMessageKey(currentStreak))}
         </ThemedText>
       </View>
     </View>
@@ -105,7 +114,7 @@ export function StreakCard({ streak, compact = false }: StreakCardProps) {
 const styles = StyleSheet.create({
   container: {
     padding: Spacing.lg,
-    borderRadius: BorderRadius.xl,
+    borderRadius: 20,
     marginBottom: Spacing.lg,
   },
   compactContainer: {
@@ -118,20 +127,12 @@ const styles = StyleSheet.create({
   },
   compactText: {
     fontWeight: '600',
-    color: '#FBBF24',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: Spacing.lg,
-  },
-  iconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: Spacing.md,
+    gap: Spacing.md,
   },
   title: {
     fontWeight: '700',
@@ -139,7 +140,7 @@ const styles = StyleSheet.create({
   streakRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-around',
+    justifyContent: 'space-evenly',
     marginBottom: Spacing.lg,
   },
   streakItem: {
@@ -151,22 +152,19 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     lineHeight: 56,
   },
-  divider: {
-    width: 1,
-    height: 60,
-  },
   messageContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: Spacing.sm,
+    paddingVertical: Spacing.sm + 2,
     paddingHorizontal: Spacing.md,
-    borderRadius: BorderRadius.md,
+    borderRadius: 14,
     gap: Spacing.xs,
   },
   message: {
-    color: '#FBBF24',
-    fontWeight: '500',
+    color: '#3B2506',
+    fontWeight: '700',
+    fontSize: 14,
   },
 });
 

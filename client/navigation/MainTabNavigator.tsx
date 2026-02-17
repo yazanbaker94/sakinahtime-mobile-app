@@ -11,6 +11,7 @@ import SettingsScreen from "@/screens/SettingsScreen";
 import { useTheme } from "@/hooks/useTheme";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 import { useTranslation } from "@/hooks/useTranslation";
+import { usePrayerColor } from "@/contexts/PrayerColorContext";
 
 export type MainTabParamList = {
   QiblaTab: undefined;
@@ -26,30 +27,44 @@ export default function MainTabNavigator() {
   const { theme, isDark } = useTheme();
   const screenOptions = useScreenOptions();
   const { t } = useTranslation();
+  const { dynamicColor } = usePrayerColor();
 
   return (
     <Tab.Navigator
       initialRouteName="QiblaTab"
       screenOptions={{
-        ...screenOptions,
+        ...(() => { const { header, animation, ...rest } = screenOptions; return rest; })(),
         tabBarActiveTintColor: theme.tabIconSelected,
         tabBarInactiveTintColor: theme.tabIconDefault,
         tabBarHideOnKeyboard: true,
         tabBarStyle: {
           position: "absolute",
+          bottom: Platform.OS === "ios" ? 24 : 16,
+          left: 16,
+          right: 16,
           backgroundColor: Platform.select({
-            ios: "transparent",
+            ios: isDark ? 'rgba(28, 28, 30, 0.85)' : 'rgba(255, 255, 255, 0.85)',
             android: theme.backgroundRoot,
           }),
           borderTopWidth: 0,
-          elevation: 0,
+          borderRadius: 28,
+          elevation: 8,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: isDark ? 0.3 : 0.12,
+          shadowRadius: 16,
+          height: 64,
+          paddingBottom: Platform.OS === "ios" ? 0 : 8,
+          paddingTop: 8,
+          borderWidth: isDark ? 1 : 0,
+          borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'transparent',
         },
         tabBarBackground: () =>
           Platform.OS === "ios" ? (
             <BlurView
-              intensity={100}
+              intensity={80}
               tint={isDark ? "dark" : "light"}
-              style={StyleSheet.absoluteFill}
+              style={[StyleSheet.absoluteFill, { borderRadius: 28, overflow: 'hidden' }]}
             />
           ) : null,
       }}

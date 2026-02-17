@@ -18,6 +18,7 @@ import {
   Alert,
 } from "react-native";
 import { Image } from "expo-image";
+import { BlurView } from "expo-blur";
 import PagerView from "react-native-pager-view";
 import * as Haptics from "expo-haptics";
 import * as Clipboard from 'expo-clipboard';
@@ -64,6 +65,15 @@ import { useFeatureHint } from "@/hooks/useFeatureHint";
 import { useTranslation } from "@/hooks/useTranslation";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+
+// Darken a hex color by a factor (0 = black, 1 = unchanged) for accessible badge text
+const darkenHex = (hex: string, factor: number): string => {
+  const h = hex.replace('#', '');
+  const r = Math.round(parseInt(h.substring(0, 2), 16) * factor);
+  const g = Math.round(parseInt(h.substring(2, 4), 16) * factor);
+  const b = Math.round(parseInt(h.substring(4, 6), 16) * factor);
+  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+};
 
 interface VerseRegion {
   surah: number;
@@ -1060,7 +1070,7 @@ function MushafScreenContent() {
 
     // Add highlight if it doesn't exist
     if (!highlights[verseKey]) {
-      const newHighlights = { ...highlights, [verseKey]: `${theme.gold}26` };
+      const newHighlights = { ...highlights, [verseKey]: `${theme.primary}26` };
       const newHighlightTimestamps = { ...highlightTimestamps, [verseKey]: Date.now() };
       setHighlights(newHighlights);
       setHighlightTimestamps(newHighlightTimestamps);
@@ -1086,7 +1096,7 @@ function MushafScreenContent() {
     const newNotes = { ...notes };
     delete newNotes[verseKey];
     setNotes(newNotes);
-    if (highlights[verseKey] === `${theme.gold}26`) {
+    if (highlights[verseKey] === `${theme.primary}26`) {
       removeHighlight(verseKey);
     }
     try {
@@ -1406,7 +1416,7 @@ function MushafScreenContent() {
                     width: Math.max(coord.width * imageScale, 20),
                     height: Math.max(coord.height * imageScale, 20),
                     backgroundColor: actualBgColor,
-                    borderRadius: isWordHidden ? 3 : 0,
+                    borderRadius: isWordHidden ? 4 : 6,
                   }]}
                   onPress={() => {
                     if (isWordHidden) {
@@ -1514,7 +1524,7 @@ function MushafScreenContent() {
               const isAudioPlaying = audioState?.current && `${audioState.current.surah}:${audioState.current.ayah}` === verseKey;
               const isSelected = selectedVerse?.verseKey === verseKey;
               const isHighlighted = highlightedVerse === verseKey;
-              const highlightColor = highlights[verseKey] || (notes[verseKey] ? `${theme.gold}26` : null);
+              const highlightColor = highlights[verseKey] || (notes[verseKey] ? `${theme.primary}26` : null);
 
               const isHidden = isHifzActive && !isVerseRevealed;
 
@@ -1551,7 +1561,7 @@ function MushafScreenContent() {
                     width: (maxX - minX) * imageScale,
                     height: (maxY - minY) * imageScale,
                     backgroundColor: bgColor,
-                    borderRadius: isHidden ? 4 : 0,
+                    borderRadius: isHidden ? 4 : 6,
                   }]}
                   onPress={(e) => {
                     const { pageX, pageY } = e.nativeEvent;
@@ -1701,9 +1711,14 @@ function MushafScreenContent() {
       <View style={styles.surahItemContent}>
         <View style={styles.surahLeft}>
           <View style={[styles.surahNumber, {
-            backgroundColor: `${theme.primary}15`,
+            backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#FFFFFF',
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 3 },
+            shadowOpacity: 0.06,
+            shadowRadius: 8,
+            elevation: 2,
           }]}>
-            <ThemedText type="small" style={{ color: theme.primary, fontWeight: '700', fontSize: 13 }}>{item.number}</ThemedText>
+            <ThemedText type="small" style={{ color: theme.text, fontWeight: '800', fontSize: 13 }}>{item.number}</ThemedText>
           </View>
           <View style={styles.surahInfo}>
             <ThemedText type="body" style={{ fontWeight: '600', fontSize: 16, letterSpacing: -0.3 }}>{item.nameEn}</ThemedText>
@@ -1713,7 +1728,14 @@ function MushafScreenContent() {
             </View>
           </View>
         </View>
-        <ThemedText type="arabic" style={{ fontFamily: 'AlMushafQuran', fontSize: 20, opacity: 0.85, letterSpacing: 1 }}>{item.nameAr}</ThemedText>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+          <Image
+            source={item.revelationType === 'Meccan' ? require('../../assets/images/qibla3d/kaaba.png') : require('../../assets/images/qibla3d/madinah.png')}
+            style={{ width: 16, height: 16, opacity: 0.7 }}
+            contentFit="contain"
+          />
+          <ThemedText type="arabic" style={{ fontFamily: 'AlMushafQuran', fontSize: 20, opacity: 0.85, letterSpacing: 1 }}>{item.nameAr}</ThemedText>
+        </View>
       </View>
     </Pressable>
   ), [isDark, theme, goToSurah]);
@@ -1763,15 +1785,17 @@ function MushafScreenContent() {
     return (
       <View>
         {isNewJuz && (
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: index === 0 ? 0 : Spacing.lg, marginBottom: Spacing.sm }}>
-            <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: `${theme.primary}15`, alignItems: 'center', justifyContent: 'center' }}>
-              <ThemedText type="small" style={{ fontWeight: '700', fontSize: 13, color: theme.primary }}>{item.juz}</ThemedText>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: index === 0 ? 0 : Spacing.lg, marginBottom: Spacing.sm }}>
+            <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#FFFFFF', alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 2 }}>
+              <ThemedText type="small" style={{ fontWeight: '800', fontSize: 13, color: theme.text }}>{item.juz}</ThemedText>
             </View>
             <ThemedText type="body" style={{ fontSize: 14, fontWeight: '600', opacity: 0.7 }}>{t('mushaf.juzLabel')} {item.juz}</ThemedText>
           </View>
         )}
         {isNewHizb && (
-          <ThemedText type="caption" style={{ fontSize: 12, opacity: 0.5, marginTop: Spacing.xs, marginBottom: Spacing.xs, marginLeft: 44 }}>{hizbLabel}</ThemedText>
+          <View style={{ alignSelf: 'center', marginTop: Spacing.sm, marginBottom: Spacing.sm, paddingHorizontal: 16, paddingVertical: 6, borderRadius: 14, backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)' }}>
+            <ThemedText type="caption" style={{ fontSize: 12, fontWeight: '600', opacity: 0.6 }}>{hizbLabel}</ThemedText>
+          </View>
         )}
         <Pressable
           onPress={() => {
@@ -1790,8 +1814,8 @@ function MushafScreenContent() {
           <View>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: `${theme.primary}15`, alignItems: 'center', justifyContent: 'center' }}>
-                  <ThemedText type="small" style={{ fontSize: 10, fontWeight: '600', color: theme.primary }}>{quarterLabel}</ThemedText>
+                <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#FFFFFF', alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 6, elevation: 1 }}>
+                  <ThemedText type="small" style={{ fontSize: 10, fontWeight: '800', color: theme.text }}>{quarterLabel}</ThemedText>
                 </View>
                 <ThemedText type="body" style={{ fontWeight: '600', fontSize: 14 }}>{item.surah?.nameEn} {item.verse.numberInSurah}</ThemedText>
               </View>
@@ -1844,12 +1868,12 @@ function MushafScreenContent() {
                     width: 32,
                     height: 32,
                     borderRadius: 16,
-                    backgroundColor: `${theme.gold}26`,
+                    backgroundColor: `${theme.primary}26`,
                     alignItems: 'center',
                     justifyContent: 'center',
                     marginRight: 10
                   }}>
-                    <Feather name="file-text" size={16} color={theme.gold} />
+                    <Feather name="file-text" size={16} color={theme.primary} />
                   </View>
                   <ThemedText type="body" style={{ fontWeight: '700', fontSize: 15, letterSpacing: 0.5, opacity: 0.9 }}>
                     {t('mushaf.notesSection')} ({Object.keys(notes).length})
@@ -1946,9 +1970,9 @@ function MushafScreenContent() {
                         <View style={{
                           padding: 10,
                           borderRadius: 8,
-                          backgroundColor: `${theme.gold}1A`,
+                          backgroundColor: `${theme.primary}1A`,
                           borderLeftWidth: 3,
-                          borderLeftColor: theme.gold
+                          borderLeftColor: theme.primary
                         }}>
                           <ThemedText type="caption" style={{ fontSize: 13, fontStyle: 'italic' }}>{notes[verseKey]}</ThemedText>
                         </View>
@@ -2229,8 +2253,13 @@ function MushafScreenContent() {
                   borderRadius: 18,
                   alignItems: 'center',
                   justifyContent: 'center',
-                  backgroundColor: showSearchBar ? `${theme.primary}20` : (isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)'),
-                  opacity: pressed ? 0.6 : 1,
+                  backgroundColor: showSearchBar ? `${theme.primary}20` : (isDark ? 'rgba(255,255,255,0.1)' : '#FFFFFF'),
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: showSearchBar ? 0 : 0.05,
+                  shadowRadius: 10,
+                  elevation: showSearchBar ? 0 : 2,
+                  transform: [{ scale: pressed ? 0.92 : 1 }],
                 }]}
               >
                 <Feather name="search" size={18} color={showSearchBar ? theme.primary : theme.text} />
@@ -2249,53 +2278,73 @@ function MushafScreenContent() {
                   borderRadius: 18,
                   alignItems: 'center',
                   justifyContent: 'center',
-                  backgroundColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)',
-                  opacity: pressed ? 0.6 : 1,
+                  backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : '#FFFFFF',
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.05,
+                  shadowRadius: 10,
+                  elevation: 2,
+                  transform: [{ scale: pressed ? 0.92 : 1 }],
                 }]}
               >
                 <Feather name="x" size={20} color={theme.text} />
               </Pressable>
             </View>
           </View>
-          <View style={{ flexDirection: 'row', gap: 6, marginTop: Spacing.md, backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)', padding: 4, borderRadius: 12 }}>
+          <View style={{ flexDirection: 'row', gap: 4, marginTop: Spacing.md, backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)', padding: 4, borderRadius: 14 }}>
             <Pressable
               onPress={() => setNavigationMode('surah')}
               style={({ pressed }) => [{
                 flex: 1,
                 paddingVertical: 10,
-                borderRadius: 10,
+                borderRadius: 12,
                 alignItems: 'center',
                 backgroundColor: navigationMode === 'surah' ? theme.primary : 'transparent',
-                opacity: pressed ? 0.7 : 1,
+                shadowColor: navigationMode === 'surah' ? '#000' : 'transparent',
+                shadowOffset: { width: 0, height: 6 },
+                shadowOpacity: navigationMode === 'surah' ? 0.15 : 0,
+                shadowRadius: 12,
+                elevation: navigationMode === 'surah' ? 4 : 0,
+                transform: [{ scale: pressed ? 0.96 : 1 }],
               }]}
             >
-              <ThemedText type="body" style={{ fontWeight: navigationMode === 'surah' ? '600' : '500', color: navigationMode === 'surah' ? '#FFF' : (isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)'), fontSize: 14 }}>{t('mushaf.surahTab')}</ThemedText>
+              <ThemedText type="body" style={{ fontWeight: navigationMode === 'surah' ? '700' : '500', color: navigationMode === 'surah' ? '#FFF' : (isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)'), fontSize: 14 }}>{t('mushaf.surahTab')}</ThemedText>
             </Pressable>
             <Pressable
               onPress={() => setNavigationMode('juz')}
               style={({ pressed }) => [{
                 flex: 1,
                 paddingVertical: 10,
-                borderRadius: 10,
+                borderRadius: 12,
                 alignItems: 'center',
                 backgroundColor: navigationMode === 'juz' ? theme.primary : 'transparent',
-                opacity: pressed ? 0.7 : 1,
+                shadowColor: navigationMode === 'juz' ? '#000' : 'transparent',
+                shadowOffset: { width: 0, height: 6 },
+                shadowOpacity: navigationMode === 'juz' ? 0.15 : 0,
+                shadowRadius: 12,
+                elevation: navigationMode === 'juz' ? 4 : 0,
+                transform: [{ scale: pressed ? 0.96 : 1 }],
               }]}
             >
-              <ThemedText type="body" style={{ fontWeight: navigationMode === 'juz' ? '600' : '500', color: navigationMode === 'juz' ? '#FFF' : (isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)'), fontSize: 14 }}>{t('mushaf.juzTab')}</ThemedText>
+              <ThemedText type="body" style={{ fontWeight: navigationMode === 'juz' ? '700' : '500', color: navigationMode === 'juz' ? '#FFF' : (isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)'), fontSize: 14 }}>{t('mushaf.juzTab')}</ThemedText>
             </Pressable>
             <Pressable
               onPress={() => setNavigationMode('recent')}
               style={({ pressed }) => [{
                 flex: 1,
                 paddingVertical: 10,
-                borderRadius: 10,
+                borderRadius: 12,
                 alignItems: 'center',
                 backgroundColor: navigationMode === 'recent' ? theme.primary : 'transparent',
-                opacity: pressed ? 0.7 : 1,
+                shadowColor: navigationMode === 'recent' ? '#000' : 'transparent',
+                shadowOffset: { width: 0, height: 6 },
+                shadowOpacity: navigationMode === 'recent' ? 0.15 : 0,
+                shadowRadius: 12,
+                elevation: navigationMode === 'recent' ? 4 : 0,
+                transform: [{ scale: pressed ? 0.96 : 1 }],
               }]}
             >
-              <ThemedText type="body" style={{ fontWeight: navigationMode === 'recent' ? '600' : '500', color: navigationMode === 'recent' ? '#FFF' : (isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)'), fontSize: 14 }}>{t('mushaf.recentTab')}</ThemedText>
+              <ThemedText type="body" style={{ fontWeight: navigationMode === 'recent' ? '700' : '500', color: navigationMode === 'recent' ? '#FFF' : (isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)'), fontSize: 14 }}>{t('mushaf.recentTab')}</ThemedText>
             </Pressable>
           </View>
 
@@ -2520,17 +2569,13 @@ function MushafScreenContent() {
                                 paddingHorizontal: 6,
                                 paddingVertical: 3,
                                 borderRadius: 4,
-                                backgroundColor: result.tafsirSource === 'sahih-international'
-                                  ? (isDark ? 'rgba(59, 130, 246, 0.15)' : 'rgba(59, 130, 246, 0.1)')
-                                  : (isDark ? 'rgba(147, 51, 234, 0.15)' : 'rgba(147, 51, 234, 0.1)'),
+                                backgroundColor: `${theme.primary}1A`,
                                 marginRight: 8,
                               }}>
                                 <ThemedText type="caption" style={{
                                   fontSize: 10,
                                   fontWeight: '600',
-                                  color: result.tafsirSource === 'sahih-international'
-                                    ? (isDark ? '#60A5FA' : '#2563EB')
-                                    : (isDark ? '#C084FC' : '#9333EA')
+                                  color: theme.primary,
                                 }}>
                                   {result.tafsirSource === 'sahih-international' ? 'TRANSLATION' : 'TAFSIR'}
                                 </ThemedText>
@@ -2539,17 +2584,13 @@ function MushafScreenContent() {
                                 paddingHorizontal: 6,
                                 paddingVertical: 3,
                                 borderRadius: 4,
-                                backgroundColor: result.tafsirSource === 'sahih-international'
-                                  ? (isDark ? 'rgba(59, 130, 246, 0.15)' : 'rgba(59, 130, 246, 0.1)')
-                                  : (isDark ? 'rgba(147, 51, 234, 0.15)' : 'rgba(147, 51, 234, 0.1)'),
+                                backgroundColor: `${theme.primary}1A`,
                                 marginRight: 8,
                               }}>
                                 <ThemedText type="caption" style={{
                                   fontSize: 10,
                                   fontWeight: '600',
-                                  color: result.tafsirSource === 'sahih-international'
-                                    ? (isDark ? '#60A5FA' : '#2563EB')
-                                    : (isDark ? '#C084FC' : '#9333EA')
+                                  color: theme.primary,
                                 }}>
                                   {result.tafsirSource === 'jalalayn' ? 'JALALAYN' : result.tafsirSource === 'sahih-international' ? 'SAHIH INT\'L' : 'ABRIDGED'}
                                 </ThemedText>
@@ -2598,12 +2639,16 @@ function MushafScreenContent() {
             {navigationMode === 'recent' && searchQuery.trim().length < 2 && (
               <View style={{ paddingHorizontal: Spacing.lg, paddingTop: Spacing.sm }}>
                 {recentPages.length === 0 ? (
-                  <View style={{ alignItems: 'center', paddingVertical: 40 }}>
-                    <Feather name="clock" size={48} color={theme.textSecondary} style={{ marginBottom: 16 }} />
-                    <ThemedText type="body" style={{ color: theme.textSecondary, textAlign: 'center' }}>
+                  <View style={{ alignItems: 'center', paddingVertical: 60 }}>
+                    <Image
+                      source={require('../../assets/images/3d-images/quranstand.png')}
+                      style={{ width: 96, height: 96, marginBottom: 20 }}
+                      resizeMode="contain"
+                    />
+                    <ThemedText type="body" style={{ color: theme.textSecondary, textAlign: 'center', fontWeight: '600' }}>
                       {t('mushaf.noRecentPages')}
                     </ThemedText>
-                    <ThemedText type="caption" style={{ color: theme.textSecondary, textAlign: 'center', marginTop: 4 }}>
+                    <ThemedText type="caption" style={{ color: theme.textSecondary, textAlign: 'center', marginTop: 6, opacity: 0.7 }}>
                       {t('mushaf.pagesYouVisit')}
                     </ThemedText>
                   </View>
@@ -2637,12 +2682,19 @@ function MushafScreenContent() {
                           }]}
                         >
                           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-                            <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: `${theme.primary}15`, alignItems: 'center', justifyContent: 'center' }}>
-                              <ThemedText type="body" style={{ fontWeight: '700', fontSize: 12, color: theme.primary }}>{surah?.number || page}</ThemedText>
+                            <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#FFFFFF', alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 2 }}>
+                              <ThemedText type="body" style={{ fontWeight: '800', fontSize: 12, color: theme.text }}>{surah?.number || page}</ThemedText>
                             </View>
                             <View>
                               <ThemedText type="body" style={{ fontWeight: '600', fontSize: 15 }}>{surah?.nameEn || `${t('mushaf.pageNumber')} ${page}`}</ThemedText>
-                              <ThemedText type="arabic" style={{ fontFamily: 'AlMushafQuran', fontSize: 14, opacity: 0.7, marginTop: 2 }}>{surah?.nameAr}</ThemedText>
+                              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 2 }}>
+                                <Image
+                                  source={surah?.revelationType === 'Meccan' ? require('../../assets/images/qibla3d/kaaba.png') : require('../../assets/images/qibla3d/madinah.png')}
+                                  style={{ width: 14, height: 14, opacity: 0.7 }}
+                                  resizeMode="contain"
+                                />
+                                <ThemedText type="arabic" style={{ fontFamily: 'AlMushafQuran', fontSize: 14, opacity: 0.7 }}>{surah?.nameAr}</ThemedText>
+                              </View>
                             </View>
                           </View>
                           <View style={{ alignItems: 'flex-end' }}>
@@ -2702,37 +2754,47 @@ function MushafScreenContent() {
                     {juzData.length} {hizbGranularity === 'quarter' ? t('mushaf.quartersLabel') : hizbGranularity === 'half' ? t('mushaf.halvesLabel') : t('mushaf.juzLabel')}
                   </ThemedText>
                   <View style={{ flexDirection: 'row', gap: 8 }}>
-                    {/* Granularity Dropdown Button */}
+                    {/* Granularity Dropdown Button - Clay Pill */}
                     <Pressable
                       onPress={() => setShowGranularityPicker(!showGranularityPicker)}
                       style={({ pressed }) => [{
                         flexDirection: 'row',
                         alignItems: 'center',
                         gap: 4,
-                        paddingVertical: 5,
-                        paddingHorizontal: 10,
-                        borderRadius: 8,
-                        backgroundColor: showGranularityPicker ? `${theme.primary}20` : (isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.05)'),
-                        opacity: pressed ? 0.7 : 1,
+                        paddingVertical: 6,
+                        paddingHorizontal: 12,
+                        borderRadius: 10,
+                        backgroundColor: showGranularityPicker ? `${theme.primary}20` : (isDark ? 'rgba(255,255,255,0.1)' : '#FFFFFF'),
+                        shadowColor: '#000',
+                        shadowOffset: { width: 0, height: 4 },
+                        shadowOpacity: showGranularityPicker ? 0 : 0.08,
+                        shadowRadius: 10,
+                        elevation: showGranularityPicker ? 0 : 3,
+                        transform: [{ scale: pressed ? 0.92 : 1 }],
                       }]}
                     >
-                      <ThemedText style={{ fontSize: 12, fontWeight: '500', color: showGranularityPicker ? theme.primary : theme.text }}>
+                      <ThemedText style={{ fontSize: 12, fontWeight: '600', color: showGranularityPicker ? theme.primary : theme.text }}>
                         {hizbGranularity === 'quarter' ? '¼' : hizbGranularity === 'half' ? '½' : 'Juz'}
                       </ThemedText>
                       <Feather name={showGranularityPicker ? 'chevron-up' : 'chevron-down'} size={14} color={showGranularityPicker ? theme.primary : theme.text} />
                     </Pressable>
-                    {/* Sort Button */}
+                    {/* Sort Button - Clay Pill */}
                     <Pressable
                       onPress={() => setJuzSortAsc(!juzSortAsc)}
                       style={({ pressed }) => [{
                         flexDirection: 'row',
                         alignItems: 'center',
                         gap: 4,
-                        paddingVertical: 5,
-                        paddingHorizontal: 10,
-                        borderRadius: 8,
-                        backgroundColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.05)',
-                        opacity: pressed ? 0.7 : 1,
+                        paddingVertical: 6,
+                        paddingHorizontal: 12,
+                        borderRadius: 10,
+                        backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : '#FFFFFF',
+                        shadowColor: '#000',
+                        shadowOffset: { width: 0, height: 4 },
+                        shadowOpacity: 0.08,
+                        shadowRadius: 10,
+                        elevation: 3,
+                        transform: [{ scale: pressed ? 0.92 : 1 }],
                       }]}
                     >
                       <Feather name={juzSortAsc ? 'arrow-up' : 'arrow-down'} size={14} color={theme.text} />
@@ -2824,9 +2886,21 @@ function MushafScreenContent() {
 
       {/* Header Zone - contains Juz/Hizb, Action Pill, Surah info */}
       <View style={[styles.headerZone, { height: layout.headerZoneHeight }]}>
-        {/* Juz/Hizb Badge - Left */}
-        <View style={styles.headerLeft}>
-          <ThemedText type="caption" style={{ fontSize: 10, opacity: isDark ? 0.7 : 0.4 }}>
+        {/* Juz/Hizb Badge - Left — Frosted Glass Pill */}
+        <View style={[styles.headerLeft, {
+          backgroundColor: isDark ? 'rgba(30, 30, 30, 0.85)' : 'rgba(255, 255, 255, 0.82)',
+          borderRadius: 14,
+          paddingHorizontal: 10,
+          paddingVertical: 6,
+          borderWidth: 1,
+          borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.06,
+          shadowRadius: 4,
+          elevation: 2,
+        }]}>
+          <ThemedText type="caption" style={{ fontSize: 10, opacity: isDark ? 0.7 : 0.5, fontWeight: '600', letterSpacing: 0.5 }}>
             JUZ {(() => {
               const pageCoords = allCoords?.[currentPage];
               const firstVerse = pageCoords?.[0];
@@ -2836,7 +2910,7 @@ function MushafScreenContent() {
               return verseData?.juz || 1;
             })()}
           </ThemedText>
-          <ThemedText type="caption" style={{ fontSize: 12, opacity: isDark ? 0.6 : 0.35, marginTop: 1 }}>
+          <ThemedText type="caption" style={{ fontSize: 10, opacity: isDark ? 0.5 : 0.35, marginTop: 1, letterSpacing: 0.3 }}>
             HIZB {(() => {
               const pageCoords = allCoords?.[currentPage];
               const firstVerse = pageCoords?.[0];
@@ -2851,45 +2925,45 @@ function MushafScreenContent() {
         {/* Action Pill - Center */}
         <View style={[styles.pillButton, {
           backgroundColor: isDark ? 'rgba(30, 30, 30, 0.95)' : 'rgba(255, 255, 255, 0.95)',
-          borderColor: `${theme.gold}66`,
+          borderColor: `${theme.primary}66`,
         }]}>
           <Pressable
             onPress={() => navigation.navigate('Progress')}
             style={({ pressed }) => [styles.pillButtonHalf, { opacity: pressed ? 0.5 : 1 }]}
           >
-            <Feather name="bar-chart-2" size={16} color={theme.gold} />
-            <ThemedText style={{ color: theme.gold, fontSize: 8, marginTop: 1 }}>
+            <Feather name="bar-chart-2" size={16} color={theme.primary} />
+            <ThemedText style={{ color: theme.primary, fontSize: 8, marginTop: 1 }}>
               {stats?.completionPercentage?.toFixed(0) || 0}%
             </ThemedText>
           </Pressable>
-          <View style={[styles.pillDivider, { backgroundColor: `${theme.gold}4D` }]} />
+          <View style={[styles.pillDivider, { backgroundColor: `${theme.primary}4D` }]} />
           <Pressable
             onPress={() => setShowBookmarks(true)}
             style={({ pressed }) => [styles.pillButtonHalf, { opacity: pressed ? 0.5 : 1 }]}
           >
-            <Feather name="bookmark" size={18} color={theme.gold} />
+            <Feather name="bookmark" size={18} color={theme.primary} />
             {bookmarks.length > 0 && (
-              <View style={[styles.pillBadge, { backgroundColor: theme.gold }]}>
+              <View style={[styles.pillBadge, { backgroundColor: theme.primary }]}>
                 <ThemedText style={{ color: '#FFF', fontSize: 8, fontWeight: '700' }}>{bookmarks.length}</ThemedText>
               </View>
             )}
           </Pressable>
-          <View style={[styles.pillDivider, { backgroundColor: `${theme.gold}4D` }]} />
+          <View style={[styles.pillDivider, { backgroundColor: `${theme.primary}4D` }]} />
           <Pressable
             onPress={() => setShowNotes(true)}
             style={({ pressed }) => [styles.pillButtonHalf, { opacity: pressed ? 0.5 : 1 }]}
           >
-            <Feather name="edit-3" size={18} color={theme.gold} />
+            <Feather name="edit-3" size={18} color={theme.primary} />
             {(() => {
               const uniqueKeys = new Set([...Object.keys(highlights), ...Object.keys(notes)]);
               return uniqueKeys.size > 0 && (
-                <View style={[styles.pillBadge, { backgroundColor: theme.gold }]}>
+                <View style={[styles.pillBadge, { backgroundColor: theme.primary }]}>
                   <ThemedText style={{ color: '#FFF', fontSize: 8, fontWeight: '700' }}>{uniqueKeys.size}</ThemedText>
                 </View>
               );
             })()}
           </Pressable>
-          <View style={[styles.pillDivider, { backgroundColor: `${theme.gold}4D` }]} />
+          <View style={[styles.pillDivider, { backgroundColor: `${theme.primary}4D` }]} />
           {/* Hifz Mode Toggle */}
           <Pressable
             onPress={() => {
@@ -2910,7 +2984,7 @@ function MushafScreenContent() {
             <Feather
               name="book-open"
               size={18}
-              color={hifzMode.isActive ? theme.primary : theme.gold}
+              color={theme.primary}
             />
             {hifzMode.isActive && (
               <View style={[styles.pillBadge, { backgroundColor: theme.primary }]}>
@@ -2918,33 +2992,63 @@ function MushafScreenContent() {
               </View>
             )}
           </Pressable>
-          <View style={[styles.pillDivider, { backgroundColor: `${theme.gold}4D` }]} />
+          <View style={[styles.pillDivider, { backgroundColor: `${theme.primary}4D` }]} />
           <Pressable
             onPress={() => setShowSurahList(true)}
             style={({ pressed }) => [styles.pillButtonHalf, { opacity: pressed ? 0.5 : 1 }]}
           >
-            <Feather name="list" size={18} color={theme.gold} />
+            <Feather name="list" size={18} color={theme.primary} />
           </Pressable>
         </View>
 
-        {/* Surah Badge - Right */}
-        <View style={styles.headerRight}>
-          <ThemedText type="arabic" style={{ fontFamily: 'AlMushafQuran', fontSize: 14, opacity: isDark ? 0.8 : 0.7 }}>
-            {(() => {
-              const pageCoords = allCoords?.[currentPage];
-              const firstVerse = pageCoords?.[0];
-              const pageSurah = surahs.find(s => s.number === (firstVerse?.sura || 1));
-              return pageSurah?.nameAr;
-            })()}
-          </ThemedText>
-          <ThemedText type="caption" style={{ fontSize: 10, opacity: isDark ? 0.6 : 0.4, marginTop: 1 }}>
-            {(() => {
-              const pageCoords = allCoords?.[currentPage];
-              const firstVerse = pageCoords?.[0];
-              const pageSurah = surahs.find(s => s.number === (firstVerse?.sura || 1));
-              return pageSurah?.nameEn;
-            })()}
-          </ThemedText>
+        {/* Surah Badge - Right — Frosted Glass Pill with Makki/Madani Icon */}
+        <View style={[styles.headerRight, {
+          backgroundColor: isDark ? 'rgba(30, 30, 30, 0.85)' : 'rgba(255, 255, 255, 0.82)',
+          borderRadius: 14,
+          paddingHorizontal: 10,
+          paddingVertical: 6,
+          borderWidth: 1,
+          borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.06,
+          shadowRadius: 4,
+          elevation: 2,
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: 6,
+        }]}>
+          {(() => {
+            const pageCoords = allCoords?.[currentPage];
+            const firstVerse = pageCoords?.[0];
+            const pageSurah = surahs.find(s => s.number === (firstVerse?.sura || 1));
+            const isMeccan = pageSurah?.revelationType === 'Meccan';
+            return (
+              <Image
+                source={isMeccan ? require('../../assets/images/qibla3d/kaaba.png') : require('../../assets/images/qibla3d/madinah.png')}
+                style={{ width: 16, height: 16, opacity: 0.8 }}
+                contentFit="contain"
+              />
+            );
+          })()}
+          <View style={{ alignItems: 'flex-end' }}>
+            <ThemedText type="arabic" style={{ fontFamily: 'AlMushafQuran', fontSize: 14, opacity: isDark ? 0.8 : 0.7 }}>
+              {(() => {
+                const pageCoords = allCoords?.[currentPage];
+                const firstVerse = pageCoords?.[0];
+                const pageSurah = surahs.find(s => s.number === (firstVerse?.sura || 1));
+                return pageSurah?.nameAr;
+              })()}
+            </ThemedText>
+            <ThemedText type="caption" style={{ fontSize: 10, opacity: isDark ? 0.5 : 0.4, marginTop: 1 }}>
+              {(() => {
+                const pageCoords = allCoords?.[currentPage];
+                const firstVerse = pageCoords?.[0];
+                const pageSurah = surahs.find(s => s.number === (firstVerse?.sura || 1));
+                return pageSurah?.nameEn;
+              })()}
+            </ThemedText>
+          </View>
         </View>
       </View>
 
@@ -3041,7 +3145,7 @@ function MushafScreenContent() {
             alignItems: 'center',
             gap: 12,
           }}>
-            <ActivityIndicator size="large" color={theme.gold} />
+            <ActivityIndicator size="large" color={theme.primary} />
             <ThemedText type="body" style={{ fontWeight: '600' }}>{t('mushaf.loadingVerses')}</ThemedText>
           </View>
         </View>
@@ -3056,7 +3160,8 @@ function MushafScreenContent() {
             style={[
               styles.verseMenu,
               {
-                backgroundColor: isDark ? `${theme.primary}FA` : 'rgba(245, 245, 245, 0.98)',
+                backgroundColor: isDark ? 'rgba(20, 20, 20, 0.88)' : 'rgba(255, 255, 255, 0.85)',
+                borderRadius: 16,
                 position: 'absolute',
                 left: (() => {
                   const menuWidth = 180;
@@ -3119,14 +3224,14 @@ function MushafScreenContent() {
                 { opacity: pressed ? 0.6 : 1 },
               ]}
             >
-              <Feather name="play" size={20} color={theme.gold} />
+              <Feather name="play" size={20} color={theme.primary} />
               <ThemedText type="body" style={{ marginLeft: 12, fontWeight: '500' }}>
                 {hifzMode.isActive && hifzMode.settings.repeatCount > 1
                   ? `${t('mushaf.play')} ${hifzMode.settings.repeatCount}×`
                   : t('mushaf.play')}
               </ThemedText>
             </Pressable>
-            <View style={[styles.menuDivider, { backgroundColor: `${theme.gold}33` }]} />
+            <View style={[styles.menuDivider, { backgroundColor: `${theme.primary}33` }]} />
             <Pressable
               onPress={async () => {
                 const verseData = quranData.data.surahs
@@ -3142,10 +3247,10 @@ function MushafScreenContent() {
                 { opacity: pressed ? 0.6 : 1 },
               ]}
             >
-              <Feather name="copy" size={20} color={theme.gold} />
+              <Feather name="copy" size={20} color={theme.primary} />
               <ThemedText type="body" style={{ marginLeft: 12, fontWeight: '500' }}>{t('mushaf.copyVerse')}</ThemedText>
             </Pressable>
-            <View style={[styles.menuDivider, { backgroundColor: `${theme.gold}33` }]} />
+            <View style={[styles.menuDivider, { backgroundColor: `${theme.primary}33` }]} />
             <Pressable
               onPress={async () => {
                 const verseData = quranData.data.surahs
@@ -3165,10 +3270,10 @@ function MushafScreenContent() {
                 { opacity: pressed ? 0.6 : 1 },
               ]}
             >
-              <Feather name="share-2" size={20} color={theme.gold} />
+              <Feather name="share-2" size={20} color={theme.primary} />
               <ThemedText type="body" style={{ marginLeft: 12, fontWeight: '500' }}>{t('mushaf.shareVerse')}</ThemedText>
             </Pressable>
-            <View style={[styles.menuDivider, { backgroundColor: `${theme.gold}33` }]} />
+            <View style={[styles.menuDivider, { backgroundColor: `${theme.primary}33` }]} />
             <Pressable
               onPress={() => {
                 toggleBookmark(selectedVerse.verseKey);
@@ -3182,14 +3287,14 @@ function MushafScreenContent() {
               <Feather
                 name="bookmark"
                 size={20}
-                color={theme.gold}
-                fill={bookmarks.includes(selectedVerse.verseKey) ? theme.gold : 'none'}
+                color={theme.primary}
+                fill={bookmarks.includes(selectedVerse.verseKey) ? theme.primary : 'none'}
               />
               <ThemedText type="body" style={{ marginLeft: 12, fontWeight: '500' }}>
                 {bookmarks.includes(selectedVerse.verseKey) ? t('mushaf.removeBookmark') : t('mushaf.bookmark')}
               </ThemedText>
             </Pressable>
-            <View style={[styles.menuDivider, { backgroundColor: `${theme.gold}33` }]} />
+            <View style={[styles.menuDivider, { backgroundColor: `${theme.primary}33` }]} />
             <Pressable
               onPress={() => {
                 handleTafsirPress();
@@ -3199,10 +3304,10 @@ function MushafScreenContent() {
                 { opacity: pressed ? 0.6 : 1 },
               ]}
             >
-              <Feather name="book" size={20} color={theme.gold} />
+              <Feather name="book" size={20} color={theme.primary} />
               <ThemedText type="body" style={{ marginLeft: 12, fontWeight: '500' }}>{t('mushaf.tafsirTranslation')}</ThemedText>
             </Pressable>
-            <View style={[styles.menuDivider, { backgroundColor: `${theme.gold}33` }]} />
+            <View style={[styles.menuDivider, { backgroundColor: `${theme.primary}33` }]} />
             <Pressable
               onPress={() => {
                 setNoteVerseKey(selectedVerse.verseKey);
@@ -3215,12 +3320,12 @@ function MushafScreenContent() {
                 { opacity: pressed ? 0.6 : 1 },
               ]}
             >
-              <Feather name="file-text" size={20} color={theme.gold} />
+              <Feather name="file-text" size={20} color={theme.primary} />
               <ThemedText type="body" style={{ marginLeft: 12, fontWeight: '500' }}>
                 {notes[selectedVerse.verseKey] ? t('mushaf.editNote') : t('mushaf.addNote')}
               </ThemedText>
             </Pressable>
-            <View style={[styles.menuDivider, { backgroundColor: `${theme.gold}33` }]} />
+            <View style={[styles.menuDivider, { backgroundColor: `${theme.primary}33` }]} />
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Pressable
                 onPress={() => {
@@ -3236,7 +3341,7 @@ function MushafScreenContent() {
                   { opacity: pressed ? 0.6 : 1, flex: 1 },
                 ]}
               >
-                <Feather name="edit-3" size={20} color={theme.gold} />
+                <Feather name="edit-3" size={20} color={theme.primary} />
                 <ThemedText type="body" style={{ marginLeft: 12, fontWeight: '500' }}>
                   {highlights[selectedVerse.verseKey] ? t('mushaf.removeHighlight') : t('mushaf.highlight')}
                 </ThemedText>
@@ -3250,7 +3355,7 @@ function MushafScreenContent() {
                   backgroundColor: highlights[selectedVerse.verseKey] || selectedColor,
                   marginRight: 12,
                   borderWidth: 2,
-                  borderColor: theme.gold,
+                  borderColor: theme.primary,
                   opacity: pressed ? 0.7 : 1,
                 }]}
               />
@@ -3288,7 +3393,7 @@ function MushafScreenContent() {
                       borderRadius: 25,
                       backgroundColor: color.value,
                       borderWidth: 3,
-                      borderColor: (highlights[selectedVerse.verseKey] === color.value || (!highlights[selectedVerse.verseKey] && selectedColor === color.value)) ? theme.gold : 'transparent',
+                      borderColor: (highlights[selectedVerse.verseKey] === color.value || (!highlights[selectedVerse.verseKey] && selectedColor === color.value)) ? theme.primary : 'transparent',
                       opacity: pressed ? 0.7 : 1,
                     }]}
                   />
@@ -3350,7 +3455,7 @@ function MushafScreenContent() {
                     {
                       color: theme.text,
                       backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)',
-                      borderColor: `${theme.gold}4D`,
+                      borderColor: `${theme.primary}4D`,
                     },
                   ]}
                 />
@@ -3385,7 +3490,7 @@ function MushafScreenContent() {
                       flex: 1,
                       paddingVertical: 12,
                       borderRadius: 10,
-                      backgroundColor: theme.gold,
+                      backgroundColor: theme.primary,
                       opacity: pressed ? 0.7 : 1,
                     }]}
                   >
@@ -3417,20 +3522,28 @@ function MushafScreenContent() {
             style={[
               styles.modalContainer,
               {
-                backgroundColor: theme.cardBackground,
+                backgroundColor: isDark ? 'rgba(15, 15, 15, 0.92)' : 'rgba(255, 255, 255, 0.82)',
                 maxHeight: SCREEN_HEIGHT * 0.85,
                 width: SCREEN_WIDTH * 0.9,
                 height: SCREEN_HEIGHT * 0.75,
+                overflow: 'hidden',
               },
             ]}
           >
+            {Platform.OS === 'ios' && (
+              <BlurView
+                intensity={60}
+                tint={isDark ? 'dark' : 'light'}
+                style={StyleSheet.absoluteFill}
+              />
+            )}
             {/* Elegant Header */}
             <View style={{
               paddingHorizontal: 20,
               paddingTop: Platform.OS === 'android' ? Math.max(insets.top, 10) + 10 : 20,
               paddingBottom: 16,
-              borderBottomWidth: 1,
-              borderBottomColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)',
+              borderBottomWidth: StyleSheet.hairlineWidth,
+              borderBottomColor: isDark ? 'rgba(255, 255, 255, 0.04)' : 'rgba(0, 0, 0, 0.03)',
             }}>
               {/* Verse Reference */}
               <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
@@ -3490,10 +3603,13 @@ function MushafScreenContent() {
                   justifyContent: 'space-between',
                   paddingVertical: 12,
                   paddingHorizontal: 14,
-                  borderRadius: 12,
-                  backgroundColor: `${theme.gold}1A`,
-                  borderWidth: 1,
-                  borderColor: `${theme.gold}33`,
+                  borderRadius: 14,
+                  backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.7)',
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.06,
+                  shadowRadius: 12,
+                  elevation: 3,
                 }}
               >
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1 }}>
@@ -3501,11 +3617,11 @@ function MushafScreenContent() {
                     width: 32,
                     height: 32,
                     borderRadius: 16,
-                    backgroundColor: `${theme.gold}33`,
+                    backgroundColor: `${theme.primary}33`,
                     alignItems: 'center',
                     justifyContent: 'center'
                   }}>
-                    <Feather name="layers" size={14} color={theme.gold} />
+                    <Feather name="layers" size={14} color={theme.primary} />
                   </View>
                   <View style={{ flex: 1 }}>
                     <ThemedText type="caption" style={{ fontSize: 10, opacity: 0.6, marginBottom: 2, letterSpacing: 0.5 }}>
@@ -3517,10 +3633,10 @@ function MushafScreenContent() {
                   </View>
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                  <ThemedText type="caption" style={{ fontSize: 12, color: theme.gold, fontWeight: '600' }}>
+                  <ThemedText type="caption" style={{ fontSize: 12, color: darkenHex(theme.primary, 0.55), fontWeight: '600' }}>
                     Change
                   </ThemedText>
-                  <Feather name="chevron-right" size={16} color={theme.gold} />
+                  <Feather name="chevron-right" size={16} color={theme.primary} />
                 </View>
               </TouchableOpacity>
             </View>
@@ -3543,11 +3659,11 @@ function MushafScreenContent() {
                     justifyContent: 'center',
                     marginBottom: 16
                   }}>
-                    <ThemedText style={{ fontSize: 24, opacity: 0.4 }}>"</ThemedText>
+                    <ThemedText style={{ fontSize: 24, opacity: 0.4, lineHeight: 28, textAlign: 'center', includeFontPadding: false }}>"</ThemedText>
                   </View>
 
                   {/* Tafsir Text */}
-                  <View style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)', padding: 16, borderRadius: 12 }}>
+                  <View style={{ padding: 0 }}>
                     <ThemedText
                       style={{
                         fontSize: 16,
@@ -3806,12 +3922,11 @@ function MushafScreenContent() {
                     width: 32,
                     height: 32,
                     borderRadius: 16,
-                    backgroundColor: isDark ? 'rgba(59, 130, 246, 0.15)' : 'rgba(59, 130, 246, 0.1)',
                     alignItems: 'center',
                     justifyContent: 'center',
                     marginRight: 10
                   }}>
-                    <Feather name="globe" size={16} color={isDark ? '#60A5FA' : '#2563EB'} />
+                    <Image source={require('../../assets/images/3d-images/globe.png')} style={{ width: 28, height: 28 }} contentFit="contain" />
                   </View>
                   <ThemedText type="body" style={{ fontWeight: '700', fontSize: 15, letterSpacing: 0.5, opacity: 0.9, flex: 1 }}>
                     {t('mushaf.myTranslations')}
@@ -4019,12 +4134,15 @@ function MushafScreenContent() {
                         marginBottom: 10,
                         borderRadius: 16,
                         backgroundColor: isActive
-                          ? `${theme.primary}15`
-                          : (isDark ? '#1f2937' : '#f3f4f6'),
-                        borderWidth: isActive ? 2 : 0,
-                        borderColor: isActive
-                          ? theme.primary
-                          : 'transparent',
+                          ? `${theme.primary}0D`
+                          : (isDark ? '#1f2937' : '#FFFFFF'),
+                        borderWidth: 0,
+                        borderColor: 'transparent',
+                        shadowColor: '#000',
+                        shadowOffset: { width: 0, height: 8 },
+                        shadowOpacity: isActive ? 0.08 : 0.04,
+                        shadowRadius: 24,
+                        elevation: isActive ? 4 : 2,
                         transform: [{ scale: pressed ? 0.98 : 1 }],
                       }]}
                     >
@@ -4037,14 +4155,12 @@ function MushafScreenContent() {
                             paddingHorizontal: 8,
                             paddingVertical: 4,
                             borderRadius: 8,
-                            backgroundColor: tafsir.language === 'ar'
-                              ? `${theme.gold}33`
-                              : `${theme.primary}33`
+                            backgroundColor: `${theme.primary}33`
                           }}>
                             <ThemedText type="caption" style={{
                               fontSize: 11,
                               fontWeight: '700',
-                              color: tafsir.language === 'ar' ? theme.gold : theme.primary,
+                              color: darkenHex(theme.primary, 0.55),
                               letterSpacing: 0.3
                             }}>
                               {getLanguageName(tafsir.language)}
@@ -4055,12 +4171,12 @@ function MushafScreenContent() {
                               paddingHorizontal: 6,
                               paddingVertical: 3,
                               borderRadius: 6,
-                              backgroundColor: isDark ? 'rgba(147, 51, 234, 0.2)' : 'rgba(147, 51, 234, 0.15)'
+                              backgroundColor: `${theme.primary}1A`
                             }}>
                               <ThemedText type="caption" style={{
                                 fontSize: 10,
                                 fontWeight: '700',
-                                color: isDark ? '#C084FC' : '#9333EA',
+                                color: darkenHex(theme.primary, 0.55),
                                 letterSpacing: 0.5
                               }}>
                                 {t('mushaf.tafsirBadge')}
@@ -4071,12 +4187,12 @@ function MushafScreenContent() {
                               paddingHorizontal: 6,
                               paddingVertical: 3,
                               borderRadius: 6,
-                              backgroundColor: isDark ? 'rgba(59, 130, 246, 0.2)' : 'rgba(59, 130, 246, 0.15)'
+                              backgroundColor: `${theme.primary}1A`
                             }}>
                               <ThemedText type="caption" style={{
                                 fontSize: 10,
                                 fontWeight: '700',
-                                color: isDark ? '#60A5FA' : '#2563EB',
+                                color: darkenHex(theme.primary, 0.55),
                                 letterSpacing: 0.5
                               }}>
                                 {t('mushaf.translationBadge')}
@@ -4100,20 +4216,20 @@ function MushafScreenContent() {
                           width: 40,
                           height: 40,
                           borderRadius: 20,
-                          backgroundColor: `${theme.primary}33`,
+                          backgroundColor: theme.primary,
                           alignItems: 'center',
                           justifyContent: 'center'
                         }}>
-                          <Feather name="check" size={20} color={theme.primary} />
+                          <Feather name="check" size={20} color="#FFFFFF" />
                         </View>
                       ) : (
                         <View style={{
                           paddingHorizontal: 12,
                           paddingVertical: 8,
                           borderRadius: 8,
-                          backgroundColor: `${theme.gold}26`
+                          backgroundColor: `${theme.primary}26`
                         }}>
-                          <ThemedText type="caption" style={{ fontSize: 12, color: theme.gold, fontWeight: '600' }}>
+                          <ThemedText type="caption" style={{ fontSize: 12, color: darkenHex(theme.primary, 0.55), fontWeight: '600' }}>
                             {t('mushaf.select')}
                           </ThemedText>
                         </View>
@@ -4156,12 +4272,12 @@ function MushafScreenContent() {
                     width: 32,
                     height: 32,
                     borderRadius: 16,
-                    backgroundColor: isDark ? 'rgba(147, 51, 234, 0.15)' : 'rgba(147, 51, 234, 0.1)',
+                    backgroundColor: 'transparent',
                     alignItems: 'center',
                     justifyContent: 'center',
                     marginRight: 10
                   }}>
-                    <Feather name="book-open" size={16} color={isDark ? '#C084FC' : '#9333EA'} />
+                    <Image source={require('../../assets/images/3d-images/book.png')} style={{ width: 28, height: 28 }} contentFit="contain" />
                   </View>
                   <ThemedText type="body" style={{ fontWeight: '700', fontSize: 15, letterSpacing: 0.5, opacity: 0.9, flex: 1 }}>
                     {t('mushaf.myTafsirs')}
@@ -4304,12 +4420,15 @@ function MushafScreenContent() {
                         marginBottom: 10,
                         borderRadius: 16,
                         backgroundColor: isActive
-                          ? `${theme.primary}15`
-                          : (isDark ? '#1f2937' : '#f3f4f6'),
-                        borderWidth: isActive ? 2 : 0,
-                        borderColor: isActive
-                          ? theme.primary
-                          : 'transparent',
+                          ? `${theme.primary}0D`
+                          : (isDark ? '#1f2937' : '#FFFFFF'),
+                        borderWidth: 0,
+                        borderColor: 'transparent',
+                        shadowColor: '#000',
+                        shadowOffset: { width: 0, height: 8 },
+                        shadowOpacity: isActive ? 0.08 : 0.04,
+                        shadowRadius: 24,
+                        elevation: isActive ? 4 : 2,
                         transform: [{ scale: pressed ? 0.98 : 1 }],
                       }]}
                     >
@@ -4322,14 +4441,12 @@ function MushafScreenContent() {
                             paddingHorizontal: 8,
                             paddingVertical: 4,
                             borderRadius: 8,
-                            backgroundColor: tafsir.language === 'ar'
-                              ? `${theme.gold}33`
-                              : `${theme.primary}33`
+                            backgroundColor: `${theme.primary}33`
                           }}>
                             <ThemedText type="caption" style={{
                               fontSize: 11,
                               fontWeight: '700',
-                              color: tafsir.language === 'ar' ? theme.gold : theme.primary,
+                              color: darkenHex(theme.primary, 0.55),
                               letterSpacing: 0.3
                             }}>
                               {getLanguageName(tafsir.language)}
@@ -4340,12 +4457,12 @@ function MushafScreenContent() {
                               paddingHorizontal: 6,
                               paddingVertical: 3,
                               borderRadius: 6,
-                              backgroundColor: isDark ? 'rgba(147, 51, 234, 0.2)' : 'rgba(147, 51, 234, 0.15)'
+                              backgroundColor: `${theme.primary}1A`
                             }}>
                               <ThemedText type="caption" style={{
                                 fontSize: 10,
                                 fontWeight: '700',
-                                color: isDark ? '#C084FC' : '#9333EA',
+                                color: darkenHex(theme.primary, 0.55),
                                 letterSpacing: 0.5
                               }}>
                                 {t('mushaf.tafsirBadge')}
@@ -4356,12 +4473,12 @@ function MushafScreenContent() {
                               paddingHorizontal: 6,
                               paddingVertical: 3,
                               borderRadius: 6,
-                              backgroundColor: isDark ? 'rgba(59, 130, 246, 0.2)' : 'rgba(59, 130, 246, 0.15)'
+                              backgroundColor: `${theme.primary}1A`
                             }}>
                               <ThemedText type="caption" style={{
                                 fontSize: 10,
                                 fontWeight: '700',
-                                color: isDark ? '#60A5FA' : '#2563EB',
+                                color: darkenHex(theme.primary, 0.55),
                                 letterSpacing: 0.5
                               }}>
                                 {t('mushaf.translationBadge')}
@@ -4380,14 +4497,14 @@ function MushafScreenContent() {
                       </View>
                       {isActive ? (
                         <View style={{
-                          width: 32,
-                          height: 32,
-                          borderRadius: 16,
-                          backgroundColor: `${theme.primary}33`,
+                          width: 40,
+                          height: 40,
+                          borderRadius: 20,
+                          backgroundColor: theme.primary,
                           alignItems: 'center',
                           justifyContent: 'center'
                         }}>
-                          <Feather name="check" size={18} color={theme.primary} />
+                          <Feather name="check" size={20} color="#FFFFFF" />
                         </View>
                       ) : null}
                     </Pressable>
@@ -4428,12 +4545,12 @@ function MushafScreenContent() {
                     width: 32,
                     height: 32,
                     borderRadius: 16,
-                    backgroundColor: `${theme.gold}26`,
+                    backgroundColor: 'transparent',
                     alignItems: 'center',
                     justifyContent: 'center',
                     marginRight: 10
                   }}>
-                    <Feather name="download-cloud" size={16} color={theme.gold} />
+                    <Image source={require('../../assets/images/3d-images/cloud.png')} style={{ width: 28, height: 28 }} contentFit="contain" />
                   </View>
                   <ThemedText type="body" style={{ fontWeight: '700', fontSize: 15, letterSpacing: 0.5, opacity: 0.9, flex: 1 }}>
                     {t('mushaf.availableToDownload')}
@@ -4611,13 +4728,13 @@ function MushafScreenContent() {
                                     paddingVertical: 4,
                                     borderRadius: 8,
                                     backgroundColor: tafsir.language === 'ar'
-                                      ? `${theme.gold}33`
+                                      ? `${theme.primary}33`
                                       : `${theme.primary}33`
                                   }}>
                                     <ThemedText type="caption" style={{
                                       fontSize: 11,
                                       fontWeight: '700',
-                                      color: tafsir.language === 'ar' ? theme.gold : theme.primary,
+                                      color: theme.primary,
                                       letterSpacing: 0.3
                                     }}>
                                       {getLanguageName(tafsir.language)}
@@ -4628,12 +4745,12 @@ function MushafScreenContent() {
                                       paddingHorizontal: 6,
                                       paddingVertical: 3,
                                       borderRadius: 6,
-                                      backgroundColor: isDark ? 'rgba(147, 51, 234, 0.2)' : 'rgba(147, 51, 234, 0.15)'
+                                      backgroundColor: `${theme.primary}1A`
                                     }}>
                                       <ThemedText type="caption" style={{
                                         fontSize: 10,
                                         fontWeight: '700',
-                                        color: isDark ? '#C084FC' : '#9333EA',
+                                        color: darkenHex(theme.primary, 0.55),
                                         letterSpacing: 0.5
                                       }}>
                                         {t('mushaf.tafsirBadge')}
@@ -4644,12 +4761,12 @@ function MushafScreenContent() {
                                       paddingHorizontal: 6,
                                       paddingVertical: 3,
                                       borderRadius: 6,
-                                      backgroundColor: isDark ? 'rgba(59, 130, 246, 0.2)' : 'rgba(59, 130, 246, 0.15)'
+                                      backgroundColor: `${theme.primary}1A`
                                     }}>
                                       <ThemedText type="caption" style={{
                                         fontSize: 10,
                                         fontWeight: '700',
-                                        color: isDark ? '#60A5FA' : '#2563EB',
+                                        color: darkenHex(theme.primary, 0.55),
                                         letterSpacing: 0.5
                                       }}>
                                         {t('mushaf.translationBadge')}
@@ -4662,17 +4779,17 @@ function MushafScreenContent() {
                                 </ThemedText>
                               </View>
                               {downloadingTafsir === tafsir.id ? (
-                                <ActivityIndicator size="small" color={theme.gold} />
+                                <ActivityIndicator size="small" color={theme.primary} />
                               ) : (
                                 <View style={{
                                   width: 40,
                                   height: 40,
                                   borderRadius: 20,
-                                  backgroundColor: `${theme.gold}26`,
+                                  backgroundColor: `${theme.primary}26`,
                                   alignItems: 'center',
                                   justifyContent: 'center'
                                 }}>
-                                  <Feather name="download" size={18} color={theme.gold} />
+                                  <Feather name="download" size={18} color={theme.primary} />
                                 </View>
                               )}
                             </Pressable>
@@ -4837,13 +4954,13 @@ function MushafScreenContent() {
                                     paddingVertical: 4,
                                     borderRadius: 8,
                                     backgroundColor: tafsir.language === 'ar'
-                                      ? `${theme.gold}33`
+                                      ? `${theme.primary}33`
                                       : `${theme.primary}33`
                                   }}>
                                     <ThemedText type="caption" style={{
                                       fontSize: 11,
                                       fontWeight: '700',
-                                      color: tafsir.language === 'ar' ? theme.gold : theme.primary,
+                                      color: theme.primary,
                                       letterSpacing: 0.3
                                     }}>
                                       {getLanguageName(tafsir.language)}
@@ -4854,12 +4971,12 @@ function MushafScreenContent() {
                                       paddingHorizontal: 6,
                                       paddingVertical: 3,
                                       borderRadius: 6,
-                                      backgroundColor: isDark ? 'rgba(147, 51, 234, 0.2)' : 'rgba(147, 51, 234, 0.15)'
+                                      backgroundColor: `${theme.primary}1A`
                                     }}>
                                       <ThemedText type="caption" style={{
                                         fontSize: 10,
                                         fontWeight: '700',
-                                        color: isDark ? '#C084FC' : '#9333EA',
+                                        color: darkenHex(theme.primary, 0.55),
                                         letterSpacing: 0.5
                                       }}>
                                         TAFSIR
@@ -4870,12 +4987,12 @@ function MushafScreenContent() {
                                       paddingHorizontal: 6,
                                       paddingVertical: 3,
                                       borderRadius: 6,
-                                      backgroundColor: isDark ? 'rgba(59, 130, 246, 0.2)' : 'rgba(59, 130, 246, 0.15)'
+                                      backgroundColor: `${theme.primary}1A`
                                     }}>
                                       <ThemedText type="caption" style={{
                                         fontSize: 10,
                                         fontWeight: '700',
-                                        color: isDark ? '#60A5FA' : '#2563EB',
+                                        color: darkenHex(theme.primary, 0.55),
                                         letterSpacing: 0.5
                                       }}>
                                         TRANSLATION
@@ -4888,17 +5005,17 @@ function MushafScreenContent() {
                                 </ThemedText>
                               </View>
                               {downloadingTafsir === tafsir.id ? (
-                                <ActivityIndicator size="small" color={theme.gold} />
+                                <ActivityIndicator size="small" color={theme.primary} />
                               ) : (
                                 <View style={{
                                   width: 40,
                                   height: 40,
                                   borderRadius: 20,
-                                  backgroundColor: `${theme.gold}26`,
+                                  backgroundColor: `${theme.primary}26`,
                                   alignItems: 'center',
                                   justifyContent: 'center'
                                 }}>
-                                  <Feather name="download" size={18} color={theme.gold} />
+                                  <Feather name="download" size={18} color={theme.primary} />
                                 </View>
                               )}
                             </Pressable>
@@ -5082,15 +5199,17 @@ function MushafScreenContent() {
           style={[
             styles.mediaPlayer,
             {
-              backgroundColor: isDark ? `${theme.primary}FA` : 'rgba(255, 255, 255, 0.98)',
+              backgroundColor: isDark ? 'rgba(20, 20, 20, 0.88)' : 'rgba(255, 255, 255, 0.85)',
               paddingBottom: Math.max(insets.bottom - 10, 10),
               borderTopWidth: 1,
-              borderTopColor: `${theme.gold}33`,
+              borderTopColor: isDark ? 'rgba(255,255,255,0.08)' : `${theme.primary}33`,
+              borderWidth: 1,
+              borderColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
               shadowColor: '#000',
               shadowOffset: { width: 0, height: -4 },
-              shadowOpacity: 0.1,
-              shadowRadius: 12,
-              elevation: 8,
+              shadowOpacity: 0.12,
+              shadowRadius: 16,
+              elevation: 12,
             },
           ]}
         >
@@ -5106,7 +5225,7 @@ function MushafScreenContent() {
             <View style={{
               width: 36 * playerScale,
               height: 4 * playerScale,
-              backgroundColor: `${theme.gold}4D`,
+              backgroundColor: `${theme.primary}4D`,
               borderRadius: 2 * playerScale,
               marginBottom: 4 * playerScale,
             }} />
@@ -5144,12 +5263,12 @@ function MushafScreenContent() {
                     paddingHorizontal: 10 * playerScale,
                     paddingVertical: 4 * playerScale,
                     borderRadius: 10 * playerScale,
-                    backgroundColor: `${theme.gold}33`,
+                    backgroundColor: `${theme.primary}33`,
                     transform: [{ scale: pressed ? 0.95 : 1 }],
                     marginLeft: 'auto',
                   }]}
                 >
-                  <ThemedText type="caption" style={{ fontSize: 11 * playerScale, fontWeight: '700', color: theme.gold, letterSpacing: 0.3 }}>
+                  <ThemedText type="caption" style={{ fontSize: 11 * playerScale, fontWeight: '700', color: theme.primary, letterSpacing: 0.3 }}>
                     {audioState.playbackRate}×
                   </ThemedText>
                 </Pressable>
@@ -5198,11 +5317,11 @@ function MushafScreenContent() {
                   borderRadius: 20 * playerScale,
                   alignItems: 'center',
                   justifyContent: 'center',
-                  backgroundColor: `${theme.gold}26`,
+                  backgroundColor: `${theme.primary}26`,
                   transform: [{ scale: pressed ? 0.9 : 1 }],
                 }]}
               >
-                <Feather name="skip-back" size={18 * playerScale} color={theme.gold} />
+                <Feather name="skip-back" size={18 * playerScale} color={theme.primary} />
               </Pressable>
               <Pressable
                 onPress={() => {
@@ -5218,14 +5337,15 @@ function MushafScreenContent() {
                   borderRadius: 26 * playerScale,
                   alignItems: 'center',
                   justifyContent: 'center',
-                  backgroundColor: theme.gold,
+                  backgroundColor: theme.primary,
                   transform: [{ scale: pressed ? 0.92 : 1 }],
                   marginHorizontal: 4 * playerScale,
-                  shadowColor: theme.gold,
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.3,
-                  shadowRadius: 8,
-                  elevation: 6,
+                  // Golden glow when playing — ethereal light emission
+                  shadowColor: audioState.isPlaying ? theme.primary : '#000',
+                  shadowOffset: { width: 0, height: audioState.isPlaying ? 0 : 4 },
+                  shadowOpacity: audioState.isPlaying ? 0.7 : 0.3,
+                  shadowRadius: audioState.isPlaying ? 20 : 8,
+                  elevation: audioState.isPlaying ? 16 : 6,
                 }]}
               >
                 <Feather name={audioState.isPlaying ? 'pause' : 'play'} size={20 * playerScale} color="#FFF" />
@@ -5238,11 +5358,11 @@ function MushafScreenContent() {
                   borderRadius: 20 * playerScale,
                   alignItems: 'center',
                   justifyContent: 'center',
-                  backgroundColor: `${theme.gold}26`,
+                  backgroundColor: `${theme.primary}26`,
                   transform: [{ scale: pressed ? 0.9 : 1 }],
                 }]}
               >
-                <Feather name="skip-forward" size={18 * playerScale} color={theme.gold} />
+                <Feather name="skip-forward" size={18 * playerScale} color={theme.primary} />
               </Pressable>
               <Pressable
                 onPress={() => setShowAudioSettings(true)}
@@ -5252,12 +5372,12 @@ function MushafScreenContent() {
                   borderRadius: 20 * playerScale,
                   alignItems: 'center',
                   justifyContent: 'center',
-                  backgroundColor: `${theme.gold}26`,
+                  backgroundColor: `${theme.primary}26`,
                   transform: [{ scale: pressed ? 0.9 : 1 }],
                   marginLeft: 4 * playerScale,
                 }]}
               >
-                <Feather name="sliders" size={16 * playerScale} color={theme.gold} />
+                <Feather name="sliders" size={16 * playerScale} color={theme.primary} />
               </Pressable>
               <Pressable
                 onPress={() => AudioService.stop()}
@@ -5330,11 +5450,11 @@ function MushafScreenContent() {
                 shadowRadius: 8,
                 elevation: 6,
                 borderWidth: 1,
-                borderColor: `${theme.gold}4D`,
+                borderColor: `${theme.primary}4D`,
                 transform: [{ scale: pressed ? 0.95 : 1 }],
               }]}
             >
-              <Feather name={audioState.isPlaying ? 'pause' : 'play'} size={14 * playerScale} color={theme.gold} />
+              <Feather name={audioState.isPlaying ? 'pause' : 'play'} size={14 * playerScale} color={theme.primary} />
               <ThemedText type="caption" style={{ fontSize: 12 * playerScale, fontWeight: '600' }}>
                 {(locale === 'ar' ? surahs.find(s => s.number === audioState.current.surah)?.nameAr : surahs.find(s => s.number === audioState.current.surah)?.nameEn?.split(' ')[0]) || audioState.current.surah}:{audioState.current.ayah}
               </ThemedText>
@@ -5354,7 +5474,7 @@ function MushafScreenContent() {
                 borderRadius: 22 * playerScale,
                 alignItems: 'center',
                 justifyContent: 'center',
-                backgroundColor: theme.gold,
+                backgroundColor: theme.primary,
                 shadowColor: '#000',
                 shadowOffset: { width: 0, height: 4 },
                 shadowOpacity: 0.3,
@@ -5470,7 +5590,7 @@ function MushafScreenContent() {
                 setShowHifzStatusMenu(false);
               }}
             >
-              <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: theme.gold, alignItems: 'center', justifyContent: 'center' }}>
+              <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: theme.primary, alignItems: 'center', justifyContent: 'center' }}>
                 <Feather name="play" size={12} color="#FFFFFF" />
               </View>
               <ThemedText style={styles.hifzStatusMenuText}>
@@ -5790,13 +5910,13 @@ const styles = StyleSheet.create({
   surahItem: {
     marginHorizontal: Spacing.lg,
     marginBottom: Spacing.sm,
-    borderRadius: 16,
+    borderRadius: 18,
     overflow: 'hidden',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
+    shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.04,
-    shadowRadius: 3,
-    elevation: 1,
+    shadowRadius: 16,
+    elevation: 2,
   },
   surahItemContent: {
     flexDirection: 'row',

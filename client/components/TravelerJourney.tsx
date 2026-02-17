@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { View, Image, StyleSheet, useWindowDimensions } from 'react-native';
 import Svg, { Path, Circle } from 'react-native-svg';
 import Animated, {
@@ -7,6 +7,7 @@ import Animated, {
     withRepeat,
     withTiming,
     withSequence,
+    withSpring,
     Easing,
 } from 'react-native-reanimated';
 import { useTheme } from '@/hooks/useTheme';
@@ -34,6 +35,8 @@ interface TravelerJourneyProps {
     progress: number;
     /** Index of the next prayer (0=Fajr, 1=Dhuhr, ..., 4=Isha) */
     nextPrayerIndex: number;
+    /** When true, trigger a celebration animation (jump + glow) */
+    celebrate?: boolean;
 }
 
 const PRAYERS = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'] as const;
@@ -63,7 +66,7 @@ function generateWavePath(width: number, yCenter: number, amplitude: number, ste
     return points.join(' ');
 }
 
-export function TravelerJourney({ prayerTimes, progress, nextPrayerIndex }: TravelerJourneyProps) {
+export function TravelerJourney({ prayerTimes, progress, nextPrayerIndex, celebrate = false }: TravelerJourneyProps) {
     const { isDark, theme } = useTheme();
     const { width: screenWidth } = useWindowDimensions();
 
@@ -125,11 +128,37 @@ export function TravelerJourney({ prayerTimes, progress, nextPrayerIndex }: Trav
         );
     }, [bobOffset]);
 
+    // Celebration shared values (must be declared before characterAnimStyle)
+    const jumpOffset = useSharedValue(0);
+    const glowScale = useSharedValue(0);
+    const glowOpacity = useSharedValue(0);
+
     const characterAnimStyle = useAnimatedStyle(() => ({
         transform: [
             { scaleX: -1 }, // Flip to face right (toward destination)
-            { translateY: bobOffset.value },
+            { translateY: bobOffset.value + jumpOffset.value },
         ],
+    }));
+
+    // Celebration: jump + glow aura
+    useEffect(() => {
+        if (celebrate) {
+            // Jump: quick up then spring back down
+            jumpOffset.value = withSequence(
+                withTiming(-14, { duration: 150, easing: Easing.out(Easing.cubic) }),
+                withSpring(0, { damping: 6, stiffness: 300 }),
+            );
+            // Glow: scale up and fade out over 1 second
+            glowScale.value = 0;
+            glowScale.value = withTiming(1.5, { duration: 600, easing: Easing.out(Easing.cubic) });
+            glowOpacity.value = 0.8;
+            glowOpacity.value = withTiming(0, { duration: 1000 });
+        }
+    }, [celebrate, jumpOffset, glowScale, glowOpacity]);
+
+    const glowAnimStyle = useAnimatedStyle(() => ({
+        transform: [{ scale: glowScale.value }],
+        opacity: glowOpacity.value,
     }));
 
     // SVG paths
@@ -242,6 +271,18 @@ export function TravelerJourney({ prayerTimes, progress, nextPrayerIndex }: Trav
                     characterAnimStyle,
                 ]}
             >
+                {/* Golden glow aura (celebration) */}
+                <Animated.View
+                    style={[{
+                        position: 'absolute',
+                        width: characterSize * 2,
+                        height: characterSize * 2,
+                        borderRadius: characterSize,
+                        backgroundColor: isDark ? 'rgba(251, 191, 36, 0.6)' : 'rgba(212, 160, 23, 0.5)',
+                        left: -characterSize / 2,
+                        top: -characterSize / 2,
+                    }, glowAnimStyle]}
+                />
                 <Image
                     source={characterImage}
                     style={{

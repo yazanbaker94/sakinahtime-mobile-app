@@ -11,6 +11,7 @@ import {
     ScrollView,
     Pressable,
     TextInput,
+    Image,
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { Feather } from '@expo/vector-icons';
@@ -25,12 +26,13 @@ import { PrayerName, PRAYER_NAMES } from '@/types/prayerLog';
 import { Spacing, BorderRadius } from '@/constants/theme';
 import { useTranslation } from '@/hooks/useTranslation';
 
-const PRAYER_DISPLAY: Record<PrayerName, { nameEn: string; nameAr: string; icon: string }> = {
-    Fajr: { nameEn: 'Fajr', nameAr: 'الفجر', icon: 'sunrise' },
-    Dhuhr: { nameEn: 'Dhuhr', nameAr: 'الظهر', icon: 'sun' },
-    Asr: { nameEn: 'Asr', nameAr: 'العصر', icon: 'cloud' },
-    Maghrib: { nameEn: 'Maghrib', nameAr: 'المغرب', icon: 'sunset' },
-    Isha: { nameEn: 'Isha', nameAr: 'العشاء', icon: 'moon' },
+// Reuse 3D celestial icons from the prayer calendar
+const PRAYER_3D_ICONS: Record<PrayerName, any> = {
+    Fajr: require('../../assets/images/islamic-calendar-icons/dawn.png'),
+    Dhuhr: require('../../assets/images/islamic-calendar-icons/noon.png'),
+    Asr: require('../../assets/images/islamic-calendar-icons/afternoon.png'),
+    Maghrib: require('../../assets/images/islamic-calendar-icons/sunset.png'),
+    Isha: require('../../assets/images/islamic-calendar-icons/night.png'),
 };
 
 export default function QadaTrackerScreen() {
@@ -81,6 +83,23 @@ export default function QadaTrackerScreen() {
         }
     };
 
+    // Dynamic hero card: peaceful theme color when 0, soft coral when > 0
+    const isAllCaughtUp = totalQada === 0;
+    const heroColor = isAllCaughtUp ? theme.primary : '#F5A5A5';
+    const heroBg = isAllCaughtUp
+        ? `${theme.primary}18`
+        : (isDark ? 'rgba(245,165,165,0.12)' : 'rgba(245,165,165,0.15)');
+
+    // Clay card helper
+    const clayCard = {
+        backgroundColor: isDark ? 'rgba(30,30,30,0.85)' : 'rgba(255,255,255,0.95)',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.04,
+        shadowRadius: 30,
+        elevation: 4,
+    };
+
     return (
         <ThemedView style={styles.container}>
             <ScrollView
@@ -103,12 +122,19 @@ export default function QadaTrackerScreen() {
                     </View>
                 </View>
 
-                {/* Total summary */}
+                {/* Dynamic Hero Card */}
                 <View style={[
                     styles.totalCard,
-                    { backgroundColor: isDark ? 'rgba(239, 68, 68, 0.1)' : 'rgba(239, 68, 68, 0.08)' }
+                    {
+                        backgroundColor: heroBg,
+                        shadowColor: heroColor,
+                        shadowOffset: { width: 0, height: 8 },
+                        shadowOpacity: 0.15,
+                        shadowRadius: 20,
+                        elevation: 4,
+                    }
                 ]}>
-                    <ThemedText type="h1" style={{ color: '#EF4444', fontWeight: '800', fontSize: 48 }}>
+                    <ThemedText type="h1" style={{ color: heroColor, fontWeight: '800', fontSize: 48 }}>
                         {totalQada}
                     </ThemedText>
                     <ThemedText type="body" secondary>
@@ -116,49 +142,42 @@ export default function QadaTrackerScreen() {
                     </ThemedText>
                 </View>
 
-                {/* Hint banner */}
+                {/* Theme-synced Info Banner */}
                 <View style={[
                     styles.hintBanner,
-                    { backgroundColor: isDark ? 'rgba(59, 130, 246, 0.1)' : 'rgba(59, 130, 246, 0.08)' }
+                    { backgroundColor: `${theme.primary}18` }
                 ]}>
-                    <Feather name="info" size={14} color="#3B82F6" />
-                    <ThemedText type="caption" style={{ color: '#3B82F6', flex: 1, marginLeft: 8 }}>
+                    <Feather name="info" size={14} color={theme.primary} />
+                    <ThemedText type="caption" style={{ color: theme.primary, flex: 1, marginLeft: 8 }}>
                         {t('qadaTracker.hint')}
                     </ThemedText>
                 </View>
 
                 {/* Prayer list */}
                 {PRAYER_NAMES.map((prayer) => {
-                    const display = PRAYER_DISPLAY[prayer];
                     const count = qadaCounts?.[prayer] || 0;
                     const isEditing = editingPrayer === prayer;
 
                     return (
                         <View
                             key={prayer}
-                            style={[
-                                styles.prayerRow,
-                                { backgroundColor: theme.cardBackground },
-                            ]}
+                            style={[styles.prayerRow, clayCard]}
                         >
                             {/* Top row: Prayer name and controls */}
                             <View style={styles.prayerRowTop}>
                                 <View style={styles.prayerInfo}>
-                                    <View style={[
-                                        styles.prayerIcon,
-                                        { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)' }
-                                    ]}>
-                                        <Feather
-                                            name={display.icon as any}
-                                            size={20}
-                                            color={theme.textSecondary}
+                                    {/* Fixed-width icon container for consistent text alignment */}
+                                    <View style={{ width: 44, height: 44, alignItems: 'center', justifyContent: 'center' }}>
+                                        <Image
+                                            source={PRAYER_3D_ICONS[prayer]}
+                                            style={{ width: 36, height: 36 }}
+                                            resizeMode="contain"
                                         />
                                     </View>
                                     <View style={{ flexShrink: 1 }}>
                                         <ThemedText type="body" style={{ fontWeight: '600', fontSize: 16 }}>
                                             {t(`prayer.${prayer.toLowerCase()}`)}
                                         </ThemedText>
-
                                     </View>
                                 </View>
 
@@ -191,16 +210,22 @@ export default function QadaTrackerScreen() {
                                                     styles.controlButton,
                                                     {
                                                         opacity: count === 0 ? 0.3 : 1,
-                                                        backgroundColor: pressed ? 'rgba(239, 68, 68, 0.3)' : 'rgba(128, 128, 128, 0.15)',
-                                                        transform: [{ scale: pressed ? 0.9 : 1 }],
+                                                        backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : '#FFFFFF',
+                                                        borderWidth: 0,
+                                                        shadowColor: '#000',
+                                                        shadowOffset: { width: 0, height: 4 },
+                                                        shadowOpacity: pressed ? 0.03 : 0.08,
+                                                        shadowRadius: pressed ? 4 : 10,
+                                                        elevation: pressed ? 1 : 3,
+                                                        transform: [{ scale: pressed ? 0.92 : 1 }],
                                                     }
                                                 ]}
                                             >
-                                                <Feather name="minus" size={18} color="#EF4444" />
+                                                <Feather name="minus" size={18} color={isDark ? theme.text : '#374151'} />
                                             </Pressable>
 
                                             <Pressable onPress={() => handleStartEdit(prayer)}>
-                                                <ThemedText type="h2" style={styles.countText}>
+                                                <ThemedText type="h2" style={[styles.countText, { color: theme.primary }]}>
                                                     {count}
                                                 </ThemedText>
                                             </Pressable>
@@ -211,12 +236,18 @@ export default function QadaTrackerScreen() {
                                                 style={({ pressed }) => [
                                                     styles.controlButton,
                                                     {
-                                                        backgroundColor: pressed ? 'rgba(16, 185, 129, 0.3)' : 'rgba(128, 128, 128, 0.15)',
-                                                        transform: [{ scale: pressed ? 0.9 : 1 }],
+                                                        backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : '#FFFFFF',
+                                                        borderWidth: 0,
+                                                        shadowColor: '#000',
+                                                        shadowOffset: { width: 0, height: 4 },
+                                                        shadowOpacity: pressed ? 0.03 : 0.08,
+                                                        shadowRadius: pressed ? 4 : 10,
+                                                        elevation: pressed ? 1 : 3,
+                                                        transform: [{ scale: pressed ? 0.92 : 1 }],
                                                     }
                                                 ]}
                                             >
-                                                <Feather name="plus" size={18} color="#10B981" />
+                                                <Feather name="plus" size={18} color={isDark ? theme.text : '#374151'} />
                                             </Pressable>
 
                                             {count > 0 && (
@@ -267,38 +298,30 @@ const styles = StyleSheet.create({
         padding: Spacing.xs,
         marginLeft: -Spacing.xs,
     },
-    iconContainer: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
     title: {
         fontWeight: '700',
     },
+    // Dynamic hero — shadow + color set inline
     totalCard: {
         alignItems: 'center',
         padding: Spacing.xl,
-        borderRadius: BorderRadius.xl,
+        borderRadius: 20,
         marginBottom: Spacing.lg,
     },
+    // Theme-synced info banner
     hintBanner: {
         flexDirection: 'row',
         alignItems: 'center',
         padding: Spacing.md,
-        borderRadius: BorderRadius.lg,
+        borderRadius: 16,
         marginBottom: Spacing.lg,
     },
+    // Borderless clay prayer cards
     prayerRow: {
         padding: Spacing.md,
-        borderRadius: BorderRadius.xl,
+        borderRadius: 20,
         marginBottom: Spacing.md,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 2,
+        // Shadows set inline via clayCard
     },
     prayerRowTop: {
         flexDirection: 'row',
@@ -310,18 +333,12 @@ const styles = StyleSheet.create({
         flex: 1,
         gap: Spacing.md,
     },
-    prayerIcon: {
-        width: 44,
-        height: 44,
-        borderRadius: 22,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
     countControls: {
         flexDirection: 'row',
         alignItems: 'center',
         gap: Spacing.sm,
     },
+    // Tactile clay pill buttons
     controlButton: {
         width: 40,
         height: 40,
@@ -344,7 +361,7 @@ const styles = StyleSheet.create({
         width: 70,
         height: 44,
         borderWidth: 2,
-        borderRadius: BorderRadius.lg,
+        borderRadius: 14,
         textAlign: 'center',
         fontSize: 18,
         fontWeight: '600',
@@ -357,20 +374,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: Spacing.lg,
         paddingVertical: Spacing.sm,
-        borderRadius: BorderRadius.lg,
+        borderRadius: 14,
         marginLeft: Spacing.md,
-    },
-    infoContainer: {
-        flexDirection: 'row',
-        alignItems: 'flex-start',
-        gap: Spacing.sm,
-        marginTop: Spacing.lg,
-        padding: Spacing.lg,
-        backgroundColor: 'rgba(128, 128, 128, 0.1)',
-        borderRadius: BorderRadius.lg,
-    },
-    infoText: {
-        flex: 1,
-        lineHeight: 20,
     },
 });

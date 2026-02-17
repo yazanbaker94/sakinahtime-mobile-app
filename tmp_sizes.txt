@@ -1,0 +1,11 @@
+2048x2048 1669KB character.png
+2816x1536 1207KB steps.png
+446x478 235KB palm_tree.png
+538x421 218KB tent.png
+415x462 190KB well.png
+384x393 146KB campfire.png
+323x433 144KB lantern.png
+2048x2048 2847KB madinah.png
+3583x871 3473KB widget-image.png
+1024x1024 1684KB compass-inner.png
+1024x1024 1185KB compass-cover.png

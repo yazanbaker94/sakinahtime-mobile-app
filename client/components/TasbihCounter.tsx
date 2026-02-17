@@ -2,6 +2,7 @@
  * TasbihCounter Component
  * 
  * Interactive counter widget for dhikr counting with haptic feedback.
+ * Inset clay dish design with tactile press feel.
  */
 
 import React, { useRef, useCallback } from 'react';
@@ -88,12 +89,15 @@ export function TasbihCounter({
     );
   }, [reset, onCountChange]);
 
-  const bgColor = `${theme.primary}1A`;
-
-  const counterBgColor = `${theme.primary}26`;
-
   return (
-    <View style={[styles.container, { backgroundColor: bgColor }]}>
+    <View style={[styles.container, {
+      backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#FFFFFF',
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.05,
+      shadowRadius: 24,
+      elevation: 3,
+    }]}>
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
@@ -115,7 +119,7 @@ export function TasbihCounter({
         )}
       </View>
 
-      {/* Counter Area */}
+      {/* Counter Area — Inset Clay Dish */}
       <Pressable
         onPress={handlePress}
         onLongPress={handleLongPress}
@@ -124,7 +128,18 @@ export function TasbihCounter({
         <Animated.View
           style={[
             styles.counterArea,
-            { backgroundColor: counterBgColor },
+            {
+              // Visibly darker bg = visually recedes into the card
+              backgroundColor: isDark ? 'rgba(0,0,0,0.12)' : 'rgba(0,0,0,0.045)',
+              // Strong top edge = light hitting the carved rim
+              borderTopWidth: 2,
+              borderTopColor: isDark ? 'rgba(0,0,0,0.25)' : 'rgba(0,0,0,0.10)',
+              borderLeftWidth: 1,
+              borderLeftColor: isDark ? 'rgba(0,0,0,0.12)' : 'rgba(0,0,0,0.04)',
+              borderRightWidth: 1,
+              borderRightColor: isDark ? 'rgba(0,0,0,0.12)' : 'rgba(0,0,0,0.04)',
+              borderBottomWidth: 0,
+            },
             { transform: [{ scale: pulseAnim }] },
           ]}
         >
@@ -147,7 +162,7 @@ export function TasbihCounter({
               <View
                 style={[
                   styles.progressBar,
-                  { backgroundColor: `${theme.primary}33` },
+                  { backgroundColor: `${theme.primary}20` },
                 ]}
               >
                 <View
@@ -220,7 +235,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: Spacing['2xl'],
-    borderRadius: BorderRadius.lg,
+    borderRadius: 20,
   },
   countText: {
     fontSize: 64,

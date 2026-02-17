@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Pressable, StyleSheet, Animated } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 import { PrayerStatus } from '../types/prayerLog';
 import { useTheme } from '../hooks/useTheme';
 import { useTranslation } from '../hooks/useTranslation';
@@ -11,6 +12,9 @@ interface PrayerStatusIndicatorProps {
   size?: 'compact' | 'normal';
   showLabels?: boolean;
   disabled?: boolean;
+  isPastAndUnmarked?: boolean;
+  isCurrent?: boolean;
+  onCelebrate?: () => void;
 }
 
 // Status cycle order and display info - uses t() for translations
@@ -39,12 +43,17 @@ export function PrayerStatusIndicator({
   onStatusChange,
   size = 'compact',
   disabled = false,
+  isPastAndUnmarked = false,
+  isCurrent = false,
+  onCelebrate,
 }: PrayerStatusIndicatorProps) {
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
   const { t } = useTranslation();
   const STATUS_CYCLE = getStatusCycle(t);
   const [showLabel, setShowLabel] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const pulseAnim = useRef(new Animated.Value(0.4)).current;
   const hideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const sizeConfig = {
@@ -56,12 +65,62 @@ export function PrayerStatusIndicator({
 
   const currentStatusInfo = STATUS_CYCLE.find(s => s.status === status) || STATUS_CYCLE[0];
   const isUnmarked = status === 'unmarked';
+  const showPastFill = isPastAndUnmarked && isUnmarked;
+  const showCurrentPulse = isCurrent && isUnmarked;
+
+  // Gentle pulse animation for active/current prayer
+  useEffect(() => {
+    if (showCurrentPulse) {
+      const pulse = Animated.loop(
+        Animated.sequence([
+          Animated.timing(pulseAnim, { toValue: 0.7, duration: 1200, useNativeDriver: true }),
+          Animated.timing(pulseAnim, { toValue: 0.3, duration: 1200, useNativeDriver: true }),
+        ])
+      );
+      pulse.start();
+      return () => pulse.stop();
+    } else {
+      pulseAnim.setValue(0.4);
+    }
+  }, [showCurrentPulse, pulseAnim]);
 
   // Show label briefly when status changes (not on initial render)
   const handlePress = () => {
     if (disabled) return;
     const nextStatus = getNextStatus(status);
     onStatusChange(nextStatus);
+
+    // Haptic feedback — HEAVY impact + success notification for "prayed"
+    try {
+      if (nextStatus === 'prayed') {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+        // Double-tap success for maximum satisfaction
+        setTimeout(() => {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        }, 120);
+        // Fire celebration callback
+        if (onCelebrate) {
+          onCelebrate();
+        }
+      } else if (nextStatus !== 'unmarked') {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      }
+    } catch (_) {
+      // Haptics not available on this device
+    }
+
+    // Dramatic shrink-bounce animation
+    if (nextStatus !== 'unmarked') {
+      scaleAnim.setValue(0.3); // Shrink down dramatically
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        friction: 3,   // Less friction = more overshoot bounce
+        tension: 180,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      scaleAnim.setValue(1);
+    }
 
     // Show label briefly for non-unmarked states
     if (nextStatus !== 'unmarked') {
@@ -100,56 +159,56 @@ export function PrayerStatusIndicator({
 
   return (
     <View style={styles.container}>
-      {/* Status label - shows briefly after tap, positioned above button */}
-      {showLabel && !isUnmarked && (
-        <Animated.Text
-          style={{
-            position: 'absolute',
-            bottom: config.button + 4,
-            left: -10,
-            fontSize: config.fontSize,
-            color: currentStatusInfo.color,
-            fontWeight: '600',
-            opacity: fadeAnim,
-            backgroundColor: isDark ? 'rgba(0,0,0,0.9)' : 'rgba(255,255,255,0.95)',
-            paddingHorizontal: 8,
-            paddingVertical: 3,
-            borderRadius: 6,
-            overflow: 'hidden',
-            zIndex: 10,
-          }}
+      {/* Single tap-to-cycle button with spring animation */}
+      <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+        <Pressable
+          onPress={handlePress}
+          disabled={disabled}
+          style={({ pressed }) => [
+            styles.button,
+            {
+              width: config.button,
+              height: config.button,
+              borderRadius: config.button / 2,
+              backgroundColor: showCurrentPulse
+                ? `${theme.primary}30`
+                : showPastFill
+                  ? (isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.08)')
+                  : isUnmarked
+                    ? (isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.05)')
+                    : currentStatusInfo.color,
+              borderWidth: (isUnmarked && !showPastFill && !showCurrentPulse) ? 1.5 : showCurrentPulse ? 2 : 0,
+              borderColor: showCurrentPulse ? `${theme.primary}50` : (isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.1)'),
+              opacity: pressed ? 0.7 : (disabled ? 0.4 : 1),
+            },
+          ]}
         >
-          {currentStatusInfo.label}
-        </Animated.Text>
-      )}
-
-      {/* Single tap-to-cycle button */}
-      <Pressable
-        onPress={handlePress}
-        disabled={disabled}
-        style={({ pressed }) => [
-          styles.button,
-          {
-            width: config.button,
-            height: config.button,
-            borderRadius: config.button / 2,
-            backgroundColor: isUnmarked
-              ? (isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.05)')
-              : currentStatusInfo.color,
-            borderWidth: isUnmarked ? 1.5 : 0,
-            borderColor: isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.1)',
-            opacity: pressed ? 0.7 : (disabled ? 0.4 : 1),
-          },
-        ]}
-      >
-        {!isUnmarked && (
-          <Feather
-            name={currentStatusInfo.icon as any}
-            size={config.icon}
-            color="#FFFFFF"
-          />
-        )}
-      </Pressable>
+          {showCurrentPulse && (
+            <Animated.View style={{
+              position: 'absolute',
+              width: config.button,
+              height: config.button,
+              borderRadius: config.button / 2,
+              backgroundColor: theme.primary,
+              opacity: pulseAnim,
+            }} />
+          )}
+          {showPastFill && (
+            <Feather
+              name="check"
+              size={config.icon - 2}
+              color={isDark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.35)'}
+            />
+          )}
+          {!isUnmarked && !showPastFill && (
+            <Feather
+              name={currentStatusInfo.icon as any}
+              size={config.icon}
+              color="#FFFFFF"
+            />
+          )}
+        </Pressable>
+      </Animated.View>
     </View>
   );
 }

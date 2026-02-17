@@ -63,6 +63,7 @@ import { CoordinatesProvider } from "@/contexts/CoordinatesContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { PrayerAdjustmentsProvider } from "@/contexts/PrayerAdjustmentsContext";
 import { RamadanProvider } from "@/contexts/RamadanContext";
+import { PrayerColorProvider } from "@/contexts/PrayerColorContext";
 
 // Sample verses for daily verse widget
 const DAILY_VERSES = [
@@ -231,7 +232,9 @@ export default function App() {
                       <GestureHandlerRootView style={styles.root}>
                         <KeyboardProvider>
                           <NavigationContainer ref={navigationRef} linking={linking}>
-                            <RootStackNavigator />
+                            <PrayerColorProvider>
+                              <RootStackNavigator />
+                            </PrayerColorProvider>
                           </NavigationContainer>
                         </KeyboardProvider>
                       </GestureHandlerRootView>

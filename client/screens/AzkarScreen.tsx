@@ -213,21 +213,31 @@ export default function AzkarScreen() {
     );
   }, [handleDeleteCustomDua]);
 
-  const renderTab = (tab: TabType, label: string, icon: keyof typeof Feather.glyphMap) => (
-    <Pressable
-      key={tab}
-      onPress={() => setActiveTab(tab)}
-      style={[
-        styles.tab,
-        activeTab === tab && { borderBottomWidth: 3, borderBottomColor: theme.primary },
-      ]}
-    >
-      <Feather name={icon} size={18} color={activeTab === tab ? theme.primary : theme.textSecondary} />
-      <ThemedText type="body" style={{ marginLeft: Spacing.xs, fontWeight: activeTab === tab ? '700' : '500', fontSize: 14, color: activeTab === tab ? theme.primary : theme.textSecondary }}>
-        {label}
-      </ThemedText>
-    </Pressable>
-  );
+  const renderTab = (tab: TabType, label: string, icon: keyof typeof Feather.glyphMap) => {
+    const isActive = activeTab === tab;
+    return (
+      <Pressable
+        key={tab}
+        onPress={() => setActiveTab(tab)}
+        style={[
+          styles.tabButton,
+          isActive && {
+            backgroundColor: isDark ? 'rgba(255,255,255,0.12)' : '#FFFFFF',
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.1,
+            shadowRadius: 12,
+            elevation: 3,
+          },
+        ]}
+      >
+        <Feather name={icon} size={16} color={isActive ? theme.primary : theme.textSecondary} />
+        <ThemedText type="body" style={{ marginLeft: Spacing.xs, fontWeight: isActive ? '700' : '500', fontSize: 14, color: isActive ? theme.primary : theme.textSecondary }}>
+          {label}
+        </ThemedText>
+      </Pressable>
+    );
+  };
 
   const renderDuaSubTab = (tab: DuaSubTab, label: string, icon: keyof typeof Feather.glyphMap) => (
     <Pressable
@@ -266,11 +276,13 @@ export default function AzkarScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      {/* Tab Selector */}
-      <View style={[styles.tabContainer, { paddingTop: insets.top + Spacing.md, backgroundColor: theme.backgroundDefault, borderBottomWidth: 1, borderBottomColor: theme.border }]}>
-        {renderTab('azkar', t('tabs.azkar'), 'sun')}
-        {renderTab('duas', t('azkar.duas'), 'book-open')}
-        {renderTab('guides', t('azkar.guides'), 'compass')}
+      {/* Tab Selector — Clay Sliding Pill */}
+      <View style={[styles.tabContainer, { paddingTop: insets.top + Spacing.md, backgroundColor: theme.backgroundDefault }]}>
+        <View style={[styles.tabTrack, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)' }]}>
+          {renderTab('azkar', t('tabs.azkar'), 'sun')}
+          {renderTab('duas', t('azkar.duas'), 'book-open')}
+          {renderTab('guides', t('azkar.guides'), 'compass')}
+        </View>
       </View>
 
       <ScrollView contentContainerStyle={[styles.scrollContent, { paddingBottom: tabBarHeight + Spacing.xl }]} scrollIndicatorInsets={{ bottom: tabBarHeight }} showsVerticalScrollIndicator={false}>
@@ -282,7 +294,7 @@ export default function AzkarScreen() {
             <View style={styles.categoriesGrid}>
               {azkarCategories.map((category) => (<CompactCategoryCard key={category.id} category={category} onPress={() => handleCategoryPress(category)} />))}
             </View>
-            <View style={[styles.tipCard, { backgroundColor: `${theme.primary}15` }]}>
+            <View style={[styles.tipCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#FFFFFF', shadowColor: '#000', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.04, shadowRadius: 20, elevation: 2 }]}>
               <View style={styles.tipHeader}>
                 <Feather name="info" size={20} color={theme.primary} />
                 <ThemedText type="body" style={{ marginLeft: Spacing.sm, fontWeight: '600' }}>{t('azkar.dailyTip')}</ThemedText>
@@ -398,8 +410,9 @@ export default function AzkarScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  tabContainer: { flexDirection: 'row', paddingHorizontal: Spacing.md },
-  tab: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: Spacing.md, paddingHorizontal: Spacing.sm },
+  tabContainer: { paddingHorizontal: Spacing.md, paddingBottom: Spacing.sm, zIndex: 10 },
+  tabTrack: { flexDirection: 'row', backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: 14, padding: 4, gap: 4, overflow: 'hidden' },
+  tabButton: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 10, paddingHorizontal: 8, borderRadius: 11, backgroundColor: 'transparent' },
   scrollContent: { flexGrow: 1, paddingHorizontal: Spacing.lg, paddingTop: Spacing.lg },
   sectionHeader: { marginBottom: Spacing.md },
   sectionTitle: { fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.5, fontSize: 11 },

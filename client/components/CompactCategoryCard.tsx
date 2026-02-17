@@ -1,25 +1,26 @@
 /**
  * CompactCategoryCard Component
  * 
- * Smaller category card for the grid layout with icon, titles, and count.
+ * Smaller category card for the grid layout with 3D icon, titles, and count.
+ * Borderless clay tile design with soft drop-shadow.
  */
 
 import React from 'react';
-import { View, StyleSheet, Pressable } from 'react-native';
+import { View, StyleSheet, Pressable, Image } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
-import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/hooks/useTranslation';
 import { Spacing, BorderRadius } from '@/constants/theme';
 import { AzkarCategory } from '@/data/azkar';
 
-const ICON_MAP: Record<string, keyof typeof Feather.glyphMap> = {
-  sunrise: 'sunrise',
-  sunset: 'sunset',
-  heart: 'heart',
-  moon: 'moon',
-  sun: 'sun',
-  star: 'star',
+// Map category IDs to 3D icon assets
+const CATEGORY_3D_ICONS: Record<string, any> = {
+  morning: require('../../assets/images/islamic-calendar-icons/dawn.png'),
+  evening: require('../../assets/images/islamic-calendar-icons/sunset.png'),
+  sleep: require('../../assets/images/islamic-calendar-icons/night.png'),
+  'after-prayer': require('../../assets/images/3d-images/AfterPrayer.png'),
+  waking: require('../../assets/images/3d-images/WakingUp.png'),
+  general: require('../../assets/images/3d-images/GeneralAzkar.png'),
 };
 
 interface CompactCategoryCardProps {
@@ -31,38 +32,29 @@ export function CompactCategoryCard({ category, onPress }: CompactCategoryCardPr
   const { isDark, theme } = useTheme();
   const { t, locale } = useTranslation();
 
-  const getIconColor = () => {
-    return theme.primary;
-  };
-
-  const getIconBgColor = () => {
-    return `${theme.primary}20`;
-  };
-
-  const cardBgColor = isDark
-    ? `${theme.primary}20`
-    : theme.backgroundDefault;
-
   return (
     <Pressable
       onPress={onPress}
       style={({ pressed }) => [
         styles.container,
-        { backgroundColor: cardBgColor },
         {
+          backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : '#FFFFFF',
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 6 },
+          shadowOpacity: 0.04,
+          shadowRadius: 20,
+          elevation: 2,
           opacity: pressed ? 0.8 : 1,
-          transform: [{ scale: pressed ? 0.98 : 1 }],
+          transform: [{ scale: pressed ? 0.97 : 1 }],
         },
       ]}
     >
-      {/* Icon */}
-      <View style={[styles.iconContainer, { backgroundColor: getIconBgColor() }]}>
-        <Feather
-          name={ICON_MAP[category.icon] || 'heart'}
-          size={22}
-          color={getIconColor()}
-        />
-      </View>
+      {/* 3D Icon */}
+      <Image
+        source={CATEGORY_3D_ICONS[category.id] || CATEGORY_3D_ICONS.general}
+        style={{ width: 44, height: 44, marginBottom: Spacing.sm }}
+        resizeMode="contain"
+      />
 
       {/* Title - locale aware via i18n */}
       <ThemedText type={locale === 'ar' ? 'arabic' : 'body'}
@@ -88,14 +80,6 @@ const styles = StyleSheet.create({
     padding: Spacing.md,
     borderRadius: BorderRadius.lg,
     alignItems: 'center',
-  },
-  iconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: Spacing.sm,
   },
   titleEn: {
     fontWeight: '500',

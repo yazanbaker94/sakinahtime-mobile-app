@@ -69,7 +69,8 @@
     "hours": "HOURS",
     "minutes": "MINUTES",
     "seconds": "SECONDS",
-    "min": "min"
+    "min": "min",
+    "active": "ACTIVE"
   },
   "qibla": {
     "title": "Qibla",
