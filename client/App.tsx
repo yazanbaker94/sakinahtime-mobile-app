@@ -119,9 +119,30 @@ export default function App() {
   React.useEffect(() => {
     async function loadFonts() {
       try {
-        await Font.loadAsync({
-          'AlMushafQuran': require('../assets/fonts/AlMushafQuran.ttf'),
-        });
+        await Promise.all([
+          Font.loadAsync({
+            'AlMushafQuran': require('../assets/fonts/AlMushafQuran.ttf'),
+          }),
+          // Pre-cache all 3D icon assets so they render instantly on tab navigation
+          Asset.loadAsync([
+            require('../assets/images/3d-images/travel.png'),
+            require('../assets/images/3d-images/eating.png'),
+            require('../assets/images/3d-images/entering.png'),
+            require('../assets/images/3d-images/cloud.png'),
+            require('../assets/images/3d-images/quranstand.png'),
+            require('../assets/images/3d-images/book.png'),
+            require('../assets/images/3d-images/globe.png'),
+            require('../assets/images/3d-images/Guidance.png'),
+            require('../assets/images/3d-images/Family.png'),
+            require('../assets/images/3d-images/Gratitude.png'),
+            require('../assets/images/3d-images/Forgiveness.png'),
+            require('../assets/images/3d-images/Weather.png'),
+            require('../assets/images/3d-images/customdua.png'),
+            require('../assets/images/3d-images/GeneralAzkar.png'),
+            require('../assets/images/3d-images/AfterPrayer.png'),
+            require('../assets/images/3d-images/WakingUp.png'),
+          ]),
+        ]);
         setFontsLoaded(true);
 
         // Sync widget data on app launch (Android only)
