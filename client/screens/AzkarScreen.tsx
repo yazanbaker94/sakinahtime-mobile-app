@@ -322,26 +322,24 @@ export default function AzkarScreen() {
       </View>
 
       <ScrollView ref={scrollRef} contentContainerStyle={[styles.scrollContent, { paddingBottom: tabBarHeight + Spacing.xl }]} scrollIndicatorInsets={{ bottom: tabBarHeight }} showsVerticalScrollIndicator={false}>
-        {activeTab === 'azkar' && (
-          <>
-            <QuickAccessStrip categories={azkarCategories} onCategoryPress={handleCategoryPress} />
-            <TasbihCounter />
-            <View style={styles.sectionHeader}><ThemedText type="small" secondary style={styles.sectionTitle}>{t('azkar.allCategories')}</ThemedText></View>
-            <View style={styles.categoriesGrid}>
-              {azkarCategories.map((category) => (<CompactCategoryCard key={category.id} category={category} onPress={() => handleCategoryPress(category)} />))}
+        <View style={{ display: activeTab === 'azkar' ? 'flex' : 'none' }}>
+          <QuickAccessStrip categories={azkarCategories} onCategoryPress={handleCategoryPress} />
+          <TasbihCounter />
+          <View style={styles.sectionHeader}><ThemedText type="small" secondary style={styles.sectionTitle}>{t('azkar.allCategories')}</ThemedText></View>
+          <View style={styles.categoriesGrid}>
+            {azkarCategories.map((category) => (<CompactCategoryCard key={category.id} category={category} onPress={() => handleCategoryPress(category)} />))}
+          </View>
+          <View style={[styles.tipCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#FFFFFF', shadowColor: '#000', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.04, shadowRadius: 20, elevation: 2 }]}>
+            <View style={styles.tipHeader}>
+              <Feather name="info" size={20} color={theme.primary} />
+              <ThemedText type="body" style={{ marginLeft: Spacing.sm, fontWeight: '600' }}>{t('azkar.dailyTip')}</ThemedText>
             </View>
-            <View style={[styles.tipCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#FFFFFF', shadowColor: '#000', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.04, shadowRadius: 20, elevation: 2 }]}>
-              <View style={styles.tipHeader}>
-                <Feather name="info" size={20} color={theme.primary} />
-                <ThemedText type="body" style={{ marginLeft: Spacing.sm, fontWeight: '600' }}>{t('azkar.dailyTip')}</ThemedText>
-              </View>
-              <ThemedText type="small" secondary style={styles.tipText}>{tip.text}</ThemedText>
-              <ThemedText type="caption" style={{ color: theme.primary }}>- {tip.source}</ThemedText>
-            </View>
-          </>
-        )}
+            <ThemedText type="small" secondary style={styles.tipText}>{tip.text}</ThemedText>
+            <ThemedText type="caption" style={{ color: theme.primary }}>- {tip.source}</ThemedText>
+          </View>
+        </View>
 
-        {activeTab === 'duas' && (
+        <View style={{ display: activeTab === 'duas' ? 'flex' : 'none' }}>
           <View style={styles.duasContainer}>
             {/* Search Bar — Inset Clay Dish */}
             <View style={[styles.searchContainer, { backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)', borderWidth: 0, borderColor: 'transparent', borderTopWidth: 1, borderTopColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)' }]}>
@@ -410,9 +408,9 @@ export default function AzkarScreen() {
               </>
             )}
           </View>
-        )}
+        </View>
 
-        {activeTab === 'guides' && (
+        <View style={{ display: activeTab === 'guides' ? 'flex' : 'none' }}>
           <View style={styles.guidesContainer}>
             <View style={[styles.searchContainer, { backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)', borderWidth: 0, borderColor: 'transparent', borderTopWidth: 1, borderTopColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)' }]}>
               <Feather name="search" size={20} color={theme.textSecondary} />
@@ -442,7 +440,7 @@ export default function AzkarScreen() {
               ))
             )}
           </View>
-        )}
+        </View>
       </ScrollView>
     </ThemedView>
   );
