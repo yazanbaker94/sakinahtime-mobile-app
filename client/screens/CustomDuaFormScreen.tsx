@@ -105,8 +105,10 @@ export function CustomDuaFormScreen() {
   const inputStyle = [
     styles.input,
     {
-      backgroundColor: theme.backgroundSecondary,
+      backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)',
       color: theme.text,
+      borderWidth: 0,
+      borderColor: 'transparent',
     },
   ];
 
@@ -127,6 +129,11 @@ export function CustomDuaFormScreen() {
             styles.saveButton,
             {
               backgroundColor: theme.primary,
+              shadowColor: theme.primary,
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.3,
+              shadowRadius: 10,
+              elevation: 4,
               opacity: pressed || isSaving ? 0.7 : 1,
             },
           ]}

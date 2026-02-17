@@ -19,7 +19,7 @@ interface DuaOfTheDayProps {
 }
 
 export function DuaOfTheDay({ dua, onPress }: DuaOfTheDayProps) {
-  const { theme } = useTheme();
+  const { isDark, theme } = useTheme();
   const { t } = useTranslation();
 
   // Get source text
@@ -39,7 +39,16 @@ export function DuaOfTheDay({ dua, onPress }: DuaOfTheDayProps) {
       style={({ pressed }) => [
         styles.container,
         {
-          backgroundColor: `${theme.primary}1A`,
+          backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#FFFFFF',
+          borderLeftWidth: 4,
+          borderLeftColor: theme.primary,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 6 },
+          shadowOpacity: 0.05,
+          shadowRadius: 20,
+          elevation: 3,
+          borderWidth: 0,
+          borderColor: 'transparent',
           opacity: pressed ? 0.8 : 1,
         }
       ]}
@@ -135,8 +144,6 @@ const styles = StyleSheet.create({
   tapHint: {
     alignItems: 'center',
     paddingTop: Spacing.sm,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(128, 128, 128, 0.1)',
   },
 });
 

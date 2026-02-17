@@ -69,7 +69,16 @@ export function DuaCard({
   const content = (
     <View style={[
       styles.container,
-      { backgroundColor: isDark ? `${theme.primary}20` : theme.backgroundDefault },
+      {
+        backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#FFFFFF',
+        borderLeftWidth: 4,
+        borderLeftColor: theme.primary,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.05,
+        shadowRadius: 20,
+        elevation: 3,
+      },
       isCompact && styles.compactContainer,
     ]}>
       {/* Header Row with Favorite Button */}
@@ -250,11 +259,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.full,
+    borderWidth: 0,
+    borderColor: 'transparent',
   },
   repetitionBadge: {
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.full,
+    borderWidth: 0,
+    borderColor: 'transparent',
   },
   actionsRow: {
     flexDirection: 'row',
@@ -262,8 +275,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: Spacing.md,
     paddingTop: Spacing.md,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(128, 128, 128, 0.1)',
     gap: Spacing.md,
   },
   actionButton: {

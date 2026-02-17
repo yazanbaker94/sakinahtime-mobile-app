@@ -6,6 +6,7 @@
  */
 
 import React, { useCallback, useState, useMemo, useRef } from 'react';
+import { Image } from 'react-native';
 import { View, StyleSheet, ScrollView, Pressable, TextInput, FlatList, Animated, Alert } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 import { ThemedText } from '@/components/ThemedText';
@@ -56,6 +57,17 @@ const DUA_ICON_MAP: Record<string, keyof typeof Feather.glyphMap> = {
   compass: 'compass',
   users: 'users',
   star: 'star',
+};
+
+// 3D icon assets for dua categories
+const DUA_3D_ICONS: Record<string, any> = {
+  navigation: require('../../assets/images/3d-images/travel.png'),
+  coffee: require('../../assets/images/3d-images/eating.png'),
+  home: require('../../assets/images/3d-images/entering.png'),
+  moon: require('../../assets/images/3d-images/cloud.png'),
+  star: require('../../assets/images/3d-images/quranstand.png'),
+  heart: require('../../assets/images/3d-images/book.png'),
+  shield: require('../../assets/images/3d-images/globe.png'),
 };
 
 // Daily tips — simple rotating hadith reminders
@@ -239,18 +251,30 @@ export default function AzkarScreen() {
     );
   };
 
-  const renderDuaSubTab = (tab: DuaSubTab, label: string, icon: keyof typeof Feather.glyphMap) => (
-    <Pressable
-      key={tab}
-      onPress={() => { setDuaSubTab(tab); setSelectedDuaCategory(null); }}
-      style={[styles.duaSubTab, duaSubTab === tab && { backgroundColor: `${theme.primary}15` }]}
-    >
-      <Feather name={icon} size={14} color={duaSubTab === tab ? theme.primary : theme.textSecondary} />
-      <ThemedText type="caption" style={{ marginLeft: 4, color: duaSubTab === tab ? theme.primary : theme.textSecondary, fontWeight: duaSubTab === tab ? '600' : '400' }}>
-        {label}
-      </ThemedText>
-    </Pressable>
-  );
+  const renderDuaSubTab = (tab: DuaSubTab, label: string, icon: keyof typeof Feather.glyphMap) => {
+    const isActive = duaSubTab === tab;
+    return (
+      <Pressable
+        key={tab}
+        onPress={() => { setDuaSubTab(tab); setSelectedDuaCategory(null); }}
+        style={[styles.duaSubTab, {
+          backgroundColor: isActive ? theme.primary : (isDark ? 'rgba(255,255,255,0.08)' : '#FFFFFF'),
+          shadowColor: isActive ? theme.primary : '#000',
+          shadowOffset: { width: 0, height: isActive ? 4 : 3 },
+          shadowOpacity: isActive ? 0.25 : 0.06,
+          shadowRadius: isActive ? 10 : 8,
+          elevation: isActive ? 4 : 2,
+          borderWidth: 0,
+          borderColor: 'transparent',
+        }]}
+      >
+        <Feather name={icon} size={14} color={isActive ? '#FFFFFF' : theme.textSecondary} />
+        <ThemedText type="caption" style={{ marginLeft: 4, color: isActive ? '#FFFFFF' : theme.textSecondary, fontWeight: isActive ? '700' : '500' }}>
+          {label}
+        </ThemedText>
+      </Pressable>
+    );
+  };
 
   const renderDuaItem = ({ item }: { item: Dua }) => (
     <DuaCard dua={item} variant="compact" isFavorite={isFavorite(item.id)} onFavoriteToggle={() => toggleFavorite(item.id)} onPress={() => handleDuaPress(item)} />
@@ -307,8 +331,8 @@ export default function AzkarScreen() {
 
         {activeTab === 'duas' && (
           <View style={styles.duasContainer}>
-            {/* Search Bar */}
-            <View style={[styles.searchContainer, { backgroundColor: theme.backgroundSecondary }]}>
+            {/* Search Bar — Inset Clay Dish */}
+            <View style={[styles.searchContainer, { backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)', borderWidth: 0, borderColor: 'transparent' }]}>
               <Feather name="search" size={20} color={theme.textSecondary} />
               <TextInput style={[styles.searchInput, { color: theme.text }]} placeholder={t('azkar.searchDuas')} placeholderTextColor={theme.textSecondary} value={duaSearchQuery} onChangeText={setDuaSearchQuery} />
               {duaSearchQuery.length > 0 && (<Pressable onPress={() => setDuaSearchQuery('')}><Feather name="x" size={20} color={theme.textSecondary} /></Pressable>)}
@@ -335,9 +359,13 @@ export default function AzkarScreen() {
                     <DuaOfTheDay dua={duaOfTheDay} onPress={() => handleDuaPress(duaOfTheDay)} />
                     <View style={styles.duaCategoriesGrid}>
                       {duaCategories.map((category) => (
-                        <Pressable key={category.id} onPress={() => handleDuaCategoryPress(category)} style={({ pressed }) => [styles.duaCategoryCard, { backgroundColor: theme.cardBackground, opacity: pressed ? 0.7 : 1 }]}>
-                          <View style={[styles.duaCategoryIcon, { backgroundColor: `${theme.primary}15` }]}>
-                            <Feather name={DUA_ICON_MAP[category.icon] || 'star'} size={24} color={theme.primary} />
+                        <Pressable key={category.id} onPress={() => handleDuaCategoryPress(category)} style={({ pressed }) => [styles.duaCategoryCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#FFFFFF', shadowColor: '#000', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.05, shadowRadius: 20, elevation: 3, borderWidth: 0, borderColor: 'transparent', opacity: pressed ? 0.7 : 1 }]}>
+                          <View style={[styles.duaCategoryIcon, { backgroundColor: `${theme.primary}10` }]}>
+                            {DUA_3D_ICONS[category.icon] ? (
+                              <Image source={DUA_3D_ICONS[category.icon]} style={{ width: 28, height: 28 }} resizeMode="contain" />
+                            ) : (
+                              <Feather name={DUA_ICON_MAP[category.icon] || 'star'} size={24} color={theme.primary} />
+                            )}
                           </View>
                           <ThemedText type="small" style={styles.duaCategoryTitle}>{t(`duaCategories.${category.id}`)}</ThemedText>
                           <ThemedText type="caption" secondary>{category.count} {t('azkar.duas').toLowerCase()}</ThemedText>
@@ -360,7 +388,7 @@ export default function AzkarScreen() {
                 {duaSubTab === 'favorites' && (<FlatList data={favoriteDuas} renderItem={renderDuaItem} keyExtractor={item => item.id} scrollEnabled={false} ListEmptyComponent={renderEmptyState(t('azkar.tapHeartTip'), 'heart')} />)}
                 {duaSubTab === 'custom' && (
                   <>
-                    <Pressable onPress={handleAddCustomDua} style={({ pressed }) => [styles.addButton, { backgroundColor: theme.primary, opacity: pressed ? 0.8 : 1 }]}>
+                    <Pressable onPress={handleAddCustomDua} style={({ pressed }) => [styles.addButton, { backgroundColor: theme.primary, shadowColor: theme.primary, shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.3, shadowRadius: 12, elevation: 4, opacity: pressed ? 0.8 : 1 }]}>
                       <Feather name="plus" size={20} color="#fff" />
                       <ThemedText type="body" style={{ color: '#fff', marginLeft: Spacing.sm, fontWeight: '600' }}>{t('azkar.addCustomDua')}</ThemedText>
                     </Pressable>
@@ -374,7 +402,7 @@ export default function AzkarScreen() {
 
         {activeTab === 'guides' && (
           <View style={styles.guidesContainer}>
-            <View style={[styles.searchContainer, { backgroundColor: theme.backgroundSecondary }]}>
+            <View style={[styles.searchContainer, { backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)', borderWidth: 0, borderColor: 'transparent' }]}>
               <Feather name="search" size={20} color={theme.textSecondary} />
               <TextInput style={[styles.searchInput, { color: theme.text }]} placeholder={t('azkar.searchGuides')} placeholderTextColor={theme.textSecondary} value={searchQuery} onChangeText={setSearchQuery} />
               {searchQuery.length > 0 && (<Pressable onPress={() => setSearchQuery('')}><Feather name="x" size={20} color={theme.textSecondary} /></Pressable>)}
