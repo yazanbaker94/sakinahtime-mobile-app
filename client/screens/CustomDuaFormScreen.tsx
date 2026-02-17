@@ -109,6 +109,8 @@ export function CustomDuaFormScreen() {
       color: theme.text,
       borderWidth: 0,
       borderColor: 'transparent',
+      borderTopWidth: 1,
+      borderTopColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)',
     },
   ];
 

@@ -293,7 +293,11 @@ export default function AzkarScreen() {
 
   const renderEmptyState = (message: string, icon: keyof typeof Feather.glyphMap) => (
     <View style={styles.emptyState}>
-      <Feather name={icon} size={48} color={theme.textSecondary} />
+      {icon === 'edit-3' ? (
+        <Image source={require('../../assets/images/3d-images/customdua.png')} style={{ width: 64, height: 64 }} resizeMode="contain" />
+      ) : (
+        <Feather name={icon} size={48} color={theme.textSecondary} />
+      )}
       <ThemedText type="body" secondary style={{ marginTop: Spacing.md, textAlign: 'center' }}>{message}</ThemedText>
     </View>
   );
@@ -332,7 +336,7 @@ export default function AzkarScreen() {
         {activeTab === 'duas' && (
           <View style={styles.duasContainer}>
             {/* Search Bar — Inset Clay Dish */}
-            <View style={[styles.searchContainer, { backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)', borderWidth: 0, borderColor: 'transparent' }]}>
+            <View style={[styles.searchContainer, { backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)', borderWidth: 0, borderColor: 'transparent', borderTopWidth: 1, borderTopColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)' }]}>
               <Feather name="search" size={20} color={theme.textSecondary} />
               <TextInput style={[styles.searchInput, { color: theme.text }]} placeholder={t('azkar.searchDuas')} placeholderTextColor={theme.textSecondary} value={duaSearchQuery} onChangeText={setDuaSearchQuery} />
               {duaSearchQuery.length > 0 && (<Pressable onPress={() => setDuaSearchQuery('')}><Feather name="x" size={20} color={theme.textSecondary} /></Pressable>)}
@@ -402,7 +406,7 @@ export default function AzkarScreen() {
 
         {activeTab === 'guides' && (
           <View style={styles.guidesContainer}>
-            <View style={[styles.searchContainer, { backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)', borderWidth: 0, borderColor: 'transparent' }]}>
+            <View style={[styles.searchContainer, { backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)', borderWidth: 0, borderColor: 'transparent', borderTopWidth: 1, borderTopColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)' }]}>
               <Feather name="search" size={20} color={theme.textSecondary} />
               <TextInput style={[styles.searchInput, { color: theme.text }]} placeholder={t('azkar.searchGuides')} placeholderTextColor={theme.textSecondary} value={searchQuery} onChangeText={setSearchQuery} />
               {searchQuery.length > 0 && (<Pressable onPress={() => setSearchQuery('')}><Feather name="x" size={20} color={theme.textSecondary} /></Pressable>)}
