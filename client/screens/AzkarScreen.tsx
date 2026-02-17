@@ -75,6 +75,8 @@ const DUA_3D_ICONS: Record<string, any> = {
   cloud: require('../../assets/images/3d-images/Weather.png'),
 };
 
+const CUSTOM_DUA_ICON = require('../../assets/images/3d-images/customdua.png');
+
 // Daily tips — simple rotating hadith reminders
 const DAILY_TIPS = [
   { text: 'The Prophet ﷺ said: "The best remembrance is La ilaha illallah (There is no god but Allah)."', source: 'Tirmidhi' },
@@ -299,16 +301,16 @@ export default function AzkarScreen() {
     </Swipeable>
   );
 
-  const renderEmptyState = (message: string, icon: keyof typeof Feather.glyphMap) => (
+  const renderEmptyState = useCallback((message: string, icon: keyof typeof Feather.glyphMap) => (
     <View style={styles.emptyState}>
       {icon === 'edit-3' ? (
-        <Image source={require('../../assets/images/3d-images/customdua.png')} style={{ width: 64, height: 64 }} resizeMode="contain" />
+        <Image source={CUSTOM_DUA_ICON} style={{ width: 64, height: 64 }} resizeMode="contain" />
       ) : (
         <Feather name={icon} size={48} color={theme.textSecondary} />
       )}
       <ThemedText type="body" secondary style={{ marginTop: Spacing.md, textAlign: 'center' }}>{message}</ThemedText>
     </View>
-  );
+  ), [theme.textSecondary]);
 
   return (
     <ThemedView style={styles.container}>
