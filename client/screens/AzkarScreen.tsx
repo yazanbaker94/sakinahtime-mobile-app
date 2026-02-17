@@ -364,47 +364,47 @@ export default function AzkarScreen() {
               ) : renderEmptyState(`${t('azkar.noDuasFound')} "${duaSearchQuery}"`, 'search')
             ) : (
               <>
-                {duaSubTab === 'categories' && !selectedDuaCategory && (
-                  <>
-                    <DuaOfTheDay dua={duaOfTheDay} onPress={() => handleDuaPress(duaOfTheDay)} />
-                    <View style={styles.duaCategoriesGrid}>
-                      {duaCategories.map((category) => (
-                        <Pressable key={category.id} onPress={() => handleDuaCategoryPress(category)} style={({ pressed }) => [styles.duaCategoryCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#FFFFFF', shadowColor: '#000', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.05, shadowRadius: 20, elevation: 3, borderWidth: 0, borderColor: 'transparent', opacity: pressed ? 0.7 : 1 }]}>
-                          <View style={[styles.duaCategoryIcon, { backgroundColor: `${theme.primary}10` }]}>
-                            {DUA_3D_ICONS[category.icon] ? (
-                              <Image source={DUA_3D_ICONS[category.icon]} style={{ width: 28, height: 28 }} resizeMode="contain" />
-                            ) : (
-                              <Feather name={DUA_ICON_MAP[category.icon] || 'star'} size={24} color={theme.primary} />
-                            )}
-                          </View>
-                          <ThemedText type="small" style={styles.duaCategoryTitle}>{t(`duaCategories.${category.id}`)}</ThemedText>
-                          <ThemedText type="caption" secondary>{category.count} {t('azkar.duas').toLowerCase()}</ThemedText>
-                        </Pressable>
-                      ))}
-                    </View>
-                  </>
-                )}
-                {duaSubTab === 'categories' && selectedDuaCategory && (
-                  <View>
-                    <Pressable onPress={handleBackFromDuaCategory} style={styles.backButton}>
-                      <Feather name="arrow-left" size={20} color={theme.text} />
-                      <ThemedText type="body" style={{ marginLeft: Spacing.sm, fontWeight: '600' }}>{t(`duaCategories.${selectedDuaCategory}`) || t('azkar.back')}</ThemedText>
-                    </Pressable>
-                    <FlatList data={categoryDuas} renderItem={renderDuaItem} keyExtractor={item => item.id} scrollEnabled={false} />
+                <View style={{ display: duaSubTab === 'categories' && !selectedDuaCategory ? 'flex' : 'none' }}>
+                  <DuaOfTheDay dua={duaOfTheDay} onPress={() => handleDuaPress(duaOfTheDay)} />
+                  <View style={styles.duaCategoriesGrid}>
+                    {duaCategories.map((category) => (
+                      <Pressable key={category.id} onPress={() => handleDuaCategoryPress(category)} style={({ pressed }) => [styles.duaCategoryCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#FFFFFF', shadowColor: '#000', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.05, shadowRadius: 20, elevation: 3, borderWidth: 0, borderColor: 'transparent', opacity: pressed ? 0.7 : 1 }]}>
+                        <View style={[styles.duaCategoryIcon, { backgroundColor: `${theme.primary}10` }]}>
+                          {DUA_3D_ICONS[category.icon] ? (
+                            <Image source={DUA_3D_ICONS[category.icon]} style={{ width: 28, height: 28 }} resizeMode="contain" />
+                          ) : (
+                            <Feather name={DUA_ICON_MAP[category.icon] || 'star'} size={24} color={theme.primary} />
+                          )}
+                        </View>
+                        <ThemedText type="small" style={styles.duaCategoryTitle}>{t(`duaCategories.${category.id}`)}</ThemedText>
+                        <ThemedText type="caption" secondary>{category.count} {t('azkar.duas').toLowerCase()}</ThemedText>
+                      </Pressable>
+                    ))}
                   </View>
-                )}
-                {duaSubTab === 'quranic' && (<FlatList data={quranicDuas} renderItem={renderDuaItem} keyExtractor={item => item.id} scrollEnabled={false} ListEmptyComponent={renderEmptyState(t('azkar.noQuranicDuas'), 'book-open')} />)}
-                {duaSubTab === 'prophetic' && (<FlatList data={propheticDuas} renderItem={renderDuaItem} keyExtractor={item => item.id} scrollEnabled={false} ListEmptyComponent={renderEmptyState(t('azkar.noPropheticDuas'), 'bookmark')} />)}
-                {duaSubTab === 'favorites' && (<FlatList data={favoriteDuas} renderItem={renderDuaItem} keyExtractor={item => item.id} scrollEnabled={false} ListEmptyComponent={renderEmptyState(t('azkar.tapHeartTip'), 'heart')} />)}
-                {duaSubTab === 'custom' && (
-                  <>
-                    <Pressable onPress={handleAddCustomDua} style={({ pressed }) => [styles.addButton, { backgroundColor: theme.primary, shadowColor: theme.primary, shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.3, shadowRadius: 12, elevation: 4, opacity: pressed ? 0.8 : 1 }]}>
-                      <Feather name="plus" size={20} color="#fff" />
-                      <ThemedText type="body" style={{ color: '#fff', marginLeft: Spacing.sm, fontWeight: '600' }}>{t('azkar.addCustomDua')}</ThemedText>
-                    </Pressable>
-                    <FlatList data={customDuas} renderItem={renderCustomDuaItem} keyExtractor={item => item.id} scrollEnabled={false} ListEmptyComponent={renderEmptyState(t('azkar.addPersonalSupplications'), 'edit-3')} />
-                  </>
-                )}
+                </View>
+                <View style={{ display: duaSubTab === 'categories' && selectedDuaCategory ? 'flex' : 'none' }}>
+                  <Pressable onPress={handleBackFromDuaCategory} style={styles.backButton}>
+                    <Feather name="arrow-left" size={20} color={theme.text} />
+                    <ThemedText type="body" style={{ marginLeft: Spacing.sm, fontWeight: '600' }}>{t(`duaCategories.${selectedDuaCategory}`) || t('azkar.back')}</ThemedText>
+                  </Pressable>
+                  <FlatList data={categoryDuas} renderItem={renderDuaItem} keyExtractor={item => item.id} scrollEnabled={false} />
+                </View>
+                <View style={{ display: duaSubTab === 'quranic' ? 'flex' : 'none' }}>
+                  <FlatList data={quranicDuas} renderItem={renderDuaItem} keyExtractor={item => item.id} scrollEnabled={false} ListEmptyComponent={renderEmptyState(t('azkar.noQuranicDuas'), 'book-open')} />
+                </View>
+                <View style={{ display: duaSubTab === 'prophetic' ? 'flex' : 'none' }}>
+                  <FlatList data={propheticDuas} renderItem={renderDuaItem} keyExtractor={item => item.id} scrollEnabled={false} ListEmptyComponent={renderEmptyState(t('azkar.noPropheticDuas'), 'bookmark')} />
+                </View>
+                <View style={{ display: duaSubTab === 'favorites' ? 'flex' : 'none' }}>
+                  <FlatList data={favoriteDuas} renderItem={renderDuaItem} keyExtractor={item => item.id} scrollEnabled={false} ListEmptyComponent={renderEmptyState(t('azkar.tapHeartTip'), 'heart')} />
+                </View>
+                <View style={{ display: duaSubTab === 'custom' ? 'flex' : 'none' }}>
+                  <Pressable onPress={handleAddCustomDua} style={({ pressed }) => [styles.addButton, { backgroundColor: theme.primary, shadowColor: theme.primary, shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.3, shadowRadius: 12, elevation: 4, opacity: pressed ? 0.8 : 1 }]}>
+                    <Feather name="plus" size={20} color="#fff" />
+                    <ThemedText type="body" style={{ color: '#fff', marginLeft: Spacing.sm, fontWeight: '600' }}>{t('azkar.addCustomDua')}</ThemedText>
+                  </Pressable>
+                  <FlatList data={customDuas} renderItem={renderCustomDuaItem} keyExtractor={item => item.id} scrollEnabled={false} ListEmptyComponent={renderEmptyState(t('azkar.addPersonalSupplications'), 'edit-3')} />
+                </View>
               </>
             )}
           </View>
