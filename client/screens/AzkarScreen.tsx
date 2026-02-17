@@ -186,8 +186,11 @@ export default function AzkarScreen() {
     navigation.navigate('CustomDuaForm', { duaId: dua.id });
   }, [navigation]);
 
+  const scrollRef = useRef<ScrollView>(null);
+
   const handleDuaCategoryPress = useCallback((category: DuaCategory) => {
     setSelectedDuaCategory(category.id);
+    scrollRef.current?.scrollTo({ y: 0, animated: true });
   }, []);
 
   const handleBackFromDuaCategory = useCallback(() => {
@@ -318,7 +321,7 @@ export default function AzkarScreen() {
         </View>
       </View>
 
-      <ScrollView contentContainerStyle={[styles.scrollContent, { paddingBottom: tabBarHeight + Spacing.xl }]} scrollIndicatorInsets={{ bottom: tabBarHeight }} showsVerticalScrollIndicator={false}>
+      <ScrollView ref={scrollRef} contentContainerStyle={[styles.scrollContent, { paddingBottom: tabBarHeight + Spacing.xl }]} scrollIndicatorInsets={{ bottom: tabBarHeight }} showsVerticalScrollIndicator={false}>
         {activeTab === 'azkar' && (
           <>
             <QuickAccessStrip categories={azkarCategories} onCategoryPress={handleCategoryPress} />
