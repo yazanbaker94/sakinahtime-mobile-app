@@ -128,13 +128,7 @@ export default function App() {
           syncWidgetDataOnLaunch();
         }
 
-        // Pre-load prayer card backgrounds for instant rendering
-        // Using Asset.loadAsync ensures images are decoded before navigation
-        const prayerBackgrounds = [
-          require('../assets/images/mosque-silhouette.jpg'),
-        ];
-        await Asset.loadAsync(prayerBackgrounds);
-        console.log('[App] Prayer backgrounds loaded');
+
 
         // Pre-fetch word timing data for default reciter in background
         // This ensures word-by-word highlighting is ready when user plays audio

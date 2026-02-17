@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, StyleSheet, ScrollView, Pressable, Platform, useWindowDimensions, ImageBackground } from "react-native";
+import { View, StyleSheet, ScrollView, Pressable, Platform, useWindowDimensions } from "react-native";
 
-// Prayer card background
-const mosqueBackground = require('../../assets/images/mosque-silhouette.jpg');
+import { TravelerJourney } from '@/components/TravelerJourney';
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -82,6 +81,8 @@ export default function PrayerTimesScreen() {
 
   const [countdown, setCountdown] = useState({ hours: 0, minutes: 0, seconds: 0 });
   const [nextPrayer, setNextPrayer] = useState<{ name: string; time: string; nameAr: string } | null>(null);
+  const [travelerProgress, setTravelerProgress] = useState(0);
+  const [nextPrayerIndex, setNextPrayerIndex] = useState(0);
   const { method: calculationMethod, isLoading: methodLoading } = useCalculationMethod();
 
   const {
@@ -168,11 +169,50 @@ export default function PrayerTimesScreen() {
   useEffect(() => {
     if (!prayerData?.timings) return;
 
+    const prayerKeys = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'] as const;
+
     const updateCountdown = () => {
       const next = getNextPrayer(prayerData.timings, adjustments);
       setNextPrayer(next);
       if (next) {
         setCountdown(getTimeUntilPrayer(next.time));
+      }
+
+      // Calculate traveler progress
+      const now = new Date();
+      const currentMinutes = now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60;
+
+      const prayerMinutes = prayerKeys.map(key => {
+        const timeStr = prayerData.timings[key];
+        if (!timeStr) return 0;
+        const [h, m] = timeStr.split(':').map(Number);
+        const adj = adjustments?.[key] || 0;
+        return h * 60 + m + adj;
+      });
+
+      // Find which segment we're in
+      let nextIdx: number = prayerKeys.length; // After Isha by default
+      for (let i = 0; i < prayerMinutes.length; i++) {
+        if (prayerMinutes[i] > currentMinutes) {
+          nextIdx = i;
+          break;
+        }
+      }
+
+      setNextPrayerIndex(nextIdx);
+
+      if (nextIdx === 0) {
+        // Before Fajr
+        setTravelerProgress(0);
+      } else if (nextIdx >= prayerKeys.length) {
+        // After Isha
+        setTravelerProgress(1);
+      } else {
+        const prevTime = prayerMinutes[nextIdx - 1];
+        const nextTime = prayerMinutes[nextIdx];
+        const range = nextTime - prevTime;
+        const elapsed = currentMinutes - prevTime;
+        setTravelerProgress(range > 0 ? Math.max(0, Math.min(1, elapsed / range)) : 0);
       }
     };
 
@@ -417,11 +457,11 @@ export default function PrayerTimesScreen() {
         ]}
       >
         {nextPrayer ? (
-          <ImageBackground
-            source={mosqueBackground}
+          <View
             style={[
               styles.nextPrayerCard,
               {
+                backgroundColor: isDark ? theme.cardBackground : theme.primary,
                 shadowColor: theme.primary,
                 shadowOffset: { width: 0, height: 6 },
                 shadowOpacity: isDark ? 0 : 0.25,
@@ -429,15 +469,7 @@ export default function PrayerTimesScreen() {
                 elevation: isDark ? 0 : 6,
               },
             ]}
-            imageStyle={{
-              borderRadius: 18,
-              opacity: isDark ? 0.6 : 0.85,
-            }}
-            resizeMode="cover"
-            fadeDuration={0}
           >
-            {/* Overlay for better text readability */}
-            <View style={[styles.prayerCardOverlay, { backgroundColor: isDark ? 'rgba(0,0,0,0.4)' : 'rgba(0,0,0,0.25)' }]} />
             {/* Header buttons row */}
             <View style={styles.headerButtons}>
               {/* Calendar button */}
@@ -546,7 +578,22 @@ export default function PrayerTimesScreen() {
                 </ThemedText>
               </View>
             </View>
-          </ImageBackground>
+
+            {/* Traveler Journey */}
+            {prayerData?.timings && (
+              <TravelerJourney
+                prayerTimes={{
+                  Fajr: prayerData.timings.Fajr,
+                  Dhuhr: prayerData.timings.Dhuhr,
+                  Asr: prayerData.timings.Asr,
+                  Maghrib: prayerData.timings.Maghrib,
+                  Isha: prayerData.timings.Isha,
+                }}
+                progress={travelerProgress}
+                nextPrayerIndex={nextPrayerIndex}
+              />
+            )}
+          </View>
         ) : null}
 
         <View style={[styles.prayersList, { flex: 1, marginBottom: Spacing.md }]}>

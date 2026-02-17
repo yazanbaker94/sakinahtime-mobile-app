@@ -40,11 +40,11 @@ const useCompassSize = () => {
   const { width, height } = useWindowDimensions();
 
   return useMemo(() => {
-    const availableWidth = width - 80;
-    const availableHeight = height * 0.42;
+    const availableWidth = width - 40;
+    const availableHeight = height * 0.45;
     const compassSize = Math.min(
-      Math.max(availableWidth * 0.85, 220),
-      Math.min(availableHeight, 340)
+      Math.max(availableWidth * 0.88, 260),
+      Math.min(availableHeight, 400)
     );
     return compassSize;
   }, [width, height]);
@@ -63,8 +63,6 @@ export default function QiblaScreen() {
   const prevHeadingRef = useRef<number | null>(null);
   const targetRotationRef = useRef(0); // Track target independently from animation
   const [showCalibrationHint, setShowCalibrationHint] = React.useState(false);
-  const [isLocked, setIsLocked] = React.useState(false);
-  const [lockedHeading, setLockedHeading] = React.useState<number | null>(null);
   const calibrationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const smoothRotation = useSharedValue(0);
 
@@ -136,7 +134,7 @@ export default function QiblaScreen() {
   // Haptic feedback on every movement - stops when aligned (silence = "locked in" feeling)
   // Note: Only on iOS - Android's haptic hardware doesn't support subtle per-scroll vibrations
   useEffect(() => {
-    if (!isFocused || Platform.OS !== "ios" || isAligned || isLocked) return;
+    if (!isFocused || Platform.OS !== "ios" || isAligned) return;
     if (heading === null) return;
 
     // Check if heading actually changed significantly (at least 2 degrees)
@@ -155,7 +153,7 @@ export default function QiblaScreen() {
       lastHapticRef.current = now;
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
-  }, [heading, isFocused, isAligned, isLocked]);
+  }, [heading, isFocused, isAligned]);
 
   useEffect(() => {
     // Only trigger haptics and animations when screen is focused
@@ -173,8 +171,6 @@ export default function QiblaScreen() {
   useEffect(() => {
     if (heading === null) return;
 
-    // Don't update rotation when locked
-    if (isLocked) return;
 
     if (prevHeadingRef.current === null) {
       // First heading - set directly (no animation for initial position)
@@ -204,7 +200,7 @@ export default function QiblaScreen() {
     }
 
     prevHeadingRef.current = heading;
-  }, [heading, smoothRotation, isLocked]);
+  }, [heading, smoothRotation]);
 
   const compassRotationStyle = useAnimatedStyle(() => {
     return {
@@ -215,7 +211,6 @@ export default function QiblaScreen() {
       ],
     };
   });
-
 
 
   // Kaaba position on compass edge — radius is ~65% of compass size (matching SVG coordinate system)
@@ -238,11 +233,15 @@ export default function QiblaScreen() {
     };
   }, [qiblaDirection, kaabaRadius, smoothRotation]);
 
-  const getDirectionText = () => {
+  const getDirectionLabel = () => {
     if (direction === "aligned") return t('qibla.facingQibla');
-    const turnDegrees = Math.round(relativeAngle);
-    if (direction === "left") return `${t('qibla.turnLeft')} ${turnDegrees}°`;
-    return `${t('qibla.turnRight')} ${turnDegrees}°`;
+    if (direction === "left") return t('qibla.turnLeft');
+    return t('qibla.turnRight');
+  };
+
+  const getDirectionDegrees = () => {
+    if (direction === "aligned") return null;
+    return `${Math.round(relativeAngle)}°`;
   };
 
   const getDirectionIcon = (): "check-circle" | "chevron-left" | "chevron-right" => {
@@ -409,17 +408,9 @@ export default function QiblaScreen() {
 
         {/* SVG Compass */}
         <View style={[styles.compassWrapper, {
-          width: compassSize + 20,
-          height: compassSize + 20,
+          width: compassSize,
+          height: compassSize,
         }]}>
-          {/* Subtle outer glow ring - changes when locked */}
-          <View style={[styles.glowRing, {
-            width: compassSize + 12,
-            height: compassSize + 12,
-            borderRadius: (compassSize + 12) / 2,
-            borderColor: isLocked ? primaryColor : `${primaryColor}20`,
-            borderWidth: isLocked ? 3 : 2,
-          }]} />
 
           {/* Compass container */}
           <View style={{
@@ -433,14 +424,23 @@ export default function QiblaScreen() {
               position: 'absolute',
               width: compassSize,
               height: compassSize,
+              overflow: 'visible',
             }, compassRotationStyle]}>
-              <SvgXml
-                xml={isDark ? compassRingDarkSvg : compassRingLightSvg}
-                width={compassSize}
-                height={compassSize}
-              />
+              {/* Clip only the ring to a circle so it doesn't wobble outside */}
+              <View style={{
+                width: compassSize,
+                height: compassSize,
+                overflow: 'hidden',
+                borderRadius: compassSize / 2,
+              }}>
+                <SvgXml
+                  xml={isDark ? compassRingDarkSvg : compassRingLightSvg.replace('#F5F6F5', theme.backgroundRoot)}
+                  width={compassSize}
+                  height={compassSize}
+                />
+              </View>
 
-              {/* Layer 2: Kaaba Icon — positioned on ring edge at qibla bearing */}
+              {/* Layer 2: Kaaba Icon — positioned on ring edge at qibla bearing (NOT clipped) */}
               <Animated.View
                 style={[{
                   position: 'absolute',
@@ -464,6 +464,7 @@ export default function QiblaScreen() {
               position: 'absolute',
               alignItems: 'center',
               justifyContent: 'center',
+              transform: [{ rotate: '-43deg' }],
             }}>
               <SvgXml
                 xml={isDark ? needleDarkSvg : needleLightSvg}
@@ -475,69 +476,36 @@ export default function QiblaScreen() {
         </View>
 
         {/* Direction Indicator */}
-        <View
-          style={styles.directionIndicator}
-        >
+        <View style={[styles.directionIndicator, { height: 60 }]}>
           <ThemedText
             type="body"
-            style={[
-              styles.directionText,
-              {
-                color: isAligned ? primaryColor : theme.text,
-                fontWeight: '800',
-                fontSize: 18,
-                letterSpacing: -0.5,
-              },
-            ]}
-          >
-            {isLocked ? t('qibla.directionLocked') : getDirectionText()}
-          </ThemedText>
-        </View>
-
-        {/* Lock Button - Always reserves space, visible only when aligned or locked */}
-        <Pressable
-          onPress={() => {
-            if (!isAligned && !isLocked) return; // No action if not aligned
-            if (isLocked) {
-              setIsLocked(false);
-              setLockedHeading(null);
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            } else {
-              setIsLocked(true);
-              setLockedHeading(heading);
-              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-            }
-          }}
-          style={({ pressed }) => [{
-            flexDirection: 'row',
-            alignItems: 'center',
-            paddingHorizontal: 16,
-            paddingVertical: 8,
-            borderRadius: 20,
-            backgroundColor: isLocked
-              ? primaryColor
-              : (isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)'),
-            opacity: (isAligned || isLocked) ? (pressed ? 0.7 : 1) : 0,
-            gap: 6,
-          }]}
-          disabled={!isAligned && !isLocked}
-        >
-          <Feather
-            name={isLocked ? "lock" : "unlock"}
-            size={14}
-            color={isLocked ? '#FFFFFF' : primaryColor}
-          />
-          <ThemedText
-            type="caption"
             style={{
-              color: isLocked ? '#FFFFFF' : primaryColor,
+              color: isAligned ? primaryColor : theme.text,
               fontWeight: '600',
               fontSize: 13,
+              letterSpacing: 2,
+              textAlign: 'center',
+              textTransform: 'uppercase',
             }}
           >
-            {isLocked ? t('qibla.tapToUnlock') : t('qibla.lockDirection')}
+            {getDirectionLabel()}
           </ThemedText>
-        </Pressable>
+          {getDirectionDegrees() && (
+            <ThemedText
+              type="body"
+              style={{
+                color: theme.text,
+                fontWeight: '800',
+                fontSize: 38,
+                letterSpacing: -1,
+                textAlign: 'center',
+                lineHeight: 42,
+              }}
+            >
+              {getDirectionDegrees()}
+            </ThemedText>
+          )}
+        </View>
 
         {/* Info Cards - All 3 on one row */}
         <View style={styles.infoContainer}>
@@ -673,9 +641,9 @@ const styles = StyleSheet.create({
   },
 
   directionIndicator: {
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "center",
-    gap: Spacing.sm,
+    gap: 2,
     justifyContent: "center",
   },
   directionText: {
