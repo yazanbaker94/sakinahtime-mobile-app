@@ -68,6 +68,11 @@ const DUA_3D_ICONS: Record<string, any> = {
   star: require('../../assets/images/3d-images/quranstand.png'),
   heart: require('../../assets/images/3d-images/book.png'),
   shield: require('../../assets/images/3d-images/globe.png'),
+  compass: require('../../assets/images/3d-images/Guidance.png'),
+  users: require('../../assets/images/3d-images/Family.png'),
+  gift: require('../../assets/images/3d-images/Gratitude.png'),
+  'refresh-cw': require('../../assets/images/3d-images/Forgiveness.png'),
+  cloud: require('../../assets/images/3d-images/Weather.png'),
 };
 
 // Daily tips — simple rotating hadith reminders
