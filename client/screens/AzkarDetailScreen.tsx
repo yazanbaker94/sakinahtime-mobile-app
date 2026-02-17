@@ -141,6 +141,7 @@ export default function AzkarDetailScreen() {
         paddingVertical: Spacing.sm,
         borderRadius: BorderRadius.full,
         borderWidth: 0,
+        borderColor: 'transparent',
         backgroundColor: isActive
           ? theme.primary
           : (isDark ? 'rgba(255,255,255,0.08)' : '#FFFFFF'),

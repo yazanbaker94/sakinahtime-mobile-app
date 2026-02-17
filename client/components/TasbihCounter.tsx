@@ -129,16 +129,9 @@ export function TasbihCounter({
           style={[
             styles.counterArea,
             {
-              // Visibly darker bg = visually recedes into the card
-              backgroundColor: isDark ? 'rgba(0,0,0,0.12)' : 'rgba(0,0,0,0.045)',
-              // Strong top edge = light hitting the carved rim
-              borderTopWidth: 2,
-              borderTopColor: isDark ? 'rgba(0,0,0,0.25)' : 'rgba(0,0,0,0.10)',
-              borderLeftWidth: 1,
-              borderLeftColor: isDark ? 'rgba(0,0,0,0.12)' : 'rgba(0,0,0,0.04)',
-              borderRightWidth: 1,
-              borderRightColor: isDark ? 'rgba(0,0,0,0.12)' : 'rgba(0,0,0,0.04)',
-              borderBottomWidth: 0,
+              // Uniform pale grey — the outer card shadow provides the 3D depth
+              backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)',
+              borderWidth: 0,
             },
             { transform: [{ scale: pulseAnim }] },
           ]}
