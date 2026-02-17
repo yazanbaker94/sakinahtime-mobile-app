@@ -190,7 +190,7 @@ export default function AzkarScreen() {
 
   const handleDuaCategoryPress = useCallback((category: DuaCategory) => {
     setSelectedDuaCategory(category.id);
-    scrollRef.current?.scrollTo({ y: 0, animated: true });
+    scrollRef.current?.scrollTo({ y: 0, animated: false });
   }, []);
 
   const handleBackFromDuaCategory = useCallback(() => {
