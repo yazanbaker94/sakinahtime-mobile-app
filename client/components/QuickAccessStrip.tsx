@@ -102,6 +102,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     borderRadius: BorderRadius.full,
     borderWidth: 0,
+    borderColor: 'transparent',
     gap: Spacing.xs,
   },
   pillText: {

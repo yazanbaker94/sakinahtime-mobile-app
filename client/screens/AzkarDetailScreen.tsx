@@ -268,6 +268,7 @@ export default function AzkarDetailScreen() {
                       height: 32,
                       borderRadius: 16,
                       borderWidth: 0,
+                      borderColor: 'transparent',
                       alignItems: 'center' as const,
                       justifyContent: 'center' as const,
                       backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : `${theme.primary}10`,
@@ -452,6 +453,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.md,
     borderWidth: 0,
+    borderColor: 'transparent',
   },
   bottomRow: {
     flexDirection: "row",
