@@ -122,7 +122,15 @@ export function HijriCalendarScreen() {
       {/* Header with Back Button */}
       <View style={[styles.header, { backgroundColor: theme.backgroundRoot }]}>
         <Pressable
-          style={[styles.backButton, { backgroundColor: theme.backgroundDefault }]}
+          style={[styles.backButton, {
+            backgroundColor: isDark ? theme.backgroundDefault : '#FFFFFF',
+            borderWidth: 0,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.06,
+            shadowRadius: 12,
+            elevation: 3,
+          }]}
           onPress={() => navigation.goBack()}
         >
           <Feather name="arrow-left" size={24} color={theme.primary} />

@@ -7,12 +7,13 @@
  */
 
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import { HijriDate, MoonPhase, FastingDay } from '../types/hijri';
 import { EventWithDate } from '../services/IslamicEventsService';
-import { MoonPhaseIndicator } from './MoonPhaseIndicator';
 import { useTheme } from '../hooks/useTheme';
 import { useTranslation } from '../hooks/useTranslation';
+
+const moon3D = require('../../assets/images/3d-images/moon.png');
 
 interface HijriDateHeaderProps {
   hijriDate: HijriDate;
@@ -67,7 +68,7 @@ export function HijriDateHeader({
     return (
       <View style={[styles.compactContainer, { backgroundColor: bgColor }]}>
         {showMoonPhase && (
-          <MoonPhaseIndicator phase={moonPhase} size="small" isDark={isDark} />
+          <Image source={moon3D} style={{ width: 28, height: 28 }} resizeMode="contain" />
         )}
         <View style={styles.compactContent}>
           <Text style={styles.compactHijri}>
@@ -82,55 +83,65 @@ export function HijriDateHeader({
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: bgColor }]}>
-      {/* Moon on top */}
-      {showMoonPhase && (
-        <View style={styles.moonContainer}>
-          <MoonPhaseIndicator phase={moonPhase} size="medium" isDark={isDark} />
-        </View>
-      )}
+    /* Glowing shadow wrapper */
+    <View style={{
+      borderRadius: 16,
+      shadowColor: '#5e9caa',
+      shadowOffset: { width: 0, height: 12 },
+      shadowOpacity: 0.35,
+      shadowRadius: 20,
+      elevation: 10,
+    }}>
+      <View style={[styles.container, { backgroundColor: bgColor }]}>
+        {/* 3D Moon */}
+        {showMoonPhase && (
+          <View style={styles.moonContainer}>
+            <Image source={moon3D} style={{ width: 56, height: 56 }} resizeMode="contain" />
+          </View>
+        )}
 
-      {/* Hijri date centered */}
-      <Text style={styles.hijriDate}>
-        {hijriDate.day} {t(`hijri.months.${hijriDate.month}`)} {hijriDate.year} {t('hijriCalendar.ah')}
-      </Text>
+        {/* Hijri date centered */}
+        <Text style={styles.hijriDate}>
+          {hijriDate.day} {t(`hijri.months.${hijriDate.month}`)} {hijriDate.year} {t('hijriCalendar.ah')}
+        </Text>
 
-      {/* Gregorian date */}
-      {showGregorian && (
-        <Text style={[styles.gregorianDate, { color: tertiaryTextColor }]}>{gregorianFormatted}</Text>
-      )}
+        {/* Gregorian date */}
+        {showGregorian && (
+          <Text style={[styles.gregorianDate, { color: tertiaryTextColor }]}>{gregorianFormatted}</Text>
+        )}
 
-      {/* Integrated info badges */}
-      {(fastingInfo || nextEvent) && (
-        <View style={styles.infoSection}>
-          {/* Fasting Status */}
-          {fastingInfo?.isFastingProhibited && (
-            <View style={[styles.infoBadge, styles.prohibitedBadge]}>
-              <Text style={styles.infoBadgeText}>⚠️ {t('hijriCalendar.fastingProhibited')}</Text>
-            </View>
-          )}
-          {fastingInfo?.todayFasting && !fastingInfo.isFastingProhibited && (
-            <View style={[styles.infoBadge, styles.fastingBadge]}>
-              <Text style={styles.infoBadgeText}>🌙 {t(`fastingLabels.${fastingInfo.todayFasting.type}`) || fastingInfo.todayFasting.label}</Text>
-            </View>
-          )}
+        {/* Integrated info badges */}
+        {(fastingInfo || nextEvent) && (
+          <View style={styles.infoSection}>
+            {/* Fasting Status */}
+            {fastingInfo?.isFastingProhibited && (
+              <View style={[styles.infoBadge, styles.prohibitedBadge]}>
+                <Text style={styles.infoBadgeText}>⚠️ {t('hijriCalendar.fastingProhibited')}</Text>
+              </View>
+            )}
+            {fastingInfo?.todayFasting && !fastingInfo.isFastingProhibited && (
+              <View style={[styles.infoBadge, styles.fastingBadge]}>
+                <Text style={styles.infoBadgeText}>🌙 {t(`fastingLabels.${fastingInfo.todayFasting.type}`) || fastingInfo.todayFasting.label}</Text>
+              </View>
+            )}
 
-          {/* Next Event Countdown */}
-          {nextEvent && nextEvent.daysUntil > 0 && (
-            <View style={[styles.infoBadge, styles.eventBadge]}>
-              <Text style={styles.infoBadgeText}>
-                ⭐ {t(`islamicEvents.${nextEvent.id}`) || (isArabic ? nextEvent.nameAr : nextEvent.nameEn)}{' '}
-                {nextEvent.daysUntil < 7
-                  ? t('countdown.inDays', { count: nextEvent.daysUntil })
-                  : nextEvent.daysUntil < 30
-                    ? t(Math.floor(nextEvent.daysUntil / 7) > 1 ? 'countdown.inWeeks' : 'countdown.inWeek', { count: Math.floor(nextEvent.daysUntil / 7) })
-                    : t(Math.floor(nextEvent.daysUntil / 30) > 1 ? 'countdown.inMonths' : 'countdown.inMonth', { count: Math.floor(nextEvent.daysUntil / 30) })
-                }
-              </Text>
-            </View>
-          )}
-        </View>
-      )}
+            {/* Next Event Countdown */}
+            {nextEvent && nextEvent.daysUntil > 0 && (
+              <View style={[styles.infoBadge, styles.eventBadge]}>
+                <Text style={styles.infoBadgeText}>
+                  ⭐ {t(`islamicEvents.${nextEvent.id}`) || (isArabic ? nextEvent.nameAr : nextEvent.nameEn)}{' '}
+                  {nextEvent.daysUntil < 7
+                    ? t('countdown.inDays', { count: nextEvent.daysUntil })
+                    : nextEvent.daysUntil < 30
+                      ? t(Math.floor(nextEvent.daysUntil / 7) > 1 ? 'countdown.inWeeks' : 'countdown.inWeek', { count: Math.floor(nextEvent.daysUntil / 7) })
+                      : t(Math.floor(nextEvent.daysUntil / 30) > 1 ? 'countdown.inMonths' : 'countdown.inMonth', { count: Math.floor(nextEvent.daysUntil / 30) })
+                  }
+                </Text>
+              </View>
+            )}
+          </View>
+        )}
+      </View>
     </View>
   );
 }

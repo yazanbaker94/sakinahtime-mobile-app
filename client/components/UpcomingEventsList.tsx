@@ -95,24 +95,34 @@ export function UpcomingEventsList({
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.cardBackground }]}>
-      <Text style={[styles.title, { color: theme.text }]}>{t('upcomingEvents.title')}</Text>
-      <FlatList
-        data={displayEvents}
-        keyExtractor={(item) => `${item.id}-${item.hijriDate.year}`}
-        renderItem={({ item }) => (
-          <EventItem
-            event={item}
-            showDescription={showDescriptions}
-            isDark={isDark}
-            theme={theme}
-            locale={locale}
-            t={t}
-          />
-        )}
-        scrollEnabled={false}
-        ItemSeparatorComponent={() => <View style={[styles.separator, { backgroundColor: theme.border }]} />}
-      />
+    /* Floating shadow wrapper */
+    <View style={{
+      borderRadius: 16,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.05,
+      shadowRadius: 25,
+      elevation: 4,
+    }}>
+      <View style={[styles.container, { backgroundColor: isDark ? theme.cardBackground : '#FFFFFF', borderWidth: 0 }]}>
+        <Text style={[styles.title, { color: theme.text }]}>{t('upcomingEvents.title')}</Text>
+        <FlatList
+          data={displayEvents}
+          keyExtractor={(item) => `${item.id}-${item.hijriDate.year}`}
+          renderItem={({ item }) => (
+            <EventItem
+              event={item}
+              showDescription={showDescriptions}
+              isDark={isDark}
+              theme={theme}
+              locale={locale}
+              t={t}
+            />
+          )}
+          scrollEnabled={false}
+          ItemSeparatorComponent={() => <View style={[styles.separator, { backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.04)' }]} />}
+        />
+      </View>
     </View>
   );
 }
@@ -120,7 +130,7 @@ export function UpcomingEventsList({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    borderRadius: 16,
     padding: 16,
   },
   title: {

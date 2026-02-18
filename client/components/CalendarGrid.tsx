@@ -151,78 +151,126 @@ export function CalendarGrid({
   })();
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.cardBackground }]}>
-      {/* Month Navigation */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigateMonth(-1)} style={[styles.navButton, { backgroundColor: theme.backgroundSecondary }]}>
-          <Text style={[styles.navText, { color: theme.text }]}>‹</Text>
-        </TouchableOpacity>
-        <View style={styles.monthTitle}>
-          <Text style={[styles.monthName, { color: theme.text }]}>{monthName} {year}</Text>
-          <Text style={[styles.monthNameAr, { color: theme.textSecondary }]}>
-            {hijriDateService.getMonthName(month, 'ar')}
-          </Text>
-        </View>
-        <TouchableOpacity onPress={() => navigateMonth(1)} style={[styles.navButton, { backgroundColor: theme.backgroundSecondary }]}>
-          <Text style={[styles.navText, { color: theme.text }]}>›</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Weekday Headers */}
-      <View style={styles.weekdayRow}>
-        {weekdays.map((day: string, index: number) => (
-          <View key={index} style={styles.weekdayCell}>
-            <Text style={[
-              styles.weekdayText,
-              { color: theme.textSecondary },
-              index === 5 && { color: theme.primary }, // Friday
-            ]}>
-              {day}
+    /* Floating shadow wrapper */
+    <View style={{
+      borderRadius: 16,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.05,
+      shadowRadius: 25,
+      elevation: 4,
+    }}>
+      <View style={[styles.container, { backgroundColor: isDark ? theme.cardBackground : '#FFFFFF', borderWidth: 0 }]}>
+        {/* Month Navigation */}
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigateMonth(-1)} style={[styles.navButton, {
+            backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#EDEEF0',
+            borderWidth: 0,
+            borderTopWidth: 1.5,
+            borderTopColor: isDark ? 'rgba(0,0,0,0.08)' : 'rgba(0,0,0,0.04)',
+          }]}>
+            <Text style={[styles.navText, { color: theme.text }]}>‹</Text>
+          </TouchableOpacity>
+          <View style={styles.monthTitle}>
+            <Text style={[styles.monthName, { color: theme.text }]}>{monthName} {year}</Text>
+            <Text style={[styles.monthNameAr, { color: theme.textSecondary }]}>
+              {hijriDateService.getMonthName(month, 'ar')}
             </Text>
           </View>
-        ))}
-      </View>
-
-      {/* Calendar Days */}
-      <View style={styles.daysGrid}>
-        {calendarDays.map((day, index) => (
-          <TouchableOpacity
-            key={index}
-            style={[
-              styles.dayCell,
-              day.isToday && [styles.todayCell, { backgroundColor: theme.primary }],
-              !day.isCurrentMonth && styles.emptyCell,
-            ]}
-            onPress={() => handleDayPress(day)}
-            disabled={!day.isCurrentMonth}
-          >
-            {day.isCurrentMonth && (
-              <>
-                <Text style={[
-                  styles.dayNumber,
-                  { color: theme.text },
-                  day.isToday && styles.todayNumber,
-                ]}>
-                  {day.hijriDate.day}
-                </Text>
-                <View style={styles.indicators}>
-                  {day.event && (
-                    <View style={[styles.indicator, { backgroundColor: day.event.color || theme.gold }]} />
-                  )}
-                  {day.fastingDay && day.fastingDay.type === 'white_day' && (
-                    <View style={[styles.indicator, { backgroundColor: '#8B5CF6' }]} />
-                  )}
-                  {day.fastingDay && day.fastingDay.type !== 'white_day' && (
-                    <View style={[styles.indicator, { backgroundColor: '#3B82F6' }]} />
-                  )}
-                </View>
-              </>
-            )}
+          <TouchableOpacity onPress={() => navigateMonth(1)} style={[styles.navButton, {
+            backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#EDEEF0',
+            borderWidth: 0,
+            borderTopWidth: 1.5,
+            borderTopColor: isDark ? 'rgba(0,0,0,0.08)' : 'rgba(0,0,0,0.04)',
+          }]}>
+            <Text style={[styles.navText, { color: theme.text }]}>›</Text>
           </TouchableOpacity>
-        ))}
-      </View>
+        </View>
 
-      <CalendarLegend isDark={isDark} theme={theme} t={t} />
+        {/* Weekday Headers */}
+        <View style={styles.weekdayRow}>
+          {weekdays.map((day: string, index: number) => (
+            <View key={index} style={styles.weekdayCell}>
+              <Text style={[
+                styles.weekdayText,
+                { color: theme.textSecondary },
+                index === 5 && { color: theme.primary }, // Friday
+              ]}>
+                {day}
+              </Text>
+            </View>
+          ))}
+        </View>
+
+        {/* Calendar Days */}
+        <View style={styles.daysGrid}>
+          {calendarDays.map((day, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[
+                styles.dayCell,
+                !day.isCurrentMonth && styles.emptyCell,
+              ]}
+              onPress={() => handleDayPress(day)}
+              disabled={!day.isCurrentMonth}
+            >
+              {day.isCurrentMonth && day.isToday ? (
+                /* Glowing today wrapper */
+                <View style={{
+                  width: DAY_SIZE - 4,
+                  height: DAY_SIZE - 4,
+                  borderRadius: (DAY_SIZE - 4) / 2,
+                  backgroundColor: theme.primary,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  shadowColor: '#5e9caa',
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.4,
+                  shadowRadius: 8,
+                  elevation: 5,
+                }}>
+                  <Text style={[styles.dayNumber, styles.todayNumber]}>
+                    {day.hijriDate.day}
+                  </Text>
+                  <View style={styles.indicators}>
+                    {day.event && (
+                      <View style={[styles.indicator, { backgroundColor: day.event.color || theme.gold }]} />
+                    )}
+                    {day.fastingDay && day.fastingDay.type === 'white_day' && (
+                      <View style={[styles.indicator, { backgroundColor: '#8B5CF6' }]} />
+                    )}
+                    {day.fastingDay && day.fastingDay.type !== 'white_day' && (
+                      <View style={[styles.indicator, { backgroundColor: '#3B82F6' }]} />
+                    )}
+                  </View>
+                </View>
+              ) : day.isCurrentMonth ? (
+                <>
+                  <Text style={[
+                    styles.dayNumber,
+                    { color: theme.text },
+                  ]}>
+                    {day.hijriDate.day}
+                  </Text>
+                  <View style={styles.indicators}>
+                    {day.event && (
+                      <View style={[styles.indicator, { backgroundColor: day.event.color || theme.gold }]} />
+                    )}
+                    {day.fastingDay && day.fastingDay.type === 'white_day' && (
+                      <View style={[styles.indicator, { backgroundColor: '#8B5CF6' }]} />
+                    )}
+                    {day.fastingDay && day.fastingDay.type !== 'white_day' && (
+                      <View style={[styles.indicator, { backgroundColor: '#3B82F6' }]} />
+                    )}
+                  </View>
+                </>
+              ) : null}
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        <CalendarLegend isDark={isDark} theme={theme} t={t} />
+      </View>
     </View>
   );
 }
