@@ -96,9 +96,9 @@ export function ThemePicker() {
                   borderColor: 'transparent',
                   shadowColor: isSelected ? themeColors.primary : '#000',
                   shadowOffset: { width: 0, height: isSelected ? 4 : 2 },
-                  shadowOpacity: isSelected ? 0.45 : (isDark ? 0 : 0.06),
+                  shadowOpacity: isSelected ? 0.5 : (isDark ? 0.15 : 0.06),
                   shadowRadius: isSelected ? 12 : 6,
-                  elevation: isSelected ? 8 : (isDark ? 0 : 2),
+                  elevation: isSelected ? 8 : (isDark ? 1 : 2),
                   backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : '#FFFFFF',
                 },
               ]}
