@@ -261,61 +261,91 @@ export default function QiblaScreen() {
           ]}
         >
           <View style={styles.permissionContainer}>
-            <View
-              style={[
-                styles.iconCircle,
-                {
-                  backgroundColor: `${dynamicColor}15`,
-                  borderWidth: 2,
-                  borderColor: `${dynamicColor}30`,
-                },
-              ]}
-            >
-              <Feather name="map-pin" size={48} color={dynamicColor} />
+            {/* 3D Location Pin with Glow */}
+            <View style={{ alignItems: 'center', marginBottom: -40, zIndex: 2 }}>
+              {/* Glow behind pin */}
+              <View style={{
+                position: 'absolute',
+                width: 120,
+                height: 120,
+                borderRadius: 60,
+                backgroundColor: dynamicColor,
+                opacity: 0.12,
+                top: 10,
+              }} />
+              <Image
+                source={require('../../assets/images/3d-images/location.png')}
+                style={{ width: 120, height: 120 }}
+                resizeMode="contain"
+                fadeDuration={0}
+              />
             </View>
-            <ThemedText type="h3" style={styles.permissionTitle}>
-              {t('prayer.locationRequired')}
-            </ThemedText>
-            <ThemedText type="body" secondary style={styles.permissionText}>
-              {t('qibla.locationRequiredQibla')}
-            </ThemedText>
-            {Platform.OS === "web" ? (
-              <ThemedText type="small" secondary style={styles.permissionText}>
-                {t('prayer.browserLocationHint')}
+
+            {/* Floating Pedestal Card */}
+            <View style={{
+              backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
+              borderRadius: 24,
+              paddingTop: 56,
+              paddingBottom: 32,
+              paddingHorizontal: 28,
+              alignItems: 'center',
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 8 },
+              shadowOpacity: 0.08,
+              shadowRadius: 24,
+              elevation: 5,
+              width: '100%',
+            }}>
+              <ThemedText type="h3" style={styles.permissionTitle}>
+                {t('prayer.locationRequired')}
               </ThemedText>
-            ) : canAskAgain ? (
-              <Pressable
-                onPress={requestPermission}
-                style={[styles.permissionButton, {
-                  backgroundColor: dynamicColor,
-                  shadowColor: dynamicColor,
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.3,
-                  shadowRadius: 8,
-                  elevation: 4,
-                }]}
-              >
-                <ThemedText type="body" style={{ color: "#FFFFFF", fontWeight: '600' }}>
-                  {t('prayer.enableLocation')}
+              <ThemedText type="body" secondary style={styles.permissionText}>
+                {t('qibla.locationRequiredQibla')}
+              </ThemedText>
+              {Platform.OS === "web" ? (
+                <ThemedText type="small" secondary style={styles.permissionText}>
+                  {t('prayer.browserLocationHint')}
                 </ThemedText>
-              </Pressable>
-            ) : (
-              <Pressable
-                onPress={openSettings}
-                style={[styles.permissionButton, {
-                  backgroundColor: dynamicColor,
-                  shadowColor: dynamicColor,
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.3,
-                  shadowRadius: 8,
-                  elevation: 4,
-                }]}
-              >
-                <ThemedText type="body" style={{ color: "#FFFFFF", fontWeight: '600' }}>
-                  {t('prayer.openSettings')}
-                </ThemedText>
-              </Pressable>
-            )}
+              ) : canAskAgain ? (
+                <Pressable
+                  onPress={requestPermission}
+                  style={({ pressed }) => [styles.permissionButton, {
+                    backgroundColor: dynamicColor,
+                    shadowColor: dynamicColor,
+                    shadowOffset: { width: 0, height: 6 },
+                    shadowOpacity: 0.35,
+                    shadowRadius: 12,
+                    elevation: 6,
+                    opacity: pressed ? 0.85 : 1,
+                    width: '100%',
+                  }]}
+                >
+                  <Feather name="navigation" size={18} color="#FFFFFF" style={{ marginRight: 8 }} />
+                  <ThemedText type="body" style={{ color: "#FFFFFF", fontWeight: '700', fontSize: 16 }}>
+                    {t('prayer.enableLocation')}
+                  </ThemedText>
+                </Pressable>
+              ) : (
+                <Pressable
+                  onPress={openSettings}
+                  style={({ pressed }) => [styles.permissionButton, {
+                    backgroundColor: dynamicColor,
+                    shadowColor: dynamicColor,
+                    shadowOffset: { width: 0, height: 6 },
+                    shadowOpacity: 0.35,
+                    shadowRadius: 12,
+                    elevation: 6,
+                    opacity: pressed ? 0.85 : 1,
+                    width: '100%',
+                  }]}
+                >
+                  <Feather name="settings" size={18} color="#FFFFFF" style={{ marginRight: 8 }} />
+                  <ThemedText type="body" style={{ color: "#FFFFFF", fontWeight: '700', fontSize: 16 }}>
+                    {t('prayer.openSettings')}
+                  </ThemedText>
+                </Pressable>
+              )}
+            </View>
           </View>
         </View>
       </View>
@@ -771,6 +801,9 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   permissionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingHorizontal: Spacing["3xl"],
     paddingVertical: Spacing.lg,
     borderRadius: 16,

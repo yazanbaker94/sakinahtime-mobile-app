@@ -146,6 +146,7 @@ export default function App() {
             require('../assets/images/3d-images/Knowledge.png'),
             require('../assets/images/3d-images/Character.png'),
             require('../assets/images/3d-images/Finance.png'),
+            require('../assets/images/3d-images/location.png'),
           ]),
         ]);
         setFontsLoaded(true);
