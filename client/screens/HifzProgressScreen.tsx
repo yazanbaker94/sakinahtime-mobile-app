@@ -13,7 +13,7 @@ import {
   Alert,
   Share,
   Dimensions,
-  Image,
+  Switch,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -27,12 +27,7 @@ import { useRevisionSchedule } from '../hooks/useRevisionSchedule';
 import { hifzNotificationService } from '../services/HifzNotificationService';
 import { QURAN_STATS } from '../constants/hifz';
 import { useTranslation } from '@/hooks/useTranslation';
-import { TactileSwitch } from '@/components/TactileSwitch';
 import type { MemorizationStatus } from '../types/hifz';
-
-const ICON_CURRENT_STREAK = require('../../assets/images/3d-images/currentstreak.png');
-const ICON_LONGEST_STREAK = require('../../assets/images/3d-images/longeststreak.png');
-const ICON_TODAY_PROGRESS = require('../../assets/images/3d-images/todayprogress.png');
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -125,13 +120,7 @@ export default function HifzProgressScreen() {
             {current} / {total}
           </ThemedText>
         </View>
-        <View style={[styles.progressBarBg, {
-          backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#EDEFF2',
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 1 },
-          shadowOpacity: 0.08,
-          shadowRadius: 2,
-        }]}>
+        <View style={[styles.progressBarBg, { backgroundColor: theme.backgroundSecondary }]}>
           <View
             style={[
               styles.progressBarFill,
@@ -150,26 +139,12 @@ export default function HifzProgressScreen() {
     icon: string,
     label: string,
     value: string | number,
-    color: string,
-    image3d?: any
+    color: string
   ) => (
-    <View style={[styles.statCard, {
-      backgroundColor: '#FFFFFF',
-      borderWidth: 0,
-      borderColor: 'transparent',
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.05,
-      shadowRadius: 12,
-      elevation: 2,
-    }]}>
-      {image3d ? (
-        <Image source={image3d} style={{ width: 44, height: 44, marginBottom: 8 }} resizeMode="contain" />
-      ) : (
-        <View style={[styles.statIcon, { backgroundColor: `${color}15` }]}>
-          <Feather name={icon as any} size={20} color={color} />
-        </View>
-      )}
+    <View style={[styles.statCard, { backgroundColor: theme.cardBackground }]}>
+      <View style={[styles.statIcon, { backgroundColor: `${color}20` }]}>
+        <Feather name={icon as any} size={20} color={color} />
+      </View>
       <ThemedText style={styles.statValue}>{value}</ThemedText>
       <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
         {label}
@@ -234,15 +209,13 @@ export default function HifzProgressScreen() {
             'book-open',
             t('hifz.versesMemorized'),
             stats?.memorizedVerses || 0,
-            theme.primary,
-            ICON_TODAY_PROGRESS
+            theme.primary
           )}
           {renderStatCard(
             'loader',
             t('hifz.inProgress'),
             stats?.inProgressVerses || 0,
-            '#F59E0B',
-            ICON_CURRENT_STREAK
+            '#F59E0B'
           )}
           {renderStatCard(
             'calendar',
@@ -254,42 +227,25 @@ export default function HifzProgressScreen() {
             'check-circle',
             t('hifz.revisedToday'),
             todayCompleted,
-            activeColor,
-            ICON_LONGEST_STREAK
+            activeColor
           )}
         </View>
 
         {/* Daily Goal Progress */}
-        <View style={[styles.section, {
-          backgroundColor: '#FFFFFF',
-          borderWidth: 0,
-          borderColor: 'transparent',
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.05,
-          shadowRadius: 12,
-          elevation: 2,
-        }]}>
+        <View style={[styles.section, { backgroundColor: theme.cardBackground }]}>
           <View style={styles.sectionHeader}>
             <ThemedText style={styles.sectionTitle}>{t('hifz.dailyGoal')}</ThemedText>
             <ThemedText style={[styles.goalText, { color: activeColor }]}>
               {todayCompleted} / {dailyGoal}
             </ThemedText>
           </View>
-          <View style={[styles.goalBarBg, {
-            backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#EDEFF2',
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 1 },
-            shadowOpacity: 0.08,
-            shadowRadius: 2,
-          }]}>
+          <View style={[styles.goalBarBg, { backgroundColor: theme.backgroundSecondary }]}>
             <View
               style={[
                 styles.goalBarFill,
                 {
                   width: `${dailyGoalProgress}%`,
                   backgroundColor: activeColor,
-                  borderRadius: 4,
                 },
               ]}
             />
@@ -297,16 +253,7 @@ export default function HifzProgressScreen() {
         </View>
 
         {/* Overall Progress */}
-        <View style={[styles.section, {
-          backgroundColor: '#FFFFFF',
-          borderWidth: 0,
-          borderColor: 'transparent',
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.05,
-          shadowRadius: 12,
-          elevation: 2,
-        }]}>
+        <View style={[styles.section, { backgroundColor: theme.cardBackground }]}>
           <ThemedText style={styles.sectionTitle}>{t('hifz.overallProgress')}</ThemedText>
           {renderProgressBar(
             t('hifz.verses'),
@@ -330,16 +277,7 @@ export default function HifzProgressScreen() {
 
         {/* Due Revisions */}
         {dueRevisions.length > 0 && (
-          <View style={[styles.section, {
-            backgroundColor: '#FFFFFF',
-            borderWidth: 0,
-            borderColor: 'transparent',
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.05,
-            shadowRadius: 12,
-            elevation: 2,
-          }]}>
+          <View style={[styles.section, { backgroundColor: theme.cardBackground }]}>
             <View style={styles.sectionHeader}>
               <ThemedText style={styles.sectionTitle}>{t('hifz.dueForRevision')}</ThemedText>
               <View style={[styles.badge, { backgroundColor: '#EF444420' }]}>
@@ -381,16 +319,7 @@ export default function HifzProgressScreen() {
         )}
 
         {/* Status Legend */}
-        <View style={[styles.section, {
-          backgroundColor: '#FFFFFF',
-          borderWidth: 0,
-          borderColor: 'transparent',
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.05,
-          shadowRadius: 12,
-          elevation: 2,
-        }]}>
+        <View style={[styles.section, { backgroundColor: theme.cardBackground }]}>
           <ThemedText style={styles.sectionTitle}>{t('hifz.statusLegend')}</ThemedText>
           <View style={styles.legendGrid}>
             <View style={styles.legendItem}>
@@ -409,16 +338,7 @@ export default function HifzProgressScreen() {
         </View>
 
         {/* Notification Settings */}
-        <View style={[styles.section, {
-          backgroundColor: '#FFFFFF',
-          borderWidth: 0,
-          borderColor: 'transparent',
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.05,
-          shadowRadius: 12,
-          elevation: 2,
-        }]}>
+        <View style={[styles.section, { backgroundColor: theme.cardBackground }]}>
           <ThemedText style={styles.sectionTitle}>{t('hifz.notifications')}</ThemedText>
           <View style={styles.notificationRow}>
             <View style={styles.notificationInfo}>
@@ -430,7 +350,7 @@ export default function HifzProgressScreen() {
                 </ThemedText>
               </View>
             </View>
-            <TactileSwitch
+            <Switch
               value={notificationsEnabled}
               onValueChange={async (value) => {
                 setNotificationsEnabled(value);
@@ -439,6 +359,8 @@ export default function HifzProgressScreen() {
                   await hifzNotificationService.scheduleRevisionReminder(dueRevisions.length);
                 }
               }}
+              trackColor={{ false: theme.border, true: `${activeColor}50` }}
+              thumbColor={notificationsEnabled ? activeColor : theme.textSecondary}
             />
           </View>
         </View>
@@ -446,19 +368,10 @@ export default function HifzProgressScreen() {
         {/* Reset Button */}
         <TouchableOpacity
           onPress={handleReset}
-          style={[styles.resetButton, {
-            backgroundColor: '#EF4444',
-            borderWidth: 0,
-            borderColor: 'transparent',
-            shadowColor: '#EF4444',
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.35,
-            shadowRadius: 8,
-            elevation: 5,
-          }]}
+          style={[styles.resetButton, { borderColor: '#EF4444' }]}
         >
-          <Feather name="trash-2" size={18} color="#FFFFFF" />
-          <ThemedText style={[styles.resetText, { color: '#FFFFFF' }]}>
+          <Feather name="trash-2" size={18} color="#EF4444" />
+          <ThemedText style={[styles.resetText, { color: '#EF4444' }]}>
             {t('hifz.resetAllProgress')}
           </ThemedText>
         </TouchableOpacity>
@@ -665,6 +578,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 14,
     borderRadius: 12,
+    borderWidth: 1,
     gap: 8,
     marginTop: 8,
   },
