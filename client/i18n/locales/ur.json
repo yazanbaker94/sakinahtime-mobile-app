@@ -1,4 +1,4 @@
-{
+﻿{
   "tabs": {
     "qibla": "قبلہ",
     "prayer": "نماز",
@@ -1305,6 +1305,8 @@
     "stopRepeating": "دہرانا بند کریں"
   },
   "calendarGrid": {
+    "holiday": "تعطیل",
+    "holiday": "u062au0639u0637u06ccu0644",
     "whiteDay": "ایام بیض",
     "event": "واقعہ",
     "fasting": "روزہ"

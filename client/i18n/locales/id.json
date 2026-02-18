@@ -1,4 +1,4 @@
-{
+﻿{
     "tabs": {
         "qibla": "Kiblat",
         "prayer": "Shalat",
@@ -1305,7 +1305,9 @@
         "stopRepeating": "Berhenti Mengulang"
     },
     "calendarGrid": {
-        "whiteDay": "Hari Putih",
+        "holiday": "Hari Libur",
+    "holiday": "Hari Libur",
+    "whiteDay": "Hari Putih",
         "event": "Acara",
         "fasting": "Puasa"
     },

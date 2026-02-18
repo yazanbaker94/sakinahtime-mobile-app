@@ -1307,6 +1307,7 @@
     "stopRepeating": "Stop Repeating"
   },
   "calendarGrid": {
+    "holiday": "Holiday",
     "whiteDay": "White Day",
     "event": "Event",
     "fasting": "Fasting"

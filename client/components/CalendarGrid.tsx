@@ -32,7 +32,11 @@ const DAY_SIZE = Math.floor((SCREEN_WIDTH - 48) / 7);
 
 function CalendarLegend({ isDark, theme, t }: { isDark: boolean; theme: any; t: (key: string) => string }) {
   return (
-    <View style={[styles.legend, { borderTopColor: theme.border }]}>
+    <View style={[styles.legend, { borderTopColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)' }]}>
+      <View style={styles.legendItem}>
+        <View style={[styles.legendDot, { backgroundColor: theme.primary }]} />
+        <Text style={[styles.legendText, { color: theme.textSecondary }]}>{t('calendarGrid.holiday')}</Text>
+      </View>
       <View style={styles.legendItem}>
         <View style={[styles.legendDot, { backgroundColor: theme.gold }]} />
         <Text style={[styles.legendText, { color: theme.textSecondary }]}>{t('calendarGrid.event')}</Text>
@@ -160,14 +164,18 @@ export function CalendarGrid({
       shadowRadius: 25,
       elevation: 4,
     }}>
-      <View style={[styles.container, { backgroundColor: isDark ? theme.cardBackground : '#FFFFFF', borderWidth: 0 }]}>
+      <View style={[styles.container, { backgroundColor: isDark ? theme.cardBackground : '#FFFFFF', borderWidth: 0, borderColor: 'transparent' }]}>
         {/* Month Navigation */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigateMonth(-1)} style={[styles.navButton, {
-            backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#EDEEF0',
+            backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
             borderWidth: 0,
-            borderTopWidth: 1.5,
-            borderTopColor: isDark ? 'rgba(0,0,0,0.08)' : 'rgba(0,0,0,0.04)',
+            borderColor: 'transparent',
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.05,
+            shadowRadius: 10,
+            elevation: 3,
           }]}>
             <Text style={[styles.navText, { color: theme.text }]}>‹</Text>
           </TouchableOpacity>
@@ -178,10 +186,14 @@ export function CalendarGrid({
             </Text>
           </View>
           <TouchableOpacity onPress={() => navigateMonth(1)} style={[styles.navButton, {
-            backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#EDEEF0',
+            backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
             borderWidth: 0,
-            borderTopWidth: 1.5,
-            borderTopColor: isDark ? 'rgba(0,0,0,0.08)' : 'rgba(0,0,0,0.04)',
+            borderColor: 'transparent',
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.05,
+            shadowRadius: 10,
+            elevation: 3,
           }]}>
             <Text style={[styles.navText, { color: theme.text }]}>›</Text>
           </TouchableOpacity>

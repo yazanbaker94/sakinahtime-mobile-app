@@ -1,4 +1,4 @@
-{
+﻿{
   "tabs": {
     "qibla": "Qibla",
     "prayer": "Gebet",
@@ -2264,6 +2264,8 @@
   "calendarGrid": {
     "event": "Ereignis",
     "fasting": "Fasten",
+    "holiday": "Feiertag",
+    "holiday": "Feiertag",
     "whiteDay": "Weißer Tag"
   },
   "duaOfDay": {

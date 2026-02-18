@@ -1,4 +1,4 @@
-{
+﻿{
   "tabs": {
     "qibla": "Qibla",
     "prayer": "Prière",
@@ -1305,6 +1305,8 @@
     "stopRepeating": "Arrêter la répétition"
   },
   "calendarGrid": {
+    "holiday": "Fête",
+    "holiday": "F\u00eate",
     "whiteDay": "Jour blanc",
     "event": "Événement",
     "fasting": "Jeûne"

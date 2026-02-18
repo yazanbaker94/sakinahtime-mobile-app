@@ -1,4 +1,4 @@
-{
+﻿{
   "tabs": {
     "qibla": "朝向",
     "prayer": "礼拜",
@@ -2264,6 +2264,8 @@
   "calendarGrid": {
     "event": "事件",
     "fasting": "斋戒",
+    "holiday": "节日",
+    "holiday": "u8282u65e5",
     "whiteDay": "白天日"
   },
   "duaOfDay": {

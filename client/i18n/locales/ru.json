@@ -1,4 +1,4 @@
-{
+﻿{
   "tabs": {
     "qibla": "Кибла",
     "prayer": "Намаз",
@@ -2264,6 +2264,8 @@
   "calendarGrid": {
     "event": "Событие",
     "fasting": "Пост",
+    "holiday": "Праздник",
+    "holiday": "u041fu0440u0430u0437u0434u043du0438u043a",
     "whiteDay": "Белый день"
   },
   "duaOfDay": {

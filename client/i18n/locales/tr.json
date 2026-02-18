@@ -1,4 +1,4 @@
-{
+﻿{
   "tabs": {
     "qibla": "Kıble",
     "prayer": "Namaz",
@@ -1416,6 +1416,8 @@
     "stop": "Durdur"
   },
   "calendarGrid": {
+    "holiday": "Bayram",
+    "holiday": "Bayram",
     "whiteDay": "White Day",
     "event": "Event",
     "fasting": "Fasting",

@@ -1,4 +1,4 @@
-{
+﻿{
   "tabs": {
     "qibla": "কিবলা",
     "prayer": "নামাজ",
@@ -1305,6 +1305,8 @@
     "stopRepeating": "পুনরাবৃত্তি বন্ধ করুন"
   },
   "calendarGrid": {
+    "holiday": "ছটর দন",
+    "holiday": "u099bu09c1u099fu09bfu09b0 u09a6u09bfu09a8",
     "whiteDay": "আইয়ামে বীয",
     "event": "অনুষ্ঠান",
     "fasting": "রোজা"
