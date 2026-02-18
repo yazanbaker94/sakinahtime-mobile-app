@@ -86,6 +86,7 @@ const styles = StyleSheet.create({
         borderRadius: TRACK_HEIGHT / 2,
         justifyContent: 'center',
         paddingHorizontal: 2,
+        overflow: 'visible',
     },
     thumb: {
         width: THUMB_SIZE,

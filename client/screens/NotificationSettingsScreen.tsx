@@ -354,20 +354,42 @@ export default function NotificationSettingsScreen() {
                     <View style={styles.adjustmentControls}>
                       <Pressable
                         onPress={() => handleAdjustPrayerTime(prayer.key as keyof PrayerAdjustments, adjustment - 1)}
-                        style={[styles.adjustmentButton, { backgroundColor: isDark ? 'rgba(239, 68, 68, 0.15)' : 'rgba(220, 38, 38, 0.1)' }]}
+                        style={[styles.adjustmentButton, {
+                          backgroundColor: '#FFFFFF',
+                          borderWidth: 0,
+                          borderColor: 'transparent',
+                          shadowColor: '#000',
+                          shadowOffset: { width: 0, height: 3 },
+                          shadowOpacity: 0.05,
+                          shadowRadius: 8,
+                          elevation: 2,
+                        }]}
                       >
                         <Feather name="minus" size={16} color={isDark ? '#EF4444' : '#DC2626'} />
                       </Pressable>
-                      <View style={[styles.adjustmentValue, { backgroundColor: theme.backgroundSecondary }]}>
+                      <View style={[styles.adjustmentValue, {
+                        backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#F3F4F6',
+                        borderWidth: 0,
+                        borderColor: 'transparent',
+                      }]}>
                         <ThemedText type="body" style={{ fontWeight: '700', minWidth: 50, textAlign: 'center' }}>
                           {adjustment > 0 ? '+' : ''}{adjustment} {t('notifications.min')}
                         </ThemedText>
                       </View>
                       <Pressable
                         onPress={() => handleAdjustPrayerTime(prayer.key as keyof PrayerAdjustments, adjustment + 1)}
-                        style={[styles.adjustmentButton, { backgroundColor: `${theme.primary}15` }]}
+                        style={[styles.adjustmentButton, {
+                          backgroundColor: '#FFFFFF',
+                          borderWidth: 0,
+                          borderColor: 'transparent',
+                          shadowColor: '#000',
+                          shadowOffset: { width: 0, height: 3 },
+                          shadowOpacity: 0.05,
+                          shadowRadius: 8,
+                          elevation: 2,
+                        }]}
                       >
-                        <Feather name="plus" size={16} color={theme.primary} />
+                        <Feather name="plus" size={16} color="#5e9caa" />
                       </Pressable>
                     </View>
                   </View>
