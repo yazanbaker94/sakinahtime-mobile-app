@@ -117,9 +117,9 @@ export default function QiblaScreen() {
   const lastHapticRef = useRef<number>(0);
   const lastHeadingRef = useRef<number | null>(null);
 
-  // Haptic feedback on movement (iOS only)
   useEffect(() => {
     if (!isFocused || Platform.OS !== "ios" || isAligned) return;
+    if (!permission?.granted && !hasManualLocation) return;
     if (heading === null) return;
 
     if (lastHeadingRef.current !== null) {
@@ -140,6 +140,7 @@ export default function QiblaScreen() {
   // Alignment haptics + animation
   useEffect(() => {
     if (!isFocused) return;
+    if (!permission?.granted && !hasManualLocation) return;
 
     if (isAligned && !wasAlignedRef.current) {
       // Heavy success haptic
@@ -422,10 +423,13 @@ export default function QiblaScreen() {
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingHorizontal: Spacing.lg }}>
           {/* Location Pill */}
           {city ? (
-            <View style={[styles.frostedPill, {
-              backgroundColor: glassBg,
-              borderColor: glassBorder,
-            }]}>
+            <Pressable
+              onPress={() => navigation.navigate('LocationSettings' as any)}
+              style={({ pressed }) => [styles.frostedPill, {
+                backgroundColor: pressed ? `${dynamicColor}25` : glassBg,
+                borderColor: glassBorder,
+              }]}
+            >
               <Feather name="map-pin" size={13} color={dynamicColor} />
               <ThemedText type="small" style={{
                 marginLeft: 6,
@@ -435,7 +439,7 @@ export default function QiblaScreen() {
               }}>
                 {city}
               </ThemedText>
-            </View>
+            </Pressable>
           ) : <View />}
 
           {/* Mosques Pill */}
