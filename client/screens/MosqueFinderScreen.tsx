@@ -159,9 +159,8 @@ export default function MosqueFinderScreen() {
         {/* Search Input — carved clay inset */}
         <View style={[styles.searchInputContainer, {
           backgroundColor: isDark ? theme.backgroundSecondary : '#F2F3F5',
-          borderWidth: 1,
-          borderColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)',
-          // Simulate inset shadow with top inner border
+          borderWidth: 0,
+          // Simulate inset shadow with top inner border only
           borderTopColor: isDark ? 'rgba(0,0,0,0.12)' : 'rgba(0,0,0,0.06)',
           borderTopWidth: 1.5,
         }]}>
@@ -204,6 +203,7 @@ export default function MosqueFinderScreen() {
             style={[styles.radiusButton, {
               backgroundColor: showRadiusPicker ? theme.primary : (isDark ? theme.backgroundSecondary : '#FFFFFF'),
               overflow: 'hidden',
+              borderWidth: 0,
             }]}
           >
             <Feather
@@ -223,10 +223,11 @@ export default function MosqueFinderScreen() {
         <View style={[styles.radiusPicker, {
           backgroundColor: isDark ? theme.backgroundSecondary : '#FFFFFF',
           shadowColor: '#000',
-          shadowOffset: { width: 0, height: 20 },
-          shadowOpacity: 0.15,
-          shadowRadius: 40,
-          elevation: 16,
+          shadowOffset: { width: 0, height: 12 },
+          shadowOpacity: 0.12,
+          shadowRadius: 30,
+          elevation: 20,
+          borderWidth: 0,
         }]}>
           {RADIUS_OPTIONS.map((option, index) => (
             <React.Fragment key={option.value}>

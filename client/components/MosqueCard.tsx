@@ -51,6 +51,9 @@ export function MosqueCard({ mosque, onPress, onDirections }: MosqueCardProps) {
           overflow: 'hidden',
           borderLeftWidth: 4,
           borderLeftColor: theme.primary,
+          borderTopWidth: 0,
+          borderRightWidth: 0,
+          borderBottomWidth: 0,
           opacity: pressed ? 0.85 : 1,
         }]}
       >
