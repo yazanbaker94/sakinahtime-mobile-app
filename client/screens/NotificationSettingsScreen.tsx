@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { View, StyleSheet, ScrollView, Pressable, Switch, Platform, NativeModules, Alert } from "react-native";
+import { View, StyleSheet, ScrollView, Pressable, Platform, NativeModules, Alert } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -16,6 +16,7 @@ import { useCalculationMethod, CALCULATION_METHODS, getMethodForCountry } from "
 import { usePrayerAdjustments, PrayerAdjustments } from "@/hooks/usePrayerAdjustments";
 import { FastingNotificationSettings } from "@/components/FastingNotificationSettings";
 import { Feather } from "@expo/vector-icons";
+import { TactileSwitch } from "@/components/TactileSwitch";
 import * as Haptics from "expo-haptics";
 import { useTranslation } from "@/hooks/useTranslation";
 
@@ -131,11 +132,11 @@ export default function NotificationSettingsScreen() {
       >
         {/* Prayer Notifications */}
         <View style={[styles.card, {
-          backgroundColor: isDark ? theme.cardBackground : theme.cardBackground,
-          borderColor: isDark ? theme.border : 'transparent',
-          borderWidth: isDark ? 1 : 0,
+          backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
+          borderWidth: 0,
+          borderColor: 'transparent',
           elevation: isDark ? 0 : 3,
-          shadowOpacity: isDark ? 0 : 0.08,
+          shadowOpacity: isDark ? 0 : 0.04,
         }]}>
           <View style={styles.settingRow}>
             <View style={styles.settingInfo}>
@@ -149,11 +150,11 @@ export default function NotificationSettingsScreen() {
                 </ThemedText>
               </View>
             </View>
-            <Switch
+            <TactileSwitch
               value={notificationSettings.enabled}
               onValueChange={handleToggleNotifications}
-              trackColor={{ false: theme.backgroundSecondary, true: theme.primary }}
-              thumbColor="#FFFFFF"
+              trackColorFalse={theme.backgroundSecondary}
+              trackColorTrue={theme.primary}
             />
           </View>
 
@@ -163,11 +164,11 @@ export default function NotificationSettingsScreen() {
               {PRAYERS.map((prayer) => (
                 <View key={prayer.key} style={styles.prayerNotificationRow}>
                   <ThemedText type="body">{t(`prayer.${prayer.key.toLowerCase()}`)}</ThemedText>
-                  <Switch
+                  <TactileSwitch
                     value={notificationSettings.prayers[prayer.key as keyof typeof notificationSettings.prayers]}
                     onValueChange={(value) => togglePrayerNotification(prayer.key as keyof typeof notificationSettings.prayers, value)}
-                    trackColor={{ false: theme.backgroundSecondary, true: theme.primary }}
-                    thumbColor="#FFFFFF"
+                    trackColorFalse={theme.backgroundSecondary}
+                    trackColorTrue={theme.primary}
                   />
                 </View>
               ))}
@@ -177,11 +178,11 @@ export default function NotificationSettingsScreen() {
 
         {/* Azan Sound */}
         <View style={[styles.card, {
-          backgroundColor: isDark ? theme.cardBackground : theme.cardBackground,
-          borderColor: isDark ? theme.border : 'transparent',
-          borderWidth: isDark ? 1 : 0,
+          backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
+          borderWidth: 0,
+          borderColor: 'transparent',
           elevation: isDark ? 0 : 3,
-          shadowOpacity: isDark ? 0 : 0.08,
+          shadowOpacity: isDark ? 0 : 0.04,
         }]}>
           <View style={styles.settingRow}>
             <View style={styles.settingInfo}>
@@ -195,28 +196,28 @@ export default function NotificationSettingsScreen() {
                 </ThemedText>
               </View>
             </View>
-            <Switch
+            <TactileSwitch
               value={azanSettings.enabled}
               onValueChange={handleToggleAzan}
-              trackColor={{ false: theme.backgroundSecondary, true: theme.primary }}
-              thumbColor="#FFFFFF"
+              trackColorFalse={theme.backgroundSecondary}
+              trackColorTrue={theme.primary}
             />
           </View>
 
           {/* Per-Prayer Azan Toggles */}
           {azanSettings.enabled && (
             <View style={styles.prayerNotifications}>
-              <ThemedText type="small" secondary style={{ marginBottom: 8 }}>
+              <ThemedText type="small" secondary style={{ fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>
                 {t('notifications.selectPrayersForAzan')}
               </ThemedText>
               {PRAYERS.map((prayer) => (
                 <View key={prayer.key} style={styles.prayerNotificationRow}>
                   <ThemedText type="body">{t(`prayer.${prayer.key.toLowerCase()}`)}</ThemedText>
-                  <Switch
+                  <TactileSwitch
                     value={azanSettings.prayers[prayer.key as keyof typeof azanSettings.prayers]}
                     onValueChange={(value) => togglePrayerAzan(prayer.key as keyof typeof azanSettings.prayers, value)}
-                    trackColor={{ false: theme.backgroundSecondary, true: theme.primary }}
-                    thumbColor="#FFFFFF"
+                    trackColorFalse={theme.backgroundSecondary}
+                    trackColorTrue={theme.primary}
                   />
                 </View>
               ))}
@@ -226,11 +227,11 @@ export default function NotificationSettingsScreen() {
 
         {/* Iqama Reminder */}
         <View style={[styles.card, {
-          backgroundColor: isDark ? theme.cardBackground : theme.cardBackground,
-          borderColor: isDark ? theme.border : 'transparent',
-          borderWidth: isDark ? 1 : 0,
+          backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
+          borderWidth: 0,
+          borderColor: 'transparent',
           elevation: isDark ? 0 : 3,
-          shadowOpacity: isDark ? 0 : 0.08,
+          shadowOpacity: isDark ? 0 : 0.04,
         }]}>
           <View style={styles.settingRow}>
             <View style={styles.settingInfo}>
@@ -244,11 +245,11 @@ export default function NotificationSettingsScreen() {
                 </ThemedText>
               </View>
             </View>
-            <Switch
+            <TactileSwitch
               value={iqamaSettings.enabled}
               onValueChange={handleToggleIqama}
-              trackColor={{ false: theme.backgroundSecondary, true: theme.primary }}
-              thumbColor="#FFFFFF"
+              trackColorFalse={theme.backgroundSecondary}
+              trackColorTrue={theme.primary}
             />
           </View>
 
@@ -306,11 +307,11 @@ export default function NotificationSettingsScreen() {
                   {PRAYERS.map((prayer) => (
                     <View key={`iqama-${prayer.key}`} style={styles.prayerNotificationRow}>
                       <ThemedText type="body">{t(`prayer.${prayer.key.toLowerCase()}`)}</ThemedText>
-                      <Switch
+                      <TactileSwitch
                         value={iqamaSettings.prayers[prayer.key as keyof IqamaSettings["prayers"]]}
                         onValueChange={(value) => togglePrayerIqama(prayer.key as keyof IqamaSettings["prayers"], value)}
-                        trackColor={{ false: theme.backgroundSecondary, true: theme.primary }}
-                        thumbColor="#FFFFFF"
+                        trackColorFalse={theme.backgroundSecondary}
+                        trackColorTrue={theme.primary}
                       />
                     </View>
                   ))}
@@ -322,11 +323,11 @@ export default function NotificationSettingsScreen() {
 
         {/* Time Adjustments */}
         <View style={[styles.card, {
-          backgroundColor: isDark ? theme.cardBackground : theme.cardBackground,
-          borderColor: isDark ? theme.border : 'transparent',
-          borderWidth: isDark ? 1 : 0,
+          backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
+          borderWidth: 0,
+          borderColor: 'transparent',
           elevation: isDark ? 0 : 3,
-          shadowOpacity: isDark ? 0 : 0.08,
+          shadowOpacity: isDark ? 0 : 0.04,
         }]}>
           <Pressable onPress={() => setShowAdjustments(!showAdjustments)} style={styles.settingRow}>
             <View style={styles.settingInfo}>
@@ -379,11 +380,11 @@ export default function NotificationSettingsScreen() {
         {/* Calculation Method */}
         <View
           style={[styles.card, {
-            backgroundColor: isDark ? theme.cardBackground : theme.cardBackground,
-            borderColor: isDark ? theme.border : 'transparent',
-            borderWidth: isDark ? 1 : 0,
+            backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
+            borderWidth: 0,
+            borderColor: 'transparent',
             elevation: isDark ? 0 : 3,
-            shadowOpacity: isDark ? 0 : 0.08,
+            shadowOpacity: isDark ? 0 : 0.04,
           }]}
           onLayout={(event) => { calcMethodYRef.current = event.nativeEvent.layout.y; }}
         >
@@ -424,9 +425,14 @@ export default function NotificationSettingsScreen() {
                     setCalculationMethod(recommendedMethod, false);
                     setShowMethodPicker(false);
                   }}
-                  style={[styles.autoDetectButton, { backgroundColor: !isManuallySet ? `${theme.primary}20` : theme.backgroundSecondary }]}
+                  style={[styles.autoDetectButton, {
+                    backgroundColor: !isManuallySet ? theme.primary : theme.backgroundSecondary,
+                  }]}
                 >
-                  <ThemedText type="small" style={{ color: !isManuallySet ? theme.primary : theme.textSecondary, fontWeight: '600' }}>
+                  <ThemedText type="small" style={{
+                    color: !isManuallySet ? '#FFFFFF' : theme.textSecondary,
+                    fontWeight: '600',
+                  }}>
                     {!isManuallySet ? t('notifications.active') : t('notifications.useAuto')}
                   </ThemedText>
                 </Pressable>
@@ -440,7 +446,7 @@ export default function NotificationSettingsScreen() {
                     setCalculationMethod(method.id, true); // true = manual selection
                     setShowMethodPicker(false);
                   }}
-                  style={[styles.methodItem, calculationMethod === method.id && { backgroundColor: `${theme.primary}15` }]}
+                  style={[styles.methodItem, calculationMethod === method.id && { backgroundColor: 'transparent' }]}
                 >
                   <ThemedText type="body">{t(`calculationMethods.${method.localeKey}`) || method.name}</ThemedText>
                   {calculationMethod === method.id && <Feather name="check" size={20} color={theme.primary} />}
@@ -480,8 +486,8 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
     marginBottom: Spacing.md,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 15,
   },
   settingRow: {
     flexDirection: "row",

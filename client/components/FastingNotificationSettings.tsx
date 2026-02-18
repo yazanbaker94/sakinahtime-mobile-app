@@ -8,7 +8,6 @@ import React from 'react';
 import {
   View,
   StyleSheet,
-  Switch,
   Pressable,
   ActivityIndicator,
 } from 'react-native';
@@ -19,6 +18,7 @@ import { ThemedText } from './ThemedText';
 import { Feather } from '@expo/vector-icons';
 import { Spacing, BorderRadius } from '../constants/theme';
 import { useTranslation } from '../hooks/useTranslation';
+import { TactileSwitch } from './TactileSwitch';
 
 interface FastingNotificationSettingsProps {
   compact?: boolean;
@@ -56,11 +56,11 @@ export function FastingNotificationSettings({ compact = false }: FastingNotifica
   if (compact) {
     return (
       <View style={[styles.card, {
-        backgroundColor: theme.cardBackground,
-        borderColor: isDark ? theme.border : 'transparent',
-        borderWidth: isDark ? 1 : 0,
+        backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
+        borderWidth: 0,
+        borderColor: 'transparent',
         elevation: isDark ? 0 : 3,
-        shadowOpacity: isDark ? 0 : 0.08,
+        shadowOpacity: isDark ? 0 : 0.04,
       }]}>
         <View style={styles.settingRow}>
           <View style={styles.settingInfo}>
@@ -74,11 +74,11 @@ export function FastingNotificationSettings({ compact = false }: FastingNotifica
               </ThemedText>
             </View>
           </View>
-          <Switch
+          <TactileSwitch
             value={settings.enabled}
             onValueChange={toggleEnabled}
-            trackColor={{ false: theme.backgroundSecondary, true: theme.primary }}
-            thumbColor="#FFFFFF"
+            trackColorFalse={theme.backgroundSecondary}
+            trackColorTrue={theme.primary}
           />
         </View>
       </View>
@@ -87,11 +87,11 @@ export function FastingNotificationSettings({ compact = false }: FastingNotifica
 
   return (
     <View style={[styles.card, {
-      backgroundColor: theme.cardBackground,
-      borderColor: isDark ? theme.border : 'transparent',
-      borderWidth: isDark ? 1 : 0,
+      backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
+      borderWidth: 0,
+      borderColor: 'transparent',
       elevation: isDark ? 0 : 3,
-      shadowOpacity: isDark ? 0 : 0.08,
+      shadowOpacity: isDark ? 0 : 0.04,
     }]}>
       {/* Main Toggle */}
       <View style={styles.settingRow}>
@@ -106,11 +106,11 @@ export function FastingNotificationSettings({ compact = false }: FastingNotifica
             </ThemedText>
           </View>
         </View>
-        <Switch
+        <TactileSwitch
           value={settings.enabled}
           onValueChange={toggleEnabled}
-          trackColor={{ false: theme.backgroundSecondary, true: theme.primary }}
-          thumbColor="#FFFFFF"
+          trackColorFalse={theme.backgroundSecondary}
+          trackColorTrue={theme.primary}
         />
       </View>
 
@@ -121,46 +121,83 @@ export function FastingNotificationSettings({ compact = false }: FastingNotifica
             <ThemedText type="small" secondary style={{ fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: Spacing.sm }}>
               {t('fasting.reminderTime')}
             </ThemedText>
-            <View style={styles.reminderTimeOptions}>
+            {/* Carved track wrapper */}
+            <View style={[
+              styles.reminderTimeOptions,
+              {
+                backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#F3F4F6',
+                borderRadius: BorderRadius.lg,
+                padding: 4,
+                borderWidth: 0,
+                borderTopWidth: 1.5,
+                borderTopColor: isDark ? 'rgba(0,0,0,0.08)' : 'rgba(0,0,0,0.04)',
+              },
+            ]}>
               <Pressable
                 style={[
                   styles.reminderTimeOption,
-                  { backgroundColor: theme.backgroundSecondary },
-                  settings.reminderTime === 'evening' && {
-                    backgroundColor: `${theme.primary}20`,
-                    borderWidth: 2,
-                    borderColor: theme.primary,
+                  {
+                    backgroundColor: settings.reminderTime === 'evening'
+                      ? (isDark ? theme.cardBackground : '#FFFFFF')
+                      : 'transparent',
+                    borderWidth: 0,
+                    ...(settings.reminderTime === 'evening' ? {
+                      shadowColor: '#000',
+                      shadowOffset: { width: 0, height: 3 },
+                      shadowOpacity: 0.08,
+                      shadowRadius: 8,
+                      elevation: 3,
+                    } : {}),
                   },
                 ]}
                 onPress={() => setReminderTime('evening')}
               >
                 <ThemedText type="body" style={[
                   { fontWeight: '600' },
-                  settings.reminderTime === 'evening' && { color: theme.primary },
+                  settings.reminderTime === 'evening'
+                    ? { color: theme.primary }
+                    : { opacity: 0.5 },
                 ]}>
                   {t('fasting.eveningBefore')}
                 </ThemedText>
-                <ThemedText type="caption" secondary>8:00 PM</ThemedText>
+                <ThemedText type="caption" style={[
+                  settings.reminderTime === 'evening'
+                    ? { color: theme.textSecondary }
+                    : { opacity: 0.4 },
+                ]}>8:00 PM</ThemedText>
               </Pressable>
               <Pressable
                 style={[
                   styles.reminderTimeOption,
-                  { backgroundColor: theme.backgroundSecondary },
-                  settings.reminderTime === 'morning' && {
-                    backgroundColor: `${theme.primary}20`,
-                    borderWidth: 2,
-                    borderColor: theme.primary,
+                  {
+                    backgroundColor: settings.reminderTime === 'morning'
+                      ? (isDark ? theme.cardBackground : '#FFFFFF')
+                      : 'transparent',
+                    borderWidth: 0,
+                    ...(settings.reminderTime === 'morning' ? {
+                      shadowColor: '#000',
+                      shadowOffset: { width: 0, height: 3 },
+                      shadowOpacity: 0.08,
+                      shadowRadius: 8,
+                      elevation: 3,
+                    } : {}),
                   },
                 ]}
                 onPress={() => setReminderTime('morning')}
               >
                 <ThemedText type="body" style={[
                   { fontWeight: '600' },
-                  settings.reminderTime === 'morning' && { color: theme.primary },
+                  settings.reminderTime === 'morning'
+                    ? { color: theme.primary }
+                    : { opacity: 0.5 },
                 ]}>
                   {t('fasting.beforeFajr')}
                 </ThemedText>
-                <ThemedText type="caption" secondary>{t('fasting.thirtyMinBefore')}</ThemedText>
+                <ThemedText type="caption" style={[
+                  settings.reminderTime === 'morning'
+                    ? { color: theme.textSecondary }
+                    : { opacity: 0.4 },
+                ]}>{t('fasting.thirtyMinBefore')}</ThemedText>
               </Pressable>
             </View>
           </View>
@@ -178,11 +215,11 @@ export function FastingNotificationSettings({ compact = false }: FastingNotifica
                     {t(FASTING_TYPE_KEYS[type].descKey)}
                   </ThemedText>
                 </View>
-                <Switch
+                <TactileSwitch
                   value={settings.types[type]}
                   onValueChange={(value) => toggleFastingType(type, value)}
-                  trackColor={{ false: theme.backgroundSecondary, true: theme.primary }}
-                  thumbColor="#FFFFFF"
+                  trackColorFalse={theme.backgroundSecondary}
+                  trackColorTrue={theme.primary}
                 />
               </View>
             ))}
@@ -207,8 +244,8 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
     marginBottom: Spacing.md,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 15,
   },
   settingRow: {
     flexDirection: 'row',
