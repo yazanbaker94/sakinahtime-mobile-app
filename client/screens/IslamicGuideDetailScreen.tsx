@@ -59,7 +59,7 @@ export default function IslamicGuideDetailScreen({ route }: Props) {
           {
             paddingTop: insets.top + Spacing.md,
             backgroundColor: theme.cardBackground,
-            borderBottomColor: theme.border,
+            borderBottomColor: 'transparent',
           },
         ]}
       >
@@ -88,7 +88,14 @@ export default function IslamicGuideDetailScreen({ route }: Props) {
           style={[
             styles.descriptionCard,
             {
-              backgroundColor: `${theme.primary}15`,
+              backgroundColor: '#FFFFFF',
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 6 },
+              shadowOpacity: 0.05,
+              shadowRadius: 20,
+              elevation: 3,
+              borderLeftWidth: 4,
+              borderLeftColor: theme.primary,
             },
           ]}
         >
@@ -106,6 +113,13 @@ export default function IslamicGuideDetailScreen({ route }: Props) {
                 styles.stepCard,
                 {
                   backgroundColor: theme.cardBackground,
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 6 },
+                  shadowOpacity: 0.05,
+                  shadowRadius: 20,
+                  elevation: 3,
+                  borderWidth: 0,
+                  borderColor: 'transparent',
                 },
               ]}
             >
@@ -148,7 +162,15 @@ export default function IslamicGuideDetailScreen({ route }: Props) {
             style={[
               styles.referencesCard,
               {
-                backgroundColor: theme.backgroundSecondary,
+                backgroundColor: '#FFFFFF',
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 6 },
+                shadowOpacity: 0.05,
+                shadowRadius: 20,
+                elevation: 3,
+                borderLeftWidth: 4,
+                borderLeftColor: theme.primary,
+                borderWidth: 0,
               },
             ]}
           >

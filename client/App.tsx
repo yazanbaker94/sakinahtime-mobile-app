@@ -141,6 +141,11 @@ export default function App() {
             require('../assets/images/3d-images/GeneralAzkar.png'),
             require('../assets/images/3d-images/AfterPrayer.png'),
             require('../assets/images/3d-images/WakingUp.png'),
+            require('../assets/images/3d-images/Worship.png'),
+            require('../assets/images/3d-images/Purification.png'),
+            require('../assets/images/3d-images/Knowledge.png'),
+            require('../assets/images/3d-images/Character.png'),
+            require('../assets/images/3d-images/Finance.png'),
           ]),
         ]);
         setFontsLoaded(true);

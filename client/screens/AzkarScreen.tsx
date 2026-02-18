@@ -77,6 +77,19 @@ const DUA_3D_ICONS: Record<string, any> = {
 
 const CUSTOM_DUA_ICON = require('../../assets/images/3d-images/customdua.png');
 
+// 3D icon assets for guide categories
+const GUIDE_3D_ICONS: Record<string, any> = {
+  worship: require('../../assets/images/3d-images/Worship.png'),
+  purification: require('../../assets/images/3d-images/Purification.png'),
+  hajj: require('../../assets/images/3d-images/quranstand.png'),
+  charity: require('../../assets/images/3d-images/Gratitude.png'),
+  fasting: require('../../assets/images/3d-images/cloud.png'),
+  funeral: require('../../assets/images/3d-images/book.png'),
+  character: require('../../assets/images/3d-images/Character.png'),
+  knowledge: require('../../assets/images/3d-images/Knowledge.png'),
+  finance: require('../../assets/images/3d-images/Finance.png'),
+};
+
 // Daily tips — simple rotating hadith reminders
 const DAILY_TIPS = [
   { text: 'The Prophet ﷺ said: "The best remembrance is La ilaha illallah (There is no god but Allah)."', source: 'Tirmidhi' },
@@ -425,17 +438,23 @@ export default function AzkarScreen() {
               filteredCategories.map((category) => (
                 <View key={category.id} style={styles.guideCategory}>
                   <View style={styles.guideCategoryHeader}>
+                    {GUIDE_3D_ICONS[category.id] && (
+                      <Image source={GUIDE_3D_ICONS[category.id]} style={{ width: 32, height: 32 }} resizeMode="contain" fadeDuration={0} />
+                    )}
                     <View style={styles.guideCategoryTitles}>
                       <View style={styles.categoryTitleRow}><ThemedText type="h4" style={{ flex: 1 }}>{t(`guideCategories.${category.id}`)}</ThemedText></View>
                     </View>
 
                   </View>
-                  <View style={styles.guidesList}>
-                    {category.guides.map((guide) => (
-                      <Pressable key={guide.id} onPress={() => handleGuidePress(guide)} style={({ pressed }) => [styles.guideItem, { backgroundColor: theme.cardBackground, opacity: pressed ? 0.7 : 1 }]}>
-                        <ThemedText type="body" style={styles.guideTitle}>{t(`guides.${guide.id}.title`)}</ThemedText>
-                        <Feather name="chevron-right" size={18} color={theme.textSecondary} />
-                      </Pressable>
+                  <View style={[styles.guidesList, { backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : '#FFFFFF', shadowColor: '#000', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.04, shadowRadius: 20, elevation: 2, borderWidth: 0, borderColor: 'transparent' }]}>
+                    {category.guides.map((guide, idx) => (
+                      <React.Fragment key={guide.id}>
+                        {idx > 0 && <View style={{ height: 1, backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)', marginHorizontal: Spacing.md }} />}
+                        <Pressable onPress={() => handleGuidePress(guide)} style={({ pressed }) => [styles.guideItem, { opacity: pressed ? 0.7 : 1 }]}>
+                          <ThemedText type="body" style={styles.guideTitle}>{t(`guides.${guide.id}.title`)}</ThemedText>
+                          <Feather name="chevron-right" size={18} color={theme.textSecondary} />
+                        </Pressable>
+                      </React.Fragment>
                     ))}
                   </View>
                 </View>
@@ -470,7 +489,7 @@ const styles = StyleSheet.create({
   guideCategoryTitles: { flex: 1, marginLeft: Spacing.md },
   categoryTitleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   guideCount: { width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
-  guidesList: { gap: Spacing.xs },
+  guidesList: { borderRadius: BorderRadius.lg, overflow: 'hidden' },
   guideItem: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: Spacing.md, borderRadius: BorderRadius.md },
   guideTitle: { flex: 1, fontSize: 15 },
   // Duas styles
