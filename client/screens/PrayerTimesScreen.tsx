@@ -456,6 +456,16 @@ export default function PrayerTimesScreen() {
                   </ThemedText>
                 </Pressable>
               )}
+
+              {/* Escape hatch */}
+              <Pressable
+                onPress={() => navigation.navigate('LocationSettings' as any)}
+                style={({ pressed }) => ({ marginTop: 16, opacity: pressed ? 0.5 : 1 })}
+              >
+                <ThemedText type="body" style={{ color: '#9CA3AF', fontSize: 14 }}>
+                  {t('prayer.enterLocationManually') || 'Enter Location Manually'}
+                </ThemedText>
+              </Pressable>
             </View>
           </View>
         </View>
