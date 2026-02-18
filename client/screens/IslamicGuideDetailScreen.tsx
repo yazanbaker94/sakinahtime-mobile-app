@@ -94,6 +94,9 @@ export default function IslamicGuideDetailScreen({ route }: Props) {
               shadowOpacity: 0.05,
               shadowRadius: 20,
               elevation: 3,
+              borderTopWidth: 0,
+              borderRightWidth: 0,
+              borderBottomWidth: 0,
               borderLeftWidth: 4,
               borderLeftColor: theme.primary,
             },
@@ -136,7 +139,8 @@ export default function IslamicGuideDetailScreen({ route }: Props) {
                     type="body"
                     style={{
                       color: theme.primary,
-                      fontWeight: "700",
+                      fontWeight: '800',
+                      fontSize: 16,
                     }}
                   >
                     {index + 1}
@@ -168,9 +172,11 @@ export default function IslamicGuideDetailScreen({ route }: Props) {
                 shadowOpacity: 0.05,
                 shadowRadius: 20,
                 elevation: 3,
+                borderTopWidth: 0,
+                borderRightWidth: 0,
+                borderBottomWidth: 0,
                 borderLeftWidth: 4,
                 borderLeftColor: theme.primary,
-                borderWidth: 0,
               },
             ]}
           >
