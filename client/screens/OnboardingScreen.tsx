@@ -260,7 +260,7 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
     // Button label logic
     const getButtonLabel = (item: OnboardingSlide, isLastSlide: boolean) => {
         if (isLastSlide) return t('onboarding.getStarted');
-        if (item.action) return t('onboarding.enable');
+        if (item.action === 'location' || item.action === 'notifications') return t('onboarding.enable');
         return t('onboarding.continue');
     };
 
