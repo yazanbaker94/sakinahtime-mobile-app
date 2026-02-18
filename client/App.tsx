@@ -147,6 +147,9 @@ export default function App() {
             require('../assets/images/3d-images/Character.png'),
             require('../assets/images/3d-images/Finance.png'),
             require('../assets/images/3d-images/location.png'),
+            require('../assets/images/3d-images/currentstreak.png'),
+            require('../assets/images/3d-images/longeststreak.png'),
+            require('../assets/images/3d-images/todayprogress.png'),
           ]),
         ]);
         setFontsLoaded(true);
