@@ -271,12 +271,10 @@ export function CitySearchModal({
           </ThemedText>
         </View>
 
-        {/* Search Input — carved clay inset */}
+        {/* Search Input — smooth carved pill */}
         <View style={[styles.searchContainer, {
-          backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#F2F3F5',
+          backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#F3F4F6',
           borderWidth: 0,
-          borderTopColor: isDark ? 'rgba(0,0,0,0.12)' : 'rgba(0,0,0,0.06)',
-          borderTopWidth: 1.5,
         }]}>
           <Feather name="search" size={18} color={theme.textSecondary} />
           <TextInput
@@ -365,7 +363,7 @@ const styles = StyleSheet.create({
     marginVertical: Spacing.md,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.md,
+    borderRadius: 14,
     gap: 8,
   },
   searchInput: {
@@ -386,7 +384,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
-    borderBottomWidth: 1,
+    borderBottomWidth: 0,
   },
   cityInfo: {
     flex: 1,

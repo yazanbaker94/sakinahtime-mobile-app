@@ -116,8 +116,8 @@ export default function LocationSettingsScreen() {
             backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
             borderWidth: 0,
           }]}>
-            <View style={[styles.locationIconContainer, { backgroundColor: `${theme.primary}10` }]}>
-              <Image source={locationPin3D} style={{ width: 36, height: 36 }} resizeMode="contain" />
+            <View style={[styles.locationIconContainer, { backgroundColor: 'transparent' }]}>
+              <Image source={locationPin3D} style={{ width: 40, height: 40 }} resizeMode="contain" />
             </View>
             <View style={{ flex: 1 }}>
               <ThemedText type="caption" secondary>
@@ -176,6 +176,9 @@ export default function LocationSettingsScreen() {
                 {gpsLocationText}
               </ThemedText>
             </View>
+            {locationMode === 'gps' && (
+              <Feather name="check-circle" size={22} color={theme.primary} />
+            )}
           </Pressable>
         </View>
 
