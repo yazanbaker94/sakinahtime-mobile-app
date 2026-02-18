@@ -150,6 +150,9 @@ export default function App() {
             require('../assets/images/3d-images/currentstreak.png'),
             require('../assets/images/3d-images/longeststreak.png'),
             require('../assets/images/3d-images/todayprogress.png'),
+            require('../assets/images/3d-images/Bookmark.png'),
+            require('../assets/images/3d-images/Notes.png'),
+            require('../assets/images/3d-images/Highlights.png'),
           ]),
         ]);
         setFontsLoaded(true);

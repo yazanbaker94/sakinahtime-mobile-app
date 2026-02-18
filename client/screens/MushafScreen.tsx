@@ -1864,17 +1864,7 @@ function MushafScreenContent() {
             {Object.keys(notes).length > 0 && (
               <View style={{ marginTop: Spacing.lg }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.lg, marginBottom: Spacing.md }}>
-                  <View style={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: 16,
-                    backgroundColor: `${theme.primary}26`,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginRight: 10
-                  }}>
-                    <Feather name="file-text" size={16} color={theme.primary} />
-                  </View>
+                  <Image source={require('../../assets/images/3d-images/Notes.png')} style={{ width: 36, height: 36, marginRight: 10 }} contentFit="contain" />
                   <ThemedText type="body" style={{ fontWeight: '700', fontSize: 15, letterSpacing: 0.5, opacity: 0.9 }}>
                     {t('mushaf.notesSection')} ({Object.keys(notes).length})
                   </ThemedText>
@@ -1954,6 +1944,13 @@ function MushafScreenContent() {
                           padding: Spacing.md,
                           borderRadius: 12,
                           backgroundColor: isDark ? 'rgba(255, 255, 255, 0.04)' : '#FFFFFF',
+                          borderWidth: 0,
+                          borderColor: 'transparent',
+                          shadowColor: '#000',
+                          shadowOffset: { width: 0, height: 4 },
+                          shadowOpacity: 0.05,
+                          shadowRadius: 12,
+                          elevation: 2,
                           opacity: pressed ? 0.7 : 1,
                         }]}
                       >
@@ -1963,16 +1960,20 @@ function MushafScreenContent() {
                             {timeAgo && <ThemedText type="caption" style={{ fontSize: 11, opacity: 0.5, marginTop: 2 }}>{timeAgo}</ThemedText>}
                           </View>
                           {highlights[verseKey] && (
-                            <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: highlights[verseKey], marginLeft: 8 }} />
+                            <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: highlights[verseKey], marginLeft: 8, shadowColor: highlights[verseKey], shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.6, shadowRadius: 5, elevation: 4 }} />
                           )}
                         </View>
                         <ThemedText type="arabic" style={{ fontFamily: 'AlMushafQuran', fontSize: 16, opacity: 0.7, marginBottom: 8, textAlign: 'right', lineHeight: 28 }}>{preview}</ThemedText>
                         <View style={{
                           padding: 10,
                           borderRadius: 8,
-                          backgroundColor: `${theme.primary}1A`,
+                          backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : '#F3F4F6',
                           borderLeftWidth: 3,
-                          borderLeftColor: theme.primary
+                          borderLeftColor: theme.primary,
+                          shadowColor: '#000',
+                          shadowOffset: { width: 0, height: 2 },
+                          shadowOpacity: 0.05,
+                          shadowRadius: 3,
                         }}>
                           <ThemedText type="caption" style={{ fontSize: 13, fontStyle: 'italic' }}>{notes[verseKey]}</ThemedText>
                         </View>
@@ -1987,17 +1988,7 @@ function MushafScreenContent() {
             {Object.keys(highlights).filter(key => !notes[key]).length > 0 && (
               <View style={{ marginTop: Spacing.lg }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.lg, marginBottom: Spacing.md }}>
-                  <View style={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: 16,
-                    backgroundColor: `${theme.primary}15`,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginRight: 10
-                  }}>
-                    <Feather name="edit-3" size={16} color={theme.primary} />
-                  </View>
+                  <Image source={require('../../assets/images/3d-images/Highlights.png')} style={{ width: 36, height: 36, marginRight: 10 }} contentFit="contain" />
                   <ThemedText type="body" style={{ fontWeight: '700', fontSize: 15, letterSpacing: 0.5, opacity: 0.9 }}>
                     {t('mushaf.highlightsSection')} ({Object.keys(highlights).filter(key => !notes[key]).length})
                   </ThemedText>
@@ -2070,6 +2061,13 @@ function MushafScreenContent() {
                           padding: Spacing.md,
                           borderRadius: 12,
                           backgroundColor: isDark ? 'rgba(255, 255, 255, 0.04)' : '#FFFFFF',
+                          borderWidth: 0,
+                          borderColor: 'transparent',
+                          shadowColor: '#000',
+                          shadowOffset: { width: 0, height: 4 },
+                          shadowOpacity: 0.05,
+                          shadowRadius: 12,
+                          elevation: 2,
                           opacity: pressed ? 0.7 : 1,
                         }]}
                       >
@@ -2078,7 +2076,7 @@ function MushafScreenContent() {
                             <ThemedText type="body" style={{ fontWeight: '600', fontSize: 15 }}>{surahInfo?.nameEn} {surah}:{ayah}</ThemedText>
                             {timeAgo && <ThemedText type="caption" style={{ fontSize: 11, opacity: 0.5, marginTop: 2 }}>{timeAgo}</ThemedText>}
                           </View>
-                          <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: color, marginLeft: 8 }} />
+                          <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: color, marginLeft: 8, shadowColor: color, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.6, shadowRadius: 5, elevation: 4 }} />
                         </View>
                         <ThemedText type="arabic" style={{ fontFamily: 'AlMushafQuran', fontSize: 16, opacity: 0.7, textAlign: 'right', lineHeight: 28 }}>{preview}</ThemedText>
                       </Pressable>
@@ -2185,18 +2183,23 @@ function MushafScreenContent() {
                       styles.surahItem,
                       {
                         backgroundColor: isDark ? 'rgba(255, 255, 255, 0.04)' : '#FFFFFF',
+                        borderWidth: 0,
+                        borderColor: 'transparent',
                         transform: [{ scale: pressed ? 0.98 : 1 }],
-                        elevation: isDark ? 0 : 1,
-                        shadowOpacity: isDark ? 0 : 0.04,
+                        shadowColor: '#000',
+                        shadowOffset: { width: 0, height: 4 },
+                        shadowOpacity: isDark ? 0 : 0.05,
+                        shadowRadius: 12,
+                        elevation: isDark ? 0 : 2,
                       },
                     ]}
                   >
                     <View style={styles.surahItemContent}>
                       <View style={styles.surahLeft}>
                         <View style={[styles.surahNumber, {
-                          backgroundColor: `${theme.primary}15`,
+                          backgroundColor: 'transparent',
                         }]}>
-                          <Feather name="bookmark" size={18} color={theme.primary} fill={theme.primary} />
+                          <Image source={require('../../assets/images/3d-images/Bookmark.png')} style={{ width: 36, height: 36 }} contentFit="contain" />
                         </View>
                         <View style={styles.surahInfo}>
                           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
