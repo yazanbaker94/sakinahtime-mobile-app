@@ -31,6 +31,10 @@ import { QURAN_CONSTANTS } from '@/constants/quran-constants';
 import { useTranslation } from '@/hooks/useTranslation';
 import { TactileSwitch } from '@/components/TactileSwitch';
 
+const ICON_CURRENT_STREAK = require('../../assets/images/3d-images/currentstreak.png');
+const ICON_LONGEST_STREAK = require('../../assets/images/3d-images/longeststreak.png');
+const ICON_TODAY_PROGRESS = require('../../assets/images/3d-images/todayprogress.png');
+
 export default function ProgressScreen() {
   const { theme, isDark } = useTheme();
   const { t } = useTranslation();
@@ -291,7 +295,7 @@ export default function ProgressScreen() {
                 shadowRadius: 6,
                 elevation: 4,
               }}>
-                <Feather name="zap" size={32} color="#F59E0B" />
+                <Image source={ICON_CURRENT_STREAK} style={{ width: 48, height: 48 }} resizeMode="contain" />
               </View>
               <ThemedText type="h2">{stats?.currentStreak || 0}</ThemedText>
               <ThemedText type="caption">{t('progress.currentStreak')}</ThemedText>
@@ -304,7 +308,7 @@ export default function ProgressScreen() {
                 shadowRadius: 6,
                 elevation: 4,
               }}>
-                <Feather name="award" size={32} color="#8B5CF6" />
+                <Image source={ICON_LONGEST_STREAK} style={{ width: 48, height: 48 }} resizeMode="contain" />
               </View>
               <ThemedText type="h2">{stats?.longestStreak || 0}</ThemedText>
               <ThemedText type="caption">{t('progress.longestStreak')}</ThemedText>
