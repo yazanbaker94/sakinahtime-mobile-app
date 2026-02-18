@@ -279,10 +279,10 @@ export default function NotificationSettingsScreen() {
                         setIqamaDelay(delay);
                         setShowIqamaDelayPicker(false);
                       }}
-                      style={[styles.delayItem, iqamaSettings.delayMinutes === delay && { backgroundColor: `${theme.primary}15` }]}
+                      style={[styles.delayItem, iqamaSettings.delayMinutes === delay && { backgroundColor: 'transparent' }]}
                     >
                       <ThemedText type="body">{delay} {t('notifications.minutes')}</ThemedText>
-                      {iqamaSettings.delayMinutes === delay && <Feather name="check" size={20} color={theme.primary} />}
+                      {iqamaSettings.delayMinutes === delay && <Feather name="check" size={20} color="#5e9caa" />}
                     </Pressable>
                   ))}
                 </View>
@@ -449,7 +449,7 @@ export default function NotificationSettingsScreen() {
                   style={[styles.methodItem, calculationMethod === method.id && { backgroundColor: 'transparent' }]}
                 >
                   <ThemedText type="body">{t(`calculationMethods.${method.localeKey}`) || method.name}</ThemedText>
-                  {calculationMethod === method.id && <Feather name="check" size={20} color={theme.primary} />}
+                  {calculationMethod === method.id && <Feather name="check" size={20} color="#5e9caa" />}
                 </Pressable>
               ))}
             </View>
@@ -488,6 +488,7 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowRadius: 15,
+    overflow: 'hidden',
   },
   settingRow: {
     flexDirection: "row",

@@ -129,8 +129,7 @@ export function FastingNotificationSettings({ compact = false }: FastingNotifica
                 borderRadius: BorderRadius.lg,
                 padding: 4,
                 borderWidth: 0,
-                borderTopWidth: 1.5,
-                borderTopColor: isDark ? 'rgba(0,0,0,0.08)' : 'rgba(0,0,0,0.04)',
+                borderColor: 'transparent',
               },
             ]}>
               <Pressable
@@ -141,10 +140,11 @@ export function FastingNotificationSettings({ compact = false }: FastingNotifica
                       ? (isDark ? theme.cardBackground : '#FFFFFF')
                       : 'transparent',
                     borderWidth: 0,
+                    borderColor: 'transparent',
                     ...(settings.reminderTime === 'evening' ? {
                       shadowColor: '#000',
                       shadowOffset: { width: 0, height: 3 },
-                      shadowOpacity: 0.08,
+                      shadowOpacity: 0.1,
                       shadowRadius: 8,
                       elevation: 3,
                     } : {}),
@@ -174,10 +174,11 @@ export function FastingNotificationSettings({ compact = false }: FastingNotifica
                       ? (isDark ? theme.cardBackground : '#FFFFFF')
                       : 'transparent',
                     borderWidth: 0,
+                    borderColor: 'transparent',
                     ...(settings.reminderTime === 'morning' ? {
                       shadowColor: '#000',
                       shadowOffset: { width: 0, height: 3 },
-                      shadowOpacity: 0.08,
+                      shadowOpacity: 0.1,
                       shadowRadius: 8,
                       elevation: 3,
                     } : {}),
@@ -246,6 +247,7 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowRadius: 15,
+    overflow: 'hidden',
   },
   settingRow: {
     flexDirection: 'row',
