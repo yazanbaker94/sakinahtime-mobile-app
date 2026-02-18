@@ -146,17 +146,17 @@ export function LoopRangeSelector({
             styles.startLoopButton,
             {
               backgroundColor: hasValidRange
-                ? (isLooping ? '#EF4444' : '#FFFFFF')
+                ? (isLooping ? '#EF4444' : activeColor)
                 : theme.backgroundSecondary,
               flex: 1,
               borderWidth: 0,
               borderColor: 'transparent',
               ...(hasValidRange && !isLooping ? {
-                shadowColor: '#000',
+                shadowColor: activeColor,
                 shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.08,
-                shadowRadius: 10,
-                elevation: 3,
+                shadowOpacity: 0.35,
+                shadowRadius: 8,
+                elevation: 5,
               } : hasValidRange && isLooping ? {
                 shadowColor: '#EF4444',
                 shadowOffset: { width: 0, height: 3 },
@@ -170,12 +170,12 @@ export function LoopRangeSelector({
           <Feather
             name={isLooping ? 'square' : 'play'}
             size={18}
-            color={hasValidRange ? (isLooping ? '#FFFFFF' : activeColor) : theme.textSecondary}
+            color={hasValidRange ? '#FFFFFF' : theme.textSecondary}
           />
           <ThemedText
             style={[
               styles.startLoopText,
-              { color: hasValidRange ? (isLooping ? '#FFFFFF' : activeColor) : theme.textSecondary },
+              { color: hasValidRange ? '#FFFFFF' : theme.textSecondary },
             ]}
           >
             {isLooping ? t('loopRange.stopLoop') : t('loopRange.playLoop')}

@@ -304,7 +304,7 @@ export function HifzControlPanel({
                       </ThemedText>
                     </View>
                     {settings.hideMode === option.value && (
-                      <Feather name="check" size={20} color="#5e9caa" />
+                      <Feather name="check" size={20} color={activeColor} />
                     )}
                   </TouchableOpacity>
                 ))}
@@ -316,8 +316,16 @@ export function HifzControlPanel({
                     style={[
                       styles.modeOption,
                       {
-                        backgroundColor: settings.playWordAudioOnReveal ? `${activeColor}20` : theme.cardBackground,
-                        borderColor: settings.playWordAudioOnReveal ? activeColor : theme.border,
+                        backgroundColor: '#FFFFFF',
+                        borderWidth: 0,
+                        borderColor: 'transparent',
+                        shadowColor: '#000',
+                        shadowOffset: { width: 0, height: 3 },
+                        shadowOpacity: 0.05,
+                        shadowRadius: 8,
+                        elevation: 2,
+                        borderLeftWidth: settings.playWordAudioOnReveal ? 4 : 0,
+                        borderLeftColor: settings.playWordAudioOnReveal ? activeColor : 'transparent',
                         marginTop: 4,
                       },
                     ]}
