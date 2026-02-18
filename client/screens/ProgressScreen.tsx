@@ -35,6 +35,9 @@ const ICON_CURRENT_STREAK = require('../../assets/images/3d-images/currentstreak
 const ICON_LONGEST_STREAK = require('../../assets/images/3d-images/longeststreak.png');
 const ICON_TODAY_PROGRESS = require('../../assets/images/3d-images/todayprogress.png');
 
+const DUSTY_ROSE = '#C88E8D';
+const DUSTY_ROSE_SHADOW = '#C88E8D';
+
 export default function ProgressScreen() {
   const { theme, isDark } = useTheme();
   const { t } = useTranslation();
@@ -179,7 +182,7 @@ export default function ProgressScreen() {
 
           {/* Circular Progress */}
           <View style={styles.progressCircleContainer}>
-            <View style={[styles.progressCircle, { borderColor: theme.primary }]}>
+            <View style={[styles.progressCircle, { borderColor: DUSTY_ROSE }]}>
               <ThemedText type="h2" style={styles.progressPercentage}>
                 {stats?.completionPercentage.toFixed(1)}%
               </ThemedText>
@@ -235,7 +238,7 @@ export default function ProgressScreen() {
                     styles.goalProgressFill,
                     {
                       width: `${Math.min(100, todayProgress?.goalProgress || 0)}%`,
-                      backgroundColor: isGoalMet ? theme.primary : theme.gold,
+                      backgroundColor: isGoalMet ? DUSTY_ROSE : theme.gold,
                     }
                   ]}
                 />
@@ -327,7 +330,7 @@ export default function ProgressScreen() {
                       styles.dayBar,
                       {
                         height: Math.min(60, Math.max(4, (day.pagesRead / 20) * 60)),
-                        backgroundColor: day.goalMet ? theme.primary : theme.gold,
+                        backgroundColor: day.goalMet ? DUSTY_ROSE : theme.gold,
                       }
                     ]}
                   />
@@ -376,6 +379,7 @@ export default function ProgressScreen() {
                 <TactileSwitch
                   value={goalEnabled}
                   onValueChange={setGoalEnabled}
+                  trackColorTrue={DUSTY_ROSE}
                 />
               </View>
 
@@ -454,10 +458,10 @@ export default function ProgressScreen() {
               </View>
 
               <Pressable style={[styles.saveButton, {
-                backgroundColor: theme.primary,
+                backgroundColor: DUSTY_ROSE,
                 borderWidth: 0,
                 borderColor: 'transparent',
-                shadowColor: theme.primary,
+                shadowColor: DUSTY_ROSE_SHADOW,
                 shadowOffset: { width: 0, height: 4 },
                 shadowOpacity: 0.35,
                 shadowRadius: 8,
@@ -489,6 +493,7 @@ export default function ProgressScreen() {
             <TactileSwitch
               value={reminderEnabled}
               onValueChange={handleReminderToggle}
+              trackColorTrue={DUSTY_ROSE}
             />
           </View>
 
@@ -508,7 +513,7 @@ export default function ProgressScreen() {
                 }]}
                 onPress={() => setShowTimePicker(true)}
               >
-                <Feather name="clock" size={16} color={theme.primary} />
+                <Feather name="clock" size={16} color={DUSTY_ROSE} />
                 <ThemedText style={styles.timeButtonText}>
                   {(() => {
                     const [h, m] = reminderTime.split(':').map(Number);
@@ -739,7 +744,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 8,
-    backgroundColor: 'rgba(0,0,0,0.1)',
+    borderWidth: 0,
+    borderColor: 'transparent',
   },
   goalTypeButtonActive: {
     backgroundColor: undefined, // Will be set dynamically with theme.primary
