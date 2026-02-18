@@ -1,6 +1,6 @@
 /**
- * OnboardingScreen - First-time user onboarding flow
- * Welcomes users and requests necessary permissions
+ * OnboardingScreen - Premium first-time user onboarding flow
+ * Features: 3D clay hero assets, floating pedestal cards, themed glow buttons
  */
 
 import React, { useState, useRef } from 'react';
@@ -28,7 +28,15 @@ import * as Notifications from 'expo-notifications';
 import * as Haptics from 'expo-haptics';
 import { checkBatteryOptimization, requestBatteryOptimizationExemption, canScheduleExactAlarms, requestExactAlarmPermission } from '@/hooks/useNotifications';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+
+// 3D Hero Assets
+const HERO_ASSETS: Record<string, any> = {
+    welcome: require('../../assets/images/3d-images/crescent.png'),
+    location: require('../../assets/images/3d-images/location.png'),
+    notifications: require('../../assets/images/3d-images/bell.png'),
+    done: require('../../assets/images/3d-images/tick.png'),
+};
 
 interface OnboardingSlide {
     id: string;
@@ -37,7 +45,7 @@ interface OnboardingSlide {
     subtitle: string;
     description: string;
     action?: 'location' | 'notifications' | 'widget';
-    image?: any; // For widget preview image
+    image?: any;
 }
 
 const SLIDES: OnboardingSlide[] = [
@@ -112,7 +120,6 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
 
     const finishOnboarding = async () => {
         await onComplete();
-        // Reset navigation stack to Main so user can't go back to onboarding
         navigation.dispatch(
             CommonActions.reset({
                 index: 0,
@@ -158,13 +165,9 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
                     : Haptics.NotificationFeedbackType.Warning
             );
 
-            // On Android, if notifications are granted, also request battery optimization exemption
-            // This ensures Azan alarms work reliably after device reboot
             if (status === 'granted' && Platform.OS === 'android') {
                 const { Alert } = require('react-native');
 
-                // Step 1: Check and request SCHEDULE_EXACT_ALARM permission (Android 12+)
-                // This is CRITICAL - without it, alarms fail silently!
                 console.log('[Onboarding] Checking exact alarm permission...');
                 try {
                     const canSchedule = await canScheduleExactAlarms();
@@ -191,7 +194,6 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
                     console.error('[Onboarding] Exact alarm check failed:', alarmError);
                 }
 
-                // Step 2: Check and request battery optimization exemption
                 console.log('[Onboarding] Checking battery optimization status...');
                 try {
                     const isBatteryOptimized = await checkBatteryOptimization();
@@ -233,7 +235,6 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
         } else if (action === 'notifications') {
             requestNotificationPermission();
         } else if (action === 'widget') {
-            // For widget slide, just go to next - user will add widget manually
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             goToNext();
         } else {
@@ -241,54 +242,119 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
         }
     };
 
+    // Button label logic
+    const getButtonLabel = (item: OnboardingSlide, isLastSlide: boolean) => {
+        if (isLastSlide) return t('onboarding.getStarted');
+        if (item.action) return t('onboarding.enable');
+        return t('onboarding.continue');
+    };
+
+    // Button icon logic
+    const getButtonIcon = (item: OnboardingSlide, isLastSlide: boolean): keyof typeof Feather.glyphMap => {
+        if (isLastSlide) return 'arrow-right';
+        if (item.action === 'location') return 'navigation';
+        if (item.action === 'notifications') return 'bell';
+        if (item.action === 'widget') return 'layout';
+        return 'arrow-right';
+    };
+
     const renderSlide = ({ item, index }: { item: OnboardingSlide; index: number }) => {
         const isLastSlide = index === SLIDES.length - 1;
         const isLocationSlide = item.action === 'location';
         const isNotificationSlide = item.action === 'notifications';
         const isWidgetSlide = item.action === 'widget';
+        const heroAsset = HERO_ASSETS[item.id];
 
         return (
             <View style={[styles.slide, { width: SCREEN_WIDTH }]}>
-                <View style={styles.slideContent}>
-                    {/* Icon, App Logo, or Widget Image */}
-                    {index === 0 ? (
-                        // Welcome slide: show app logo
-                        <Image
-                            source={require('@/../assets/images/logo_white_transparent.png')}
-                            style={styles.appLogo}
-                            resizeMode="contain"
-                        />
-                    ) : isWidgetSlide && item.image ? (
-                        // Widget slide: show widget preview image
-                        <View style={styles.widgetImageContainer}>
+                {/* Upper area — 3D Hero Asset with glow */}
+                <View style={styles.heroArea}>
+                    {isWidgetSlide && item.image ? (
+                        /* Widget slide: 3D tilted widget preview */
+                        <View style={{
+                            alignItems: 'center',
+                            transform: [
+                                { perspective: 1000 },
+                                { rotateX: '8deg' },
+                                { rotateY: '-5deg' },
+                            ],
+                        }}>
+                            <View style={{
+                                shadowColor: theme.primary,
+                                shadowOffset: { width: 0, height: 12 },
+                                shadowOpacity: 0.3,
+                                shadowRadius: 24,
+                                elevation: 12,
+                                borderRadius: 24,
+                            }}>
+                                <Image
+                                    source={item.image}
+                                    style={{
+                                        width: SCREEN_WIDTH - 88,
+                                        height: 116,
+                                        borderRadius: 20,
+                                    }}
+                                    resizeMode="contain"
+                                />
+                            </View>
+                        </View>
+                    ) : heroAsset ? (
+                        /* 3D clay hero with glow circle */
+                        <View style={{ alignItems: 'center' }}>
+                            {/* Glow behind asset */}
+                            <View style={{
+                                position: 'absolute',
+                                width: 140,
+                                height: 140,
+                                borderRadius: 70,
+                                backgroundColor: theme.primary,
+                                opacity: 0.12,
+                                top: 10,
+                            }} />
                             <Image
-                                source={item.image}
-                                style={styles.widgetImage}
+                                source={heroAsset}
+                                style={{ width: 140, height: 140 }}
                                 resizeMode="contain"
+                                fadeDuration={0}
                             />
                         </View>
                     ) : (
-                        // Other slides: show icon
-                        <View
-                            style={[
-                                styles.iconContainer,
-                                {
-                                    backgroundColor: `${theme.primary}15`,
-                                    borderColor: `${theme.primary}30`,
-                                },
-                            ]}
-                        >
+                        /* Fallback icon */
+                        <View style={[styles.iconFallback, {
+                            backgroundColor: `${theme.primary}15`,
+                            borderColor: `${theme.primary}30`,
+                        }]}>
                             <Feather name={item.icon} size={48} color={theme.primary} />
                         </View>
                     )}
+                </View>
 
-                    {/* Text */}
+                {/* Lower area — Floating Pedestal Card */}
+                <View style={{
+                    backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
+                    borderTopLeftRadius: 32,
+                    borderTopRightRadius: 32,
+                    paddingTop: 36,
+                    paddingBottom: insets.bottom + 80,
+                    paddingHorizontal: 28,
+                    alignItems: 'center',
+                    shadowColor: '#000',
+                    shadowOffset: { width: 0, height: -6 },
+                    shadowOpacity: 0.08,
+                    shadowRadius: 24,
+                    elevation: 8,
+                }}>
+                    {/* Subtitle */}
                     <ThemedText type="caption" style={[styles.subtitle, { color: theme.primary }]}>
                         {t(item.subtitle)}
                     </ThemedText>
+
+                    {/* Title */}
                     <ThemedText type="h2" style={styles.title}>
                         {t(item.title)}
                     </ThemedText>
+
+                    {/* Description */}
                     <ThemedText type="body" secondary style={styles.description}>
                         {t(item.description)}
                     </ThemedText>
@@ -310,46 +376,47 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
                             </ThemedText>
                         </View>
                     )}
-                </View>
 
-                {/* Action Button */}
-                <View style={styles.buttonContainer}>
-                    {isLastSlide ? (
+                    {/* Spacer */}
+                    <View style={{ flex: 1, minHeight: 20 }} />
+
+                    {/* Primary CTA — Glowing Button */}
+                    <Pressable
+                        onPress={isLastSlide ? handleGetStarted : () => handleAction(item.action)}
+                        style={({ pressed }) => [{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            paddingVertical: 16,
+                            paddingHorizontal: 32,
+                            borderRadius: 16,
+                            width: '100%',
+                            backgroundColor: theme.primary,
+                            shadowColor: theme.primary,
+                            shadowOffset: { width: 0, height: 8 },
+                            shadowOpacity: 0.35,
+                            shadowRadius: 20,
+                            elevation: 6,
+                            opacity: pressed ? 0.85 : 1,
+                            gap: 8,
+                        }]}
+                    >
+                        <ThemedText type="body" style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 16 }}>
+                            {getButtonLabel(item, isLastSlide)}
+                        </ThemedText>
+                        <Feather name={getButtonIcon(item, isLastSlide)} size={18} color="#FFFFFF" />
+                    </Pressable>
+
+                    {/* Not Now escape hatch */}
+                    {item.action && !isLastSlide && (
                         <Pressable
-                            onPress={handleGetStarted}
-                            style={({ pressed }) => [
-                                styles.primaryButton,
-                                { backgroundColor: theme.primary, opacity: pressed ? 0.8 : 1 },
-                            ]}
+                            onPress={goToNext}
+                            style={({ pressed }) => ({ marginTop: 14, opacity: pressed ? 0.5 : 1 })}
                         >
-                            <ThemedText type="body" style={styles.buttonText}>
-                                {t('onboarding.getStarted')}
+                            <ThemedText type="body" style={{ color: '#9CA3AF', fontSize: 14 }}>
+                                {t('onboarding.notNow')}
                             </ThemedText>
-                            <Feather name="arrow-right" size={20} color="#FFFFFF" />
                         </Pressable>
-                    ) : (
-                        <>
-                            <Pressable
-                                onPress={() => handleAction(item.action)}
-                                style={({ pressed }) => [
-                                    styles.primaryButton,
-                                    { backgroundColor: theme.primary, opacity: pressed ? 0.8 : 1 },
-                                ]}
-                            >
-                                <ThemedText type="body" style={styles.buttonText}>
-                                    {item.action ? t('onboarding.enable') : t('onboarding.continue')}
-                                </ThemedText>
-                                <Feather name="arrow-right" size={20} color="#FFFFFF" />
-                            </Pressable>
-
-                            {item.action && (
-                                <Pressable onPress={goToNext} style={styles.skipActionButton}>
-                                    <ThemedText type="small" secondary>
-                                        {t('onboarding.notNow')}
-                                    </ThemedText>
-                                </Pressable>
-                            )}
-                        </>
                     )}
                 </View>
             </View>
@@ -382,11 +449,10 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
                 onScroll={handleScroll}
                 scrollEventThrottle={16}
                 bounces={false}
-                contentContainerStyle={{ paddingTop: insets.top + 60 }}
             />
 
             {/* Pagination dots */}
-            <View style={[styles.pagination, { bottom: insets.bottom + Spacing.xl }]}>
+            <View style={[styles.pagination, { bottom: insets.bottom + Spacing.lg }]}>
                 {SLIDES.map((_, index) => (
                     <View
                         key={index}
@@ -417,28 +483,20 @@ const styles = StyleSheet.create({
     },
     slide: {
         flex: 1,
-        justifyContent: 'space-between',
-        paddingHorizontal: Spacing['2xl'],
+        justifyContent: 'flex-end',
     },
-    slideContent: {
+    heroArea: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        paddingTop: Spacing['3xl'],
     },
-    iconContainer: {
+    iconFallback: {
         width: 120,
         height: 120,
         borderRadius: 60,
         alignItems: 'center',
         justifyContent: 'center',
-        marginBottom: Spacing['2xl'],
         borderWidth: 2,
-    },
-    appLogo: {
-        width: 140,
-        height: 140,
-        marginBottom: Spacing['2xl'],
     },
     subtitle: {
         textTransform: 'uppercase',
@@ -453,7 +511,7 @@ const styles = StyleSheet.create({
     description: {
         textAlign: 'center',
         lineHeight: 24,
-        paddingHorizontal: Spacing.lg,
+        paddingHorizontal: Spacing.sm,
     },
     statusBadge: {
         flexDirection: 'row',
@@ -462,28 +520,6 @@ const styles = StyleSheet.create({
         paddingVertical: Spacing.sm,
         borderRadius: BorderRadius.full,
         marginTop: Spacing.lg,
-    },
-    buttonContainer: {
-        paddingBottom: 100,
-        alignItems: 'center',
-    },
-    primaryButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: Spacing.md,
-        paddingHorizontal: Spacing['2xl'],
-        borderRadius: BorderRadius.lg,
-        gap: Spacing.sm,
-        minWidth: 200,
-    },
-    buttonText: {
-        color: '#FFFFFF',
-        fontWeight: '600',
-    },
-    skipActionButton: {
-        marginTop: Spacing.md,
-        padding: Spacing.sm,
     },
     pagination: {
         position: 'absolute',
@@ -497,22 +533,5 @@ const styles = StyleSheet.create({
     dot: {
         height: 8,
         borderRadius: 4,
-    },
-    widgetImageContainer: {
-        marginBottom: Spacing['2xl'],
-        borderRadius: 24,
-        overflow: 'hidden',
-        backgroundColor: 'rgba(255,255,255,0.05)',
-        padding: 4,
-        shadowColor: '#6366F1',
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.4,
-        shadowRadius: 20,
-        elevation: 12,
-    },
-    widgetImage: {
-        width: SCREEN_WIDTH - 88,
-        height: 116,
-        borderRadius: 20,
     },
 });
