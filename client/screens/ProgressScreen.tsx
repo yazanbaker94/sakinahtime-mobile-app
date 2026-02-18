@@ -11,9 +11,9 @@ import {
   ScrollView,
   Pressable,
   TextInput,
-  Switch,
   Alert,
   Platform,
+  Image,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -29,6 +29,7 @@ import { ProgressCalculator } from '@/services/ProgressCalculator';
 import { DailyGoal } from '@/types/progress';
 import { QURAN_CONSTANTS } from '@/constants/quran-constants';
 import { useTranslation } from '@/hooks/useTranslation';
+import { TactileSwitch } from '@/components/TactileSwitch';
 
 export default function ProgressScreen() {
   const { theme, isDark } = useTheme();
@@ -158,7 +159,16 @@ export default function ProgressScreen() {
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Overall Progress Card */}
-        <View style={[styles.card, { backgroundColor: theme.backgroundSecondary }]}>
+        <View style={[styles.card, {
+          backgroundColor: '#FFFFFF',
+          borderWidth: 0,
+          borderColor: 'transparent',
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.05,
+          shadowRadius: 12,
+          elevation: 2,
+        }]}>
           <ThemedText type="h3" style={styles.cardTitle}>
             {t('progress.overallProgress')}
           </ThemedText>
@@ -190,22 +200,40 @@ export default function ProgressScreen() {
         </View>
 
         {/* Today's Progress Card */}
-        <View style={[styles.card, { backgroundColor: theme.backgroundSecondary }]}>
+        <View style={[styles.card, {
+          backgroundColor: '#FFFFFF',
+          borderWidth: 0,
+          borderColor: 'transparent',
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.05,
+          shadowRadius: 12,
+          elevation: 2,
+        }]}>
           <ThemedText type="h3" style={styles.cardTitle}>
             {t('progress.todaysProgress')}
           </ThemedText>
 
           <View style={styles.todayStats}>
             <View style={styles.todayStatItem}>
-              <Feather
-                name={isGoalMet ? 'check-circle' : 'circle'}
-                size={24}
-                color={isGoalMet ? theme.primary : theme.gold}
-              />
+              <View style={{
+                width: 28,
+                height: 28,
+                borderRadius: 14,
+                backgroundColor: isGoalMet ? `${theme.primary}20` : `${theme.gold}20`,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+                <Feather
+                  name={isGoalMet ? 'check' : 'book-open'}
+                  size={16}
+                  color={isGoalMet ? theme.primary : theme.gold}
+                />
+              </View>
               <ThemedText type="body" style={styles.todayStatText}>
                 {progress?.dailyGoal.type === 'verses'
                   ? `${todayProgress?.versesRead || 0} ${t('progress.versesRead')}`
-                  : `${todayProgress?.pagesRead || 0} ${t('progress.pagesReadToday')}`}
+                  : `${todayProgress?.pagesRead || 0} ${(todayProgress?.pagesRead || 0) === 1 ? t('progress.pageRead') : t('progress.pagesReadToday')}`}
               </ThemedText>
             </View>
 
@@ -240,19 +268,44 @@ export default function ProgressScreen() {
         </View>
 
         {/* Streak Card */}
-        <View style={[styles.card, { backgroundColor: theme.backgroundSecondary }]}>
+        <View style={[styles.card, {
+          backgroundColor: '#FFFFFF',
+          borderWidth: 0,
+          borderColor: 'transparent',
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.05,
+          shadowRadius: 12,
+          elevation: 2,
+        }]}>
           <ThemedText type="h3" style={styles.cardTitle}>
             {t('progress.readingStreak')}
           </ThemedText>
 
           <View style={styles.streakContainer}>
             <View style={styles.streakItem}>
-              <Feather name="zap" size={32} color="#F59E0B" />
+              <View style={{
+                shadowColor: '#F59E0B',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.4,
+                shadowRadius: 6,
+                elevation: 4,
+              }}>
+                <Feather name="zap" size={32} color="#F59E0B" />
+              </View>
               <ThemedText type="h2">{stats?.currentStreak || 0}</ThemedText>
               <ThemedText type="caption">{t('progress.currentStreak')}</ThemedText>
             </View>
             <View style={styles.streakItem}>
-              <Feather name="award" size={32} color="#8B5CF6" />
+              <View style={{
+                shadowColor: '#8B5CF6',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.4,
+                shadowRadius: 6,
+                elevation: 4,
+              }}>
+                <Feather name="award" size={32} color="#8B5CF6" />
+              </View>
               <ThemedText type="h2">{stats?.longestStreak || 0}</ThemedText>
               <ThemedText type="caption">{t('progress.longestStreak')}</ThemedText>
             </View>
@@ -261,7 +314,16 @@ export default function ProgressScreen() {
 
         {/* Weekly Chart */}
         {weeklyData && (
-          <View style={[styles.card, { backgroundColor: theme.backgroundSecondary }]}>
+          <View style={[styles.card, {
+            backgroundColor: '#FFFFFF',
+            borderWidth: 0,
+            borderColor: 'transparent',
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.05,
+            shadowRadius: 12,
+            elevation: 2,
+          }]}>
             <ThemedText type="h3" style={styles.cardTitle}>
               {t('progress.thisWeek')}
             </ThemedText>
@@ -292,7 +354,16 @@ export default function ProgressScreen() {
         )}
 
         {/* Goal Settings */}
-        <View style={[styles.card, { backgroundColor: theme.backgroundSecondary }]}>
+        <View style={[styles.card, {
+          backgroundColor: '#FFFFFF',
+          borderWidth: 0,
+          borderColor: 'transparent',
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.05,
+          shadowRadius: 12,
+          elevation: 2,
+        }]}>
           <Pressable
             style={styles.cardHeader}
             onPress={() => setShowGoalSettings(!showGoalSettings)}
@@ -311,35 +382,60 @@ export default function ProgressScreen() {
             <View style={styles.goalSettings}>
               <View style={styles.settingRow}>
                 <ThemedText>{t('progress.enableDailyGoal')}</ThemedText>
-                <Switch
+                <TactileSwitch
                   value={goalEnabled}
                   onValueChange={setGoalEnabled}
-                  trackColor={{ false: '#767577', true: theme.primary }}
                 />
               </View>
 
               <View style={styles.settingRow}>
                 <ThemedText>{t('progress.goalType')}</ThemedText>
-                <View style={styles.goalTypeButtons}>
+                <View style={[styles.goalTypeButtons, {
+                  backgroundColor: '#F3F4F6',
+                  borderRadius: 10,
+                  padding: 3,
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 1 },
+                  shadowOpacity: 0.06,
+                  shadowRadius: 2,
+                }]}>
                   <Pressable
                     style={[
                       styles.goalTypeButton,
-                      goalType === 'pages' && { backgroundColor: theme.primary },
+                      goalType === 'pages'
+                        ? {
+                          backgroundColor: '#FFFFFF',
+                          shadowColor: '#000',
+                          shadowOffset: { width: 0, height: 2 },
+                          shadowOpacity: 0.08,
+                          shadowRadius: 4,
+                          elevation: 2,
+                        }
+                        : { backgroundColor: 'transparent' },
                     ]}
                     onPress={() => setGoalType('pages')}
                   >
-                    <ThemedText style={goalType === 'pages' ? styles.goalTypeTextActive : undefined}>
+                    <ThemedText style={goalType === 'pages' ? { fontWeight: '600' } : { opacity: 0.6 }}>
                       {t('progress.pages')}
                     </ThemedText>
                   </Pressable>
                   <Pressable
                     style={[
                       styles.goalTypeButton,
-                      goalType === 'verses' && { backgroundColor: theme.primary },
+                      goalType === 'verses'
+                        ? {
+                          backgroundColor: '#FFFFFF',
+                          shadowColor: '#000',
+                          shadowOffset: { width: 0, height: 2 },
+                          shadowOpacity: 0.08,
+                          shadowRadius: 4,
+                          elevation: 2,
+                        }
+                        : { backgroundColor: 'transparent' },
                     ]}
                     onPress={() => setGoalType('verses')}
                   >
-                    <ThemedText style={goalType === 'verses' ? styles.goalTypeTextActive : undefined}>
+                    <ThemedText style={goalType === 'verses' ? { fontWeight: '600' } : { opacity: 0.6 }}>
                       {t('progress.verses')}
                     </ThemedText>
                   </Pressable>
@@ -349,7 +445,16 @@ export default function ProgressScreen() {
               <View style={styles.settingRow}>
                 <ThemedText>{t('progress.target')} ({goalType === 'pages' ? '1-20' : '1-100'})</ThemedText>
                 <TextInput
-                  style={[styles.goalInput, { color: theme.text }]}
+                  style={[styles.goalInput, {
+                    color: theme.text,
+                    backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#EDEFF2',
+                    borderWidth: 0,
+                    borderColor: 'transparent',
+                    shadowColor: '#000',
+                    shadowOffset: { width: 0, height: 1 },
+                    shadowOpacity: 0.08,
+                    shadowRadius: 2,
+                  }]}
                   value={goalTarget}
                   onChangeText={setGoalTarget}
                   keyboardType="number-pad"
@@ -357,7 +462,16 @@ export default function ProgressScreen() {
                 />
               </View>
 
-              <Pressable style={[styles.saveButton, { backgroundColor: theme.primary }]} onPress={handleSaveGoal}>
+              <Pressable style={[styles.saveButton, {
+                backgroundColor: theme.primary,
+                borderWidth: 0,
+                borderColor: 'transparent',
+                shadowColor: theme.primary,
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.35,
+                shadowRadius: 8,
+                elevation: 5,
+              }]} onPress={handleSaveGoal}>
                 <ThemedText style={styles.saveButtonText}>{t('progress.saveGoal')}</ThemedText>
               </Pressable>
             </View>
@@ -365,17 +479,25 @@ export default function ProgressScreen() {
         </View>
 
         {/* Reminder Settings */}
-        <View style={[styles.card, { backgroundColor: theme.backgroundSecondary }]}>
+        <View style={[styles.card, {
+          backgroundColor: '#FFFFFF',
+          borderWidth: 0,
+          borderColor: 'transparent',
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.05,
+          shadowRadius: 12,
+          elevation: 2,
+        }]}>
           <ThemedText type="h3" style={styles.cardTitle}>
             {t('progress.readingReminder')}
           </ThemedText>
 
           <View style={styles.settingRow}>
             <ThemedText>{t('progress.enableReminder')}</ThemedText>
-            <Switch
+            <TactileSwitch
               value={reminderEnabled}
               onValueChange={handleReminderToggle}
-              trackColor={{ false: '#767577', true: theme.primary }}
             />
           </View>
 
@@ -383,7 +505,16 @@ export default function ProgressScreen() {
             <View style={styles.settingRow}>
               <ThemedText>{t('progress.reminderTime')}</ThemedText>
               <Pressable
-                style={[styles.timeButton, { borderColor: theme.border }]}
+                style={[styles.timeButton, {
+                  borderWidth: 0,
+                  borderColor: 'transparent',
+                  backgroundColor: '#FFFFFF',
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 3 },
+                  shadowOpacity: 0.05,
+                  shadowRadius: 8,
+                  elevation: 2,
+                }]}
                 onPress={() => setShowTimePicker(true)}
               >
                 <Feather name="clock" size={16} color={theme.primary} />
@@ -456,7 +587,16 @@ export default function ProgressScreen() {
 
         {/* Reset Button */}
         <Pressable
-          style={[styles.resetButton, { backgroundColor: '#EF4444' }]}
+          style={[styles.resetButton, {
+            backgroundColor: '#EF4444',
+            borderWidth: 0,
+            borderColor: 'transparent',
+            shadowColor: '#EF4444',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.35,
+            shadowRadius: 8,
+            elevation: 5,
+          }]}
           onPress={handleResetProgress}
         >
           <Feather name="trash-2" size={20} color="#fff" />
@@ -548,9 +688,13 @@ const styles = StyleSheet.create({
   goalProgressBar: {
     width: '100%',
     height: 8,
-    backgroundColor: 'rgba(0,0,0,0.1)',
+    backgroundColor: '#EDEFF2',
     borderRadius: 4,
     overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 2,
   },
   goalProgressFill: {
     height: '100%',
@@ -613,13 +757,13 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   goalInput: {
-    borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.2)',
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 8,
     width: 80,
     textAlign: 'center',
+    fontWeight: '600',
+    fontSize: 16,
   },
   timeInput: {
     borderWidth: 1,
@@ -634,7 +778,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 8,
