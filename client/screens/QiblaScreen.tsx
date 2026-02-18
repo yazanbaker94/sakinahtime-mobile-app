@@ -90,6 +90,8 @@ export default function QiblaScreen() {
     requestPermission,
     openSettings,
     canAskAgain,
+    locationMode,
+    manualLocation,
   } = useLocation();
 
   const { heading, available: compassAvailable, error: compassError, accuracy } = useCompass();
@@ -247,8 +249,9 @@ export default function QiblaScreen() {
   const cardinalColor = isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.25)';
   const goldColor = '#D4A017';
 
-  // Permission screen
-  if (!permission?.granted) {
+  // Permission screen (skip if user has a manual location set)
+  const hasManualLocation = locationMode === 'manual' && manualLocation;
+  if (!permission?.granted && !hasManualLocation) {
     return (
       <View style={[styles.container, { backgroundColor: isDark ? theme.backgroundRoot : '#F8F6F3' }]}>
         <View

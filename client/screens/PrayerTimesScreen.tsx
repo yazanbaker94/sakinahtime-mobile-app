@@ -99,6 +99,8 @@ export default function PrayerTimesScreen() {
     requestPermission,
     openSettings,
     canAskAgain,
+    locationMode,
+    manualLocation,
   } = useLocation();
 
   // Auto-detect calculation method based on country (only on first launch)
@@ -359,7 +361,8 @@ export default function PrayerTimesScreen() {
     );
   }
 
-  if (!permission?.granted) {
+  const hasManualLocation = locationMode === 'manual' && manualLocation;
+  if (!permission?.granted && !hasManualLocation) {
     return (
       <ThemedView style={styles.container}>
         <View
