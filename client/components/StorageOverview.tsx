@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import { View, StyleSheet, Pressable } from 'react-native';
+import { View, StyleSheet, Pressable, Image } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
@@ -50,11 +50,7 @@ export function StorageOverview({ storageInfo, onManagePress }: StorageOverviewP
             styles.iconCircle,
             { backgroundColor: `${theme.primary}26` }
           ]}>
-            <Feather
-              name="hard-drive"
-              size={20}
-              color={theme.primary}
-            />
+            <Image source={require('../assets/images/3d-images/Storage.png')} style={{ width: 32, height: 32 }} resizeMode="contain" />
           </View>
           <View>
             <ThemedText type="body" style={{ fontWeight: '600' }}>

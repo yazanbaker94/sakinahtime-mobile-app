@@ -5,7 +5,7 @@
  */
 
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import { View, StyleSheet, Pressable, Alert, FlatList } from 'react-native';
+import { View, StyleSheet, Pressable, Alert, FlatList, Image } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -174,10 +174,55 @@ export function AudioDownloadScreen() {
         </View>
       )}
 
-      {/* Reciter Selector */}
-      <Pressable
-        style={[
-          styles.reciterSelector,
+      {/* Sticky controls: solid bg prevents scroll bleed-through */}
+      <View style={{
+        backgroundColor: isDark ? theme.backgroundRoot : theme.backgroundRoot,
+        zIndex: 10,
+        elevation: 10,
+        paddingBottom: Spacing.sm,
+      }}>
+
+        {/* Reciter Selector */}
+        <Pressable
+          style={[
+            styles.reciterSelector,
+            {
+              backgroundColor: isDark ? `${theme.primary}26` : '#FFFFFF',
+              borderWidth: 0,
+              borderColor: 'transparent',
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: isDark ? 0 : 0.05,
+              shadowRadius: 12,
+              elevation: isDark ? 0 : 2,
+            }
+          ]}
+          onPress={openReciterSelection}
+        >
+          <View style={styles.reciterInfo}>
+            <View style={[
+              styles.reciterIcon,
+              { backgroundColor: `${theme.primary}15` }
+            ]}>
+              <Image source={require('../../assets/images/3d-images/Reciter.png')} style={{ width: 32, height: 32 }} resizeMode="contain" />
+            </View>
+            <View style={{ flex: 1 }}>
+              <ThemedText type="caption" secondary>{t('mushaf.selectReciter')}</ThemedText>
+              <ThemedText type="body" style={{ fontWeight: '600' }} numberOfLines={1}>
+                {locale === 'ar' ? reciterInfo?.nameAr : reciterInfo?.nameEn}
+              </ThemedText>
+            </View>
+          </View>
+          <Feather
+            name="chevron-right"
+            size={20}
+            color={theme.textSecondary}
+          />
+        </Pressable>
+
+        {/* Progress Summary */}
+        <View style={[
+          styles.progressSummary,
           {
             backgroundColor: isDark ? `${theme.primary}26` : '#FFFFFF',
             borderWidth: 0,
@@ -188,71 +233,35 @@ export function AudioDownloadScreen() {
             shadowRadius: 12,
             elevation: isDark ? 0 : 2,
           }
-        ]}
-        onPress={openReciterSelection}
-      >
-        <View style={styles.reciterInfo}>
-          <View style={[
-            styles.reciterIcon,
-            { backgroundColor: `${theme.primary}15` }
-          ]}>
-            <Feather name="mic" size={20} color={theme.primary} />
-          </View>
-          <View style={{ flex: 1 }}>
-            <ThemedText type="caption" secondary>{t('mushaf.selectReciter')}</ThemedText>
-            <ThemedText type="body" style={{ fontWeight: '600' }} numberOfLines={1}>
-              {locale === 'ar' ? reciterInfo?.nameAr : reciterInfo?.nameEn}
+        ]}>
+          <View style={styles.progressInfo}>
+            <ThemedText type="h2" style={{ color: theme.primary }}>
+              {downloadedCount}
+            </ThemedText>
+            <ThemedText type="caption" secondary style={{ marginLeft: 6 }}>
+              of {totalSurahs} surahs downloaded
             </ThemedText>
           </View>
-        </View>
-        <Feather
-          name="chevron-right"
-          size={20}
-          color={theme.textSecondary}
-        />
-      </Pressable>
-
-      {/* Progress Summary */}
-      <View style={[
-        styles.progressSummary,
-        {
-          backgroundColor: isDark ? `${theme.primary}26` : '#FFFFFF',
-          borderWidth: 0,
-          borderColor: 'transparent',
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: isDark ? 0 : 0.05,
-          shadowRadius: 12,
-          elevation: isDark ? 0 : 2,
-        }
-      ]}>
-        <View style={styles.progressInfo}>
-          <ThemedText type="h2" style={{ color: theme.primary }}>
-            {downloadedCount}
-          </ThemedText>
-          <ThemedText type="caption" secondary style={{ marginLeft: 6 }}>
-            of {totalSurahs} surahs downloaded
-          </ThemedText>
-        </View>
-        <View style={[
-          styles.progressBar,
-          {
-            backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : '#EDEFF2',
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 1 },
-            shadowOpacity: 0.08,
-            shadowRadius: 2,
-          }
-        ]}>
-          <View
-            style={[
-              styles.progressFill,
-              {
-                width: `${(downloadedCount / totalSurahs) * 100}%`,
-                backgroundColor: theme.primary,
-              }
-            ]}
-          />
+          <View style={[
+            styles.progressBar,
+            {
+              backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : '#EDEFF2',
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 1 },
+              shadowOpacity: 0.08,
+              shadowRadius: 2,
+            }
+          ]}>
+            <View
+              style={[
+                styles.progressFill,
+                {
+                  width: `${(downloadedCount / totalSurahs) * 100}%`,
+                  backgroundColor: theme.primary,
+                }
+              ]}
+            />
+          </View>
         </View>
       </View>
 
@@ -276,7 +285,14 @@ export function AudioDownloadScreen() {
             style={({ pressed }) => [
               styles.batchButton,
               {
-                backgroundColor: isDark ? 'rgba(251, 191, 36, 0.15)' : 'rgba(245, 158, 11, 0.1)',
+                backgroundColor: isDark ? 'rgba(251, 191, 36, 0.15)' : '#FFFFFF',
+                borderWidth: 0,
+                borderColor: 'transparent',
+                shadowColor: '#F59E0B',
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.25,
+                shadowRadius: 8,
+                elevation: 4,
                 opacity: pressed ? 0.7 : 1,
               }
             ]}
@@ -309,7 +325,14 @@ export function AudioDownloadScreen() {
             style={({ pressed }) => [
               styles.batchButton,
               {
-                backgroundColor: `${theme.primary}15`,
+                backgroundColor: isDark ? `${theme.primary}26` : '#FFFFFF',
+                borderWidth: 0,
+                borderColor: 'transparent',
+                shadowColor: theme.primary,
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.25,
+                shadowRadius: 8,
+                elevation: 4,
                 opacity: pressed || !isOnline || downloadedCount === totalSurahs ? 0.5 : 1,
               }
             ]}
@@ -334,7 +357,14 @@ export function AudioDownloadScreen() {
           style={({ pressed }) => [
             styles.batchButton,
             {
-              backgroundColor: isDark ? 'rgba(248, 113, 113, 0.15)' : 'rgba(239, 68, 68, 0.1)',
+              backgroundColor: isDark ? 'rgba(248, 113, 113, 0.15)' : '#FFFFFF',
+              borderWidth: 0,
+              borderColor: 'transparent',
+              shadowColor: '#EF4444',
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.25,
+              shadowRadius: 8,
+              elevation: 4,
               opacity: pressed || downloadedCount === 0 ? 0.5 : 1,
             }
           ]}

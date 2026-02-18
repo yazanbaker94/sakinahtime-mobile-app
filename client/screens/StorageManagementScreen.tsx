@@ -5,7 +5,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, Pressable, Alert, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable, Alert, ActivityIndicator, Image } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -155,15 +155,20 @@ export function StorageManagementScreen() {
               style={({ pressed }) => [
                 styles.actionCard,
                 {
-                  backgroundColor: isDark ? 'rgba(96, 165, 250, 0.15)' : 'rgba(59, 130, 246, 0.1)',
+                  backgroundColor: isDark ? 'rgba(96, 165, 250, 0.15)' : '#FFFFFF',
+                  borderWidth: 0,
+                  borderColor: 'transparent',
+                  shadowColor: '#3B82F6',
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 8,
+                  elevation: 4,
                   opacity: pressed ? 0.7 : 1,
                 }
               ]}
               onPress={() => navigation.navigate('AudioDownload')}
             >
-              <View style={[styles.actionIcon, { backgroundColor: 'rgba(59, 130, 246, 0.2)' }]}>
-                <Feather name="headphones" size={20} color={isDark ? '#60A5FA' : '#3B82F6'} />
-              </View>
+              <Image source={require('../../assets/images/3d-images/Audio.png')} style={{ width: 40, height: 40 }} resizeMode="contain" />
               <ThemedText type="small" style={{ fontWeight: '500', marginTop: Spacing.xs }}>
                 {t('storage.manageAudio')}
               </ThemedText>
@@ -176,7 +181,14 @@ export function StorageManagementScreen() {
               style={({ pressed }) => [
                 styles.actionCard,
                 {
-                  backgroundColor: isDark ? 'rgba(248, 113, 113, 0.15)' : 'rgba(239, 68, 68, 0.1)',
+                  backgroundColor: isDark ? 'rgba(248, 113, 113, 0.15)' : '#FFFFFF',
+                  borderWidth: 0,
+                  borderColor: 'transparent',
+                  shadowColor: '#EF4444',
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 8,
+                  elevation: 4,
                   opacity: pressed ? 0.7 : 1,
                 }
               ]}
@@ -187,9 +199,7 @@ export function StorageManagementScreen() {
                 <ActivityIndicator size="small" color={isDark ? '#F87171' : '#EF4444'} />
               ) : (
                 <>
-                  <View style={[styles.actionIcon, { backgroundColor: 'rgba(239, 68, 68, 0.2)' }]}>
-                    <Feather name="trash-2" size={20} color={isDark ? '#F87171' : '#EF4444'} />
-                  </View>
+                  <Image source={require('../../assets/images/3d-images/Clear.png')} style={{ width: 40, height: 40 }} resizeMode="contain" />
                   <ThemedText type="small" style={{ fontWeight: '500', marginTop: Spacing.xs }}>
                     {t('storage.clearAll')}
                   </ThemedText>
