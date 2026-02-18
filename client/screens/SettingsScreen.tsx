@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, ScrollView, Pressable, Platform, Linking } from "react-native";
+import { View, StyleSheet, ScrollView, Pressable, Platform, Linking, Alert } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
@@ -15,6 +15,8 @@ import { ThemePicker } from "@/components/ThemePicker";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useTranslation } from "@/hooks/useTranslation";
 import { SUPPORTED_LANGUAGES } from "@/i18n";
+import { useOnboarding } from "@/hooks/useOnboarding";
+import * as Updates from "expo-updates";
 
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
@@ -23,6 +25,7 @@ export default function SettingsScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { t, locale } = useTranslation();
   const { settings: notificationSettings } = useNotifications();
+  const { resetOnboarding } = useOnboarding();
 
   return (
     <ThemedView style={styles.container}>
@@ -290,6 +293,58 @@ export default function SettingsScreen() {
             </Pressable>
           </View>
         </View>
+        {/* Dev Tools */}
+        <View style={styles.section}>
+          <View style={[styles.card, {
+            backgroundColor: isDark ? `${theme.primary}33` : theme.cardBackground,
+            elevation: isDark ? 0 : 3,
+            shadowOpacity: isDark ? 0 : 0.08,
+          }]}>
+            <Pressable
+              onPress={() => {
+                Alert.alert(
+                  'Replay Onboarding',
+                  'This will reset the intro screens. The app will reload.',
+                  [
+                    { text: 'Cancel', style: 'cancel' },
+                    {
+                      text: 'Reset & Reload',
+                      style: 'destructive',
+                      onPress: async () => {
+                        await resetOnboarding();
+                        try {
+                          await Updates.reloadAsync();
+                        } catch {
+                          Alert.alert('Done', 'Please force-close and reopen the app.');
+                        }
+                      },
+                    },
+                  ]
+                );
+              }}
+              style={({ pressed }) => [
+                styles.settingRow,
+                { opacity: pressed ? 0.7 : 1 },
+              ]}
+            >
+              <View style={styles.settingLeft}>
+                <View style={[styles.iconCircle, { backgroundColor: 'rgba(239, 68, 68, 0.1)' }]}>
+                  <Feather name="refresh-cw" size={20} color="#EF4444" />
+                </View>
+                <View style={styles.settingText}>
+                  <ThemedText type="body" style={{ fontWeight: '600' }}>
+                    Replay Onboarding
+                  </ThemedText>
+                  <ThemedText type="caption" secondary>
+                    Reset intro screens for testing
+                  </ThemedText>
+                </View>
+              </View>
+              <Feather name="chevron-right" size={20} color={theme.textSecondary} />
+            </Pressable>
+          </View>
+        </View>
+
       </ScrollView>
     </ThemedView>
   );
