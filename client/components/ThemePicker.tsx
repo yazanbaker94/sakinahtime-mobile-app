@@ -79,6 +79,7 @@ export function ThemePicker() {
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.themeScroll}
+        style={{ overflow: 'visible' }}
       >
         {themeOrder.map((id) => {
           const config = Themes[id];
@@ -186,6 +187,7 @@ const styles = StyleSheet.create({
   },
   themeScroll: {
     paddingRight: Spacing.md,
+    paddingVertical: Spacing.sm,
     gap: Spacing.sm,
   },
   themeCard: {

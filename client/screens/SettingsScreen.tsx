@@ -29,6 +29,16 @@ export default function SettingsScreen() {
 
   return (
     <ThemedView style={styles.container}>
+      {/* Freeze zone: opaque bar that covers the system status bar so content clips behind it */}
+      <View style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: insets.top,
+        backgroundColor: theme.backgroundRoot,
+        zIndex: 10,
+      }} />
       <ScrollView
         contentContainerStyle={[
           styles.scrollContent,
@@ -313,9 +323,11 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
+    borderWidth: 0,
+    borderColor: 'transparent',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 12,
     // elevation and shadowOpacity set dynamically based on dark mode
   },
   settingRow: {
