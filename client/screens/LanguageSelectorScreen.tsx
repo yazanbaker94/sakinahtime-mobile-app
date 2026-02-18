@@ -52,14 +52,17 @@ export default function LanguageSelectorScreen() {
                 ]}
                 showsVerticalScrollIndicator={false}
             >
-                <ThemedText type="caption" secondary style={{ marginBottom: Spacing.sm }}>
+                <ThemedText type="caption" secondary style={{ marginBottom: Spacing.md }}>
                     {t('settings.chooseLanguage')}
                 </ThemedText>
 
                 <View style={[styles.card, {
-                    backgroundColor: isDark ? `${theme.primary}33` : theme.cardBackground,
-                    elevation: isDark ? 0 : 3,
-                    shadowOpacity: isDark ? 0 : 0.08,
+                    backgroundColor: isDark ? `${theme.primary}33` : '#FFFFFF',
+                    borderWidth: 0,
+                    borderColor: 'transparent',
+                    elevation: isDark ? 0 : 2,
+                    shadowOpacity: isDark ? 0 : 0.05,
+                    shadowRadius: 12,
                 }]}>
                     {SUPPORTED_LANGUAGES.map((lang, index) => {
                         const isSelected = locale === lang.code;
@@ -71,11 +74,12 @@ export default function LanguageSelectorScreen() {
                                 onPress={() => handleSelect(lang.code)}
                                 style={({ pressed }) => [
                                     styles.languageRow,
-                                    !isLast && {
-                                        borderBottomWidth: 1,
-                                        borderBottomColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
+                                    {
+                                        opacity: pressed ? 0.7 : 1,
+                                        backgroundColor: isSelected
+                                            ? (isDark ? `${theme.primary}15` : `${theme.primary}08`)
+                                            : 'transparent',
                                     },
-                                    { opacity: pressed ? 0.7 : 1 },
                                 ]}
                             >
                                 <View style={styles.languageLeft}>
@@ -86,6 +90,7 @@ export default function LanguageSelectorScreen() {
                                         <ThemedText type="body" style={{
                                             fontWeight: isSelected ? '700' : '500',
                                             color: isSelected ? theme.primary : theme.text,
+                                            fontSize: isSelected ? 16 : 15,
                                         }}>
                                             {lang.nativeName}
                                         </ThemedText>
@@ -96,12 +101,20 @@ export default function LanguageSelectorScreen() {
                                 </View>
 
                                 {isSelected ? (
-                                    <View style={[styles.checkCircle, { backgroundColor: theme.primary }]}>
+                                    <View style={[styles.checkCircle, {
+                                        backgroundColor: theme.primary,
+                                        shadowColor: theme.primary,
+                                        shadowOffset: { width: 0, height: 2 },
+                                        shadowOpacity: 0.4,
+                                        shadowRadius: 4,
+                                        elevation: 3,
+                                    }]}>
                                         <Feather name="check" size={14} color="#FFF" />
                                     </View>
                                 ) : (
                                     <View style={[styles.radioCircle, {
-                                        borderColor: isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.12)',
+                                        backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#F3F4F6',
+                                        borderWidth: 0,
                                     }]} />
                                 )}
                             </Pressable>
@@ -132,10 +145,11 @@ const styles = StyleSheet.create({
     },
     card: {
         borderRadius: BorderRadius.lg,
-        overflow: 'hidden',
+        borderWidth: 0,
+        borderColor: 'transparent',
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowRadius: 8,
+        shadowOffset: { width: 0, height: 4 },
+        shadowRadius: 12,
     },
     languageRow: {
         flexDirection: 'row',
@@ -159,6 +173,5 @@ const styles = StyleSheet.create({
         width: 22,
         height: 22,
         borderRadius: 11,
-        borderWidth: 2,
     },
 });
