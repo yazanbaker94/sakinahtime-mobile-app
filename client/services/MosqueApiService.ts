@@ -199,9 +199,10 @@ async function searchNearbyMosques(params: SearchParams): Promise<Mosque[]> {
     mosqueCache.radiusMeters >= radiusMeters &&
     calculateDistance(latitude, longitude, mosqueCache.latitude, mosqueCache.longitude) < CACHE_DISTANCE_THRESHOLD
   ) {
-    // Recalculate distances from current position but use cached results
+    // Recalculate distances from current position and filter to requested radius
     return mosqueCache.data
       .map(m => ({ ...m, distance: calculateDistance(latitude, longitude, m.latitude, m.longitude) }))
+      .filter(m => m.distance <= radiusMeters)
       .sort((a, b) => a.distance - b.distance);
   }
 
