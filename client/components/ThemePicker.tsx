@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
   },
   themeScroll: {
     paddingRight: Spacing.md,
-    paddingVertical: Spacing.sm,
+    paddingVertical: 20,
     gap: Spacing.sm,
   },
   themeCard: {
