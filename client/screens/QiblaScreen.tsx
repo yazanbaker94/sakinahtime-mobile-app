@@ -28,6 +28,8 @@ import Animated, {
 } from "react-native-reanimated";
 import { useTranslation } from "@/hooks/useTranslation";
 import { usePrayerColor } from "@/contexts/PrayerColorContext";
+import { MosqueApiService } from "@/services/MosqueApiService";
+import { DEFAULT_RADIUS } from "@/constants/mosque";
 
 // 3D assets
 const kaabaPng = require('../../assets/images/qibla3d/kaaba.png');
@@ -96,8 +98,12 @@ export default function QiblaScreen() {
 
   const { heading, available: compassAvailable, error: compassError, accuracy } = useCompass();
 
-
-
+  // Prefetch mosque data silently so MosqueFinderScreen loads instantly
+  useEffect(() => {
+    if (latitude !== null && longitude !== null) {
+      MosqueApiService.prefetchNearbyMosques(latitude, longitude, DEFAULT_RADIUS);
+    }
+  }, [latitude, longitude]);
 
   const qiblaDirection = useMemo(() => {
     if (latitude === null || longitude === null) return 0;

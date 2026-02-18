@@ -18,6 +18,19 @@ interface SearchParams {
   radiusMeters: number;
 }
 
+// In-memory cache for prefetched mosque data
+interface MosqueCache {
+  data: Mosque[];
+  latitude: number;
+  longitude: number;
+  radiusMeters: number;
+  timestamp: number;
+}
+
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+const CACHE_DISTANCE_THRESHOLD = 100; // meters — reuse cache if user moved less than this
+let mosqueCache: MosqueCache | null = null;
+
 interface OverpassElement {
   type: 'node' | 'way' | 'relation';
   id: number;
@@ -73,27 +86,27 @@ function toRad(deg: number): number {
  */
 function buildAddress(tags?: OverpassElement['tags']): string {
   if (!tags) return 'Address not available';
-  
+
   if (tags['addr:full']) {
     return tags['addr:full'];
   }
-  
+
   const parts: string[] = [];
-  
+
   if (tags['addr:housenumber'] && tags['addr:street']) {
     parts.push(`${tags['addr:housenumber']} ${tags['addr:street']}`);
   } else if (tags['addr:street']) {
     parts.push(tags['addr:street']);
   }
-  
+
   if (tags['addr:city']) {
     parts.push(tags['addr:city']);
   }
-  
+
   if (tags['addr:postcode']) {
     parts.push(tags['addr:postcode']);
   }
-  
+
   return parts.length > 0 ? parts.join(', ') : 'Address not available';
 }
 
@@ -116,7 +129,7 @@ export function transformOsmToMosque(
   // Get coordinates (nodes have lat/lon directly, ways/relations have center)
   const lat = element.lat ?? element.center?.lat ?? 0;
   const lon = element.lon ?? element.center?.lon ?? 0;
-  
+
   const distance = calculateDistance(userLat, userLon, lat, lon);
 
   return {
@@ -139,12 +152,12 @@ export function transformOsmToMosque(
  */
 async function fetchFromOverpass(query: string): Promise<any> {
   let lastError: Error | null = null;
-  
+
   for (const server of OVERPASS_SERVERS) {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
-      
+
       const response = await fetch(server, {
         method: 'POST',
         headers: {
@@ -153,13 +166,13 @@ async function fetchFromOverpass(query: string): Promise<any> {
         body: `data=${encodeURIComponent(query)}`,
         signal: controller.signal,
       });
-      
+
       clearTimeout(timeoutId);
 
       if (response.ok) {
         return await response.json();
       }
-      
+
       // If server returned error, try next one
       lastError = new Error(`Server ${server} returned ${response.status}`);
     } catch (error) {
@@ -167,7 +180,7 @@ async function fetchFromOverpass(query: string): Promise<any> {
       // Continue to next server
     }
   }
-  
+
   throw lastError || new Error('All Overpass servers failed');
 }
 
@@ -176,7 +189,19 @@ async function fetchFromOverpass(query: string): Promise<any> {
  */
 async function searchNearbyMosques(params: SearchParams): Promise<Mosque[]> {
   const { latitude, longitude, radiusMeters } = params;
-  
+
+  // Check cache first
+  if (mosqueCache &&
+    Date.now() - mosqueCache.timestamp < CACHE_TTL_MS &&
+    mosqueCache.radiusMeters >= radiusMeters &&
+    calculateDistance(latitude, longitude, mosqueCache.latitude, mosqueCache.longitude) < CACHE_DISTANCE_THRESHOLD
+  ) {
+    // Recalculate distances from current position but use cached results
+    return mosqueCache.data
+      .map(m => ({ ...m, distance: calculateDistance(latitude, longitude, m.latitude, m.longitude) }))
+      .sort((a, b) => a.distance - b.distance);
+  }
+
   // Overpass QL query to find mosques within radius
   // Searches for amenity=place_of_worship with religion=muslim OR amenity=mosque
   const query = `
@@ -193,13 +218,16 @@ async function searchNearbyMosques(params: SearchParams): Promise<Mosque[]> {
   try {
     const data = await fetchFromOverpass(query);
     const elements: OverpassElement[] = data.elements || [];
-    
+
     // Transform and sort by distance
     const mosques = elements
       .filter(el => el.lat || el.center) // Must have coordinates
       .map(el => transformOsmToMosque(el, latitude, longitude))
       .sort((a, b) => a.distance - b.distance);
-    
+
+    // Cache the results
+    mosqueCache = { data: mosques, latitude, longitude, radiusMeters, timestamp: Date.now() };
+
     return mosques;
   } catch (error) {
     console.error('Error fetching mosques from OpenStreetMap:', error);
@@ -221,10 +249,10 @@ async function getMosqueDetails(
   if (parts.length !== 3 || parts[0] !== 'osm') {
     throw new Error('Invalid mosque ID format');
   }
-  
+
   const osmType = parts[1]; // node, way, or relation
   const osmId = parts[2];
-  
+
   const query = `
     [out:json][timeout:10];
     ${osmType}(${osmId});
@@ -234,7 +262,7 @@ async function getMosqueDetails(
   try {
     const data = await fetchFromOverpass(query);
     const elements: OverpassElement[] = data.elements || [];
-    
+
     if (elements.length === 0) {
       throw new Error('Mosque not found');
     }
@@ -266,10 +294,23 @@ function getPhotoUrl(_photoReference: string, _maxWidth: number = 400): string |
   return null;
 }
 
+/**
+ * Prefetch nearby mosques silently (called from Qibla screen)
+ * Warms the cache so MosqueFinderScreen loads instantly
+ */
+async function prefetchNearbyMosques(latitude: number, longitude: number, radiusMeters: number = 5000): Promise<void> {
+  try {
+    await searchNearbyMosques({ latitude, longitude, radiusMeters });
+  } catch {
+    // Silent fail — this is a background optimization
+  }
+}
+
 export const MosqueApiService = {
   searchNearbyMosques,
   getMosqueDetails,
   getPhotoUrl,
   calculateDistance,
   transformOsmToMosque,
+  prefetchNearbyMosques,
 };
