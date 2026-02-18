@@ -35,6 +35,7 @@ const HERO_ASSETS: Record<string, any> = {
     welcome: require('../../assets/images/3d-images/crescent.png'),
     location: require('../../assets/images/3d-images/location.png'),
     notifications: require('../../assets/images/3d-images/bell.png'),
+    widget: require('../../assets/images/3d-images/widget.png'),
     done: require('../../assets/images/3d-images/tick.png'),
 };
 
@@ -79,7 +80,6 @@ const SLIDES: OnboardingSlide[] = [
         subtitle: 'onboarding.widgetSubtitle',
         description: 'onboarding.widgetDescription',
         action: 'widget',
-        image: require('@/../assets/images/widget-image.png'),
     },
     {
         id: 'done',
@@ -267,80 +267,16 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
 
         return (
             <View style={[styles.slide, { width: SCREEN_WIDTH }]}>
-                {/* Upper area — 3D Hero Asset with glow */}
-                <View style={[styles.heroArea, { zIndex: 10 }]}>
-                    {isWidgetSlide && item.image ? (
-                        /* Widget slide: 3D tilted widget preview — overlaps card */
-                        <View style={{
-                            alignItems: 'center',
-                            marginBottom: -50,
-                            transform: [
-                                { perspective: 1000 },
-                                { rotateX: '15deg' },
-                                { rotateY: '-15deg' },
-                            ],
-                        }}>
-                            <View style={{
-                                shadowColor: theme.primary,
-                                shadowOffset: { width: 0, height: 16 },
-                                shadowOpacity: 0.5,
-                                shadowRadius: 30,
-                                elevation: 16,
-                                borderRadius: 24,
-                            }}>
-                                <Image
-                                    source={item.image}
-                                    style={{
-                                        width: SCREEN_WIDTH - 88,
-                                        height: 116,
-                                        borderRadius: 20,
-                                    }}
-                                    resizeMode="contain"
-                                />
-                            </View>
-                        </View>
-                    ) : heroAsset ? (
-                        /* 3D clay hero with Shadow Hack glow aura */
-                        <View style={{ alignItems: 'center', marginBottom: -60 }}>
-                            {/* Shadow Hack: transparent shape + massive colored shadow = soft glow cloud */}
-                            <View style={{
-                                position: 'absolute',
-                                width: 120,
-                                height: 120,
-                                borderRadius: 60,
-                                backgroundColor: 'transparent',
-                                top: 15,
-                                shadowColor: theme.primary,
-                                shadowOffset: { width: 0, height: 0 },
-                                shadowOpacity: 1,
-                                shadowRadius: 50,
-                                elevation: 20,
-                            }} />
-                            <Image
-                                source={heroAsset}
-                                style={{ width: 150, height: 150 }}
-                                resizeMode="contain"
-                                fadeDuration={0}
-                            />
-                        </View>
-                    ) : (
-                        /* Fallback icon */
-                        <View style={[styles.iconFallback, {
-                            backgroundColor: `${theme.primary}15`,
-                            borderColor: `${theme.primary}30`,
-                            marginBottom: -60,
-                        }]}>
-                            <Feather name={item.icon} size={48} color={theme.primary} />
-                        </View>
-                    )}
-                </View>
+                {/* Upper spacer — pushes card to bottom half */}
+                <View style={{ flex: 1 }} />
 
-                {/* Lower area — Floating Pedestal Card */}
+                {/* Pedestal Card — position: relative so the hero can be absolutely placed */}
                 <View style={{
+                    position: 'relative',
                     backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
                     borderTopLeftRadius: 32,
                     borderTopRightRadius: 32,
-                    paddingTop: 56,
+                    paddingTop: 100,
                     paddingBottom: insets.bottom + 80,
                     paddingHorizontal: 28,
                     alignItems: 'center',
@@ -351,6 +287,48 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
                     shadowRadius: 24,
                     elevation: 8,
                 }}>
+                    {/* 3D Hero — absolute positioned, overlapping top edge */}
+                    <View style={{
+                        position: 'absolute',
+                        top: -80,
+                        left: 0,
+                        right: 0,
+                        alignItems: 'center',
+                        zIndex: 10,
+                    }}>
+                        {heroAsset ? (
+                            <View style={{ alignItems: 'center' }}>
+                                {/* Shadow Hack glow */}
+                                <View style={{
+                                    position: 'absolute',
+                                    width: 120,
+                                    height: 120,
+                                    borderRadius: 60,
+                                    backgroundColor: 'transparent',
+                                    top: 15,
+                                    shadowColor: theme.primary,
+                                    shadowOffset: { width: 0, height: 0 },
+                                    shadowOpacity: 1,
+                                    shadowRadius: 50,
+                                    elevation: 20,
+                                }} />
+                                <Image
+                                    source={heroAsset}
+                                    style={{ width: 150, height: 150 }}
+                                    resizeMode="contain"
+                                    fadeDuration={0}
+                                />
+                            </View>
+                        ) : (
+                            <View style={[styles.iconFallback, {
+                                backgroundColor: `${theme.primary}15`,
+                                borderColor: `${theme.primary}30`,
+                            }]}>
+                                <Feather name={item.icon} size={48} color={theme.primary} />
+                            </View>
+                        )}
+                    </View>
+
                     {/* Subtitle */}
                     <ThemedText type="caption" style={[styles.subtitle, { color: theme.primary }]}>
                         {t(item.subtitle)}
@@ -387,7 +365,7 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
                     {/* Spacer */}
                     <View style={{ flex: 1, minHeight: 20 }} />
 
-                    {/* Button wrapper — overflow visible so shadow isn't clipped */}
+                    {/* CTA Button — colored shadow for tactile pop */}
                     <View style={{ width: '100%', overflow: 'visible' }}>
                         <Pressable
                             onPress={isLastSlide ? handleGetStarted : () => handleAction(item.action)}
@@ -403,7 +381,7 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
                                 shadowColor: theme.primary,
                                 shadowOffset: { width: 0, height: 8 },
                                 shadowOpacity: 0.35,
-                                shadowRadius: 12,
+                                shadowRadius: 10,
                                 elevation: 8,
                                 opacity: pressed ? 0.85 : 1,
                                 gap: 8,
@@ -493,11 +471,6 @@ const styles = StyleSheet.create({
     slide: {
         flex: 1,
         justifyContent: 'flex-end',
-    },
-    heroArea: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
     },
     iconFallback: {
         width: 120,
