@@ -50,7 +50,7 @@ export function StorageOverview({ storageInfo, onManagePress }: StorageOverviewP
             styles.iconCircle,
             { backgroundColor: `${theme.primary}26` }
           ]}>
-            <Image source={require('../assets/images/3d-images/Storage.png')} style={{ width: 32, height: 32 }} resizeMode="contain" />
+            <Image source={require('../../assets/images/3d-images/Storage.png')} style={{ width: 32, height: 32 }} resizeMode="contain" />
           </View>
           <View>
             <ThemedText type="body" style={{ fontWeight: '600' }}>
