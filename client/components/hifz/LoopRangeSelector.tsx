@@ -64,7 +64,14 @@ export function LoopRangeSelector({
   return (
     <View style={[styles.container, style]}>
       {/* Current Range Display */}
-      <View style={[styles.rangeDisplay, { backgroundColor: theme.backgroundSecondary }]}>
+      <View style={[styles.rangeDisplay, {
+        backgroundColor: '#FFFFFF',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.05,
+        shadowRadius: 8,
+        elevation: 2,
+      }]}>
         <View style={styles.rangeItem}>
           <View style={[styles.rangeBadge, { backgroundColor: loopRange.start ? '#3B82F6' : theme.border }]}>
             <ThemedText style={styles.rangeBadgeText}>A</ThemedText>
@@ -92,7 +99,14 @@ export function LoopRangeSelector({
 
       {/* Help Text */}
       {!hasValidRange && (
-        <View style={[styles.helpBox, { backgroundColor: theme.backgroundSecondary }]}>
+        <View style={[styles.helpBox, {
+          backgroundColor: '#FFFFFF',
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.04,
+          shadowRadius: 6,
+          elevation: 1,
+        }]}>
           <Feather name="info" size={16} color={theme.textSecondary} />
           <ThemedText style={[styles.helpText, { color: theme.textSecondary }]}>
             {t('loopRange.helpText')}
@@ -108,7 +122,11 @@ export function LoopRangeSelector({
             accessible={true}
             accessibilityRole="button"
             accessibilityLabel="Clear loop range"
-            style={[styles.clearButton, { borderColor: '#EF4444' }]}
+            style={[styles.clearButton, {
+              backgroundColor: 'rgba(239, 68, 68, 0.10)',
+              borderWidth: 0,
+              borderColor: 'transparent',
+            }]}
           >
             <Feather name="x" size={16} color="#EF4444" />
             <ThemedText style={[styles.clearText, { color: '#EF4444' }]}>
@@ -128,21 +146,36 @@ export function LoopRangeSelector({
             styles.startLoopButton,
             {
               backgroundColor: hasValidRange
-                ? (isLooping ? '#EF4444' : activeColor)
+                ? (isLooping ? '#EF4444' : '#FFFFFF')
                 : theme.backgroundSecondary,
               flex: 1,
+              borderWidth: 0,
+              borderColor: 'transparent',
+              ...(hasValidRange && !isLooping ? {
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.08,
+                shadowRadius: 10,
+                elevation: 3,
+              } : hasValidRange && isLooping ? {
+                shadowColor: '#EF4444',
+                shadowOffset: { width: 0, height: 3 },
+                shadowOpacity: 0.3,
+                shadowRadius: 6,
+                elevation: 4,
+              } : {}),
             },
           ]}
         >
           <Feather
             name={isLooping ? 'square' : 'play'}
             size={18}
-            color={hasValidRange ? '#FFFFFF' : theme.textSecondary}
+            color={hasValidRange ? (isLooping ? '#FFFFFF' : activeColor) : theme.textSecondary}
           />
           <ThemedText
             style={[
               styles.startLoopText,
-              { color: hasValidRange ? '#FFFFFF' : theme.textSecondary },
+              { color: hasValidRange ? (isLooping ? '#FFFFFF' : activeColor) : theme.textSecondary },
             ]}
           >
             {isLooping ? t('loopRange.stopLoop') : t('loopRange.playLoop')}
@@ -214,7 +247,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 10,
-    borderWidth: 1,
     gap: 6,
   },
   clearText: {

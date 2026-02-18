@@ -70,8 +70,22 @@ export function RepeatControls({ onStop, isRepeating, currentRepeat: externalCur
       style={[
         styles.optionButton,
         {
-          backgroundColor: isSelected ? activeColor : theme.cardBackground,
-          borderColor: isSelected ? activeColor : theme.border,
+          backgroundColor: isSelected ? activeColor : '#FFFFFF',
+          borderWidth: 0,
+          borderColor: 'transparent',
+          ...(isSelected ? {
+            shadowColor: activeColor,
+            shadowOffset: { width: 0, height: 3 },
+            shadowOpacity: 0.35,
+            shadowRadius: 6,
+            elevation: 4,
+          } : {
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 3 },
+            shadowOpacity: 0.05,
+            shadowRadius: 8,
+            elevation: 2,
+          }),
         },
       ]}
     >
@@ -239,7 +253,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
-    borderWidth: 1,
     minWidth: 48,
     alignItems: 'center',
   },

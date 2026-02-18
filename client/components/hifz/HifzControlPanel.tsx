@@ -148,8 +148,22 @@ export function HifzControlPanel({
       style={[
         styles.tabButton,
         {
-          backgroundColor: activeTab === tab ? activeColor : 'transparent',
-          borderColor: activeTab === tab ? activeColor : theme.border,
+          backgroundColor: activeTab === tab ? activeColor : '#FFFFFF',
+          borderWidth: 0,
+          borderColor: 'transparent',
+          ...(activeTab === tab ? {
+            shadowColor: activeColor,
+            shadowOffset: { width: 0, height: 3 },
+            shadowOpacity: 0.35,
+            shadowRadius: 6,
+            elevation: 4,
+          } : {
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 3 },
+            shadowOpacity: 0.05,
+            shadowRadius: 8,
+            elevation: 2,
+          }),
         },
       ]}
     >
@@ -178,8 +192,22 @@ export function HifzControlPanel({
       style={[
         styles.delayOption,
         {
-          backgroundColor: settings.autoHideDelay === delay ? activeColor : theme.cardBackground,
-          borderColor: settings.autoHideDelay === delay ? activeColor : theme.border,
+          backgroundColor: settings.autoHideDelay === delay ? activeColor : '#FFFFFF',
+          borderWidth: 0,
+          borderColor: 'transparent',
+          ...(settings.autoHideDelay === delay ? {
+            shadowColor: activeColor,
+            shadowOffset: { width: 0, height: 3 },
+            shadowOpacity: 0.35,
+            shadowRadius: 6,
+            elevation: 4,
+          } : {
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 3 },
+            shadowOpacity: 0.05,
+            shadowRadius: 8,
+            elevation: 2,
+          }),
         },
       ]}
     >
@@ -239,6 +267,7 @@ export function HifzControlPanel({
 
           <ScrollView
             style={styles.content}
+            contentContainerStyle={{ paddingBottom: 32 }}
             showsVerticalScrollIndicator={false}
             nestedScrollEnabled={true}
             keyboardShouldPersistTaps="handled"
@@ -255,8 +284,16 @@ export function HifzControlPanel({
                     style={[
                       styles.modeOption,
                       {
-                        backgroundColor: settings.hideMode === option.value ? `${activeColor}20` : theme.cardBackground,
-                        borderColor: settings.hideMode === option.value ? activeColor : theme.border,
+                        backgroundColor: '#FFFFFF',
+                        borderWidth: 0,
+                        borderColor: 'transparent',
+                        borderLeftWidth: settings.hideMode === option.value ? 4 : 0,
+                        borderLeftColor: settings.hideMode === option.value ? activeColor : 'transparent',
+                        shadowColor: '#000',
+                        shadowOffset: { width: 0, height: 3 },
+                        shadowOpacity: 0.05,
+                        shadowRadius: 8,
+                        elevation: 2,
                       },
                     ]}
                   >
@@ -267,7 +304,7 @@ export function HifzControlPanel({
                       </ThemedText>
                     </View>
                     {settings.hideMode === option.value && (
-                      <Feather name="check" size={20} color={activeColor} />
+                      <Feather name="check" size={20} color="#5e9caa" />
                     )}
                   </TouchableOpacity>
                 ))}
@@ -316,14 +353,32 @@ export function HifzControlPanel({
                 <View style={styles.quickActions}>
                   <TouchableOpacity
                     onPress={revealAll}
-                    style={[styles.actionButton, { backgroundColor: theme.cardBackground, borderColor: theme.border }]}
+                    style={[styles.actionButton, {
+                      backgroundColor: '#FFFFFF',
+                      borderWidth: 0,
+                      borderColor: 'transparent',
+                      shadowColor: '#000',
+                      shadowOffset: { width: 0, height: 3 },
+                      shadowOpacity: 0.05,
+                      shadowRadius: 8,
+                      elevation: 2,
+                    }]}
                   >
                     <Feather name="eye" size={18} color={theme.text} />
                     <ThemedText style={styles.actionText}>{t('hifzControls.revealAll')}</ThemedText>
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={hideAll}
-                    style={[styles.actionButton, { backgroundColor: theme.cardBackground, borderColor: theme.border }]}
+                    style={[styles.actionButton, {
+                      backgroundColor: '#FFFFFF',
+                      borderWidth: 0,
+                      borderColor: 'transparent',
+                      shadowColor: '#000',
+                      shadowOffset: { width: 0, height: 3 },
+                      shadowOpacity: 0.05,
+                      shadowRadius: 8,
+                      elevation: 2,
+                    }]}
                   >
                     <Feather name="eye-off" size={18} color={theme.text} />
                     <ThemedText style={styles.actionText}>
@@ -385,7 +440,16 @@ export function HifzControlPanel({
                     <View style={styles.statusButtons}>
                       <TouchableOpacity
                         onPress={() => handleMarkStatus('not_started')}
-                        style={[styles.statusButton, { backgroundColor: theme.cardBackground, borderColor: theme.border }]}
+                        style={[styles.statusButton, {
+                          backgroundColor: '#FFFFFF',
+                          borderWidth: 0,
+                          borderColor: 'transparent',
+                          shadowColor: '#000',
+                          shadowOffset: { width: 0, height: 3 },
+                          shadowOpacity: 0.05,
+                          shadowRadius: 8,
+                          elevation: 2,
+                        }]}
                       >
                         <MemorizationBadge status="not_started" size="large" />
                         <ThemedText style={styles.statusText}>{t('hifzControls.notStarted')}</ThemedText>
@@ -393,7 +457,16 @@ export function HifzControlPanel({
 
                       <TouchableOpacity
                         onPress={() => handleMarkStatus('in_progress')}
-                        style={[styles.statusButton, { backgroundColor: theme.cardBackground, borderColor: '#F59E0B' }]}
+                        style={[styles.statusButton, {
+                          backgroundColor: '#FFFFFF',
+                          borderWidth: 0,
+                          borderColor: 'transparent',
+                          shadowColor: '#000',
+                          shadowOffset: { width: 0, height: 3 },
+                          shadowOpacity: 0.05,
+                          shadowRadius: 8,
+                          elevation: 2,
+                        }]}
                       >
                         <MemorizationBadge status="in_progress" size="large" />
                         <ThemedText style={styles.statusText}>{t('hifzControls.inProgress')}</ThemedText>
@@ -401,7 +474,16 @@ export function HifzControlPanel({
 
                       <TouchableOpacity
                         onPress={() => handleMarkStatus('memorized')}
-                        style={[styles.statusButton, { backgroundColor: theme.cardBackground, borderColor: theme.primary }]}
+                        style={[styles.statusButton, {
+                          backgroundColor: '#FFFFFF',
+                          borderWidth: 0,
+                          borderColor: 'transparent',
+                          shadowColor: '#000',
+                          shadowOffset: { width: 0, height: 3 },
+                          shadowOpacity: 0.05,
+                          shadowRadius: 8,
+                          elevation: 2,
+                        }]}
                       >
                         <MemorizationBadge status="memorized" size="large" />
                         <ThemedText style={styles.statusText}>{t('hifzControls.memorized')}</ThemedText>
@@ -429,7 +511,7 @@ export function HifzControlPanel({
                         <View style={styles.bulkButtons}>
                           <TouchableOpacity
                             onPress={() => handleMarkPageStatus('in_progress')}
-                            style={[styles.bulkButton, { backgroundColor: '#F59E0B20', borderColor: '#F59E0B' }]}
+                            style={[styles.bulkButton, { backgroundColor: 'rgba(245, 158, 11, 0.10)', borderWidth: 0, borderColor: 'transparent' }]}
                           >
                             <ThemedText style={[styles.bulkButtonText, { color: '#F59E0B' }]}>
                               {t('hifzControls.inProgress')}
@@ -437,15 +519,15 @@ export function HifzControlPanel({
                           </TouchableOpacity>
                           <TouchableOpacity
                             onPress={() => handleMarkPageStatus('memorized')}
-                            style={[styles.bulkButton, { backgroundColor: `${theme.primary}20`, borderColor: theme.primary }]}
+                            style={[styles.bulkButton, { backgroundColor: 'rgba(94, 156, 170, 0.10)', borderWidth: 0, borderColor: 'transparent' }]}
                           >
-                            <ThemedText style={[styles.bulkButtonText, { color: theme.primary }]}>
+                            <ThemedText style={[styles.bulkButtonText, { color: '#5e9caa' }]}>
                               {t('hifzControls.memorized')}
                             </ThemedText>
                           </TouchableOpacity>
                           <TouchableOpacity
                             onPress={() => handleMarkPageStatus('not_started')}
-                            style={[styles.bulkButton, { backgroundColor: '#EF444420', borderColor: '#EF4444' }]}
+                            style={[styles.bulkButton, { backgroundColor: 'rgba(239, 68, 68, 0.10)', borderWidth: 0, borderColor: 'transparent' }]}
                           >
                             <ThemedText style={[styles.bulkButtonText, { color: '#EF4444' }]}>
                               {t('hifzControls.clear')}
@@ -463,7 +545,7 @@ export function HifzControlPanel({
                         <View style={styles.bulkButtons}>
                           <TouchableOpacity
                             onPress={() => handleMarkJuzStatus('in_progress')}
-                            style={[styles.bulkButton, { backgroundColor: '#F59E0B20', borderColor: '#F59E0B' }]}
+                            style={[styles.bulkButton, { backgroundColor: 'rgba(245, 158, 11, 0.10)', borderWidth: 0, borderColor: 'transparent' }]}
                           >
                             <ThemedText style={[styles.bulkButtonText, { color: '#F59E0B' }]}>
                               {t('hifzControls.inProgress')}
@@ -471,15 +553,15 @@ export function HifzControlPanel({
                           </TouchableOpacity>
                           <TouchableOpacity
                             onPress={() => handleMarkJuzStatus('memorized')}
-                            style={[styles.bulkButton, { backgroundColor: `${theme.primary}20`, borderColor: theme.primary }]}
+                            style={[styles.bulkButton, { backgroundColor: 'rgba(94, 156, 170, 0.10)', borderWidth: 0, borderColor: 'transparent' }]}
                           >
-                            <ThemedText style={[styles.bulkButtonText, { color: theme.primary }]}>
+                            <ThemedText style={[styles.bulkButtonText, { color: '#5e9caa' }]}>
                               {t('hifzControls.memorized')}
                             </ThemedText>
                           </TouchableOpacity>
                           <TouchableOpacity
                             onPress={() => handleMarkJuzStatus('not_started')}
-                            style={[styles.bulkButton, { backgroundColor: '#EF444420', borderColor: '#EF4444' }]}
+                            style={[styles.bulkButton, { backgroundColor: 'rgba(239, 68, 68, 0.10)', borderWidth: 0, borderColor: 'transparent' }]}
                           >
                             <ThemedText style={[styles.bulkButtonText, { color: '#EF4444' }]}>
                               {t('hifzControls.clear')}
@@ -547,7 +629,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 6,
     borderRadius: 12,
-    borderWidth: 1,
     gap: 3,
     minWidth: 0,
   },
@@ -573,7 +654,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     borderRadius: 12,
-    borderWidth: 1,
     marginBottom: 8,
   },
   modeOptionContent: {
@@ -596,7 +676,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 20,
-    borderWidth: 1,
   },
   delayText: {
     fontSize: 14,
@@ -614,7 +693,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 14,
     borderRadius: 12,
-    borderWidth: 1,
     gap: 8,
     minWidth: 0,
   },
@@ -635,7 +713,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     borderRadius: 12,
-    borderWidth: 1,
     gap: 12,
   },
   statusText: {
@@ -667,7 +744,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 12,
     borderRadius: 10,
-    borderWidth: 1,
     alignItems: 'center',
   },
   bulkButtonText: {
