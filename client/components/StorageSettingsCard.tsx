@@ -34,9 +34,11 @@ export function StorageSettingsCard({ settings, onSettingsChange }: StorageSetti
     <View style={[
       styles.container,
       {
-        backgroundColor: isDark ? `${theme.primary}33` : theme.backgroundDefault,
-        elevation: isDark ? 0 : 3,
-        shadowOpacity: isDark ? 0 : 0.08,
+        backgroundColor: isDark ? `${theme.primary}33` : '#FFFFFF',
+        borderWidth: 0,
+        borderColor: 'transparent',
+        elevation: isDark ? 0 : 2,
+        shadowOpacity: isDark ? 0 : 0.05,
       }
     ]}>
       <View style={styles.header}>
@@ -67,40 +69,49 @@ export function StorageSettingsCard({ settings, onSettingsChange }: StorageSetti
         </View>
       </View>
 
-      <View style={styles.presetContainer}>
-        {STORAGE_PRESETS.map((preset) => (
-          <Pressable
-            key={preset.value}
-            style={[
-              styles.presetButton,
-              {
-                backgroundColor: settings.storageLimit === preset.value
-                  ? `${theme.primary}33`
-                  : (isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.04)'),
-                borderWidth: settings.storageLimit === preset.value ? 2 : 1,
-                borderColor: settings.storageLimit === preset.value
-                  ? theme.primary
-                  : (isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'),
-              }
-            ]}
-            onPress={() => onSettingsChange({ storageLimit: preset.value })}
-          >
-            <ThemedText
-              type="small"
-              style={{
-                fontWeight: settings.storageLimit === preset.value ? '600' : '400',
-                color: settings.storageLimit === preset.value
-                  ? theme.primary
-                  : theme.text,
-              }}
+      <View style={[styles.presetContainer, {
+        backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#EDEFF2',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.06,
+        shadowRadius: 2,
+      }]}>
+        {STORAGE_PRESETS.map((preset) => {
+          const isActive = settings.storageLimit === preset.value;
+          return (
+            <Pressable
+              key={preset.value}
+              style={[
+                styles.presetButton,
+                isActive && {
+                  backgroundColor: isDark ? '#3A3A3C' : '#FFFFFF',
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: isDark ? 0.3 : 0.1,
+                  shadowRadius: 6,
+                  elevation: 3,
+                  borderWidth: 0,
+                },
+              ]}
+              onPress={() => onSettingsChange({ storageLimit: preset.value })}
             >
-              {preset.label}
-            </ThemedText>
-          </Pressable>
-        ))}
+              <ThemedText
+                type="small"
+                style={{
+                  fontWeight: isActive ? '700' : '400',
+                  color: isActive
+                    ? (isDark ? '#FFFFFF' : theme.text)
+                    : (isDark ? '#A0A0A0' : '#888'),
+                }}
+              >
+                {preset.label}
+              </ThemedText>
+            </Pressable>
+          );
+        })}
       </View>
 
-      <View style={styles.divider} />
+      <View style={{ height: Spacing.md }} />
 
       {/* WiFi Only */}
       <View style={styles.toggleRow}>
@@ -173,9 +184,11 @@ const styles = StyleSheet.create({
   container: {
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
+    borderWidth: 0,
+    borderColor: 'transparent',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 12,
     // elevation and shadowOpacity set dynamically
   },
   header: {
@@ -204,15 +217,18 @@ const styles = StyleSheet.create({
   },
   presetContainer: {
     flexDirection: 'row',
-    gap: Spacing.sm,
+    gap: 4,
     marginBottom: Spacing.md,
+    borderRadius: BorderRadius.md,
+    padding: 4,
   },
   presetButton: {
     flex: 1,
-    paddingVertical: Spacing.sm,
+    paddingVertical: Spacing.sm + 2,
     paddingHorizontal: Spacing.xs,
     borderRadius: BorderRadius.sm,
     alignItems: 'center',
+    borderWidth: 0,
   },
   divider: {
     height: 1,

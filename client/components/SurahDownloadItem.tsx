@@ -89,7 +89,7 @@ export function SurahDownloadItem({
       style={({ pressed }) => [
         styles.container,
         {
-          backgroundColor: isDark ? `${theme.primary}26` : theme.backgroundDefault,
+          backgroundColor: 'transparent',
           opacity: pressed ? 0.7 : 1,
         }
       ]}
@@ -146,26 +146,16 @@ export function SurahDownloadItem({
           </ThemedText>
         )}
 
-        <View style={[styles.statusIcon, { backgroundColor: `${getStatusColor()}20` }]}>
+        <Pressable
+          style={[styles.statusIcon, { backgroundColor: `${getStatusColor()}20` }]}
+          onPress={handlePress}
+        >
           {isDownloading ? (
             <ActivityIndicator size="small" color={getStatusColor()} />
           ) : (
             <Feather name={getStatusIcon() as any} size={18} color={getStatusColor()} />
           )}
-        </View>
-
-        {!isPending && (
-          <Pressable
-            style={styles.actionButton}
-            onPress={handlePress}
-          >
-            <Feather
-              name={getActionIcon() as any}
-              size={18}
-              color={isDownloaded ? (isDark ? '#F87171' : '#EF4444') : getStatusColor()}
-            />
-          </Pressable>
-        )}
+        </Pressable>
       </View>
     </Pressable>
   );
@@ -176,9 +166,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: Spacing.md,
-    borderRadius: BorderRadius.md,
-    marginBottom: Spacing.xs,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.sm,
+    borderRadius: 0,
+    marginBottom: 0,
   },
   leftSection: {
     flexDirection: 'row',

@@ -68,9 +68,11 @@ export function StorageBreakdown({ storageInfo, onCategoryPress }: StorageBreakd
     <View style={[
       styles.container,
       {
-        backgroundColor: isDark ? `${theme.primary}33` : theme.backgroundDefault,
-        elevation: isDark ? 0 : 3,
-        shadowOpacity: isDark ? 0 : 0.08,
+        backgroundColor: isDark ? `${theme.primary}33` : '#FFFFFF',
+        borderWidth: 0,
+        borderColor: 'transparent',
+        elevation: isDark ? 0 : 2,
+        shadowOpacity: isDark ? 0 : 0.05,
       }
     ]}>
       <ThemedText type="body" style={styles.title}>
@@ -107,7 +109,13 @@ export function StorageBreakdown({ storageInfo, onCategoryPress }: StorageBreakd
             <View style={styles.barContainer}>
               <View style={[
                 styles.bar,
-                { backgroundColor: isDark ? 'rgba(255, 255, 255, 0.1)' : '#E5E7EB' }
+                {
+                  backgroundColor: isDark ? 'rgba(255, 255, 255, 0.1)' : '#EDEFF2',
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 1 },
+                  shadowOpacity: 0.08,
+                  shadowRadius: 2,
+                }
               ]}>
                 <View
                   style={[
@@ -139,9 +147,11 @@ const styles = StyleSheet.create({
   container: {
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
+    borderWidth: 0,
+    borderColor: 'transparent',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 12,
     // elevation and shadowOpacity set dynamically
   },
   title: {

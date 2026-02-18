@@ -178,7 +178,16 @@ export function AudioDownloadScreen() {
       <Pressable
         style={[
           styles.reciterSelector,
-          { backgroundColor: theme.cardBackground }
+          {
+            backgroundColor: isDark ? `${theme.primary}26` : '#FFFFFF',
+            borderWidth: 0,
+            borderColor: 'transparent',
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: isDark ? 0 : 0.05,
+            shadowRadius: 12,
+            elevation: isDark ? 0 : 2,
+          }
         ]}
         onPress={openReciterSelection}
       >
@@ -206,17 +215,35 @@ export function AudioDownloadScreen() {
       {/* Progress Summary */}
       <View style={[
         styles.progressSummary,
-        { backgroundColor: theme.cardBackground }
+        {
+          backgroundColor: isDark ? `${theme.primary}26` : '#FFFFFF',
+          borderWidth: 0,
+          borderColor: 'transparent',
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: isDark ? 0 : 0.05,
+          shadowRadius: 12,
+          elevation: isDark ? 0 : 2,
+        }
       ]}>
         <View style={styles.progressInfo}>
           <ThemedText type="h2" style={{ color: theme.primary }}>
             {downloadedCount}
           </ThemedText>
-          <ThemedText type="caption" secondary>
+          <ThemedText type="caption" secondary style={{ marginLeft: 6 }}>
             of {totalSurahs} surahs downloaded
           </ThemedText>
         </View>
-        <View style={styles.progressBar}>
+        <View style={[
+          styles.progressBar,
+          {
+            backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : '#EDEFF2',
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: 0.08,
+            shadowRadius: 2,
+          }
+        ]}>
           <View
             style={[
               styles.progressFill,
@@ -338,14 +365,28 @@ export function AudioDownloadScreen() {
         </View>
       )}
 
-      {/* Surah List */}
-      <FlatList
-        data={surahList}
-        renderItem={renderSurahItem}
-        keyExtractor={item => item.number.toString()}
-        contentContainerStyle={[styles.listContent, { paddingBottom: insets.bottom + Spacing.xl }]}
-        showsVerticalScrollIndicator={false}
-      />
+      {/* Surah List - wrapped in unified card */}
+      <View style={{
+        flex: 1,
+        marginHorizontal: Spacing.lg,
+        backgroundColor: isDark ? `${theme.primary}26` : '#FFFFFF',
+        borderRadius: BorderRadius.lg,
+        borderWidth: 0,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: isDark ? 0 : 0.05,
+        shadowRadius: 12,
+        elevation: isDark ? 0 : 2,
+        overflow: 'hidden',
+      }}>
+        <FlatList
+          data={surahList}
+          renderItem={renderSurahItem}
+          keyExtractor={item => item.number.toString()}
+          contentContainerStyle={{ paddingVertical: Spacing.sm, paddingBottom: insets.bottom + Spacing.xl }}
+          showsVerticalScrollIndicator={false}
+        />
+      </View>
     </ThemedView>
   );
 }
