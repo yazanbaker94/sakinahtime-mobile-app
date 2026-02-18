@@ -148,16 +148,15 @@ export function transformOsmToMosque(
 }
 
 /**
- * Make request to Overpass API with fallback servers
+ * Make request to Overpass API — race all servers simultaneously
+ * Uses Promise.any() so the fastest responding server wins
  */
 async function fetchFromOverpass(query: string): Promise<any> {
-  let lastError: Error | null = null;
+  const fetchFromServer = async (server: string): Promise<any> => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s timeout per server
 
-  for (const server of OVERPASS_SERVERS) {
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
-
       const response = await fetch(server, {
         method: 'POST',
         headers: {
@@ -169,19 +168,23 @@ async function fetchFromOverpass(query: string): Promise<any> {
 
       clearTimeout(timeoutId);
 
-      if (response.ok) {
-        return await response.json();
+      if (!response.ok) {
+        throw new Error(`Server ${server} returned ${response.status}`);
       }
 
-      // If server returned error, try next one
-      lastError = new Error(`Server ${server} returned ${response.status}`);
+      return await response.json();
     } catch (error) {
-      lastError = error instanceof Error ? error : new Error('Unknown error');
-      // Continue to next server
+      clearTimeout(timeoutId);
+      throw error;
     }
-  }
+  };
 
-  throw lastError || new Error('All Overpass servers failed');
+  try {
+    // Race all servers — first successful response wins
+    return await Promise.any(OVERPASS_SERVERS.map(fetchFromServer));
+  } catch (aggregateError) {
+    throw new Error('All Overpass servers failed');
+  }
 }
 
 /**
