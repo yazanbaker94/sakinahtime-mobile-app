@@ -366,7 +366,16 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
                     <View style={{ flex: 1, minHeight: 20 }} />
 
                     {/* CTA Button — colored shadow for tactile pop */}
-                    <View style={{ width: '100%', overflow: 'visible' }}>
+                    {/* Shadow wrapper — shadow lives here, NOT on the button */}
+                    <View style={{
+                        width: '100%',
+                        borderRadius: 16,
+                        shadowColor: theme.primary,
+                        shadowOffset: { width: 0, height: 8 },
+                        shadowOpacity: 0.35,
+                        shadowRadius: 10,
+                        elevation: 8,
+                    }}>
                         <Pressable
                             onPress={isLastSlide ? handleGetStarted : () => handleAction(item.action)}
                             style={({ pressed }) => [{
@@ -378,11 +387,7 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
                                 borderRadius: 16,
                                 width: '100%',
                                 backgroundColor: theme.primary,
-                                shadowColor: theme.primary,
-                                shadowOffset: { width: 0, height: 8 },
-                                shadowOpacity: 0.35,
-                                shadowRadius: 10,
-                                elevation: 8,
+                                overflow: 'hidden',
                                 opacity: pressed ? 0.85 : 1,
                                 gap: 8,
                             }]}
