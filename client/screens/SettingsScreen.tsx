@@ -33,7 +33,7 @@ export default function SettingsScreen() {
           contentContainerStyle={[
             styles.scrollContent,
             {
-              paddingBottom: tabBarHeight + Spacing.xl,
+              paddingBottom: tabBarHeight + 60,
             },
           ]}
           showsVerticalScrollIndicator={false}

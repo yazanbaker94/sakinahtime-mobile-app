@@ -41,10 +41,10 @@ export function ThemePicker() {
               style={[
                 styles.modeButton,
                 isActive && {
-                  backgroundColor: '#FFFFFF',
+                  backgroundColor: isDark ? '#3A3A3C' : '#FFFFFF',
                   shadowColor: '#000',
                   shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.1,
+                  shadowOpacity: isDark ? 0.3 : 0.1,
                   shadowRadius: 6,
                   elevation: 3,
                 },
@@ -55,12 +55,12 @@ export function ThemePicker() {
               <Feather
                 name={mode === "light" ? "sun" : mode === "dark" ? "moon" : "smartphone"}
                 size={16}
-                color={isActive ? theme.primary : (isDark ? '#999' : '#888')}
+                color={isActive ? (isDark ? '#FFFFFF' : theme.primary) : (isDark ? '#A0A0A0' : '#888')}
               />
               <Text
                 style={[
                   styles.modeText,
-                  { color: isActive ? theme.text : (isDark ? '#999' : '#888') },
+                  { color: isActive ? (isDark ? '#FFFFFF' : theme.text) : (isDark ? '#A0A0A0' : '#888') },
                   isActive && { fontWeight: '700' },
                 ]}
               >
@@ -187,7 +187,8 @@ const styles = StyleSheet.create({
   },
   themeScroll: {
     paddingRight: Spacing.md,
-    paddingVertical: 20,
+    paddingTop: 12,
+    paddingBottom: 25,
     gap: Spacing.sm,
   },
   themeCard: {
