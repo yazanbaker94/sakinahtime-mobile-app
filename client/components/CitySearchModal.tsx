@@ -174,7 +174,7 @@ export function CitySearchModal({
           backgroundColor: pressed
             ? (isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)')
             : 'transparent',
-          borderBottomColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)',
+          borderBottomColor: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.04)',
         },
       ]}
     >
@@ -201,7 +201,7 @@ export function CitySearchModal({
           backgroundColor: pressed
             ? (isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)')
             : 'transparent',
-          borderBottomColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)',
+          borderBottomColor: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.04)',
         },
       ]}
     >
@@ -259,7 +259,7 @@ export function CitySearchModal({
           : insets.top
       }]}>
         {/* Header */}
-        <View style={[styles.header, { borderBottomColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }]}>
+        <View style={[styles.header, { borderBottomWidth: 0 }]}>
           <Pressable
             onPress={onClose}
             style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1, marginRight: 12 }]}
@@ -271,8 +271,13 @@ export function CitySearchModal({
           </ThemedText>
         </View>
 
-        {/* Search Input */}
-        <View style={[styles.searchContainer, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)' }]}>
+        {/* Search Input — carved clay inset */}
+        <View style={[styles.searchContainer, {
+          backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#F2F3F5',
+          borderWidth: 0,
+          borderTopColor: isDark ? 'rgba(0,0,0,0.12)' : 'rgba(0,0,0,0.06)',
+          borderTopWidth: 1.5,
+        }]}>
           <Feather name="search" size={18} color={theme.textSecondary} />
           <TextInput
             style={[styles.searchInput, { color: theme.text }]}
@@ -303,27 +308,40 @@ export function CitySearchModal({
           </View>
         )}
 
-        {/* Results */}
-        <FlatList
-          data={searchResults}
-          keyExtractor={(item) => item.id}
-          renderItem={renderCityItem}
-          ListHeaderComponent={ListHeader}
-          ListEmptyComponent={
-            isSearching ? null : (
-              <View style={styles.emptyContainer}>
-                <Feather name="map-pin" size={48} color={theme.textSecondary} style={{ opacity: 0.3 }} />
-                <ThemedText type="body" style={{ opacity: 0.5, marginTop: 16 }}>
-                  {t('citySearch.noCities')}
-                </ThemedText>
-                <ThemedText type="caption" style={{ opacity: 0.4, marginTop: 4, textAlign: 'center', paddingHorizontal: 40 }}>
-                  {t('citySearch.tryDifferent')}
-                </ThemedText>
-              </View>
-            )
-          }
-          contentContainerStyle={{ paddingBottom: insets.bottom + Spacing.xl }}
-        />
+        {/* Results — wrapped in floating card */}
+        <View style={{
+          flex: 1,
+          marginHorizontal: Spacing.lg,
+          borderRadius: 16,
+          overflow: 'hidden',
+          backgroundColor: isDark ? theme.backgroundSecondary : '#FFFFFF',
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.04,
+          shadowRadius: 15,
+          elevation: 3,
+        }}>
+          <FlatList
+            data={searchResults}
+            keyExtractor={(item) => item.id}
+            renderItem={renderCityItem}
+            ListHeaderComponent={ListHeader}
+            ListEmptyComponent={
+              isSearching ? null : (
+                <View style={styles.emptyContainer}>
+                  <Feather name="map-pin" size={48} color={theme.textSecondary} style={{ opacity: 0.3 }} />
+                  <ThemedText type="body" style={{ opacity: 0.5, marginTop: 16 }}>
+                    {t('citySearch.noCities')}
+                  </ThemedText>
+                  <ThemedText type="caption" style={{ opacity: 0.4, marginTop: 4, textAlign: 'center', paddingHorizontal: 40 }}>
+                    {t('citySearch.tryDifferent')}
+                  </ThemedText>
+                </View>
+              )
+            }
+            contentContainerStyle={{ paddingBottom: insets.bottom + Spacing.xl }}
+          />
+        </View>
       </ThemedView>
     </Modal>
   );
@@ -338,7 +356,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
-    borderBottomWidth: 1,
+    borderBottomWidth: 0,
   },
   searchContainer: {
     flexDirection: 'row',

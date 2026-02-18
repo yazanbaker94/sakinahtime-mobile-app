@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Pressable, StyleSheet, ScrollView, Platform } from 'react-native';
+import { View, Pressable, StyleSheet, ScrollView, Platform, Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
@@ -12,6 +12,8 @@ import { CitySearchModal } from '@/components/CitySearchModal';
 import { Spacing, BorderRadius } from '@/constants/theme';
 import { useTranslation } from '@/hooks/useTranslation';
 import type { ManualLocation } from '@/types/location';
+
+const locationPin3D = require('../../assets/images/3d-images/location.png');
 
 export default function LocationSettingsScreen() {
   const { theme, isDark } = useTheme();
@@ -82,7 +84,7 @@ export default function LocationSettingsScreen() {
           {
             paddingTop: insets.top + Spacing.md,
             backgroundColor: theme.cardBackground,
-            borderBottomColor: theme.border,
+            borderBottomWidth: 0,
           },
         ]}
       >
@@ -100,26 +102,39 @@ export default function LocationSettingsScreen() {
         contentContainerStyle={{ paddingBottom: insets.bottom + Spacing.xl }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Current Location Display */}
-        <View style={[styles.currentLocation, { backgroundColor: theme.cardBackground }]}>
-          <View style={[styles.locationIconContainer, { backgroundColor: `${theme.primary}15` }]}>
-            <Feather name="map-pin" size={24} color={theme.primary} />
-          </View>
-          <View style={{ flex: 1 }}>
-            <ThemedText type="caption" secondary>
-              {t('location.currentLocation')}
-            </ThemedText>
-            <ThemedText type="h4" style={{ fontWeight: '600', marginTop: 4 }}>
-              {locationText}
-            </ThemedText>
-          </View>
-          {isManual && (
-            <View style={[styles.modeBadge, { backgroundColor: `${theme.primary}20` }]}>
-              <ThemedText type="caption" style={{ color: theme.primary, fontWeight: '600' }}>
-                {t('location.manual')}
+        {/* Current Location Display — 3D floating card */}
+        <View style={{
+          borderRadius: 16,
+          marginTop: Spacing.lg,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.06,
+          shadowRadius: 15,
+          elevation: 3,
+        }}>
+          <View style={[styles.currentLocation, {
+            backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
+            borderWidth: 0,
+          }]}>
+            <View style={[styles.locationIconContainer, { backgroundColor: `${theme.primary}10` }]}>
+              <Image source={locationPin3D} style={{ width: 36, height: 36 }} resizeMode="contain" />
+            </View>
+            <View style={{ flex: 1 }}>
+              <ThemedText type="caption" secondary>
+                {t('location.currentLocation')}
+              </ThemedText>
+              <ThemedText type="h4" style={{ fontWeight: '600', marginTop: 4 }}>
+                {locationText}
               </ThemedText>
             </View>
-          )}
+            {isManual && (
+              <View style={[styles.modeBadge, { backgroundColor: `${theme.primary}20` }]}>
+                <ThemedText type="caption" style={{ color: theme.primary, fontWeight: '600' }}>
+                  {t('location.manual')}
+                </ThemedText>
+              </View>
+            )}
+          </View>
         </View>
 
         {/* Location Options */}
@@ -127,61 +142,80 @@ export default function LocationSettingsScreen() {
           {t('location.locationSource')}
         </ThemedText>
 
-        {/* GPS Option */}
-        <Pressable
-          onPress={handleUseGPS}
-          style={({ pressed }) => [
-            styles.option,
-            {
-              backgroundColor: theme.cardBackground,
-              borderColor: locationMode === 'gps' ? theme.primary : theme.border,
-              borderWidth: locationMode === 'gps' ? 2 : 1,
-              opacity: pressed ? 0.8 : 1,
-            },
-          ]}
-        >
-          <View style={[styles.optionIcon, { backgroundColor: `${theme.primary}15` }]}>
-            <Feather name="navigation" size={20} color={theme.primary} />
-          </View>
-          <View style={{ flex: 1 }}>
-            <ThemedText type="body" style={{ fontWeight: '600' }}>
-              {t('location.useGPS')}
-            </ThemedText>
-            <ThemedText type="caption" secondary style={{ marginTop: 2 }}>
-              {gpsLocationText}
-            </ThemedText>
-          </View>
-          {locationMode === 'gps' && (
-            <Feather name="check-circle" size={22} color={theme.primary} />
-          )}
-        </Pressable>
+        {/* GPS Option — Ribbon Trick */}
+        <View style={{
+          borderRadius: 16,
+          marginBottom: Spacing.sm,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.04,
+          shadowRadius: 15,
+          elevation: 3,
+        }}>
+          <Pressable
+            onPress={handleUseGPS}
+            style={({ pressed }) => [styles.option, {
+              backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
+              borderWidth: 0,
+              borderLeftWidth: locationMode === 'gps' ? 4 : 0,
+              borderLeftColor: theme.primary,
+              borderTopWidth: 0,
+              borderRightWidth: 0,
+              borderBottomWidth: 0,
+              opacity: pressed ? 0.85 : 1,
+            }]}
+          >
+            <View style={[styles.optionIcon, { backgroundColor: `${theme.primary}15` }]}>
+              <Feather name="navigation" size={20} color={theme.primary} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <ThemedText type="body" style={{ fontWeight: '600' }}>
+                {t('location.useGPS')}
+              </ThemedText>
+              <ThemedText type="caption" secondary style={{ marginTop: 2 }}>
+                {gpsLocationText}
+              </ThemedText>
+            </View>
+          </Pressable>
+        </View>
 
-        {/* Search City Option */}
-        <Pressable
-          onPress={handleSearchCity}
-          style={({ pressed }) => [
-            styles.option,
-            {
-              backgroundColor: theme.cardBackground,
-              borderColor: locationMode === 'manual' ? theme.primary : theme.border,
-              borderWidth: locationMode === 'manual' ? 2 : 1,
-              opacity: pressed ? 0.8 : 1,
-            },
-          ]}
-        >
-          <View style={[styles.optionIcon, { backgroundColor: isDark ? 'rgba(96, 165, 250, 0.15)' : 'rgba(59, 130, 246, 0.1)' }]}>
-            <Feather name="search" size={20} color={isDark ? '#60A5FA' : '#3B82F6'} />
-          </View>
-          <View style={{ flex: 1 }}>
-            <ThemedText type="body" style={{ fontWeight: '600' }}>
-              {t('location.setManually')}
-            </ThemedText>
-            <ThemedText type="caption" secondary style={{ marginTop: 2 }}>
-              {t('location.searchWorldwide')}
-            </ThemedText>
-          </View>
-          <Feather name="chevron-right" size={20} color={theme.textSecondary} />
-        </Pressable>
+        {/* Search City Option — Ribbon Trick */}
+        <View style={{
+          borderRadius: 16,
+          marginBottom: Spacing.sm,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.04,
+          shadowRadius: 15,
+          elevation: 3,
+        }}>
+          <Pressable
+            onPress={handleSearchCity}
+            style={({ pressed }) => [styles.option, {
+              backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
+              borderWidth: 0,
+              borderLeftWidth: locationMode === 'manual' ? 4 : 0,
+              borderLeftColor: theme.primary,
+              borderTopWidth: 0,
+              borderRightWidth: 0,
+              borderBottomWidth: 0,
+              opacity: pressed ? 0.85 : 1,
+            }]}
+          >
+            <View style={[styles.optionIcon, { backgroundColor: isDark ? 'rgba(96, 165, 250, 0.15)' : 'rgba(59, 130, 246, 0.1)' }]}>
+              <Feather name="search" size={20} color={isDark ? '#60A5FA' : '#3B82F6'} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <ThemedText type="body" style={{ fontWeight: '600' }}>
+                {t('location.setManually')}
+              </ThemedText>
+              <ThemedText type="caption" secondary style={{ marginTop: 2 }}>
+                {t('location.searchWorldwide')}
+              </ThemedText>
+            </View>
+            <Feather name="chevron-right" size={20} color={theme.textSecondary} />
+          </Pressable>
+        </View>
 
         {/* Recent Locations */}
         {recentLocations.length > 0 && (
@@ -189,41 +223,54 @@ export default function LocationSettingsScreen() {
             <ThemedText type="caption" style={styles.sectionHeader}>
               {t('location.recentLocations')}
             </ThemedText>
-            <View style={[styles.recentContainer, { backgroundColor: theme.cardBackground }]}>
-              {recentLocations.map((loc, index) => {
-                const isSelected = manualLocation?.latitude === loc.latitude &&
-                  manualLocation?.longitude === loc.longitude &&
-                  locationMode === 'manual';
-                return (
-                  <Pressable
-                    key={`${loc.latitude}-${loc.longitude}-${index}`}
-                    onPress={() => handleSelectRecent(loc)}
-                    style={({ pressed }) => [
-                      styles.recentItem,
-                      {
-                        backgroundColor: pressed ? (isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)') : 'transparent',
-                        borderBottomColor: theme.border,
-                        borderBottomWidth: index < recentLocations.length - 1 ? 1 : 0,
-                      },
-                    ]}
-                  >
-                    <View style={[styles.recentIcon, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)' }]}>
-                      <Feather name="clock" size={16} color={theme.textSecondary} />
-                    </View>
-                    <View style={{ flex: 1 }}>
-                      <ThemedText type="body" style={{ fontWeight: '500' }}>
-                        {loc.city}
-                      </ThemedText>
-                      <ThemedText type="caption" secondary>
-                        {loc.country}
-                      </ThemedText>
-                    </View>
-                    {isSelected && (
-                      <Feather name="check" size={18} color={theme.primary} />
-                    )}
-                  </Pressable>
-                );
-              })}
+            {/* Floating Tablet */}
+            <View style={{
+              borderRadius: 16,
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.04,
+              shadowRadius: 15,
+              elevation: 3,
+            }}>
+              <View style={[styles.recentContainer, {
+                backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
+                borderWidth: 0,
+              }]}>
+                {recentLocations.map((loc, index) => {
+                  const isSelected = manualLocation?.latitude === loc.latitude &&
+                    manualLocation?.longitude === loc.longitude &&
+                    locationMode === 'manual';
+                  return (
+                    <Pressable
+                      key={`${loc.latitude}-${loc.longitude}-${index}`}
+                      onPress={() => handleSelectRecent(loc)}
+                      style={({ pressed }) => [
+                        styles.recentItem,
+                        {
+                          backgroundColor: pressed ? (isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)') : 'transparent',
+                          borderBottomColor: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.04)',
+                          borderBottomWidth: index < recentLocations.length - 1 ? 1 : 0,
+                        },
+                      ]}
+                    >
+                      <View style={[styles.recentIcon, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)' }]}>
+                        <Feather name="clock" size={16} color={theme.textSecondary} />
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <ThemedText type="body" style={{ fontWeight: '500' }}>
+                          {loc.city}
+                        </ThemedText>
+                        <ThemedText type="caption" secondary>
+                          {loc.country}
+                        </ThemedText>
+                      </View>
+                      {isSelected && (
+                        <Feather name="check" size={18} color={theme.primary} />
+                      )}
+                    </Pressable>
+                  );
+                })}
+              </View>
             </View>
           </>
         )}
@@ -257,7 +304,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.lg,
     paddingBottom: Spacing.md,
-    borderBottomWidth: 1,
+    borderBottomWidth: 0,
   },
   backButton: {
     padding: Spacing.xs,
@@ -271,8 +318,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: Spacing.lg,
-    borderRadius: BorderRadius.lg,
-    marginTop: Spacing.lg,
+    borderRadius: 16,
   },
   locationIconContainer: {
     width: 48,
@@ -299,8 +345,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: Spacing.lg,
-    borderRadius: BorderRadius.lg,
-    marginBottom: Spacing.sm,
+    borderRadius: 16,
+    overflow: 'hidden',
   },
   optionIcon: {
     width: 44,
@@ -311,7 +357,7 @@ const styles = StyleSheet.create({
     marginRight: Spacing.md,
   },
   recentContainer: {
-    borderRadius: BorderRadius.lg,
+    borderRadius: 16,
     overflow: 'hidden',
   },
   recentItem: {
