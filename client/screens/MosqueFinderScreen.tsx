@@ -156,9 +156,14 @@ export default function MosqueFinderScreen() {
 
       {/* Search and Filter */}
       <View style={styles.searchContainer}>
-        {/* Search Input */}
+        {/* Search Input — carved clay inset */}
         <View style={[styles.searchInputContainer, {
-          backgroundColor: theme.backgroundSecondary,
+          backgroundColor: isDark ? theme.backgroundSecondary : '#F2F3F5',
+          borderWidth: 1,
+          borderColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)',
+          // Simulate inset shadow with top inner border
+          borderTopColor: isDark ? 'rgba(0,0,0,0.12)' : 'rgba(0,0,0,0.06)',
+          borderTopWidth: 1.5,
         }]}>
           <Feather
             name="search"
@@ -185,49 +190,70 @@ export default function MosqueFinderScreen() {
           )}
         </View>
 
-        {/* Radius Filter */}
-        <Pressable
-          onPress={() => setShowRadiusPicker(!showRadiusPicker)}
-          style={[styles.radiusButton, {
-            backgroundColor: theme.backgroundSecondary,
-          }]}
-        >
-          <Feather
-            name="sliders"
-            size={18}
-            color={theme.primary}
-          />
-          <ThemedText type="small" style={styles.radiusText}>
-            {currentRadiusLabel}
-          </ThemedText>
-        </Pressable>
+        {/* Radius Filter Pill — floating clay button */}
+        <View style={{
+          borderRadius: 12,
+          shadowColor: showRadiusPicker ? theme.primary : '#000',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: showRadiusPicker ? 0.3 : 0.06,
+          shadowRadius: showRadiusPicker ? 8 : 12,
+          elevation: showRadiusPicker ? 6 : 3,
+        }}>
+          <Pressable
+            onPress={() => setShowRadiusPicker(!showRadiusPicker)}
+            style={[styles.radiusButton, {
+              backgroundColor: showRadiusPicker ? theme.primary : (isDark ? theme.backgroundSecondary : '#FFFFFF'),
+              overflow: 'hidden',
+            }]}
+          >
+            <Feather
+              name="sliders"
+              size={18}
+              color={showRadiusPicker ? '#FFFFFF' : theme.primary}
+            />
+            <ThemedText type="small" style={[styles.radiusText, showRadiusPicker && { color: '#FFFFFF' }]}>
+              {currentRadiusLabel}
+            </ThemedText>
+          </Pressable>
+        </View>
       </View>
 
-      {/* Radius Picker Dropdown */}
+      {/* Radius Picker Dropdown — premium floating glass panel */}
       {showRadiusPicker && (
         <View style={[styles.radiusPicker, {
-          backgroundColor: theme.backgroundSecondary,
+          backgroundColor: isDark ? theme.backgroundSecondary : '#FFFFFF',
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 20 },
+          shadowOpacity: 0.15,
+          shadowRadius: 40,
+          elevation: 16,
         }]}>
-          {RADIUS_OPTIONS.map((option) => (
-            <Pressable
-              key={option.value}
-              onPress={() => handleRadiusChange(option.value)}
-              style={[
-                styles.radiusOption,
-                radius === option.value && {
-                  backgroundColor: `${theme.primary}20`,
-                }
-              ]}
-            >
-              <ThemedText type="body">{option.label}</ThemedText>
-              {radius === option.value && (
-                <Feather
-                  name="check"
-                  size={18}
-                  color={theme.primary}
-                />
+          {RADIUS_OPTIONS.map((option, index) => (
+            <React.Fragment key={option.value}>
+              <Pressable
+                onPress={() => handleRadiusChange(option.value)}
+                style={[
+                  styles.radiusOption,
+                  radius === option.value && {
+                    backgroundColor: `${theme.primary}10`,
+                  }
+                ]}
+              >
+                <ThemedText type="body" style={radius === option.value ? { fontWeight: '600', color: theme.primary } : undefined}>
+                  {option.label}
+                </ThemedText>
+                {radius === option.value && (
+                  <Feather
+                    name="check"
+                    size={18}
+                    color={theme.primary}
+                  />
+                )}
+              </Pressable>
+              {index < RADIUS_OPTIONS.length - 1 && (
+                <View style={{ height: 1, backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)', marginHorizontal: 16 }} />
               )}
-            </Pressable>
+            </React.Fragment>
           ))}
         </View>
       )}
@@ -321,8 +347,7 @@ const styles = StyleSheet.create({
   radiusPicker: {
     marginHorizontal: Spacing.lg,
     marginBottom: Spacing.md,
-    borderRadius: BorderRadius.lg,
-    overflow: 'hidden',
+    borderRadius: 16,
   },
   radiusOption: {
     flexDirection: 'row',
