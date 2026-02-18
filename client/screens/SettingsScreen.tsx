@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, ScrollView, Pressable, Platform, Linking, Alert } from "react-native";
+import { View, StyleSheet, ScrollView, Pressable, Platform, Linking, Alert, Image } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
@@ -16,6 +16,8 @@ import { useNotifications } from "@/hooks/useNotifications";
 import { useTranslation } from "@/hooks/useTranslation";
 import { SUPPORTED_LANGUAGES } from "@/i18n";
 import * as Updates from "expo-updates";
+
+const ICON_THEMES = require('../../assets/images/3d-images/Themes.png');
 
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
@@ -40,15 +42,16 @@ export default function SettingsScreen() {
         {/* Appearance Section */}
         <View style={styles.section}>
           <View style={[styles.card, {
-            backgroundColor: isDark ? `${theme.primary}33` : theme.cardBackground,
-            elevation: isDark ? 0 : 3,
-            shadowOpacity: isDark ? 0 : 0.08,
+            backgroundColor: isDark ? `${theme.primary}33` : '#FFFFFF',
+            borderWidth: 0,
+            borderColor: 'transparent',
+            elevation: isDark ? 0 : 2,
+            shadowOpacity: isDark ? 0 : 0.05,
+            shadowRadius: 12,
           }]}>
             <View style={styles.settingRow}>
               <View style={styles.settingLeft}>
-                <View style={[styles.iconCircle, { backgroundColor: `${theme.primary}26` }]}>
-                  <Feather name="droplet" size={20} color={theme.primary} />
-                </View>
+                <Image source={ICON_THEMES} style={{ width: 44, height: 44, marginRight: Spacing.md }} resizeMode="contain" />
                 <View style={styles.settingText}>
                   <ThemedText type="body" style={{ fontWeight: '600' }}>
                     {t('settings.appearance')}

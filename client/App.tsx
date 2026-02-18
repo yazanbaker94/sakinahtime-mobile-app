@@ -153,6 +153,7 @@ export default function App() {
             require('../assets/images/3d-images/Bookmark.png'),
             require('../assets/images/3d-images/Notes.png'),
             require('../assets/images/3d-images/Highlights.png'),
+            require('../assets/images/3d-images/Themes.png'),
           ]),
         ]);
         setFontsLoaded(true);

@@ -26,7 +26,13 @@ export function ThemePicker() {
     <View style={styles.container}>
       {/* Color Mode Selector */}
       <Text style={[styles.sectionLabel, { color: theme.textSecondary }]}>{t('themePicker.colorMode')}</Text>
-      <View style={[styles.modeSelector, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)' }]}>
+      <View style={[styles.modeSelector, {
+        backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#EDEFF2',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.06,
+        shadowRadius: 2,
+      }]}>
         {(["light", "dark", "auto"] as ColorMode[]).map((mode) => {
           const isActive = colorMode === mode;
           return (
@@ -34,7 +40,14 @@ export function ThemePicker() {
               key={mode}
               style={[
                 styles.modeButton,
-                isActive && { backgroundColor: theme.primary },
+                isActive && {
+                  backgroundColor: '#FFFFFF',
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.1,
+                  shadowRadius: 6,
+                  elevation: 3,
+                },
               ]}
               onPress={() => setColorMode(mode)}
               activeOpacity={0.7}
@@ -42,12 +55,13 @@ export function ThemePicker() {
               <Feather
                 name={mode === "light" ? "sun" : mode === "dark" ? "moon" : "smartphone"}
                 size={16}
-                color={isActive ? "#FFFFFF" : theme.text}
+                color={isActive ? theme.primary : (isDark ? '#999' : '#888')}
               />
               <Text
                 style={[
                   styles.modeText,
-                  { color: isActive ? "#FFFFFF" : theme.text },
+                  { color: isActive ? theme.text : (isDark ? '#999' : '#888') },
+                  isActive && { fontWeight: '700' },
                 ]}
               >
                 {mode === "light" ? t('themePicker.light') : mode === "dark" ? t('themePicker.dark') : t('themePicker.auto')}
@@ -77,8 +91,14 @@ export function ThemePicker() {
               style={[
                 styles.themeCard,
                 {
-                  borderColor: isSelected ? themeColors.primary : (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)'),
-                  borderWidth: isSelected ? 2 : 1,
+                  borderWidth: 0,
+                  borderColor: 'transparent',
+                  shadowColor: isSelected ? themeColors.primary : '#000',
+                  shadowOffset: { width: 0, height: isSelected ? 4 : 2 },
+                  shadowOpacity: isSelected ? 0.45 : (isDark ? 0 : 0.06),
+                  shadowRadius: isSelected ? 12 : 6,
+                  elevation: isSelected ? 8 : (isDark ? 0 : 2),
+                  backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : '#FFFFFF',
                 },
               ]}
               onPress={() => setThemeId(id)}
@@ -171,13 +191,12 @@ const styles = StyleSheet.create({
   themeCard: {
     width: 120,
     borderRadius: BorderRadius.md,
-    overflow: 'hidden',
-    backgroundColor: 'transparent',
+    overflow: 'visible',
   },
   previewContainer: {
     height: 80,
-    borderTopLeftRadius: BorderRadius.md - 1,
-    borderTopRightRadius: BorderRadius.md - 1,
+    borderTopLeftRadius: BorderRadius.md,
+    borderTopRightRadius: BorderRadius.md,
     overflow: 'hidden',
   },
   previewHeader: {
