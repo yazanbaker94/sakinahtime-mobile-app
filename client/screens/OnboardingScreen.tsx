@@ -3,7 +3,7 @@
  * Features: 3D clay hero assets, floating pedestal cards, themed glow buttons
  */
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
     View,
     StyleSheet,
@@ -26,6 +26,7 @@ import { Feather } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import * as Notifications from 'expo-notifications';
 import * as Haptics from 'expo-haptics';
+import { Asset } from 'expo-asset';
 import { checkBatteryOptimization, requestBatteryOptimizationExemption, canScheduleExactAlarms, requestExactAlarmPermission } from '@/hooks/useNotifications';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -103,6 +104,20 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
     const [currentIndex, setCurrentIndex] = useState(0);
     const [locationGranted, setLocationGranted] = useState(false);
     const [notificationsGranted, setNotificationsGranted] = useState(false);
+    const [assetsReady, setAssetsReady] = useState(false);
+
+    // Preload all 3D hero images so they don't pop in
+    useEffect(() => {
+        const preload = async () => {
+            try {
+                await Asset.loadAsync(Object.values(HERO_ASSETS));
+            } catch (e) {
+                // Proceed even if preload fails
+            }
+            setAssetsReady(true);
+        };
+        preload();
+    }, []);
 
     const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
         const index = Math.round(event.nativeEvent.contentOffset.x / SCREEN_WIDTH);
@@ -414,6 +429,11 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
             </View>
         );
     };
+
+    // Wait for assets before rendering
+    if (!assetsReady) {
+        return <ThemedView style={styles.container} />;
+    }
 
     return (
         <ThemedView style={styles.container}>
