@@ -64,6 +64,7 @@
     "browserLocationHint": "Please enable location in your browser settings.",
     "enableLocation": "Enable Location",
     "openSettings": "Open Settings",
+    "enterLocationManually": "Enter Location Manually",
     "loadingPrayerTimes": "Loading prayer times...",
     "failedToLoad": "Failed to load prayer times",
     "hours": "HOURS",
