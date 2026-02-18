@@ -220,20 +220,7 @@ export default function ProgressScreen() {
 
           <View style={styles.todayStats}>
             <View style={styles.todayStatItem}>
-              <View style={{
-                width: 28,
-                height: 28,
-                borderRadius: 14,
-                backgroundColor: isGoalMet ? `${theme.primary}20` : `${theme.gold}20`,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-                <Feather
-                  name={isGoalMet ? 'check' : 'book-open'}
-                  size={16}
-                  color={isGoalMet ? theme.primary : theme.gold}
-                />
-              </View>
+              <Image source={ICON_TODAY_PROGRESS} style={{ width: 32, height: 32 }} resizeMode="contain" />
               <ThemedText type="body" style={styles.todayStatText}>
                 {progress?.dailyGoal.type === 'verses'
                   ? `${todayProgress?.versesRead || 0} ${t('progress.versesRead')}`
