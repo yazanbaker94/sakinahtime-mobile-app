@@ -268,23 +268,23 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
         return (
             <View style={[styles.slide, { width: SCREEN_WIDTH }]}>
                 {/* Upper area — 3D Hero Asset with glow */}
-                <View style={styles.heroArea}>
+                <View style={[styles.heroArea, { zIndex: 10, marginBottom: -60 }]}>
                     {isWidgetSlide && item.image ? (
-                        /* Widget slide: 3D tilted widget preview */
+                        /* Widget slide: 3D tilted widget preview — overlaps card */
                         <View style={{
                             alignItems: 'center',
                             transform: [
                                 { perspective: 1000 },
-                                { rotateX: '8deg' },
-                                { rotateY: '-5deg' },
+                                { rotateX: '15deg' },
+                                { rotateY: '-15deg' },
                             ],
                         }}>
                             <View style={{
                                 shadowColor: theme.primary,
-                                shadowOffset: { width: 0, height: 12 },
-                                shadowOpacity: 0.3,
-                                shadowRadius: 24,
-                                elevation: 12,
+                                shadowOffset: { width: 0, height: 16 },
+                                shadowOpacity: 0.4,
+                                shadowRadius: 30,
+                                elevation: 16,
                                 borderRadius: 24,
                             }}>
                                 <Image
@@ -299,21 +299,26 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
                             </View>
                         </View>
                     ) : heroAsset ? (
-                        /* 3D clay hero with glow circle */
+                        /* 3D clay hero with diffuse glow aura */
                         <View style={{ alignItems: 'center' }}>
-                            {/* Glow behind asset */}
+                            {/* Diffuse glow — large, blurred aura */}
                             <View style={{
                                 position: 'absolute',
-                                width: 140,
-                                height: 140,
-                                borderRadius: 70,
+                                width: 180,
+                                height: 180,
+                                borderRadius: 90,
                                 backgroundColor: theme.primary,
-                                opacity: 0.12,
-                                top: 10,
+                                opacity: 0.18,
+                                top: -10,
+                                // Simulate blur with multiple layered shadows
+                                shadowColor: theme.primary,
+                                shadowOffset: { width: 0, height: 0 },
+                                shadowOpacity: 0.5,
+                                shadowRadius: 40,
                             }} />
                             <Image
                                 source={heroAsset}
-                                style={{ width: 140, height: 140 }}
+                                style={{ width: 150, height: 150 }}
                                 resizeMode="contain"
                                 fadeDuration={0}
                             />
@@ -380,7 +385,7 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
                     {/* Spacer */}
                     <View style={{ flex: 1, minHeight: 20 }} />
 
-                    {/* Primary CTA — Glowing Button */}
+                    {/* Primary CTA — Glowing Button with colored pop */}
                     <Pressable
                         onPress={isLastSlide ? handleGetStarted : () => handleAction(item.action)}
                         style={({ pressed }) => [{
@@ -394,9 +399,9 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
                             backgroundColor: theme.primary,
                             shadowColor: theme.primary,
                             shadowOffset: { width: 0, height: 8 },
-                            shadowOpacity: 0.35,
-                            shadowRadius: 20,
-                            elevation: 6,
+                            shadowOpacity: 0.45,
+                            shadowRadius: 15,
+                            elevation: 8,
                             opacity: pressed ? 0.85 : 1,
                             gap: 8,
                         }]}
