@@ -268,11 +268,12 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
         return (
             <View style={[styles.slide, { width: SCREEN_WIDTH }]}>
                 {/* Upper area — 3D Hero Asset with glow */}
-                <View style={[styles.heroArea, { zIndex: 10, marginBottom: -60 }]}>
+                <View style={[styles.heroArea, { zIndex: 10 }]}>
                     {isWidgetSlide && item.image ? (
                         /* Widget slide: 3D tilted widget preview — overlaps card */
                         <View style={{
                             alignItems: 'center',
+                            marginBottom: -50,
                             transform: [
                                 { perspective: 1000 },
                                 { rotateX: '15deg' },
@@ -282,7 +283,7 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
                             <View style={{
                                 shadowColor: theme.primary,
                                 shadowOffset: { width: 0, height: 16 },
-                                shadowOpacity: 0.4,
+                                shadowOpacity: 0.5,
                                 shadowRadius: 30,
                                 elevation: 16,
                                 borderRadius: 24,
@@ -299,22 +300,21 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
                             </View>
                         </View>
                     ) : heroAsset ? (
-                        /* 3D clay hero with diffuse glow aura */
-                        <View style={{ alignItems: 'center' }}>
-                            {/* Diffuse glow — large, blurred aura */}
+                        /* 3D clay hero with Shadow Hack glow aura */
+                        <View style={{ alignItems: 'center', marginBottom: -60 }}>
+                            {/* Shadow Hack: transparent shape + massive colored shadow = soft glow cloud */}
                             <View style={{
                                 position: 'absolute',
-                                width: 180,
-                                height: 180,
-                                borderRadius: 90,
-                                backgroundColor: theme.primary,
-                                opacity: 0.18,
-                                top: -10,
-                                // Simulate blur with multiple layered shadows
+                                width: 120,
+                                height: 120,
+                                borderRadius: 60,
+                                backgroundColor: 'transparent',
+                                top: 15,
                                 shadowColor: theme.primary,
                                 shadowOffset: { width: 0, height: 0 },
-                                shadowOpacity: 0.5,
-                                shadowRadius: 40,
+                                shadowOpacity: 1,
+                                shadowRadius: 50,
+                                elevation: 20,
                             }} />
                             <Image
                                 source={heroAsset}
@@ -328,6 +328,7 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
                         <View style={[styles.iconFallback, {
                             backgroundColor: `${theme.primary}15`,
                             borderColor: `${theme.primary}30`,
+                            marginBottom: -60,
                         }]}>
                             <Feather name={item.icon} size={48} color={theme.primary} />
                         </View>
@@ -339,10 +340,11 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
                     backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
                     borderTopLeftRadius: 32,
                     borderTopRightRadius: 32,
-                    paddingTop: 36,
+                    paddingTop: 56,
                     paddingBottom: insets.bottom + 80,
                     paddingHorizontal: 28,
                     alignItems: 'center',
+                    overflow: 'visible',
                     shadowColor: '#000',
                     shadowOffset: { width: 0, height: -6 },
                     shadowOpacity: 0.08,
@@ -385,32 +387,34 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
                     {/* Spacer */}
                     <View style={{ flex: 1, minHeight: 20 }} />
 
-                    {/* Primary CTA — Glowing Button with colored pop */}
-                    <Pressable
-                        onPress={isLastSlide ? handleGetStarted : () => handleAction(item.action)}
-                        style={({ pressed }) => [{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            paddingVertical: 16,
-                            paddingHorizontal: 32,
-                            borderRadius: 16,
-                            width: '100%',
-                            backgroundColor: theme.primary,
-                            shadowColor: theme.primary,
-                            shadowOffset: { width: 0, height: 8 },
-                            shadowOpacity: 0.45,
-                            shadowRadius: 15,
-                            elevation: 8,
-                            opacity: pressed ? 0.85 : 1,
-                            gap: 8,
-                        }]}
-                    >
-                        <ThemedText type="body" style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 16 }}>
-                            {getButtonLabel(item, isLastSlide)}
-                        </ThemedText>
-                        <Feather name={getButtonIcon(item, isLastSlide)} size={18} color="#FFFFFF" />
-                    </Pressable>
+                    {/* Button wrapper — overflow visible so shadow isn't clipped */}
+                    <View style={{ width: '100%', overflow: 'visible' }}>
+                        <Pressable
+                            onPress={isLastSlide ? handleGetStarted : () => handleAction(item.action)}
+                            style={({ pressed }) => [{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                paddingVertical: 16,
+                                paddingHorizontal: 32,
+                                borderRadius: 16,
+                                width: '100%',
+                                backgroundColor: theme.primary,
+                                shadowColor: theme.primary,
+                                shadowOffset: { width: 0, height: 8 },
+                                shadowOpacity: 0.35,
+                                shadowRadius: 12,
+                                elevation: 8,
+                                opacity: pressed ? 0.85 : 1,
+                                gap: 8,
+                            }]}
+                        >
+                            <ThemedText type="body" style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 16 }}>
+                                {getButtonLabel(item, isLastSlide)}
+                            </ThemedText>
+                            <Feather name={getButtonIcon(item, isLastSlide)} size={18} color="#FFFFFF" />
+                        </Pressable>
+                    </View>
 
                     {/* Not Now escape hatch */}
                     {item.action && !isLastSlide && (
