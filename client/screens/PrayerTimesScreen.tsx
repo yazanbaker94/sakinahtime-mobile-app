@@ -681,32 +681,40 @@ export default function PrayerTimesScreen() {
 
         {/* Prayer list with vertical timeline */}
         <View style={[styles.prayersList, { flex: 1, marginBottom: Spacing.md, position: 'relative' }]}>
-          {/* Vertical timeline line (unfilled background) */}
+          {/* Vertical timeline line — capped at first and last dot centers */}
           <View style={{
             position: 'absolute',
             left: 15,
-            top: 24,
-            bottom: 24,
+            top: 0,
+            bottom: 0,
             width: 2,
-            backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
-            borderRadius: 1,
             zIndex: 0,
           }}>
-            {/* Filled portion - progresses between specific prayer dots */}
+            {/* Background track — starts/ends at dot centers via padding trick */}
             <View style={{
-              width: '100%',
-              height: `${Math.min(100, Math.max(0, (() => {
-                // Fill up to the current prayer dot, then progressively fill toward the next
-                const totalSegments = PRAYERS.length - 1;
-                if (totalSegments <= 0) return 0;
-                const completedSegments = nextPrayerIndex > 0 ? nextPrayerIndex - 1 : 0;
-                const partialFill = travelerProgress;
-                return ((completedSegments + partialFill) / totalSegments) * 100;
-              })()))}%`,
-              backgroundColor: theme.primary,
+              position: 'absolute',
+              left: 0,
+              right: 0,
+              top: '10%', // Align with center of first Fajr dot
+              bottom: '10%', // Align with center of last Isha dot
+              backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
               borderRadius: 1,
-              opacity: 0.8,
-            }} />
+            }}>
+              {/* Filled portion - progresses between specific prayer dots */}
+              <View style={{
+                width: '100%',
+                height: `${Math.min(100, Math.max(0, (() => {
+                  const totalSegments = PRAYERS.length - 1;
+                  if (totalSegments <= 0) return 0;
+                  const completedSegments = nextPrayerIndex > 0 ? nextPrayerIndex - 1 : 0;
+                  const partialFill = travelerProgress;
+                  return ((completedSegments + partialFill) / totalSegments) * 100;
+                })()))}%`,
+                backgroundColor: theme.primary,
+                borderRadius: 1,
+                opacity: 0.8,
+              }} />
+            </View>
           </View>
           {PRAYERS.map((prayer, index) => {
             const originalTime = prayerData?.timings?.[prayer.key] || "";
@@ -718,9 +726,15 @@ export default function PrayerTimesScreen() {
             const isNext = nextPrayer?.name === prayer.nameEn;
             const prayerStatus = getPrayerStatus(prayer.key as PrayerName);
 
+            // After Isha rollover: all prayers are past, next wraps to Fajr
+            // In this state, Fajr is isNext but also isPast (today's Fajr).
+            // Override: if isNext, treat as NOT past for display (tomorrow's prayer)
+            const isAfterIshaRollover = nextPrayerIndex >= PRAYERS.length;
+            const displayAsPast = isPast && !isNext;
+
             // "Active Now" = this prayer's time has passed, and the NEXT prayer in list is the upcoming one
             const nextPrayerIdx = PRAYERS.findIndex(p => p.nameEn === nextPrayer?.name);
-            const isCurrent = isPast && !isNext && index === nextPrayerIdx - 1;
+            const isCurrent = displayAsPast && !isNext && index === nextPrayerIdx - 1;
 
             const handleStatusChange = (newStatus: PrayerStatus) => {
               markPrayer(prayer.key as PrayerName, newStatus, originalTime);
@@ -743,7 +757,7 @@ export default function PrayerTimesScreen() {
                     width: (isNext || isCurrent) ? 12 : 8,
                     height: (isNext || isCurrent) ? 12 : 8,
                     borderRadius: (isNext || isCurrent) ? 6 : 4,
-                    backgroundColor: (isPast || isCurrent || isNext) ? theme.primary : (isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.1)'),
+                    backgroundColor: (displayAsPast || isCurrent || isNext) ? theme.primary : (isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.1)'),
                     borderWidth: isCurrent ? 2.5 : 0,
                     borderColor: isCurrent ? `${theme.primary}40` : 'transparent',
                   }} />
@@ -759,7 +773,7 @@ export default function PrayerTimesScreen() {
                         : isCurrent
                           ? (isDark ? `${theme.primary}10` : `${theme.primary}08`)
                           : (isDark ? theme.cardBackground : theme.cardBackground),
-                      opacity: (isPast && !isNext && !isCurrent) ? 0.55 : 1,
+                      opacity: (displayAsPast && !isNext && !isCurrent) ? 0.55 : 1,
                       shadowColor: '#000',
                       shadowOffset: { width: 0, height: 2 },
                       shadowOpacity: isDark ? 0 : 0.08,
@@ -789,7 +803,7 @@ export default function PrayerTimesScreen() {
                         status={prayerStatus}
                         onStatusChange={handleStatusChange}
                         size="compact"
-                        isPastAndUnmarked={isPast && !isCurrent && prayerStatus === 'unmarked'}
+                        isPastAndUnmarked={displayAsPast && !isCurrent && prayerStatus === 'unmarked'}
                         isCurrent={isCurrent && prayerStatus === 'unmarked'}
                         onCelebrate={() => {
                           setCelebrateKey(k => k + 1);
@@ -1060,7 +1074,9 @@ const styles = StyleSheet.create({
     left: 0,
     top: 0,
     bottom: 0,
-    width: 4,
+    width: 5,
+    borderTopLeftRadius: 16,
+    borderBottomLeftRadius: 16,
   },
   prayerCardLeft: {
     flexDirection: "row",
