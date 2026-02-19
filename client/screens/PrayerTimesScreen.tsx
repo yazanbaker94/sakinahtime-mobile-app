@@ -711,7 +711,7 @@ export default function PrayerTimesScreen() {
             };
 
             return (
-              <View key={prayer.key} style={{ flexDirection: 'row', alignItems: 'stretch' }}>
+              <View key={prayer.key} style={{ flexDirection: 'row', alignItems: 'stretch', flex: 1 }}>
                 {/* Timeline dot column — flex split-line trick for seamless connection */}
                 <View style={{
                   width: 24,
