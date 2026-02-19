@@ -159,6 +159,11 @@ export default function App() {
             require('../assets/images/3d-images/Reciter.png'),
             require('../assets/images/3d-images/Storage.png'),
             require('../assets/images/3d-images/info.png'),
+            require('../assets/images/3d-images/moon.png'),
+            require('../assets/images/3d-images/crescent.png'),
+            require('../assets/images/3d-images/bell.png'),
+            require('../assets/images/3d-images/tick.png'),
+            require('../assets/images/3d-images/widget.png'),
           ]),
         ]);
         setFontsLoaded(true);
