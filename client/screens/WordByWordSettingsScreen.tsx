@@ -203,7 +203,12 @@ export default function WordByWordSettingsScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Info - moved to top */}
-        <View style={[styles.infoBox, { backgroundColor: isDark ? 'rgba(212,175,55,0.1)' : 'rgba(212,175,55,0.08)', marginBottom: Spacing.lg }]}>
+        <View style={[styles.infoBox, {
+          backgroundColor: isDark ? 'rgba(212,175,55,0.1)' : 'rgba(212,175,55,0.08)',
+          marginBottom: Spacing.lg,
+          borderWidth: 0,
+          borderColor: 'transparent',
+        }]}>
           <Feather name="info" size={16} color={theme.gold} style={{ marginRight: 10 }} />
           <ThemedText type="caption" style={{ flex: 1, color: theme.textSecondary }}>
             {t('wordByWord.infoHint')}
@@ -218,9 +223,12 @@ export default function WordByWordSettingsScreen() {
         {/* Language Options */}
         <View style={styles.section}>
           <View style={[styles.card, {
-            backgroundColor: isDark ? `${theme.primary}33` : theme.cardBackground,
-            elevation: isDark ? 0 : 3,
-            shadowOpacity: isDark ? 0 : 0.08,
+            backgroundColor: isDark ? `${theme.primary}33` : '#FFFFFF',
+            borderWidth: 0,
+            borderColor: 'transparent',
+            elevation: isDark ? 0 : 2,
+            shadowOpacity: isDark ? 0 : 0.05,
+            shadowRadius: 12,
           }]}>
             {WBW_LANGUAGES.map((lang, index) => {
               const isSelected = selectedLanguage === lang.id;
@@ -236,11 +244,12 @@ export default function WordByWordSettingsScreen() {
                   disabled={isDownloading}
                   style={({ pressed }) => [
                     styles.languageRow,
-                    !isLast && {
-                      borderBottomWidth: 1,
-                      borderBottomColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)'
+                    {
+                      opacity: pressed && !isDownloading ? 0.7 : 1,
+                      backgroundColor: isSelected
+                        ? `${theme.primary}14`
+                        : 'transparent',
                     },
-                    { opacity: pressed && !isDownloading ? 0.7 : 1 },
                   ]}
                 >
                   <View style={styles.languageLeft}>
@@ -272,13 +281,30 @@ export default function WordByWordSettingsScreen() {
                   {isDownloading ? (
                     <ActivityIndicator size="small" color={theme.primary} />
                   ) : isSelected ? (
-                    <View style={[styles.checkCircle, { backgroundColor: theme.primary }]}>
+                    <View style={[styles.checkCircle, {
+                      backgroundColor: theme.primary,
+                      shadowColor: theme.primary,
+                      shadowOffset: { width: 0, height: 2 },
+                      shadowOpacity: 0.4,
+                      shadowRadius: 4,
+                      elevation: 3,
+                    }]}>
                       <Feather name="check" size={14} color="#FFF" />
                     </View>
                   ) : isDownloaded ? (
-                    <Feather name="check-circle" size={20} color={theme.textSecondary} />
+                    <View style={[styles.checkCircle, {
+                      backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#F3F4F6',
+                      shadowColor: '#000',
+                      shadowOffset: { width: 0, height: 1 },
+                      shadowOpacity: 0.1,
+                      shadowRadius: 2,
+                    }]} />
                   ) : (
-                    <Feather name="download" size={20} color={theme.textSecondary} />
+                    <View style={[styles.checkCircle, {
+                      backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#F3F4F6',
+                    }]}>
+                      <Feather name="download" size={13} color={theme.textSecondary} />
+                    </View>
                   )}
                 </Pressable>
               );
@@ -291,9 +317,12 @@ export default function WordByWordSettingsScreen() {
           {t('wordByWord.audio')}
         </ThemedText>
         <View style={[styles.card, {
-          backgroundColor: isDark ? `${theme.primary}33` : theme.cardBackground,
-          elevation: isDark ? 0 : 3,
-          shadowOpacity: isDark ? 0 : 0.08,
+          backgroundColor: isDark ? `${theme.primary}33` : '#FFFFFF',
+          borderWidth: 0,
+          borderColor: 'transparent',
+          elevation: isDark ? 0 : 2,
+          shadowOpacity: isDark ? 0 : 0.05,
+          shadowRadius: 12,
         }]}>
           <View style={styles.audioRow}>
             <View style={{ flex: 1 }}>
@@ -304,13 +333,21 @@ export default function WordByWordSettingsScreen() {
                 {t('wordByWord.audioHint')}
               </ThemedText>
             </View>
-            <Switch
-              value={audioEnabled}
-              onValueChange={toggleAudio}
-              trackColor={{ false: isDark ? '#3A3A3C' : '#E5E5EA', true: theme.primary }}
-              thumbColor="#FFFFFF"
-              ios_backgroundColor={isDark ? '#3A3A3C' : '#E5E5EA'}
-            />
+            <View style={{
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.2,
+              shadowRadius: 3,
+              elevation: 2,
+            }}>
+              <Switch
+                value={audioEnabled}
+                onValueChange={toggleAudio}
+                trackColor={{ false: isDark ? '#3A3A3C' : '#E5E5EA', true: theme.primary }}
+                thumbColor="#FFFFFF"
+                ios_backgroundColor={isDark ? '#3A3A3C' : '#E5E5EA'}
+              />
+            </View>
           </View>
         </View>
       </ScrollView>
@@ -340,10 +377,11 @@ const styles = StyleSheet.create({
   },
   card: {
     borderRadius: BorderRadius.lg,
-    overflow: 'hidden',
+    borderWidth: 0,
+    borderColor: 'transparent',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 12,
   },
   languageRow: {
     flexDirection: 'row',
