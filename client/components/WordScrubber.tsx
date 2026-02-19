@@ -361,8 +361,9 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
             styles.wordHighlight,
             animatedHighlightStyle,
             {
-              borderColor: isDark ? theme.gold : theme.primary,
-              backgroundColor: isDark ? 'rgba(218, 165, 32, 0.25)' : 'rgba(59, 130, 246, 0.25)',
+              // Soft glow — no harsh border, just tinted background with rounded corners
+              borderWidth: 0,
+              backgroundColor: isDark ? 'rgba(218, 165, 32, 0.30)' : 'rgba(94, 156, 170, 0.25)',
             }
           ]}
           pointerEvents="none"
@@ -377,7 +378,20 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
             {
               top: infoBoxTop,
               backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
-              borderColor: isDark ? theme.gold : theme.primary,
+              // No wireframe border — use shadows + rim lighting
+              borderWidth: 0,
+              borderColor: 'transparent',
+              // Rim lighting for dark mode glass-edge
+              ...(isDark ? {
+                borderWidth: 1,
+                borderColor: 'rgba(255, 255, 255, 0.08)',
+              } : {}),
+              // Layered claymorphic shadow
+              shadowColor: isDark ? '#000' : theme.primary,
+              shadowOffset: { width: 0, height: 8 },
+              shadowOpacity: isDark ? 0.4 : 0.12,
+              shadowRadius: 20,
+              elevation: 12,
             }
           ]}
           pointerEvents="none"
@@ -386,10 +400,13 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
             <View style={styles.infoContent}>
               {/* Left side: Live Magnifier */}
               <View style={[styles.magnifierBox, {
-                backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
-                borderColor: isDark ? theme.gold : theme.primary,
+                backgroundColor: isDark ? '#2C2C2E' : '#F8F9FA',
+                // No wireframe border — subtle inset feel
+                borderWidth: 0,
+                borderColor: 'transparent',
                 overflow: 'hidden',
-              }]}>
+              }]}
+              >
                 {mushafImage ? (
                   <View style={styles.magnifierContent}>
                     <Image
@@ -404,9 +421,19 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
                       }}
                       contentFit="contain"
                     />
-                    {/* Crosshairs */}
-                    <View style={[styles.magnifierCrosshair, { backgroundColor: isDark ? theme.gold : theme.primary }]} />
-                    <View style={[styles.magnifierCrosshairV, { backgroundColor: isDark ? theme.gold : theme.primary }]} />
+                    {/* Subtle center dot instead of clinical crosshairs */}
+                    <View style={{
+                      position: 'absolute',
+                      left: '50%',
+                      top: '50%',
+                      width: 6,
+                      height: 6,
+                      borderRadius: 3,
+                      marginLeft: -3,
+                      marginTop: -3,
+                      backgroundColor: isDark ? theme.gold : theme.primary,
+                      opacity: 0.4,
+                    }} />
                   </View>
                 ) : (
                   <ThemedText style={[styles.magnifiedWord, { color: isDark ? theme.gold : theme.primary }]}>
@@ -436,10 +463,13 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
                   </ThemedText>
                 )}
 
-                {/* Frequency count */}
-                <View style={styles.frequencyRow}>
-                  <Feather name="bar-chart-2" size={12} color={theme.textSecondary} />
-                  <ThemedText style={[styles.frequency, { color: theme.textSecondary }]}>
+                {/* Frequency pill */}
+                <View style={[styles.frequencyRow, {
+                  backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(94, 156, 170, 0.06)',
+                  borderTopWidth: 0,
+                }]}>
+                  <Feather name="bar-chart-2" size={11} color={isDark ? theme.gold : theme.primary} />
+                  <ThemedText style={[styles.frequency, { color: isDark ? theme.gold : theme.primary }]}>
                     {formatFrequency(currentWord.frequency || 0)}
                   </ThemedText>
                 </View>
@@ -462,25 +492,24 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
 const styles = StyleSheet.create({
   magnifierBox: {
     width: 130,
-    height: 50,
-    borderRadius: 10,
+    height: 56,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 0,
-    borderWidth: 1.5,
   },
   infoBox: {
     position: 'absolute',
-    left: 16,
-    right: 16,
-    borderRadius: 14,
-    borderWidth: 1.5,
-    padding: 12,
+    left: 20,
+    right: 20,
+    borderRadius: 20,
+    padding: 14,
+    // Base shadow — overridden inline for light/dark
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 8,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.12,
+    shadowRadius: 20,
+    elevation: 12,
   },
   infoContent: {
     flexDirection: 'row',
@@ -520,10 +549,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'flex-end',
     gap: 4,
-    marginTop: 4,
-    paddingTop: 4,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(128,128,128,0.15)',
+    marginTop: 6,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 8,
+    // borderTopWidth removed — using pill bg instead
   },
   frequency: {
     fontSize: 11,
@@ -532,8 +562,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   wordHighlight: {
-    borderWidth: 2,
-    borderRadius: 8,
+    borderRadius: 6,
   },
   magnifiedWord: {
     fontSize: 28,
