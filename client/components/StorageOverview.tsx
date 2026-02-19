@@ -46,12 +46,7 @@ export function StorageOverview({ storageInfo, onManagePress }: StorageOverviewP
     ]}>
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <View style={[
-            styles.iconCircle,
-            { backgroundColor: `${theme.primary}26` }
-          ]}>
-            <Image source={require('../../assets/images/3d-images/Storage.png')} style={{ width: 32, height: 32 }} resizeMode="contain" />
-          </View>
+          <Image source={require('../../assets/images/3d-images/Storage.png')} style={{ width: 36, height: 36, marginRight: Spacing.sm }} resizeMode="contain" />
           <View>
             <ThemedText type="body" style={{ fontWeight: '600' }}>
               {t('storageOverview.storageUsed')}

@@ -204,12 +204,7 @@ export function AudioDownloadScreen() {
           onPress={openReciterSelection}
         >
           <View style={styles.reciterInfo}>
-            <View style={[
-              styles.reciterIcon,
-              { backgroundColor: `${theme.primary}15` }
-            ]}>
-              <Image source={require('../../assets/images/3d-images/Reciter.png')} style={{ width: 32, height: 32 }} resizeMode="contain" />
-            </View>
+            <Image source={require('../../assets/images/3d-images/Reciter.png')} style={{ width: 36, height: 36, marginRight: Spacing.sm }} resizeMode="contain" />
             <View style={{ flex: 1 }}>
               <ThemedText type="caption" secondary>{t('mushaf.selectReciter')}</ThemedText>
               <ThemedText type="body" style={{ fontWeight: '600' }} numberOfLines={1}>
