@@ -102,7 +102,8 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
   const lastWordRef = useRef<string | null>(null);
   const wasActiveRef = useRef(false);
   const meaningTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const positionRef = useRef<{ x: number; y: number } | null>(null);
+  // fingerPosition state drives magnifier rendering (local re-render only, not parent)
+  const [fingerPosition, setFingerPosition] = useState<{ x: number; y: number } | null>(null);
 
   // Animated values for smooth word highlight transitions
   const highlightLeft = useSharedValue(0);
@@ -264,7 +265,8 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
 
   // Core position update — called imperatively from parent via ref
   const handlePositionUpdate = useCallback((screenX: number, screenY: number) => {
-    positionRef.current = { x: screenX, y: screenY };
+    // Update state for magnifier live tracking (only re-renders WordScrubber, not parent)
+    setFingerPosition({ x: screenX, y: screenY });
 
     const word = findWordAtPosition(screenX, screenY);
     if (word && word.wordBounds) {
@@ -294,7 +296,7 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
     if (!isActive) {
       setCurrentWord(null);
       lastWordRef.current = null;
-      positionRef.current = null;
+      setFingerPosition(null);
       highlightOpacity.value = withTiming(0, { duration: 100 });
       if (meaningTimeoutRef.current) {
         clearTimeout(meaningTimeoutRef.current);
@@ -305,7 +307,7 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
 
   if (!isActive) return null;
 
-  const effectivePosition = positionRef.current;
+  const effectivePosition = fingerPosition;
   const isFingerInTopHalf = effectivePosition ? effectivePosition.y < SCREEN_HEIGHT / 2 : true;
   const infoBoxTop = isFingerInTopHalf ? SCREEN_HEIGHT - tabBarHeight - 180 : 100;
 
