@@ -188,6 +188,8 @@ export default function WordByWordSettingsScreen() {
         shadowOffset: { width: 0, height: 6 },
         shadowOpacity: 0.08,
         shadowRadius: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)',
       }]}>
         <Pressable
           onPress={() => navigation.goBack()}
@@ -206,7 +208,7 @@ export default function WordByWordSettingsScreen() {
         contentContainerStyle={[
           styles.scrollContent,
           {
-            paddingBottom: insets.bottom + Spacing.xl,
+            paddingBottom: 120,
           },
         ]}
         showsVerticalScrollIndicator={false}
@@ -323,14 +325,14 @@ export default function WordByWordSettingsScreen() {
                     }]} />
                   ) : (
                     <View style={{
-                      width: 28,
-                      height: 28,
-                      borderRadius: 14,
-                      backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(150, 150, 150, 0.08)',
+                      width: 30,
+                      height: 30,
+                      borderRadius: 15,
+                      backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(150, 150, 150, 0.1)',
                       alignItems: 'center',
                       justifyContent: 'center',
                     }}>
-                      <Feather name="download" size={13} color={theme.textSecondary} />
+                      <Feather name="download" size={14} color={theme.textSecondary} />
                     </View>
                   )}
                 </Pressable>
@@ -353,6 +355,8 @@ export default function WordByWordSettingsScreen() {
         shadowOffset: { width: 0, height: -6 },
         shadowOpacity: 0.06,
         shadowRadius: 10,
+        borderTopWidth: 1,
+        borderTopColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)',
       }}>
         <View style={[styles.card, {
           backgroundColor: isDark ? `${theme.primary}33` : '#FFFFFF',
@@ -441,7 +445,7 @@ const styles = StyleSheet.create({
   },
   infoBox: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     padding: Spacing.md,
     borderRadius: BorderRadius.md,
     marginTop: Spacing.sm,
