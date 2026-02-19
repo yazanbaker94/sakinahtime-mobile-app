@@ -415,12 +415,11 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
             <View style={styles.infoContent}>
               {/* Left side: Glass Lens Magnifier */}
               <View style={[styles.magnifierBox, {
-                // Exact match to the reading page bg — chameleon lens illusion
-                backgroundColor: theme.background,
+                // Exact page bg — dark: pure black (mushaf tinted white on black), light: cream (mushaf paper)
+                backgroundColor: isDark ? '#000000' : '#F5F2EA',
                 // Softened frosted glass rim per mode
                 borderWidth: 1,
                 borderColor: isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.10)',
-                overflow: 'hidden',
               }]}
               >
                 {mushafImage ? (
@@ -510,11 +509,15 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
 const styles = StyleSheet.create({
   magnifierBox: {
     width: 130,
-    height: 70, // Tall enough to frame harakat above + descenders below
+    maxWidth: 130, // Strict boundary — never grows past this
+    height: 70,
+    maxHeight: 70,
     borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 0,
+    overflow: 'hidden', // Glass lens cropping — prevents text/image bleed past rounded border
+    flexShrink: 0, // Never shrink under pressure from siblings
   },
   infoBox: {
     position: 'absolute',
@@ -543,8 +546,10 @@ const styles = StyleSheet.create({
   },
   infoTextRight: {
     flex: 1,
+    flexShrink: 0, // Never get crushed by a wide scrubber
+    minWidth: 120, // Minimum readable width
     alignItems: 'flex-end',
-    justifyContent: 'center', // Vertically center alongside the glass lens
+    justifyContent: 'center',
     gap: 4,
   },
   arabicWordLarge: {
@@ -602,6 +607,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     overflow: 'hidden',
+    backgroundColor: 'transparent', // Let parent's bg show through for the lens illusion
   },
   magnifierCrosshair: {
     position: 'absolute',
