@@ -1,4 +1,5 @@
 import React from "react";
+
 import { View, StyleSheet, ScrollView, Pressable, Platform, Linking, Alert, Image } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";

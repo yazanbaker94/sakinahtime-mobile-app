@@ -154,6 +154,10 @@ export default function App() {
             require('../assets/images/3d-images/Notes.png'),
             require('../assets/images/3d-images/Highlights.png'),
             require('../assets/images/3d-images/Themes.png'),
+            require('../assets/images/3d-images/Audio.png'),
+            require('../assets/images/3d-images/Clear.png'),
+            require('../assets/images/3d-images/Reciter.png'),
+            require('../assets/images/3d-images/Storage.png'),
           ]),
         ]);
         setFontsLoaded(true);
