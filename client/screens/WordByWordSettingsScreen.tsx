@@ -183,11 +183,11 @@ export default function WordByWordSettingsScreen() {
         paddingTop: insets.top + Spacing.md,
         backgroundColor: isDark ? theme.backgroundRoot : theme.backgroundRoot,
         zIndex: 10,
-        elevation: 5,
+        elevation: 10,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.04,
-        shadowRadius: 8,
+        shadowOpacity: 0.08,
+        shadowRadius: 10,
       }]}>
         <Pressable
           onPress={() => navigation.goBack()}
@@ -258,6 +258,8 @@ export default function WordByWordSettingsScreen() {
                       backgroundColor: isSelected
                         ? (isDark ? `${theme.primary}20` : 'rgba(94, 156, 170, 0.08)')
                         : 'transparent',
+                      marginHorizontal: isSelected ? 8 : 0,
+                      borderRadius: isSelected ? 12 : 0,
                     },
                   ]}
                 >
@@ -302,14 +304,14 @@ export default function WordByWordSettingsScreen() {
                     </View>
                   ) : isDownloaded ? (
                     <View style={[styles.checkCircle, {
-                      backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#ECEEF1',
+                      backgroundColor: isDark ? 'rgba(255,255,255,0.12)' : '#ECEEF1',
                       borderWidth: 1.5,
-                      borderColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.06)',
-                      borderTopColor: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.12)',
+                      borderColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)',
+                      borderTopColor: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.12)',
                     }]} />
                   ) : (
                     <View style={[styles.checkCircle, {
-                      backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#F3F4F6',
+                      backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(150, 150, 150, 0.1)',
                     }]}>
                       <Feather name="download" size={13} color={theme.textSecondary} />
                     </View>
