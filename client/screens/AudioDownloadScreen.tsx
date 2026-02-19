@@ -194,11 +194,6 @@ export function AudioDownloadScreen() {
               backgroundColor: isDark ? `${theme.primary}26` : '#FFFFFF',
               borderWidth: 0,
               borderColor: 'transparent',
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: isDark ? 0 : 0.05,
-              shadowRadius: 12,
-              elevation: isDark ? 0 : 2,
             }
           ]}
           onPress={openReciterSelection}
