@@ -160,7 +160,7 @@ export function StorageManagementScreen() {
                   borderColor: 'transparent',
                   shadowColor: '#3B82F6',
                   shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.25,
+                  shadowOpacity: 0.15,
                   shadowRadius: 8,
                   elevation: 4,
                   opacity: pressed ? 0.7 : 1,
@@ -186,7 +186,7 @@ export function StorageManagementScreen() {
                   borderColor: 'transparent',
                   shadowColor: '#EF4444',
                   shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.25,
+                  shadowOpacity: 0.15,
                   shadowRadius: 8,
                   elevation: 4,
                   opacity: pressed ? 0.7 : 1,
@@ -225,7 +225,14 @@ export function StorageManagementScreen() {
           style={({ pressed }) => [
             styles.refreshButton,
             {
-              backgroundColor: `${theme.primary}26`,
+              backgroundColor: isDark ? `${theme.primary}26` : '#FFFFFF',
+              borderWidth: 0,
+              borderColor: 'transparent',
+              shadowColor: theme.primary,
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.15,
+              shadowRadius: 8,
+              elevation: 4,
               opacity: pressed ? 0.7 : 1,
             }
           ]}

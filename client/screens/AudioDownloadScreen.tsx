@@ -174,12 +174,16 @@ export function AudioDownloadScreen() {
         </View>
       )}
 
-      {/* Sticky controls: solid bg prevents scroll bleed-through */}
+      {/* Sticky controls: solid bg with shadow for depth */}
       <View style={{
         backgroundColor: isDark ? theme.backgroundRoot : theme.backgroundRoot,
         zIndex: 10,
-        elevation: 10,
+        elevation: 8,
         paddingBottom: Spacing.sm,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.05,
+        shadowRadius: 8,
       }}>
 
         {/* Reciter Selector */}
@@ -224,14 +228,15 @@ export function AudioDownloadScreen() {
         <View style={[
           styles.progressSummary,
           {
-            backgroundColor: isDark ? `${theme.primary}26` : '#FFFFFF',
+            backgroundColor: isDark ? `${theme.primary}26` : '#F3F4F6',
             borderWidth: 0,
+            borderBottomWidth: 0,
             borderColor: 'transparent',
             shadowColor: '#000',
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: isDark ? 0 : 0.05,
-            shadowRadius: 12,
-            elevation: isDark ? 0 : 2,
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: 0.06,
+            shadowRadius: 3,
+            elevation: isDark ? 0 : 1,
           }
         ]}>
           <View style={styles.progressInfo}>
@@ -290,7 +295,7 @@ export function AudioDownloadScreen() {
                 borderColor: 'transparent',
                 shadowColor: '#F59E0B',
                 shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.25,
+                shadowOpacity: 0.15,
                 shadowRadius: 8,
                 elevation: 4,
                 opacity: pressed ? 0.7 : 1,
@@ -330,7 +335,7 @@ export function AudioDownloadScreen() {
                 borderColor: 'transparent',
                 shadowColor: theme.primary,
                 shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.25,
+                shadowOpacity: 0.15,
                 shadowRadius: 8,
                 elevation: 4,
                 opacity: pressed || !isOnline || downloadedCount === totalSurahs ? 0.5 : 1,
@@ -362,7 +367,7 @@ export function AudioDownloadScreen() {
               borderColor: 'transparent',
               shadowColor: '#EF4444',
               shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.25,
+              shadowOpacity: 0.15,
               shadowRadius: 8,
               elevation: 4,
               opacity: pressed || downloadedCount === 0 ? 0.5 : 1,
