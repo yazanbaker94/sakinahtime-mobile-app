@@ -30,7 +30,7 @@ interface HijriDateHeaderProps {
   nextEvent?: EventWithDate | null;
 }
 
-export function HijriDateHeader({
+export const HijriDateHeader = React.memo(function HijriDateHeader({
   hijriDate,
   gregorianDate,
   moonPhase,
@@ -144,7 +144,7 @@ export function HijriDateHeader({
       </View>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {

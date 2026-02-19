@@ -162,6 +162,7 @@ export default function RootStackNavigator() {
         component={HijriCalendarScreen}
         options={{
           headerShown: false,
+          freezeOnBlur: true,
         }}
       />
       <Stack.Screen
