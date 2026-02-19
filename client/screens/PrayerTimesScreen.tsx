@@ -711,66 +711,30 @@ export default function PrayerTimesScreen() {
             };
 
             return (
-              <View key={prayer.key} style={{ flexDirection: 'row', alignItems: 'stretch', flex: 1 }}>
-                {/* Timeline dot column — per-row segments capped at first/last */}
+              <View key={prayer.key} style={{ flexDirection: 'row', alignItems: 'stretch' }}>
+                {/* Timeline dot column — flex split-line trick for seamless connection */}
                 <View style={{
-                  width: 20,
+                  width: 24,
                   alignItems: 'center',
-                  justifyContent: 'center',
-                  zIndex: 2,
                 }}>
-                  {/* Top line segment (hidden for first row = Fajr) */}
-                  {index > 0 && (
-                    <View style={{
-                      position: 'absolute',
-                      top: 0,
-                      bottom: '50%',
-                      width: 2,
-                      backgroundColor: (() => {
-                        // Filled if this prayer or previous is past
+                  {/* TOP HALF LINE — hidden for first item (Fajr) */}
+                  <View style={{
+                    flex: 1,
+                    width: 2,
+                    backgroundColor: index === 0
+                      ? 'transparent'
+                      : (() => {
                         const segmentIdx = index - 1;
                         const totalSegments = PRAYERS.length - 1;
-                        const fillRatio = totalSegments > 0 ? ((nextPrayerIndex > 0 ? nextPrayerIndex - 1 : 0) + travelerProgress) / totalSegments : 0;
-                        const segmentFill = fillRatio * totalSegments;
-                        return segmentFill > segmentIdx
-                          ? theme.primary
-                          : (isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)');
+                        const segmentFill = totalSegments > 0
+                          ? (nextPrayerIndex > 0 ? nextPrayerIndex - 1 : 0) + travelerProgress
+                          : 0;
+                        return segmentFill > segmentIdx ? theme.primary : (isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)');
                       })(),
-                      opacity: (() => {
-                        const segmentIdx = index - 1;
-                        const totalSegments = PRAYERS.length - 1;
-                        const fillRatio = totalSegments > 0 ? ((nextPrayerIndex > 0 ? nextPrayerIndex - 1 : 0) + travelerProgress) / totalSegments : 0;
-                        return fillRatio * totalSegments > segmentIdx ? 0.8 : 1;
-                      })(),
-                      borderRadius: 1,
-                    }} />
-                  )}
-                  {/* Bottom line segment (hidden for last row = Isha) */}
-                  {index < PRAYERS.length - 1 && (
-                    <View style={{
-                      position: 'absolute',
-                      top: '50%',
-                      bottom: 0,
-                      width: 2,
-                      backgroundColor: (() => {
-                        const segmentIdx = index;
-                        const totalSegments = PRAYERS.length - 1;
-                        const fillRatio = totalSegments > 0 ? ((nextPrayerIndex > 0 ? nextPrayerIndex - 1 : 0) + travelerProgress) / totalSegments : 0;
-                        const segmentFill = fillRatio * totalSegments;
-                        return segmentFill > segmentIdx
-                          ? theme.primary
-                          : (isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)');
-                      })(),
-                      opacity: (() => {
-                        const segmentIdx = index;
-                        const totalSegments = PRAYERS.length - 1;
-                        const fillRatio = totalSegments > 0 ? ((nextPrayerIndex > 0 ? nextPrayerIndex - 1 : 0) + travelerProgress) / totalSegments : 0;
-                        return fillRatio * totalSegments > segmentIdx ? 0.8 : 1;
-                      })(),
-                      borderRadius: 1,
-                    }} />
-                  )}
-                  {/* The dot itself */}
+                    opacity: index === 0 ? 0 : 0.8,
+                    borderRadius: 1,
+                  }} />
+                  {/* THE DOT */}
                   <View style={{
                     width: (isNext || isCurrent) ? 12 : 8,
                     height: (isNext || isCurrent) ? 12 : 8,
@@ -779,11 +743,28 @@ export default function PrayerTimesScreen() {
                     borderWidth: isCurrent ? 2.5 : 0,
                     borderColor: isCurrent ? `${theme.primary}40` : 'transparent',
                   }} />
+                  {/* BOTTOM HALF LINE — hidden for last item (Isha) */}
+                  <View style={{
+                    flex: 1,
+                    width: 2,
+                    backgroundColor: index === PRAYERS.length - 1
+                      ? 'transparent'
+                      : (() => {
+                        const segmentIdx = index;
+                        const totalSegments = PRAYERS.length - 1;
+                        const segmentFill = totalSegments > 0
+                          ? (nextPrayerIndex > 0 ? nextPrayerIndex - 1 : 0) + travelerProgress
+                          : 0;
+                        return segmentFill > segmentIdx ? theme.primary : (isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)');
+                      })(),
+                    opacity: index === PRAYERS.length - 1 ? 0 : 0.8,
+                    borderRadius: 1,
+                  }} />
                 </View>
                 <View
                   style={[
                     styles.prayerCard,
-                    { marginLeft: 8 },
+                    { marginLeft: 8, marginVertical: 4 },
                     {
                       flex: 1,
                       backgroundColor: isNext
@@ -1075,7 +1056,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
   },
   prayersList: {
-    gap: Spacing.sm,
+    // NO gap — rows must touch for seamless timeline connection
   },
   prayerCard: {
     flexDirection: "row",
