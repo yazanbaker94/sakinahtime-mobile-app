@@ -179,7 +179,16 @@ export default function WordByWordSettingsScreen() {
   return (
     <ThemedView style={styles.container}>
       {/* Header */}
-      <View style={[styles.header, { paddingTop: insets.top + Spacing.md }]}>
+      <View style={[styles.header, {
+        paddingTop: insets.top + Spacing.md,
+        backgroundColor: isDark ? theme.backgroundRoot : theme.backgroundRoot,
+        zIndex: 10,
+        elevation: 5,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.04,
+        shadowRadius: 8,
+      }]}>
         <Pressable
           onPress={() => navigation.goBack()}
           style={styles.backButton}
@@ -247,7 +256,7 @@ export default function WordByWordSettingsScreen() {
                     {
                       opacity: pressed && !isDownloading ? 0.7 : 1,
                       backgroundColor: isSelected
-                        ? `${theme.primary}14`
+                        ? (isDark ? `${theme.primary}20` : 'rgba(94, 156, 170, 0.08)')
                         : 'transparent',
                     },
                   ]}
@@ -293,11 +302,10 @@ export default function WordByWordSettingsScreen() {
                     </View>
                   ) : isDownloaded ? (
                     <View style={[styles.checkCircle, {
-                      backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#F3F4F6',
-                      shadowColor: '#000',
-                      shadowOffset: { width: 0, height: 1 },
-                      shadowOpacity: 0.1,
-                      shadowRadius: 2,
+                      backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#ECEEF1',
+                      borderWidth: 1.5,
+                      borderColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.06)',
+                      borderTopColor: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.12)',
                     }]} />
                   ) : (
                     <View style={[styles.checkCircle, {
