@@ -388,20 +388,25 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
             {
               top: infoBoxTop,
               backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
-              // No wireframe border — use shadows + rim lighting
-              borderWidth: 0,
-              borderColor: 'transparent',
-              // Rim lighting for dark mode glass-edge
+              // Light mode: massive soft levitation shadow
+              // Dark mode: rim lighting glass-edge
               ...(isDark ? {
                 borderWidth: 1,
-                borderColor: 'rgba(255, 255, 255, 0.08)',
-              } : {}),
-              // Layered claymorphic shadow
-              shadowColor: isDark ? '#000' : theme.primary,
-              shadowOffset: { width: 0, height: 8 },
-              shadowOpacity: isDark ? 0.4 : 0.12,
-              shadowRadius: 20,
-              elevation: 12,
+                borderColor: 'rgba(255, 255, 255, 0.10)',
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 8 },
+                shadowOpacity: 0.5,
+                shadowRadius: 20,
+                elevation: 12,
+              } : {
+                borderWidth: 0,
+                borderColor: 'transparent',
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 12 },
+                shadowOpacity: 0.12,
+                shadowRadius: 40,
+                elevation: 24,
+              }),
             }
           ]}
           pointerEvents="none"
@@ -410,11 +415,11 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
             <View style={styles.infoContent}>
               {/* Left side: Glass Lens Magnifier */}
               <View style={[styles.magnifierBox, {
-                // Match the reading page bg — looks like a glass cutout, not a screenshot
-                backgroundColor: isDark ? '#121212' : '#F2F0E8',
-                // Delicate physical rim for glass-edge separation
+                // Match the un-dimmed reading page bg — glass cutout illusion
+                backgroundColor: isDark ? '#1A1A1A' : '#F5F3EB',
+                // Delicate glass rim
                 borderWidth: 1,
-                borderColor: isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.08)',
+                borderColor: 'rgba(150, 150, 150, 0.20)',
                 overflow: 'hidden',
               }]}
               >
@@ -476,13 +481,13 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
                   </ThemedText>
                 )}
 
-                {/* Frequency pill — full capsule treatment */}
+                {/* Frequency pill — teal in both modes for brand sync */}
                 <View style={[styles.frequencyRow, {
-                  backgroundColor: isDark ? 'rgba(218, 165, 32, 0.12)' : 'rgba(94, 156, 170, 0.10)',
+                  backgroundColor: isDark ? 'rgba(94, 156, 170, 0.15)' : 'rgba(94, 156, 170, 0.10)',
                   borderTopWidth: 0,
                 }]}>
-                  <Feather name="bar-chart-2" size={11} color={isDark ? theme.gold : theme.primary} />
-                  <ThemedText style={[styles.frequency, { color: isDark ? theme.gold : theme.primary }]}>
+                  <Feather name="bar-chart-2" size={11} color={isDark ? 'rgba(94, 156, 170, 0.9)' : theme.primary} />
+                  <ThemedText style={[styles.frequency, { color: isDark ? 'rgba(94, 156, 170, 0.9)' : theme.primary }]}>
                     {formatFrequency(currentWord.frequency || 0)}
                   </ThemedText>
                 </View>
@@ -505,7 +510,7 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
 const styles = StyleSheet.create({
   magnifierBox: {
     width: 130,
-    height: 56,
+    height: 70, // Tall enough to frame harakat above + descenders below
     borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
@@ -516,12 +521,13 @@ const styles = StyleSheet.create({
     left: 20,
     right: 20,
     borderRadius: 20,
-    padding: 22, // Generous breathing room — no content touching edges
+    padding: 24, // Maximum breathing room
+    // Base shadow — overridden inline for light/dark
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
+    shadowOffset: { width: 0, height: 12 },
     shadowOpacity: 0.12,
-    shadowRadius: 20,
-    elevation: 12,
+    shadowRadius: 40,
+    elevation: 24,
   },
   infoContent: {
     flexDirection: 'row',
