@@ -533,7 +533,7 @@ export default function PrayerTimesScreen() {
           styles.scrollContent,
           {
             paddingTop: insets.top + Spacing.md,
-            paddingBottom: tabBarHeight,
+            paddingBottom: tabBarHeight + 40, // Extra bump so Isha card clears the floating tab bar
             flex: 1,
           },
         ]}
@@ -608,7 +608,7 @@ export default function PrayerTimesScreen() {
                   >
                     <Feather name="calendar" size={14} color="#FFFFFF" />
                     <ThemedText type="caption" style={styles.compactButtonText}>
-                      {toArabicNumerals(Number(prayerData.date.hijri.day) || 0)} {t(`hijri.months.${prayerData.date.hijri.month?.number || 1}`)}
+                      {locale === 'ar' ? toArabicNumerals(Number(prayerData.date.hijri.day) || 0) : (Number(prayerData.date.hijri.day) || 0)} {t(`hijri.months.${prayerData.date.hijri.month?.number || 1}`)}
                     </ThemedText>
                   </Pressable>
                 )}
@@ -637,7 +637,7 @@ export default function PrayerTimesScreen() {
                   {t('prayer.hours')}
                 </ThemedText>
               </View>
-              <ThemedText type="h1" style={{ color: "rgba(255,255,255,0.4)", fontSize: 32, marginHorizontal: 6, marginTop: -8 }}>
+              <ThemedText type="h1" style={{ color: "rgba(255,255,255,0.4)", fontSize: 32, marginHorizontal: 6, transform: [{ translateY: -4 }] }}>
                 :
               </ThemedText>
               <View style={styles.countdownItem}>
@@ -648,7 +648,7 @@ export default function PrayerTimesScreen() {
                   {t('prayer.minutes')}
                 </ThemedText>
               </View>
-              <ThemedText type="h1" style={{ color: "rgba(255,255,255,0.4)", fontSize: 32, marginHorizontal: 6, marginTop: -8 }}>
+              <ThemedText type="h1" style={{ color: "rgba(255,255,255,0.4)", fontSize: 32, marginHorizontal: 6, transform: [{ translateY: -4 }] }}>
                 :
               </ThemedText>
               <View style={styles.countdownItem}>
@@ -744,8 +744,8 @@ export default function PrayerTimesScreen() {
                     height: (isNext || isCurrent) ? 12 : 8,
                     borderRadius: (isNext || isCurrent) ? 6 : 4,
                     backgroundColor: (isPast || isCurrent || isNext) ? theme.primary : (isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.1)'),
-                    borderWidth: (isNext || isCurrent) ? 2.5 : 0,
-                    borderColor: (isNext || isCurrent) ? `${theme.primary}40` : 'transparent',
+                    borderWidth: isCurrent ? 2.5 : 0,
+                    borderColor: isCurrent ? `${theme.primary}40` : 'transparent',
                   }} />
                 </View>
                 <View
@@ -759,14 +759,14 @@ export default function PrayerTimesScreen() {
                         : isCurrent
                           ? (isDark ? `${theme.primary}10` : `${theme.primary}08`)
                           : (isDark ? theme.cardBackground : theme.cardBackground),
-                      opacity: (isPast && !isNext && !isCurrent) ? 0.45 : 1,
+                      opacity: (isPast && !isNext && !isCurrent) ? 0.55 : 1,
                       shadowColor: '#000',
                       shadowOffset: { width: 0, height: 2 },
                       shadowOpacity: isDark ? 0 : 0.08,
                       shadowRadius: 8,
                       elevation: isDark ? 0 : 3,
-                      borderWidth: isNext ? 2 : isCurrent ? 1 : (isDark ? 1 : 0),
-                      borderColor: isNext ? theme.primary : isCurrent ? `${theme.primary}40` : (isDark ? theme.border : 'transparent'),
+                      borderWidth: isCurrent ? 2 : (isDark ? 1 : 0),
+                      borderColor: isCurrent ? theme.primary : (isDark ? theme.border : 'transparent'),
                     },
                   ]}
                 >
@@ -975,7 +975,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 10,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: 'rgba(255, 255, 255, 0.3)', // Boosted from 0.2 for contrast
   },
   perfectDayBadge: {
     flexDirection: 'row',
