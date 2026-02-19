@@ -258,137 +258,137 @@ export function AudioDownloadScreen() {
             />
           </View>
         </View>
-      </View>
 
-      {/* Current Download */}
-      {currentDownload && (
-        <View style={styles.currentDownload}>
-          <DownloadProgress
-            item={currentDownload}
-            onPause={() => pauseDownload(currentDownload.id)}
-            onResume={() => resumeDownload(currentDownload.id)}
-            onCancel={() => cancelDownload(currentDownload.id)}
-          />
-        </View>
-      )}
-
-      {/* Batch Actions */}
-      <View style={styles.batchActions}>
-        {pendingCount > 0 || isDownloading ? (
-          // Show Cancel All when downloading
-          <Pressable
-            style={({ pressed }) => [
-              styles.batchButton,
-              {
-                backgroundColor: isDark ? 'rgba(251, 191, 36, 0.15)' : '#FFFFFF',
-                borderWidth: 0,
-                borderColor: 'transparent',
-                shadowColor: '#F59E0B',
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.15,
-                shadowRadius: 8,
-                elevation: 4,
-                opacity: pressed ? 0.7 : 1,
-              }
-            ]}
-            onPress={() => {
-              Alert.alert(
-                t('audioDownload.cancelDownloads'),
-                t('audioDownload.cancelAllDesc'),
-                [
-                  { text: t('audioDownload.keepDownloading'), style: 'cancel' },
-                  { text: t('audioDownload.cancelAll'), style: 'destructive', onPress: cancelAllDownloads },
-                ]
-              );
-            }}
-          >
-            <Feather name="x-circle" size={18} color={isDark ? '#FBBF24' : '#F59E0B'} />
-            <ThemedText
-              type="small"
-              style={{
-                color: isDark ? '#FBBF24' : '#F59E0B',
-                marginLeft: Spacing.xs,
-                fontWeight: '600',
-              }}
-            >
-              {t('audioDownload.cancelAll')}
-            </ThemedText>
-          </Pressable>
-        ) : (
-          // Show Download All when not downloading
-          <Pressable
-            style={({ pressed }) => [
-              styles.batchButton,
-              {
-                backgroundColor: isDark ? `${theme.primary}26` : '#FFFFFF',
-                borderWidth: 0,
-                borderColor: 'transparent',
-                shadowColor: theme.primary,
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.15,
-                shadowRadius: 8,
-                elevation: 4,
-                opacity: pressed || !isOnline || downloadedCount === totalSurahs ? 0.5 : 1,
-              }
-            ]}
-            onPress={handleDownloadAll}
-            disabled={!isOnline || downloadedCount === totalSurahs}
-          >
-            <Feather name="download-cloud" size={18} color={theme.primary} />
-            <ThemedText
-              type="small"
-              style={{
-                color: theme.primary,
-                marginLeft: Spacing.xs,
-                fontWeight: '600',
-              }}
-            >
-              {t('audioDownload.downloadAll')}
-            </ThemedText>
-          </Pressable>
+        {/* Current Download */}
+        {currentDownload && (
+          <View style={styles.currentDownload}>
+            <DownloadProgress
+              item={currentDownload}
+              onPause={() => pauseDownload(currentDownload.id)}
+              onResume={() => resumeDownload(currentDownload.id)}
+              onCancel={() => cancelDownload(currentDownload.id)}
+            />
+          </View>
         )}
 
-        <Pressable
-          style={({ pressed }) => [
-            styles.batchButton,
-            {
-              backgroundColor: isDark ? 'rgba(248, 113, 113, 0.15)' : '#FFFFFF',
-              borderWidth: 0,
-              borderColor: 'transparent',
-              shadowColor: '#EF4444',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.15,
-              shadowRadius: 8,
-              elevation: 4,
-              opacity: pressed || downloadedCount === 0 ? 0.5 : 1,
-            }
-          ]}
-          onPress={handleDeleteAll}
-          disabled={downloadedCount === 0}
-        >
-          <Feather name="trash-2" size={18} color={isDark ? '#F87171' : '#EF4444'} />
-          <ThemedText
-            type="small"
-            style={{
-              color: isDark ? '#F87171' : '#EF4444',
-              marginLeft: Spacing.xs,
-              fontWeight: '600',
-            }}
-          >
-            {t('audioDownload.deleteAll')}
-          </ThemedText>
-        </Pressable>
-      </View>
+        {/* Batch Actions */}
+        <View style={styles.batchActions}>
+          {pendingCount > 0 || isDownloading ? (
+            // Show Cancel All when downloading
+            <Pressable
+              style={({ pressed }) => [
+                styles.batchButton,
+                {
+                  backgroundColor: isDark ? 'rgba(251, 191, 36, 0.15)' : '#FFFFFF',
+                  borderWidth: 0,
+                  borderColor: 'transparent',
+                  shadowColor: '#F59E0B',
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.15,
+                  shadowRadius: 8,
+                  elevation: 4,
+                  opacity: pressed ? 0.7 : 1,
+                }
+              ]}
+              onPress={() => {
+                Alert.alert(
+                  t('audioDownload.cancelDownloads'),
+                  t('audioDownload.cancelAllDesc'),
+                  [
+                    { text: t('audioDownload.keepDownloading'), style: 'cancel' },
+                    { text: t('audioDownload.cancelAll'), style: 'destructive', onPress: cancelAllDownloads },
+                  ]
+                );
+              }}
+            >
+              <Feather name="x-circle" size={18} color={isDark ? '#FBBF24' : '#F59E0B'} />
+              <ThemedText
+                type="small"
+                style={{
+                  color: isDark ? '#FBBF24' : '#F59E0B',
+                  marginLeft: Spacing.xs,
+                  fontWeight: '600',
+                }}
+              >
+                {t('audioDownload.cancelAll')}
+              </ThemedText>
+            </Pressable>
+          ) : (
+            // Show Download All when not downloading
+            <Pressable
+              style={({ pressed }) => [
+                styles.batchButton,
+                {
+                  backgroundColor: isDark ? `${theme.primary}26` : '#FFFFFF',
+                  borderWidth: 0,
+                  borderColor: 'transparent',
+                  shadowColor: theme.primary,
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.15,
+                  shadowRadius: 8,
+                  elevation: 4,
+                  opacity: pressed || !isOnline || downloadedCount === totalSurahs ? 0.5 : 1,
+                }
+              ]}
+              onPress={handleDownloadAll}
+              disabled={!isOnline || downloadedCount === totalSurahs}
+            >
+              <Feather name="download-cloud" size={18} color={theme.primary} />
+              <ThemedText
+                type="small"
+                style={{
+                  color: theme.primary,
+                  marginLeft: Spacing.xs,
+                  fontWeight: '600',
+                }}
+              >
+                {t('audioDownload.downloadAll')}
+              </ThemedText>
+            </Pressable>
+          )}
 
-      {/* Pending Queue Info */}
-      {pendingCount > 0 && (
-        <View style={styles.queueInfo}>
-          <Feather name="clock" size={14} color={theme.textSecondary} />
-          <ThemedText type="caption" secondary style={{ marginLeft: 4 }}>
-            {pendingCount} surah{pendingCount > 1 ? 's' : ''} in queue
-          </ThemedText>
+          <Pressable
+            style={({ pressed }) => [
+              styles.batchButton,
+              {
+                backgroundColor: isDark ? 'rgba(248, 113, 113, 0.15)' : '#FFFFFF',
+                borderWidth: 0,
+                borderColor: 'transparent',
+                shadowColor: '#EF4444',
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.15,
+                shadowRadius: 8,
+                elevation: 4,
+                opacity: pressed || downloadedCount === 0 ? 0.5 : 1,
+              }
+            ]}
+            onPress={handleDeleteAll}
+            disabled={downloadedCount === 0}
+          >
+            <Feather name="trash-2" size={18} color={isDark ? '#F87171' : '#EF4444'} />
+            <ThemedText
+              type="small"
+              style={{
+                color: isDark ? '#F87171' : '#EF4444',
+                marginLeft: Spacing.xs,
+                fontWeight: '600',
+              }}
+            >
+              {t('audioDownload.deleteAll')}
+            </ThemedText>
+          </Pressable>
         </View>
-      )}
+
+        {/* Pending Queue Info */}
+        {pendingCount > 0 && (
+          <View style={styles.queueInfo}>
+            <Feather name="clock" size={14} color={theme.textSecondary} />
+            <ThemedText type="caption" secondary style={{ marginLeft: 4 }}>
+              {pendingCount} surah{pendingCount > 1 ? 's' : ''} in queue
+            </ThemedText>
+          </View>
+        )}
+      </View>
 
       {/* Surah List - wrapped in unified card */}
       <View style={{
