@@ -213,12 +213,12 @@ export default function WordByWordSettingsScreen() {
       >
         {/* Info - moved to top */}
         <View style={[styles.infoBox, {
-          backgroundColor: isDark ? 'rgba(212,175,55,0.1)' : 'rgba(212,175,55,0.08)',
+          backgroundColor: isDark ? 'rgba(94, 156, 170, 0.1)' : 'rgba(212,175,55,0.08)',
           marginBottom: Spacing.lg,
           borderWidth: 0,
           borderColor: 'transparent',
         }]}>
-          <Feather name="info" size={16} color={theme.gold} style={{ marginRight: 10 }} />
+          <Feather name="info" size={16} color={isDark ? theme.primary : theme.gold} style={{ marginRight: 10 }} />
           <ThemedText type="caption" style={{ flex: 1, color: theme.textSecondary }}>
             {t('wordByWord.infoHint')}
           </ThemedText>
@@ -310,9 +310,14 @@ export default function WordByWordSettingsScreen() {
                       borderTopColor: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.12)',
                     }]} />
                   ) : (
-                    <View style={[styles.checkCircle, {
-                      backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(150, 150, 150, 0.1)',
-                    }]}>
+                    <View style={{
+                      width: 28,
+                      height: 28,
+                      borderRadius: 14,
+                      backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(150, 150, 150, 0.08)',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}>
                       <Feather name="download" size={13} color={theme.textSecondary} />
                     </View>
                   )}
@@ -322,10 +327,21 @@ export default function WordByWordSettingsScreen() {
           </View>
         </View>
 
-        {/* Audio Settings */}
-        <ThemedText type="caption" secondary style={{ marginTop: Spacing.xl, marginBottom: Spacing.sm }}>
-          {t('wordByWord.audio')}
-        </ThemedText>
+      </ScrollView>
+
+      {/* Audio Footer - sticky with upward shadow */}
+      <View style={{
+        backgroundColor: isDark ? theme.backgroundRoot : theme.backgroundRoot,
+        paddingHorizontal: Spacing.lg,
+        paddingTop: Spacing.md,
+        paddingBottom: insets.bottom + Spacing.md,
+        zIndex: 10,
+        elevation: 15,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: -6 },
+        shadowOpacity: 0.06,
+        shadowRadius: 10,
+      }}>
         <View style={[styles.card, {
           backgroundColor: isDark ? `${theme.primary}33` : '#FFFFFF',
           borderWidth: 0,
@@ -360,7 +376,7 @@ export default function WordByWordSettingsScreen() {
             </View>
           </View>
         </View>
-      </ScrollView>
+      </View>
     </ThemedView>
   );
 }
