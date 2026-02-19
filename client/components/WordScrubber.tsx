@@ -372,8 +372,8 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
             animatedHighlightStyle,
             {
               borderWidth: 0,
-              // Teal-branded glow in light mode, golden glow in dark mode
-              backgroundColor: isDark ? 'rgba(218, 165, 32, 0.35)' : 'rgba(94, 156, 170, 0.30)',
+              // Teal-branded glow in BOTH modes for brand cohesion
+              backgroundColor: isDark ? 'rgba(94, 156, 170, 0.35)' : 'rgba(94, 156, 170, 0.30)',
             }
           ]}
           pointerEvents="none"
@@ -408,12 +408,13 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
         >
           {currentWord ? (
             <View style={styles.infoContent}>
-              {/* Left side: Live Magnifier */}
+              {/* Left side: Glass Lens Magnifier */}
               <View style={[styles.magnifierBox, {
-                backgroundColor: isDark ? '#2C2C2E' : '#F8F9FA',
-                // No wireframe border — subtle inset feel
-                borderWidth: 0,
-                borderColor: 'transparent',
+                // Match the reading page bg — looks like a glass cutout, not a screenshot
+                backgroundColor: isDark ? '#121212' : '#F2F0E8',
+                // Delicate physical rim for glass-edge separation
+                borderWidth: 1,
+                borderColor: isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.08)',
                 overflow: 'hidden',
               }]}
               >
@@ -452,21 +453,23 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
                 )}
               </View>
 
-              {/* Right side: Word info stacked vertically */}
+              {/* Right side: Word info stacked vertically — centered alongside scrubber */}
               <View style={styles.infoTextRight}>
                 {/* Arabic word at top */}
                 <ThemedText style={[styles.arabicWordLarge, { color: theme.text }]}>
                   {currentWord.arabicWord || '...'}
                 </ThemedText>
 
-                {/* Transliteration */}
+                {/* Transliteration — secondary, faded */}
                 {currentWord.transliteration && (
-                  <ThemedText style={[styles.transliteration, { color: theme.textSecondary }]}>
+                  <ThemedText style={[styles.transliteration, {
+                    color: isDark ? 'rgba(255, 255, 255, 0.45)' : 'rgba(0, 0, 0, 0.40)'
+                  }]}>
                     {currentWord.transliteration}
                   </ThemedText>
                 )}
 
-                {/* Translation */}
+                {/* Translation — primary value, emphasized */}
                 {currentWord.translation && (
                   <ThemedText style={[styles.translation, { color: theme.text }]} numberOfLines={2}>
                     {currentWord.translation}
@@ -513,8 +516,7 @@ const styles = StyleSheet.create({
     left: 20,
     right: 20,
     borderRadius: 20,
-    padding: 14,
-    // Base shadow — overridden inline for light/dark
+    padding: 22, // Generous breathing room — no content touching edges
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.12,
@@ -536,7 +538,8 @@ const styles = StyleSheet.create({
   infoTextRight: {
     flex: 1,
     alignItems: 'flex-end',
-    gap: 3,
+    justifyContent: 'center', // Vertically center alongside the glass lens
+    gap: 4,
   },
   arabicWordLarge: {
     fontSize: 22,
@@ -550,8 +553,8 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   translation: {
-    fontSize: 13,
-    fontWeight: '500',
+    fontSize: 14,
+    fontWeight: '600', // Emphasized — this is the core value
     textAlign: 'right',
   },
   frequencyRow: {
