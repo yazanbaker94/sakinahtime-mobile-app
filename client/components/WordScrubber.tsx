@@ -415,11 +415,11 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
             <View style={styles.infoContent}>
               {/* Left side: Glass Lens Magnifier */}
               <View style={[styles.magnifierBox, {
-                // Match the un-dimmed reading page bg — glass cutout illusion
-                backgroundColor: isDark ? '#1A1A1A' : '#F5F3EB',
-                // Delicate glass rim
+                // Exact match to the reading page bg — chameleon lens illusion
+                backgroundColor: theme.background,
+                // Softened frosted glass rim per mode
                 borderWidth: 1,
-                borderColor: 'rgba(150, 150, 150, 0.20)',
+                borderColor: isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.10)',
                 overflow: 'hidden',
               }]}
               >
@@ -486,8 +486,8 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
                   backgroundColor: isDark ? 'rgba(94, 156, 170, 0.15)' : 'rgba(94, 156, 170, 0.10)',
                   borderTopWidth: 0,
                 }]}>
-                  <Feather name="bar-chart-2" size={11} color={isDark ? 'rgba(94, 156, 170, 0.9)' : theme.primary} />
-                  <ThemedText style={[styles.frequency, { color: isDark ? 'rgba(94, 156, 170, 0.9)' : theme.primary }]}>
+                  <Feather name="bar-chart-2" size={11} color={isDark ? 'rgba(94, 156, 170, 0.9)' : '#0F766E'} />
+                  <ThemedText style={[styles.frequency, { color: isDark ? 'rgba(94, 156, 170, 0.9)' : '#0F766E' }]}>
                     {formatFrequency(currentWord.frequency || 0)}
                   </ThemedText>
                 </View>
@@ -531,8 +531,8 @@ const styles = StyleSheet.create({
   },
   infoContent: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
+    alignItems: 'stretch', // Stretch so right column can center vertically
+    gap: 14,
   },
   infoContentEmpty: {
     flexDirection: 'row',
