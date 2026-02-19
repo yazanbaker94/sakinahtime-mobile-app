@@ -353,6 +353,16 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
 
   return (
     <View style={StyleSheet.absoluteFill} pointerEvents="box-none">
+      {/* Focus scrim — dims the noisy Quran text so popup demands 100% attention */}
+      {effectivePosition && (
+        <View
+          style={[
+            StyleSheet.absoluteFill,
+            { backgroundColor: isDark ? 'rgba(0,0,0,0.55)' : 'rgba(0,0,0,0.35)' }
+          ]}
+          pointerEvents="none"
+        />
+      )}
 
       {/* Word highlight - smooth animation via direct shared values */}
       {isActive && (
@@ -361,9 +371,9 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
             styles.wordHighlight,
             animatedHighlightStyle,
             {
-              // Soft glow — no harsh border, just tinted background with rounded corners
               borderWidth: 0,
-              backgroundColor: isDark ? 'rgba(218, 165, 32, 0.30)' : 'rgba(94, 156, 170, 0.25)',
+              // Teal-branded glow in light mode, golden glow in dark mode
+              backgroundColor: isDark ? 'rgba(218, 165, 32, 0.35)' : 'rgba(94, 156, 170, 0.30)',
             }
           ]}
           pointerEvents="none"
@@ -463,9 +473,9 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
                   </ThemedText>
                 )}
 
-                {/* Frequency pill */}
+                {/* Frequency pill — full capsule treatment */}
                 <View style={[styles.frequencyRow, {
-                  backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(94, 156, 170, 0.06)',
+                  backgroundColor: isDark ? 'rgba(218, 165, 32, 0.12)' : 'rgba(94, 156, 170, 0.10)',
                   borderTopWidth: 0,
                 }]}>
                   <Feather name="bar-chart-2" size={11} color={isDark ? theme.gold : theme.primary} />
@@ -548,12 +558,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'flex-end',
-    gap: 4,
+    gap: 5,
     marginTop: 6,
     paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 8,
-    // borderTopWidth removed — using pill bg instead
+    paddingHorizontal: 10,
+    borderRadius: 100, // Full capsule pill
   },
   frequency: {
     fontSize: 11,
