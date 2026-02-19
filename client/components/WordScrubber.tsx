@@ -2,10 +2,15 @@
  * WordScrubber - A drag-to-explore word-by-word magnifier component
  * Similar to Quran.com's iOS word exploration feature
  * 
- * Position updates are handled by MushafScreen which forwards touch events
+ * PERFORMANCE OPTIMIZED:
+ * - Uses forwardRef + useImperativeHandle for ref-based position updates (no parent setState)
+ * - Spatial grid index for O(1) word hit-testing instead of linear scan
+ * - Direct Reanimated shared value updates (no useEffect chain)
+ * - Debounced meaning lookup (highlight moves instantly, meaning loads ~80ms later)
+ * - Eager WBW data loading on activation
  */
 
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useCallback, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
 import { Image } from 'expo-image';
 import * as Haptics from 'expo-haptics';
@@ -14,11 +19,12 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
-  Easing
+  Easing,
+  runOnJS,
 } from 'react-native-reanimated';
 import { ThemedText } from '@/components/ThemedText';
 import { useTheme } from '@/hooks/useTheme';
-import { findWordMeaningByIndex } from '@/services/WordMeaningService';
+import { findWordMeaningByIndex, ensureWbwDataLoaded } from '@/services/WordMeaningService';
 import { Feather } from '@expo/vector-icons';
 import wordAudioService from '@/services/WordAudioService';
 
@@ -41,13 +47,16 @@ interface WordScrubberProps {
   imageOffsetY: number;
   contentZoneTop?: number;
   tabBarHeight?: number;
-  initialTouchPosition?: { x: number; y: number };
   onClose: () => void;
   isDark: boolean;
   // For live magnifier
   mushafImage?: any;
   screenWidth: number;
   imageHeight: number;
+}
+
+export interface WordScrubberHandle {
+  updatePosition: (x: number, y: number) => void;
 }
 
 interface WordInfo {
@@ -60,7 +69,6 @@ interface WordInfo {
   frequency?: number;
   screenX: number;
   screenY: number;
-  // Word bounding box in screen coordinates
   wordBounds?: {
     left: number;
     top: number;
@@ -69,25 +77,32 @@ interface WordInfo {
   };
 }
 
+// Spatial grid cell size (in image coordinates)
+const GRID_CELL_SIZE = 30;
 
-export function WordScrubber({
+interface GridEntry {
+  word: WordCoord & { verseKey: string; wordIndex: number };
+}
+
+export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
   isActive,
   pageCoords,
   imageScale,
   imageOffsetY,
   contentZoneTop = 0,
   tabBarHeight = 80,
-  initialTouchPosition,
   onClose,
   isDark,
   mushafImage,
   screenWidth,
   imageHeight,
-}: WordScrubberProps) {
+}, ref) => {
   const { theme } = useTheme();
   const [currentWord, setCurrentWord] = useState<WordInfo | null>(null);
   const lastWordRef = useRef<string | null>(null);
   const wasActiveRef = useRef(false);
+  const meaningTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const positionRef = useRef<{ x: number; y: number } | null>(null);
 
   // Animated values for smooth word highlight transitions
   const highlightLeft = useSharedValue(0);
@@ -95,20 +110,6 @@ export function WordScrubber({
   const highlightWidth = useSharedValue(0);
   const highlightHeight = useSharedValue(0);
   const highlightOpacity = useSharedValue(0);
-
-  // Animate the highlight when word bounds change
-  useEffect(() => {
-    if (currentWord?.wordBounds) {
-      const timing = { duration: 150, easing: Easing.out(Easing.cubic) };
-      highlightLeft.value = withTiming(currentWord.wordBounds.left, timing);
-      highlightTop.value = withTiming(currentWord.wordBounds.top, timing);
-      highlightWidth.value = withTiming(currentWord.wordBounds.width, timing);
-      highlightHeight.value = withTiming(currentWord.wordBounds.height, timing);
-      highlightOpacity.value = withTiming(1, { duration: 100 });
-    } else {
-      highlightOpacity.value = withTiming(0, { duration: 100 });
-    }
-  }, [currentWord?.wordBounds]);
 
   // Animated style for smooth highlight transitions
   const animatedHighlightStyle = useAnimatedStyle(() => ({
@@ -120,17 +121,23 @@ export function WordScrubber({
     opacity: highlightOpacity.value,
   }));
 
+  // Eagerly load WBW data when scrubber activates
+  useEffect(() => {
+    if (isActive) {
+      ensureWbwDataLoaded();
+    }
+  }, [isActive]);
+
   // Play word audio when finger is lifted (scrubber closes)
   useEffect(() => {
     const playWordAudioIfEnabled = async () => {
       if (wasActiveRef.current && !isActive && currentWord) {
         try {
-          // Read setting directly at playback time to avoid race conditions
           const saved = await AsyncStorage.getItem('@wbw_audio_enabled');
           const audioEnabled = saved === null ? true : saved === 'true';
 
           if (audioEnabled) {
-            const wordIndex = currentWord.wordIndex + 1; // API uses 1-indexed
+            const wordIndex = currentWord.wordIndex + 1;
             wordAudioService.playWord(currentWord.surah, currentWord.ayah, wordIndex);
           }
         } catch (e) {
@@ -143,6 +150,7 @@ export function WordScrubber({
     playWordAudioIfEnabled();
   }, [isActive, currentWord]);
 
+  // Build flat word list
   const allWords = React.useMemo(() => {
     const words: Array<WordCoord & { verseKey: string; wordIndex: number }> = [];
     Object.entries(pageCoords).forEach(([verseKey, coords]) => {
@@ -156,14 +164,46 @@ export function WordScrubber({
     return words;
   }, [pageCoords]);
 
+  // Build spatial grid index for O(1) word lookup
+  const spatialGrid = React.useMemo(() => {
+    const grid = new Map<string, GridEntry[]>();
+
+    for (const word of allWords) {
+      // Calculate which grid cells this word occupies
+      const minCol = Math.floor(word.x / GRID_CELL_SIZE);
+      const maxCol = Math.floor((word.x + word.width) / GRID_CELL_SIZE);
+      const minRow = Math.floor(word.y / GRID_CELL_SIZE);
+      const maxRow = Math.floor((word.y + word.height) / GRID_CELL_SIZE);
+
+      for (let row = minRow; row <= maxRow; row++) {
+        for (let col = minCol; col <= maxCol; col++) {
+          const key = `${col},${row}`;
+          if (!grid.has(key)) {
+            grid.set(key, []);
+          }
+          grid.get(key)!.push({ word });
+        }
+      }
+    }
+
+    return grid;
+  }, [allWords]);
+
+  // O(1) word lookup using spatial grid
   const findWordAtPosition = useCallback((screenX: number, screenY: number) => {
     const imageX = screenX / imageScale;
     const imageY = (screenY - contentZoneTop - imageOffsetY) / imageScale;
 
-    for (const word of allWords) {
+    const col = Math.floor(imageX / GRID_CELL_SIZE);
+    const row = Math.floor(imageY / GRID_CELL_SIZE);
+    const key = `${col},${row}`;
+
+    const candidates = spatialGrid.get(key);
+    if (!candidates) return null;
+
+    for (const { word } of candidates) {
       if (imageX >= word.x && imageX <= word.x + word.width &&
         imageY >= word.y && imageY <= word.y + word.height) {
-        // Convert word bounds to screen coordinates
         const wordBounds = {
           left: word.x * imageScale,
           top: (word.y * imageScale) + contentZoneTop + imageOffsetY,
@@ -181,9 +221,10 @@ export function WordScrubber({
       }
     }
     return null;
-  }, [allWords, imageScale, imageOffsetY, contentZoneTop]);
+  }, [spatialGrid, imageScale, imageOffsetY, contentZoneTop]);
 
-  const loadWordMeaning = useCallback(async (
+  // Load word meaning with debounce (meaning card fills 80ms after highlight moves)
+  const loadWordMeaningDebounced = useCallback((
     surah: number,
     ayah: number,
     wordIndex: number,
@@ -195,63 +236,76 @@ export function WordScrubber({
     if (lastWordRef.current === wordKey) return;
     lastWordRef.current = wordKey;
 
+    // Haptic feedback immediately
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
-    try {
-      const meaning = await findWordMeaningByIndex(surah, ayah, wordIndex);
-      setCurrentWord({
-        surah, ayah, wordIndex, screenX, screenY,
-        arabicWord: meaning?.arabicWord,
-        transliteration: meaning?.transliteration,
-        translation: meaning?.englishMeaning,
-        frequency: meaning?.frequency || 0,
-        wordBounds,
-      });
-    } catch (e) {
-      setCurrentWord({ surah, ayah, wordIndex, screenX, screenY, wordBounds });
+    // Clear any pending meaning lookup
+    if (meaningTimeoutRef.current) {
+      clearTimeout(meaningTimeoutRef.current);
     }
+
+    // Debounced meaning lookup — don't block highlight movement
+    meaningTimeoutRef.current = setTimeout(async () => {
+      try {
+        const meaning = await findWordMeaningByIndex(surah, ayah, wordIndex);
+        setCurrentWord({
+          surah, ayah, wordIndex, screenX, screenY,
+          arabicWord: meaning?.arabicWord,
+          transliteration: meaning?.transliteration,
+          translation: meaning?.englishMeaning,
+          frequency: meaning?.frequency || 0,
+          wordBounds,
+        });
+      } catch (e) {
+        setCurrentWord({ surah, ayah, wordIndex, screenX, screenY, wordBounds });
+      }
+    }, 80);
   }, []);
 
-  // Use refs for touch handlers to access latest state
-  const currentWordRef = useRef(currentWord);
-  const onCloseRef = useRef(onClose);
+  // Core position update — called imperatively from parent via ref
+  const handlePositionUpdate = useCallback((screenX: number, screenY: number) => {
+    positionRef.current = { x: screenX, y: screenY };
 
-  React.useEffect(() => {
-    currentWordRef.current = currentWord;
-  }, [currentWord]);
+    const word = findWordAtPosition(screenX, screenY);
+    if (word && word.wordBounds) {
+      // Directly update Reanimated shared values — no setState, no useEffect chain
+      const timing = { duration: 120, easing: Easing.out(Easing.cubic) };
+      highlightLeft.value = withTiming(word.wordBounds.left, timing);
+      highlightTop.value = withTiming(word.wordBounds.top, timing);
+      highlightWidth.value = withTiming(word.wordBounds.width, timing);
+      highlightHeight.value = withTiming(word.wordBounds.height, timing);
+      highlightOpacity.value = withTiming(1, { duration: 80 });
 
-  React.useEffect(() => {
-    onCloseRef.current = onClose;
-  }, [onClose]);
-
-  // Track last processed position to avoid duplicate processing
-  const lastPositionRef = useRef<string | null>(null);
-
-  // Update word when position changes
-  React.useEffect(() => {
-    if (isActive && initialTouchPosition) {
-      // Create a key for this position to avoid duplicate processing
-      const posKey = `${Math.round(initialTouchPosition.x)},${Math.round(initialTouchPosition.y)}`;
-      if (lastPositionRef.current === posKey) return;
-      lastPositionRef.current = posKey;
-
-      // Find and load word meaning
-      const word = findWordAtPosition(initialTouchPosition.x, initialTouchPosition.y);
-      if (word) {
-        loadWordMeaning(word.surah, word.ayah, word.wordIndex, word.screenX, word.screenY, word.wordBounds);
-      }
+      // Debounced meaning card update
+      loadWordMeaningDebounced(
+        word.surah, word.ayah, word.wordIndex,
+        word.screenX, word.screenY, word.wordBounds
+      );
     }
+  }, [findWordAtPosition, loadWordMeaningDebounced, highlightLeft, highlightTop, highlightWidth, highlightHeight, highlightOpacity]);
+
+  // Expose imperative handle for parent to call
+  useImperativeHandle(ref, () => ({
+    updatePosition: handlePositionUpdate,
+  }), [handlePositionUpdate]);
+
+  // Clean up on deactivation
+  useEffect(() => {
     if (!isActive) {
       setCurrentWord(null);
       lastWordRef.current = null;
-      lastPositionRef.current = null;
+      positionRef.current = null;
+      highlightOpacity.value = withTiming(0, { duration: 100 });
+      if (meaningTimeoutRef.current) {
+        clearTimeout(meaningTimeoutRef.current);
+        meaningTimeoutRef.current = null;
+      }
     }
-  }, [isActive, initialTouchPosition, findWordAtPosition, loadWordMeaning]);
+  }, [isActive]);
 
   if (!isActive) return null;
 
-  // Use initialTouchPosition directly as effectivePosition
-  const effectivePosition = initialTouchPosition;
+  const effectivePosition = positionRef.current;
   const isFingerInTopHalf = effectivePosition ? effectivePosition.y < SCREEN_HEIGHT / 2 : true;
   const infoBoxTop = isFingerInTopHalf ? SCREEN_HEIGHT - tabBarHeight - 180 : 100;
 
@@ -261,33 +315,24 @@ export function WordScrubber({
     return `Appears ${freq} times`;
   };
 
-  // Calculate magnifier position - shows magnified view of the area under finger
-  const MAGNIFIER_WIDTH = 130; // Width of magnifier box
-  const MAGNIFIER_HEIGHT = 50; // Height of magnifier box
-  const MAGNIFIER_SCALE = 1.5; // 1.5x magnification (wider view for longer words)
+  // Calculate magnifier position
+  const MAGNIFIER_WIDTH = 130;
+  const MAGNIFIER_HEIGHT = 50;
+  const MAGNIFIER_SCALE = 1.5;
 
-  // Calculate the position to show in the magnifier (following finger)
   const getMagnifierImagePosition = () => {
     if (!effectivePosition || !mushafImage) return { left: 0, top: 0 };
 
-    // The finger position in screen coordinates
     const fingerX = effectivePosition.x;
     const fingerY = effectivePosition.y;
-
-    // Convert finger position to image coordinates
-    // The image rendered position: top = contentZoneTop + imageOffsetY
     const imageTop = contentZoneTop + imageOffsetY;
 
-    // Position within the scaled image
     const posInImageX = fingerX;
     const posInImageY = fingerY - imageTop;
 
-    // Apply magnification scale and center in the magnifier view
-    // We want the finger position to be at the center of the magnifier
     const scaledX = posInImageX * MAGNIFIER_SCALE;
     const scaledY = posInImageY * MAGNIFIER_SCALE;
 
-    // Offset to center the finger position in the magnifier box
     const left = -(scaledX - MAGNIFIER_WIDTH / 2);
     const top = -(scaledY - MAGNIFIER_HEIGHT / 2);
 
@@ -299,7 +344,7 @@ export function WordScrubber({
   return (
     <View style={StyleSheet.absoluteFill} pointerEvents="box-none">
 
-      {/* Word highlight - highlights the actual word using coordinates with smooth animation */}
+      {/* Word highlight - smooth animation via direct shared values */}
       {isActive && (
         <Animated.View
           style={[
@@ -401,7 +446,7 @@ export function WordScrubber({
       )}
     </View>
   );
-}
+});
 
 
 const styles = StyleSheet.create({
@@ -478,7 +523,7 @@ const styles = StyleSheet.create({
   },
   wordHighlight: {
     borderWidth: 2,
-    borderRadius: 8, // More rounded for smoother look
+    borderRadius: 8,
   },
   magnifiedWord: {
     fontSize: 28,
@@ -487,7 +532,7 @@ const styles = StyleSheet.create({
   },
   magnifierLoupe: {
     position: 'absolute',
-    borderRadius: 60, // Half of MAGNIFIER_SIZE (120)
+    borderRadius: 60,
     borderWidth: 3,
     overflow: 'hidden',
     shadowColor: '#000',

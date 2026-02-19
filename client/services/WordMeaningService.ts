@@ -70,6 +70,8 @@ const WBW_DIR = `${FileSystem.documentDirectory}wbw/`;
 // Cache for loaded WBW data
 let cachedWbwData: Record<string, string> | null = null;
 let cachedLanguage: string | null = null;
+// Cache for selected language (avoid AsyncStorage read on every word)
+let cachedSelectedLanguage: string | null = null;
 
 // Normalize Arabic text for matching (remove diacritics, normalize letters)
 const normalizeArabic = (text: string): string => {
@@ -165,9 +167,15 @@ const splitVerseIntoWords = (verseText: string): string[] => {
  * If no explicit selection, auto-detect from app locale
  */
 const getSelectedLanguage = async (): Promise<string> => {
+  // Return cached if available (hot path for scrubbing)
+  if (cachedSelectedLanguage) return cachedSelectedLanguage;
+
   try {
     const saved = await AsyncStorage.getItem(STORAGE_KEY);
-    if (saved) return saved;
+    if (saved) {
+      cachedSelectedLanguage = saved;
+      return saved;
+    }
 
     // Auto-detect from device locale
     try {
@@ -179,6 +187,7 @@ const getSelectedLanguage = async (): Promise<string> => {
         if (wbwLang) {
           // Save it so we don't re-detect every time
           await AsyncStorage.setItem(STORAGE_KEY, wbwLang);
+          cachedSelectedLanguage = wbwLang;
           return wbwLang;
         }
       }
@@ -186,8 +195,10 @@ const getSelectedLanguage = async (): Promise<string> => {
       // expo-localization might not be available
     }
 
+    cachedSelectedLanguage = 'english';
     return 'english';
   } catch (e) {
+    cachedSelectedLanguage = 'english';
     return 'english';
   }
 };
@@ -263,6 +274,26 @@ const getWbwTranslation = async (surah: number, ayah: number, wordIndex: number)
 export const clearWbwCache = () => {
   cachedWbwData = null;
   cachedLanguage = null;
+  cachedSelectedLanguage = null;
+};
+
+/**
+ * Eagerly load WBW data so subsequent lookups are sync
+ * Call this once on mount (e.g., when WordScrubber activates)
+ */
+export const ensureWbwDataLoaded = async (): Promise<void> => {
+  const lang = await getSelectedLanguage();
+  await loadWbwData(lang);
+};
+
+/**
+ * Sync fast-path for WBW translation (returns null if data not loaded yet)
+ * Use after calling ensureWbwDataLoaded()
+ */
+export const getWbwTranslationSync = (surah: number, ayah: number, wordIndex: number): string | null => {
+  if (!cachedWbwData) return null;
+  const key = `${surah}:${ayah}:${wordIndex + 1}`;
+  return cachedWbwData[key] || null;
 };
 
 /**
@@ -410,7 +441,6 @@ export const findWordMeaningByIndex = async (
 
   // If arabic-gharib is selected, use Arabic meaning as the main translation
   if (selectedLang === 'arabic-gharib') {
-    // Return Arabic meaning as the englishMeaning field (it's the main translation display)
     if (arabicMeaningData || transliteration || frequency > 0) {
       return {
         arabicWord,
@@ -425,10 +455,10 @@ export const findWordMeaningByIndex = async (
     return null;
   }
 
-  // For other languages, get the WBW translation
-  const wbwMeaning = await getWbwTranslation(surah, ayah, wordIndex);
+  // Try sync fast-path first (data already cached)
+  const wbwMeaning = getWbwTranslationSync(surah, ayah, wordIndex)
+    ?? await getWbwTranslation(surah, ayah, wordIndex);
 
-  // Return result if we have at least translation, transliteration, or frequency
   if (wbwMeaning || transliteration || arabicMeaningData || frequency > 0) {
     return {
       arabicWord,
@@ -466,5 +496,7 @@ export default {
   hasWordMeanings,
   getTotalWordMeanings,
   clearWbwCache,
-  getSelectedWbwLanguageName
+  getSelectedWbwLanguageName,
+  ensureWbwDataLoaded,
+  getWbwTranslationSync
 };

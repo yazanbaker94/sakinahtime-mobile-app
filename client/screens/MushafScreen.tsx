@@ -50,7 +50,7 @@ import { useProgressTracker } from "@/hooks/useProgressTracker";
 import { useLayoutDimensions } from "@/hooks/useLayoutDimensions";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { OfflineIndicator } from "@/components/OfflineIndicator";
-import { WordScrubber } from "@/components/WordScrubber";
+import { WordScrubber, WordScrubberHandle } from "@/components/WordScrubber";
 import { AnimatedAudioWordHighlight } from "@/components/AnimatedAudioWordHighlight";
 // Hifz Mode imports
 import { HifzModeProvider, useHifzMode } from "@/contexts/HifzModeContext";
@@ -255,7 +255,7 @@ function MushafScreenContent() {
   );
   const [bookmarks, setBookmarks] = useState<string[]>([]);
   const [isWordScrubberActive, setIsWordScrubberActive] = useState(false);
-  const [wordScrubberTouchPosition, setWordScrubberTouchPosition] = useState<{ x: number; y: number } | undefined>(undefined);
+  const wordScrubberRef = useRef<WordScrubberHandle>(null);
   const [showSearchBar, setShowSearchBar] = useState(false);
   const searchInputRef = useRef<TextInput>(null);
   const surahListRef = useRef<FlatList>(null);
@@ -1329,22 +1329,21 @@ function MushafScreenContent() {
         onLongPress={(e) => {
           const { pageX, pageY } = e.nativeEvent;
           console.log('[MushafScreen] Long press detected at:', pageX, pageY);
-          setWordScrubberTouchPosition({ x: pageX, y: pageY });
           setIsWordScrubberActive(true);
+          // Use ref-based position update — no setState, no parent re-render
+          setTimeout(() => wordScrubberRef.current?.updatePosition(pageX, pageY), 0);
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         }}
         onTouchMove={(e) => {
           // Forward touch moves to WordScrubber when active
           if (isWordScrubberActive) {
             const { pageX, pageY } = e.nativeEvent;
-            console.log('[MushafScreen] Touch move (scrubber active):', pageX, pageY);
-            setWordScrubberTouchPosition({ x: pageX, y: pageY });
+            wordScrubberRef.current?.updatePosition(pageX, pageY);
           }
         }}
         onTouchEnd={() => {
           // Close WordScrubber when finger lifts
           if (isWordScrubberActive) {
-            console.log('[MushafScreen] Touch end - closing WordScrubber');
             setIsWordScrubberActive(false);
           }
         }}
@@ -1587,8 +1586,8 @@ function MushafScreenContent() {
                     } else {
                       // Normal mode: activate WordScrubber
                       console.log('[MushafScreen] Word long press at:', pageX, pageY);
-                      setWordScrubberTouchPosition({ x: pageX, y: pageY });
                       setIsWordScrubberActive(true);
+                      setTimeout(() => wordScrubberRef.current?.updatePosition(pageX, pageY), 0);
                       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                     }
                   }}
@@ -1596,7 +1595,7 @@ function MushafScreenContent() {
                     // Forward touch moves to WordScrubber when active
                     if (isWordScrubberActive) {
                       const { pageX, pageY } = e.nativeEvent;
-                      setWordScrubberTouchPosition({ x: pageX, y: pageY });
+                      wordScrubberRef.current?.updatePosition(pageX, pageY);
                     }
                   }}
                   onTouchEnd={() => {
@@ -5724,16 +5723,15 @@ function MushafScreenContent() {
 
       {/* Word Scrubber - activated by long press on verse */}
       <WordScrubber
+        ref={wordScrubberRef}
         isActive={isWordScrubberActive}
         pageCoords={groupedCoordsForScrubber}
         imageScale={layout.imageScale}
         imageOffsetY={layout.imageOffsetY}
         contentZoneTop={layout.safeAreaTop + layout.headerZoneHeight}
         tabBarHeight={layout.tabBarHeight}
-        initialTouchPosition={wordScrubberTouchPosition}
         onClose={() => {
           setIsWordScrubberActive(false);
-          setWordScrubberTouchPosition(undefined);
         }}
         isDark={isDark}
         mushafImage={mushafImages[currentPage]}
