@@ -681,41 +681,7 @@ export default function PrayerTimesScreen() {
 
         {/* Prayer list with vertical timeline */}
         <View style={[styles.prayersList, { flex: 1, marginBottom: Spacing.md, position: 'relative' }]}>
-          {/* Vertical timeline line — capped at first and last dot centers */}
-          <View style={{
-            position: 'absolute',
-            left: 15,
-            top: 0,
-            bottom: 0,
-            width: 2,
-            zIndex: 0,
-          }}>
-            {/* Background track — starts/ends at dot centers via padding trick */}
-            <View style={{
-              position: 'absolute',
-              left: 0,
-              right: 0,
-              top: '10%', // Align with center of first Fajr dot
-              bottom: '10%', // Align with center of last Isha dot
-              backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
-              borderRadius: 1,
-            }}>
-              {/* Filled portion - progresses between specific prayer dots */}
-              <View style={{
-                width: '100%',
-                height: `${Math.min(100, Math.max(0, (() => {
-                  const totalSegments = PRAYERS.length - 1;
-                  if (totalSegments <= 0) return 0;
-                  const completedSegments = nextPrayerIndex > 0 ? nextPrayerIndex - 1 : 0;
-                  const partialFill = travelerProgress;
-                  return ((completedSegments + partialFill) / totalSegments) * 100;
-                })()))}%`,
-                backgroundColor: theme.primary,
-                borderRadius: 1,
-                opacity: 0.8,
-              }} />
-            </View>
-          </View>
+
           {PRAYERS.map((prayer, index) => {
             const originalTime = prayerData?.timings?.[prayer.key] || "";
             const adjustment = prayerAdjustments[prayer.key as keyof typeof prayerAdjustments] || 0;
@@ -746,13 +712,65 @@ export default function PrayerTimesScreen() {
 
             return (
               <View key={prayer.key} style={{ flexDirection: 'row', alignItems: 'stretch', flex: 1 }}>
-                {/* Timeline dot — Y-centered with the card's status circle */}
+                {/* Timeline dot column — per-row segments capped at first/last */}
                 <View style={{
                   width: 20,
                   alignItems: 'center',
                   justifyContent: 'center',
                   zIndex: 2,
                 }}>
+                  {/* Top line segment (hidden for first row = Fajr) */}
+                  {index > 0 && (
+                    <View style={{
+                      position: 'absolute',
+                      top: 0,
+                      bottom: '50%',
+                      width: 2,
+                      backgroundColor: (() => {
+                        // Filled if this prayer or previous is past
+                        const segmentIdx = index - 1;
+                        const totalSegments = PRAYERS.length - 1;
+                        const fillRatio = totalSegments > 0 ? ((nextPrayerIndex > 0 ? nextPrayerIndex - 1 : 0) + travelerProgress) / totalSegments : 0;
+                        const segmentFill = fillRatio * totalSegments;
+                        return segmentFill > segmentIdx
+                          ? theme.primary
+                          : (isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)');
+                      })(),
+                      opacity: (() => {
+                        const segmentIdx = index - 1;
+                        const totalSegments = PRAYERS.length - 1;
+                        const fillRatio = totalSegments > 0 ? ((nextPrayerIndex > 0 ? nextPrayerIndex - 1 : 0) + travelerProgress) / totalSegments : 0;
+                        return fillRatio * totalSegments > segmentIdx ? 0.8 : 1;
+                      })(),
+                      borderRadius: 1,
+                    }} />
+                  )}
+                  {/* Bottom line segment (hidden for last row = Isha) */}
+                  {index < PRAYERS.length - 1 && (
+                    <View style={{
+                      position: 'absolute',
+                      top: '50%',
+                      bottom: 0,
+                      width: 2,
+                      backgroundColor: (() => {
+                        const segmentIdx = index;
+                        const totalSegments = PRAYERS.length - 1;
+                        const fillRatio = totalSegments > 0 ? ((nextPrayerIndex > 0 ? nextPrayerIndex - 1 : 0) + travelerProgress) / totalSegments : 0;
+                        const segmentFill = fillRatio * totalSegments;
+                        return segmentFill > segmentIdx
+                          ? theme.primary
+                          : (isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)');
+                      })(),
+                      opacity: (() => {
+                        const segmentIdx = index;
+                        const totalSegments = PRAYERS.length - 1;
+                        const fillRatio = totalSegments > 0 ? ((nextPrayerIndex > 0 ? nextPrayerIndex - 1 : 0) + travelerProgress) / totalSegments : 0;
+                        return fillRatio * totalSegments > segmentIdx ? 0.8 : 1;
+                      })(),
+                      borderRadius: 1,
+                    }} />
+                  )}
+                  {/* The dot itself */}
                   <View style={{
                     width: (isNext || isCurrent) ? 12 : 8,
                     height: (isNext || isCurrent) ? 12 : 8,

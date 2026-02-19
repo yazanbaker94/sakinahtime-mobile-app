@@ -178,7 +178,7 @@ export function PrayerStatusIndicator({
                     ? (isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.05)')
                     : currentStatusInfo.color,
               borderWidth: (isUnmarked && !showPastFill && !showCurrentPulse) ? 1.5 : showCurrentPulse ? 2 : 0,
-              borderColor: showCurrentPulse ? `${theme.primary}50` : (isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.1)'),
+              borderColor: showCurrentPulse ? `${theme.primary}50` : (isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.25)'),
               opacity: pressed ? 0.7 : (disabled ? 0.4 : 1),
             },
           ]}
