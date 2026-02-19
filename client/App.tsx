@@ -158,6 +158,7 @@ export default function App() {
             require('../assets/images/3d-images/Clear.png'),
             require('../assets/images/3d-images/Reciter.png'),
             require('../assets/images/3d-images/Storage.png'),
+            require('../assets/images/3d-images/info.png'),
           ]),
         ]);
         setFontsLoaded(true);

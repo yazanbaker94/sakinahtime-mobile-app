@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, ScrollView, Pressable, Platform, ActivityIndicator, Switch } from "react-native";
+import { View, StyleSheet, ScrollView, Pressable, Platform, ActivityIndicator, Switch, Image } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -218,7 +218,19 @@ export default function WordByWordSettingsScreen() {
           borderWidth: 0,
           borderColor: 'transparent',
         }]}>
-          <Feather name="info" size={16} color={isDark ? theme.primary : theme.gold} style={{ marginRight: 10 }} />
+          <Image
+            source={require('../../assets/images/3d-images/info.png')}
+            style={{
+              width: 28,
+              height: 28,
+              marginRight: 10,
+              shadowColor: '#D4AF37',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.3,
+              shadowRadius: 4,
+            }}
+            resizeMode="contain"
+          />
           <ThemedText type="caption" style={{ flex: 1, color: theme.textSecondary }}>
             {t('wordByWord.infoHint')}
           </ThemedText>
@@ -258,7 +270,7 @@ export default function WordByWordSettingsScreen() {
                       backgroundColor: isSelected
                         ? (isDark ? `${theme.primary}20` : 'rgba(94, 156, 170, 0.08)')
                         : 'transparent',
-                      marginHorizontal: isSelected ? 8 : 0,
+                      marginHorizontal: isSelected ? 16 : 0,
                       borderRadius: isSelected ? 12 : 0,
                     },
                   ]}
