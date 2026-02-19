@@ -104,6 +104,9 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
   const meaningTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   // fingerPosition state drives magnifier rendering (local re-render only, not parent)
   const [fingerPosition, setFingerPosition] = useState<{ x: number; y: number } | null>(null);
+  // Y-axis lock: tracks the vertical center of the current word's line
+  // Magnifier follows finger X but locks Y to word line (no jitter from vertical drift)
+  const wordLineCenterY = useRef<number | null>(null);
 
   // Animated values for smooth word highlight transitions
   const highlightLeft = useSharedValue(0);
@@ -278,6 +281,9 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
       highlightHeight.value = withTiming(word.wordBounds.height, timing);
       highlightOpacity.value = withTiming(1, { duration: 80 });
 
+      // Lock magnifier Y-axis to word's vertical center (prevents line jitter)
+      wordLineCenterY.current = word.wordBounds.top + (word.wordBounds.height / 2);
+
       // Debounced meaning card update
       loadWordMeaningDebounced(
         word.surah, word.ayah, word.wordIndex,
@@ -297,6 +303,7 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
       setCurrentWord(null);
       lastWordRef.current = null;
       setFingerPosition(null);
+      wordLineCenterY.current = null;
       highlightOpacity.value = withTiming(0, { duration: 100 });
       if (meaningTimeoutRef.current) {
         clearTimeout(meaningTimeoutRef.current);
@@ -326,11 +333,12 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
     if (!effectivePosition || !mushafImage) return { left: 0, top: 0 };
 
     const fingerX = effectivePosition.x;
-    const fingerY = effectivePosition.y;
     const imageTop = contentZoneTop + imageOffsetY;
 
+    // X follows the finger, Y locks to the word's line center
     const posInImageX = fingerX;
-    const posInImageY = fingerY - imageTop;
+    const lockedY = wordLineCenterY.current ?? effectivePosition.y;
+    const posInImageY = lockedY - imageTop;
 
     const scaledX = posInImageX * MAGNIFIER_SCALE;
     const scaledY = posInImageY * MAGNIFIER_SCALE;
