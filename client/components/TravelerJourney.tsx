@@ -21,8 +21,6 @@ const landmarkImages = {
     tent: require('../../assets/images/minature/tent.png'),
 };
 
-const characterImage = require('../../assets/images/minature/character.png');
-
 interface TravelerJourneyProps {
     prayerTimes: {
         Fajr: string;
@@ -37,6 +35,8 @@ interface TravelerJourneyProps {
     nextPrayerIndex: number;
     /** When true, trigger a celebration animation (jump + glow) */
     celebrate?: boolean;
+    /** Index of the prayer that was just marked (triggers happy bounce + spark) */
+    celebratePrayerIndex?: number;
 }
 
 const PRAYERS = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'] as const;
@@ -66,7 +66,7 @@ function generateWavePath(width: number, yCenter: number, amplitude: number, ste
     return points.join(' ');
 }
 
-export function TravelerJourney({ prayerTimes, progress, nextPrayerIndex, celebrate = false }: TravelerJourneyProps) {
+export function TravelerJourney({ prayerTimes, progress, nextPrayerIndex, celebrate = false, celebratePrayerIndex }: TravelerJourneyProps) {
     const { isDark, theme } = useTheme();
     const { width: screenWidth } = useWindowDimensions();
 
@@ -80,7 +80,6 @@ export function TravelerJourney({ prayerTimes, progress, nextPrayerIndex, celebr
 
     // Landmark icon size
     const landmarkSize = 36;
-    const characterSize = 22; // ~20% smaller for better miniature illusion
 
     // Calculate positions for 5 landmarks along the path
     const landmarkPositions = useMemo(() => {
@@ -115,50 +114,83 @@ export function TravelerJourney({ prayerTimes, progress, nextPrayerIndex, celebr
         return { x: x + pathPadding, y, progress: globalProgress };
     }, [nextPrayerIndex, progress, pathWidth, containerHeight, pathYCenter, pathAmplitude, pathPadding]);
 
-    // Bobbing animation for the character
-    const bobOffset = useSharedValue(0);
-    React.useEffect(() => {
-        bobOffset.value = withRepeat(
+    // Landmark bounce shared values (one per landmark)
+    const landmarkScales = [
+        useSharedValue(1),
+        useSharedValue(1),
+        useSharedValue(1),
+        useSharedValue(1),
+        useSharedValue(1),
+    ];
+
+    // Next-prayer glow shared values
+    const nextGlowOpacity = useSharedValue(0.3);
+    useEffect(() => {
+        // Gentle breathing glow on the next prayer icon
+        nextGlowOpacity.value = withRepeat(
             withSequence(
-                withTiming(-2, { duration: 800, easing: Easing.inOut(Easing.ease) }),
-                withTiming(2, { duration: 800, easing: Easing.inOut(Easing.ease) }),
+                withTiming(0.5, { duration: 1500, easing: Easing.inOut(Easing.ease) }),
+                withTiming(0.25, { duration: 1500, easing: Easing.inOut(Easing.ease) }),
             ),
             -1,
             true
         );
-    }, [bobOffset]);
+    }, [nextGlowOpacity]);
 
-    // Celebration shared values (must be declared before characterAnimStyle)
-    const jumpOffset = useSharedValue(0);
-    const glowScale = useSharedValue(0);
-    const glowOpacity = useSharedValue(0);
+    // Spark-of-light shared values
+    const sparkProgress = useSharedValue(0);
+    const sparkOpacity = useSharedValue(0);
+    const sparkFromIndex = useSharedValue(0);
+    const sparkToIndex = useSharedValue(1);
 
-    const characterAnimStyle = useAnimatedStyle(() => ({
-        transform: [
-            { scaleX: -1 }, // Flip to face right (toward destination)
-            { translateY: bobOffset.value + jumpOffset.value },
-        ],
-    }));
-
-    // Celebration: jump + glow aura
+    // Happy bounce on landmark + spark-of-light when a specific prayer is marked
     useEffect(() => {
-        if (celebrate) {
-            // Jump: quick up then spring back down
-            jumpOffset.value = withSequence(
-                withTiming(-14, { duration: 150, easing: Easing.out(Easing.cubic) }),
-                withSpring(0, { damping: 6, stiffness: 300 }),
+        if (celebratePrayerIndex !== undefined && celebratePrayerIndex >= 0 && celebratePrayerIndex < 5) {
+            // Happy bounce on the marked prayer's landmark
+            landmarkScales[celebratePrayerIndex].value = withSequence(
+                withTiming(1.35, { duration: 150, easing: Easing.out(Easing.cubic) }),
+                withSpring(1, { damping: 6, stiffness: 300 }),
             );
-            // Glow: scale up and fade out over 1 second
-            glowScale.value = 0;
-            glowScale.value = withTiming(1.5, { duration: 600, easing: Easing.out(Easing.cubic) });
-            glowOpacity.value = 0.8;
-            glowOpacity.value = withTiming(0, { duration: 1000 });
-        }
-    }, [celebrate, jumpOffset, glowScale, glowOpacity]);
 
-    const glowAnimStyle = useAnimatedStyle(() => ({
-        transform: [{ scale: glowScale.value }],
-        opacity: glowOpacity.value,
+            // Spark-of-light: arc from marked prayer to the next one
+            const nextIdx = Math.min(celebratePrayerIndex + 1, 4);
+            if (nextIdx !== celebratePrayerIndex) {
+                sparkFromIndex.value = celebratePrayerIndex;
+                sparkToIndex.value = nextIdx;
+                sparkProgress.value = 0;
+                sparkOpacity.value = 1;
+                sparkProgress.value = withTiming(1, {
+                    duration: 600,
+                    easing: Easing.inOut(Easing.cubic),
+                });
+                // Fade out spark at the end
+                sparkOpacity.value = withSequence(
+                    withTiming(1, { duration: 400 }),
+                    withTiming(0, { duration: 200 }),
+                );
+                // Bounce the destination landmark when spark arrives
+                setTimeout(() => {
+                    landmarkScales[nextIdx].value = withSequence(
+                        withTiming(1.25, { duration: 120, easing: Easing.out(Easing.cubic) }),
+                        withSpring(1, { damping: 8, stiffness: 350 }),
+                    );
+                }, 500);
+            }
+        }
+    }, [celebratePrayerIndex]);
+
+    // Animated styles for each landmark
+    const landmarkAnimStyles = [
+        useAnimatedStyle(() => ({ transform: [{ scale: landmarkScales[0].value }] })),
+        useAnimatedStyle(() => ({ transform: [{ scale: landmarkScales[1].value }] })),
+        useAnimatedStyle(() => ({ transform: [{ scale: landmarkScales[2].value }] })),
+        useAnimatedStyle(() => ({ transform: [{ scale: landmarkScales[3].value }] })),
+        useAnimatedStyle(() => ({ transform: [{ scale: landmarkScales[4].value }] })),
+    ];
+
+    // Next-prayer glow animated style
+    const nextGlowAnimStyle = useAnimatedStyle(() => ({
+        opacity: nextGlowOpacity.value,
     }));
 
     // SVG paths
@@ -231,19 +263,36 @@ export function TravelerJourney({ prayerTimes, progress, nextPrayerIndex, celebr
             {/* Landmarks */}
             {landmarkPositions.map((pos, i) => {
                 const isPast = i < nextPrayerIndex;
-                const isActive = isPast;
+                const isNext = i === nextPrayerIndex;
+                const iconOpacity = isPast ? 1 : isNext ? 1 : 0.35;
+                const iconScale = isNext ? 1.15 : 1;
 
                 return (
-                    <View
+                    <Animated.View
                         key={LANDMARK_KEYS[i]}
                         style={[
                             styles.landmarkContainer,
                             {
                                 left: pos.x - landmarkSize / 2,
-                                top: pos.y - landmarkSize + 4, // Anchor bottom of icon to sit on the path dot
+                                top: pos.y - landmarkSize + 4,
                             },
+                            landmarkAnimStyles[i],
                         ]}
                     >
+                        {/* Warm glow circle behind the next-prayer icon */}
+                        {isNext && (
+                            <Animated.View
+                                style={[{
+                                    position: 'absolute',
+                                    width: landmarkSize * 1.6,
+                                    height: landmarkSize * 1.6,
+                                    borderRadius: landmarkSize * 0.8,
+                                    backgroundColor: isDark ? 'rgba(251, 191, 36, 0.35)' : 'rgba(212, 160, 23, 0.25)',
+                                    left: -(landmarkSize * 0.3),
+                                    top: -(landmarkSize * 0.3),
+                                }, nextGlowAnimStyle]}
+                            />
+                        )}
                         <Image
                             source={landmarkImages[LANDMARK_KEYS[i]]}
                             style={[
@@ -251,47 +300,51 @@ export function TravelerJourney({ prayerTimes, progress, nextPrayerIndex, celebr
                                 {
                                     width: landmarkSize,
                                     height: landmarkSize,
-                                    opacity: isActive ? 1 : 0.35,
+                                    opacity: iconOpacity,
+                                    transform: [{ scale: iconScale }],
                                 },
                             ]}
                             resizeMode="contain"
                         />
-                    </View>
+                    </Animated.View>
                 );
             })}
 
-            {/* Traveler Character */}
+
+
+            {/* Spark-of-light orb */}
             <Animated.View
                 style={[
-                    styles.characterContainer,
                     {
-                        left: travelerPosition.x - characterSize / 2,
-                        top: travelerPosition.y - characterSize + 2,
-                    },
-                    characterAnimStyle,
-                ]}
-            >
-                {/* Golden glow aura (celebration) */}
-                <Animated.View
-                    style={[{
                         position: 'absolute',
-                        width: characterSize * 2,
-                        height: characterSize * 2,
-                        borderRadius: characterSize,
-                        backgroundColor: isDark ? 'rgba(251, 191, 36, 0.6)' : 'rgba(212, 160, 23, 0.5)',
-                        left: -characterSize / 2,
-                        top: -characterSize / 2,
-                    }, glowAnimStyle]}
-                />
-                <Image
-                    source={characterImage}
-                    style={{
-                        width: characterSize,
-                        height: characterSize,
-                    }}
-                    resizeMode="contain"
-                />
-            </Animated.View>
+                        width: 10,
+                        height: 10,
+                        borderRadius: 5,
+                        backgroundColor: isDark ? '#FBBF24' : '#D4A017',
+                        zIndex: 30,
+                        shadowColor: '#FBBF24',
+                        shadowOffset: { width: 0, height: 0 },
+                        shadowOpacity: 0.8,
+                        shadowRadius: 6,
+                        elevation: 8,
+                    },
+                    useAnimatedStyle(() => {
+                        // Interpolate position along the path between from and to landmarks
+                        const fromT = sparkFromIndex.value / (LANDMARK_KEYS.length - 1);
+                        const toT = sparkToIndex.value / (LANDMARK_KEYS.length - 1);
+                        const currentT = fromT + (toT - fromT) * sparkProgress.value;
+                        const x = currentT * pathWidth;
+                        // Add an arc above the path for visual flair (parabolic arc)
+                        const arcHeight = -18 * Math.sin(sparkProgress.value * Math.PI);
+                        const y = pathYCenter + Math.sin(currentT * Math.PI * 2 - Math.PI / 2) * pathAmplitude + arcHeight;
+                        return {
+                            left: x + pathPadding - 5,
+                            top: y - 5,
+                            opacity: sparkOpacity.value,
+                        };
+                    }),
+                ]}
+            />
         </View>
     );
 }
@@ -307,8 +360,4 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     landmarkImage: {},
-    characterContainer: {
-        position: 'absolute',
-        zIndex: 20, // Above landmarks so he walks in front
-    },
 });

@@ -1,0 +1,8 @@
+1835: {/* Note Modal */}
+1913: </Modal>
+1916: {/* Tafsir Viewer Modal */}
+1919: {/* Tafsir Sources Modal */}
+1964: </Modal>
+1968: {/* Audio Settings Modal */ }
+2081: </Modal>
+2557: </Modal>

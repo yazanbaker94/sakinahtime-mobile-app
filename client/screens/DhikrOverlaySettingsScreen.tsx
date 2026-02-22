@@ -273,7 +273,7 @@ export default function DhikrOverlaySettingsScreen() {
         <View style={styles.headerRight} />
       </View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.content} contentContainerStyle={{ paddingBottom: 80 }} showsVerticalScrollIndicator={false}>
         {/* Platform Notice */}
         {!supportsOverlay && (
           <View style={[styles.noticeCard, { backgroundColor: theme.backgroundSecondary }]}>
@@ -322,145 +322,189 @@ export default function DhikrOverlaySettingsScreen() {
           )}
         </View>
 
-        {/* Preview Button */}
-        {hasPermission && (
-          <TouchableOpacity
-            style={[styles.previewButton, { backgroundColor: theme.primary }]}
-            onPress={handlePreview}
-          >
-            <Ionicons name="eye" size={20} color="#FFFFFF" />
-            <Text style={styles.previewButtonText}>{t('dhikrReminders.previewOverlay')}</Text>
-          </TouchableOpacity>
-        )}
+        {/* Dependent settings — visually disabled when master toggle is off */}
+        <View style={{ opacity: settings.enabled ? 1 : 0.4 }} pointerEvents={settings.enabled ? 'auto' : 'none'}>
 
-        {/* Interval Selection */}
-        <View style={[styles.card, { backgroundColor: theme.cardBackground }, Shadows.card]}>
-          <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('dhikrReminders.reminderInterval')}</Text>
-          <View style={styles.optionsRow}>
-            {INTERVAL_OPTIONS.map((option) => (
-              <TouchableOpacity
-                key={option.value}
-                style={[
-                  styles.optionButton,
-                  {
-                    backgroundColor:
-                      settings.intervalMinutes === option.value
-                        ? theme.primary
-                        : theme.backgroundSecondary,
-                  },
-                ]}
-                onPress={() => handleIntervalChange(option.value)}
-              >
-                <Text
+          {/* Preview Button */}
+          {hasPermission && (
+            <TouchableOpacity
+              style={[styles.previewButton, { backgroundColor: theme.primary }]}
+              onPress={handlePreview}
+            >
+              <Ionicons name="eye" size={20} color="#FFFFFF" />
+              <Text style={styles.previewButtonText}>{Platform.OS === 'ios' ? 'Preview Notification' : t('dhikrReminders.previewOverlay')}</Text>
+            </TouchableOpacity>
+          )}
+
+          {/* Interval Selection */}
+          <View style={[styles.card, { backgroundColor: theme.cardBackground }, Shadows.card]}>
+            <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('dhikrReminders.reminderInterval')}</Text>
+            <View style={styles.optionsRow}>
+              {INTERVAL_OPTIONS.map((option) => (
+                <TouchableOpacity
+                  key={option.value}
                   style={[
-                    styles.optionText,
+                    styles.optionButton,
                     {
-                      color: settings.intervalMinutes === option.value ? '#FFFFFF' : theme.text,
+                      backgroundColor:
+                        settings.intervalMinutes === option.value
+                          ? theme.primary
+                          : theme.backgroundSecondary,
                     },
                   ]}
+                  onPress={() => handleIntervalChange(option.value)}
                 >
-                  {t(option.labelKey)}
-                </Text>
-              </TouchableOpacity>
+                  <Text
+                    style={[
+                      styles.optionText,
+                      {
+                        color: settings.intervalMinutes === option.value ? '#FFFFFF' : theme.text,
+                      },
+                    ]}
+                  >
+                    {t(option.labelKey)}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+
+          {/* Categories */}
+          <View style={[styles.card, { backgroundColor: theme.cardBackground }, Shadows.card]}>
+            <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('dhikrReminders.dhikrCategories')}</Text>
+            <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>
+              {t('dhikrReminders.chooseTypes')}
+            </Text>
+            {DHIKR_CATEGORIES.map((category) => (
+              <View key={category.id} style={styles.categoryRow}>
+                <View style={styles.categoryInfo}>
+                  <Text style={[styles.categoryName, { color: theme.text }]}>{locale === 'ar' ? category.nameAr : category.name}</Text>
+                </View>
+                <Switch
+                  value={settings.categories[category.id]}
+                  onValueChange={(value) => handleCategoryChange(category.id, value)}
+                  trackColor={{ false: theme.border, true: `${theme.primary}80` }}
+                  thumbColor={settings.categories[category.id] ? theme.primary : theme.muted}
+                />
+              </View>
             ))}
           </View>
-        </View>
 
-        {/* Categories */}
-        <View style={[styles.card, { backgroundColor: theme.cardBackground }, Shadows.card]}>
-          <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('dhikrReminders.dhikrCategories')}</Text>
-          <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>
-            {t('dhikrReminders.chooseTypes')}
-          </Text>
-          {DHIKR_CATEGORIES.map((category) => (
-            <View key={category.id} style={styles.categoryRow}>
-              <View style={styles.categoryInfo}>
-                <Text style={[styles.categoryName, { color: theme.text }]}>{locale === 'ar' ? category.nameAr : category.name}</Text>
+          {/* Quiet Hours */}
+          <View style={[styles.card, { backgroundColor: theme.cardBackground }, Shadows.card]}>
+            <View style={styles.toggleRow}>
+              <View style={styles.toggleInfo}>
+                <Text style={[styles.toggleTitle, { color: theme.text }]}>{t('dhikrReminders.quietHours')}</Text>
+                <Text style={[styles.toggleSubtitle, { color: theme.textSecondary }]}>
+                  {t('dhikrReminders.pauseSleep')}
+                </Text>
               </View>
               <Switch
-                value={settings.categories[category.id]}
-                onValueChange={(value) => handleCategoryChange(category.id, value)}
+                value={settings.quietHours.enabled}
+                onValueChange={handleQuietHoursToggle}
                 trackColor={{ false: theme.border, true: `${theme.primary}80` }}
-                thumbColor={settings.categories[category.id] ? theme.primary : theme.muted}
+                thumbColor={settings.quietHours.enabled ? theme.primary : theme.muted}
               />
             </View>
-          ))}
-        </View>
 
-        {/* Quiet Hours */}
-        <View style={[styles.card, { backgroundColor: theme.cardBackground }, Shadows.card]}>
-          <View style={styles.toggleRow}>
-            <View style={styles.toggleInfo}>
-              <Text style={[styles.toggleTitle, { color: theme.text }]}>{t('dhikrReminders.quietHours')}</Text>
-              <Text style={[styles.toggleSubtitle, { color: theme.textSecondary }]}>
-                {t('dhikrReminders.pauseSleep')}
-              </Text>
-            </View>
-            <Switch
-              value={settings.quietHours.enabled}
-              onValueChange={handleQuietHoursToggle}
-              trackColor={{ false: theme.border, true: `${theme.primary}80` }}
-              thumbColor={settings.quietHours.enabled ? theme.primary : theme.muted}
-            />
-          </View>
-
-          {settings.quietHours.enabled && (
-            <View style={styles.quietHoursConfig}>
-              <Text style={[styles.timeLabel, { color: theme.textSecondary }]}>{t('dhikrReminders.startAt')}</Text>
-              <View style={styles.optionsRow}>
-                {QUIET_HOUR_OPTIONS.map((option) => (
-                  <TouchableOpacity
-                    key={option.value}
-                    style={[
-                      styles.optionButton,
-                      {
-                        backgroundColor:
-                          settings.quietHours.startHour === option.value
-                            ? theme.primary
-                            : theme.backgroundSecondary,
-                      },
-                    ]}
-                    onPress={() => handleQuietStartChange(option.value)}
-                  >
-                    <Text
+            {/* Quiet hours time chips — always visible, dimmed when toggle is off */}
+            <View style={{ opacity: settings.quietHours.enabled ? 1 : 0.4, marginTop: settings.quietHours.enabled ? 0 : 12 }} pointerEvents={settings.quietHours.enabled ? 'auto' : 'none'}>
+              <View style={styles.quietHoursConfig}>
+                <Text style={[styles.timeLabel, { color: theme.textSecondary }]}>{t('dhikrReminders.startAt')}</Text>
+                <View style={styles.optionsRow}>
+                  {QUIET_HOUR_OPTIONS.map((option) => (
+                    <TouchableOpacity
+                      key={option.value}
                       style={[
-                        styles.optionText,
+                        styles.optionButton,
                         {
-                          color:
-                            settings.quietHours.startHour === option.value ? '#FFFFFF' : theme.text,
+                          backgroundColor:
+                            settings.quietHours.startHour === option.value
+                              ? theme.primary
+                              : theme.backgroundSecondary,
                         },
                       ]}
+                      onPress={() => handleQuietStartChange(option.value)}
                     >
-                      {t(option.labelKey)}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
+                      <Text
+                        style={[
+                          styles.optionText,
+                          {
+                            color:
+                              settings.quietHours.startHour === option.value ? '#FFFFFF' : theme.text,
+                          },
+                        ]}
+                      >
+                        {t(option.labelKey)}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
 
-              <Text style={[styles.timeLabel, { color: theme.textSecondary, marginTop: Spacing.md }]}>
-                {t('dhikrReminders.endAt')}
+                <Text style={[styles.timeLabel, { color: theme.textSecondary, marginTop: 20 }]}>
+                  {t('dhikrReminders.endAt')}
+                </Text>
+                <View style={styles.optionsRow}>
+                  {WAKE_HOUR_OPTIONS.map((option) => (
+                    <TouchableOpacity
+                      key={option.value}
+                      style={[
+                        styles.optionButton,
+                        {
+                          backgroundColor:
+                            settings.quietHours.endHour === option.value
+                              ? theme.primary
+                              : theme.backgroundSecondary,
+                        },
+                      ]}
+                      onPress={() => handleQuietEndChange(option.value)}
+                    >
+                      <Text
+                        style={[
+                          styles.optionText,
+                          {
+                            color:
+                              settings.quietHours.endHour === option.value ? '#FFFFFF' : theme.text,
+                          },
+                        ]}
+                      >
+                        {t(option.labelKey)}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+            </View>
+          </View>
+
+          {/* Auto Dismiss — Android only (iOS controls notification duration natively) */}
+          {Platform.OS === 'android' && (
+            <View style={[styles.card, { backgroundColor: theme.cardBackground }, Shadows.card]}>
+              <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('dhikrReminders.autoDismiss')}</Text>
+              <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>
+                {t('dhikrReminders.overlayDisappears')}
               </Text>
               <View style={styles.optionsRow}>
-                {WAKE_HOUR_OPTIONS.map((option) => (
+                {AUTO_DISMISS_OPTIONS.map((option) => (
                   <TouchableOpacity
                     key={option.value}
                     style={[
                       styles.optionButton,
                       {
                         backgroundColor:
-                          settings.quietHours.endHour === option.value
+                          settings.autoDismissSeconds === option.value
                             ? theme.primary
                             : theme.backgroundSecondary,
                       },
                     ]}
-                    onPress={() => handleQuietEndChange(option.value)}
+                    onPress={() => handleAutoDismissChange(option.value)}
                   >
                     <Text
                       style={[
                         styles.optionText,
                         {
                           color:
-                            settings.quietHours.endHour === option.value ? '#FFFFFF' : theme.text,
+                            settings.autoDismissSeconds === option.value ? '#FFFFFF' : theme.text,
                         },
                       ]}
                     >
@@ -471,45 +515,8 @@ export default function DhikrOverlaySettingsScreen() {
               </View>
             </View>
           )}
-        </View>
 
-        {/* Auto Dismiss */}
-        <View style={[styles.card, { backgroundColor: theme.cardBackground }, Shadows.card]}>
-          <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('dhikrReminders.autoDismiss')}</Text>
-          <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>
-            {t('dhikrReminders.overlayDisappears')}
-          </Text>
-          <View style={styles.optionsRow}>
-            {AUTO_DISMISS_OPTIONS.map((option) => (
-              <TouchableOpacity
-                key={option.value}
-                style={[
-                  styles.optionButton,
-                  {
-                    backgroundColor:
-                      settings.autoDismissSeconds === option.value
-                        ? theme.primary
-                        : theme.backgroundSecondary,
-                  },
-                ]}
-                onPress={() => handleAutoDismissChange(option.value)}
-              >
-                <Text
-                  style={[
-                    styles.optionText,
-                    {
-                      color:
-                        settings.autoDismissSeconds === option.value ? '#FFFFFF' : theme.text,
-                    },
-                  ]}
-                >
-                  {t(option.labelKey)}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
         </View>
-
         <View style={styles.bottomPadding} />
       </ScrollView>
     </SafeAreaView>

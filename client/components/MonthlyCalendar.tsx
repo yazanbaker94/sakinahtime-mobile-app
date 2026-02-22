@@ -124,12 +124,12 @@ export function MonthlyCalendar({ stats, onPrevMonth, onNextMonth }: MonthlyCale
       <View style={styles.summaryRow}>
         <View style={[styles.summaryBadge, { backgroundColor: `${theme.primary}26` }]}>
           <ThemedText type="small" style={{ color: theme.primary, fontWeight: '600' }}>
-            {locale === 'ar' ? `${toArNumerals(completionPercentage)}% مكتمل` : locale === 'fr' ? `${completionPercentage}% Terminé` : `${completionPercentage}% Complete`}
+            {locale === 'ar' ? `${toArNumerals(completionPercentage)}% مكتمل` : locale === 'fr' ? `${completionPercentage}% Terminé` : completionPercentage === 100 ? 'Day Complete!' : `${completionPercentage}% Complete`}
           </ThemedText>
         </View>
         <View style={[styles.summaryBadge, { backgroundColor: isDark ? 'rgba(251, 191, 36, 0.15)' : 'rgba(251, 191, 36, 0.1)' }]}>
           <ThemedText type="small" style={{ color: '#FBBF24', fontWeight: '600' }}>
-            {locale === 'ar' ? `${toArNumerals(perfectDays)} أيام كاملة` : locale === 'fr' ? `${perfectDays} Jours parfaits` : `${perfectDays} Perfect Days`}
+            {locale === 'ar' ? `${toArNumerals(perfectDays)} ${perfectDays === 1 ? 'يوم كامل' : 'أيام كاملة'}` : locale === 'fr' ? `${perfectDays} ${perfectDays === 1 ? 'Jour parfait' : 'Jours parfaits'}` : `${perfectDays} Perfect ${perfectDays === 1 ? 'Day' : 'Days'}`}
           </ThemedText>
         </View>
       </View>
@@ -168,7 +168,7 @@ export function MonthlyCalendar({ stats, onPrevMonth, onNextMonth }: MonthlyCale
                     {
                       backgroundColor: isFuture ? 'transparent' : dayColor,
                       borderWidth: isToday ? 2 : 0,
-                      borderColor: isDark ? '#fff' : '#000',
+                      borderColor: theme.primary,
                     },
                   ]}
                 >

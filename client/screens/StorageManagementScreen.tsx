@@ -4,8 +4,9 @@
  * Main screen for managing offline storage and downloads.
  */
 
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, Pressable, Alert, ActivityIndicator, Image } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, StyleSheet, ScrollView, Pressable, Alert, ActivityIndicator } from 'react-native';
+import { Image } from 'expo-image';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -25,6 +26,16 @@ import { useNetworkStatus } from '@/hooks/useNetworkStatus';
 import { NetworkStatusBadge } from '@/components/NetworkStatusBadge';
 import { StorageCategory } from '@/types/offline';
 import { audioDownloadService } from '@/services/AudioDownloadService';
+import * as FileSystem from 'expo-file-system/legacy';
+
+const WBW_DIR = `${FileSystem.documentDirectory}wbw/`;
+
+function formatBytes(bytes: number): string {
+  if (bytes === 0) return '0 B';
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
 
 export function StorageManagementScreen() {
   const insets = useSafeAreaInsets();
@@ -37,6 +48,34 @@ export function StorageManagementScreen() {
   const { settings, updateSettings, isLoading: settingsLoading } = useOfflineSettings();
 
   const [clearing, setClearing] = useState<StorageCategory | null>(null);
+  const [wbwSize, setWbwSize] = useState(0);
+  const [wbwFileCount, setWbwFileCount] = useState(0);
+  const [clearingWbw, setClearingWbw] = useState(false);
+
+  const calculateWbwSize = useCallback(async () => {
+    try {
+      const dirInfo = await FileSystem.getInfoAsync(WBW_DIR);
+      if (!dirInfo.exists) {
+        setWbwSize(0);
+        setWbwFileCount(0);
+        return;
+      }
+      const files = await FileSystem.readDirectoryAsync(WBW_DIR);
+      let totalSize = 0;
+      let count = 0;
+      for (const file of files) {
+        const fileInfo = await FileSystem.getInfoAsync(`${WBW_DIR}${file}`);
+        if (fileInfo.exists && !fileInfo.isDirectory && fileInfo.size) {
+          totalSize += fileInfo.size;
+          count++;
+        }
+      }
+      setWbwSize(totalSize);
+      setWbwFileCount(count);
+    } catch (e) {
+      console.error('[StorageManagement] Failed to calculate WBW size:', e);
+    }
+  }, []);
 
   // Auto-cleanup orphaned files when screen loads
   useEffect(() => {
@@ -50,7 +89,43 @@ export function StorageManagementScreen() {
       }
     };
     runCleanup();
+    calculateWbwSize();
   }, []);
+
+  const handleClearWbw = () => {
+    if (wbwFileCount === 0) {
+      Alert.alert(t('storage.wbwTitle'), t('storage.wbwNone'));
+      return;
+    }
+    Alert.alert(
+      t('storage.wbwClearTitle'),
+      t('storage.wbwClearDesc', { size: formatBytes(wbwSize), count: wbwFileCount }),
+      [
+        { text: t('storageAlerts.cancel'), style: 'cancel' },
+        {
+          text: t('storageAlerts.clear'),
+          style: 'destructive',
+          onPress: async () => {
+            setClearingWbw(true);
+            try {
+              const dirInfo = await FileSystem.getInfoAsync(WBW_DIR);
+              if (dirInfo.exists) {
+                await FileSystem.deleteAsync(WBW_DIR, { idempotent: true });
+                await FileSystem.makeDirectoryAsync(WBW_DIR, { intermediates: true });
+              }
+              setWbwSize(0);
+              setWbwFileCount(0);
+              refreshStorageInfo();
+            } catch (e) {
+              Alert.alert(t('storageAlerts.error'), t('storageAlerts.failedToClear'));
+            } finally {
+              setClearingWbw(false);
+            }
+          },
+        },
+      ]
+    );
+  };
 
   const handleClearCache = async (category: StorageCategory) => {
     const categoryNameKeys: Record<StorageCategory, string> = {
@@ -168,7 +243,7 @@ export function StorageManagementScreen() {
               ]}
               onPress={() => navigation.navigate('AudioDownload')}
             >
-              <Image source={require('../../assets/images/3d-images/Audio.png')} style={{ width: 40, height: 40 }} resizeMode="contain" />
+              <Image source={require('../../assets/images/3d-images/Audio.png')} style={{ width: 40, height: 40 }} contentFit="contain" transition={0} cachePolicy="memory" />
               <ThemedText type="small" style={{ fontWeight: '500', marginTop: Spacing.xs }}>
                 {t('storage.manageAudio')}
               </ThemedText>
@@ -177,6 +252,41 @@ export function StorageManagementScreen() {
               </ThemedText>
             </Pressable>
 
+            <Pressable
+              style={({ pressed }) => [
+                styles.actionCard,
+                {
+                  backgroundColor: isDark ? 'rgba(94, 156, 170, 0.15)' : '#FFFFFF',
+                  borderWidth: 0,
+                  borderColor: 'transparent',
+                  shadowColor: theme.primary,
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.15,
+                  shadowRadius: 8,
+                  elevation: 4,
+                  opacity: pressed ? 0.7 : 1,
+                }
+              ]}
+              onPress={handleClearWbw}
+              disabled={clearingWbw}
+            >
+              {clearingWbw ? (
+                <ActivityIndicator size="small" color={theme.primary} />
+              ) : (
+                <>
+                  <Image source={require('../../assets/images/3d-images/book.png')} style={{ width: 40, height: 40 }} contentFit="contain" transition={0} cachePolicy="memory" />
+                  <ThemedText type="small" style={{ fontWeight: '500', marginTop: Spacing.xs }}>
+                    {t('storage.wbwTitle')}
+                  </ThemedText>
+                  <ThemedText type="caption" secondary>
+                    {wbwFileCount > 0 ? formatBytes(wbwSize) : t('storage.wbwNone')}
+                  </ThemedText>
+                </>
+              )}
+            </Pressable>
+          </View>
+
+          <View style={{ marginTop: Spacing.md }}>
             <Pressable
               style={({ pressed }) => [
                 styles.actionCard,
@@ -199,7 +309,7 @@ export function StorageManagementScreen() {
                 <ActivityIndicator size="small" color={isDark ? '#F87171' : '#EF4444'} />
               ) : (
                 <>
-                  <Image source={require('../../assets/images/3d-images/Clear.png')} style={{ width: 40, height: 40 }} resizeMode="contain" />
+                  <Image source={require('../../assets/images/3d-images/Clear.png')} style={{ width: 40, height: 40 }} contentFit="contain" transition={0} cachePolicy="memory" />
                   <ThemedText type="small" style={{ fontWeight: '500', marginTop: Spacing.xs }}>
                     {t('storage.clearAll')}
                   </ThemedText>

@@ -5,7 +5,8 @@
  */
 
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import { View, StyleSheet, Pressable, Alert, FlatList, Image } from 'react-native';
+import { View, StyleSheet, Pressable, Alert, FlatList } from 'react-native';
+import { Image } from 'expo-image';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -199,7 +200,7 @@ export function AudioDownloadScreen() {
           onPress={openReciterSelection}
         >
           <View style={styles.reciterInfo}>
-            <Image source={require('../../assets/images/3d-images/Reciter.png')} style={{ width: 36, height: 36, marginRight: Spacing.sm }} resizeMode="contain" />
+            <Image source={require('../../assets/images/3d-images/Reciter.png')} style={{ width: 36, height: 36, marginRight: Spacing.sm }} contentFit="contain" transition={0} cachePolicy="memory" />
             <View style={{ flex: 1 }}>
               <ThemedText type="caption" secondary>{t('mushaf.selectReciter')}</ThemedText>
               <ThemedText type="body" style={{ fontWeight: '600' }} numberOfLines={1}>

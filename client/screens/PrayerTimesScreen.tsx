@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { View, StyleSheet, ScrollView, Pressable, Platform, useWindowDimensions, Image } from "react-native";
+import { View, StyleSheet, ScrollView, Pressable, Platform, useWindowDimensions } from "react-native";
+import { Image } from 'expo-image';
 
 import { TravelerJourney } from '@/components/TravelerJourney';
 import { ThemedText } from "@/components/ThemedText";
@@ -35,7 +36,7 @@ import { LocationIndicator } from "@/components/LocationIndicator";
 import { Feather } from "@expo/vector-icons";
 import { PrayerName, PrayerStatus } from "@/types/prayerLog";
 import { useTranslation } from "@/hooks/useTranslation";
-import { usePrayerColor } from "@/contexts/PrayerColorContext";
+import { usePrayerColorStore } from "@/stores/usePrayerColorStore";
 
 const PRAYERS = [
   { key: "Fajr", nameEn: "Fajr", nameAr: "الفجر", icon: "sunrise" },
@@ -85,8 +86,9 @@ export default function PrayerTimesScreen() {
   const [travelerProgress, setTravelerProgress] = useState(0);
   const [nextPrayerIndex, setNextPrayerIndex] = useState(0);
   const [celebrateKey, setCelebrateKey] = useState(0);
+  const [celebratePrayerIndex, setCelebratePrayerIndex] = useState<number | undefined>(undefined);
   const celebrateTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const { setDynamicColor } = usePrayerColor();
+  const setDynamicColor = usePrayerColorStore((s) => s.setDynamicColor);
   const { method: calculationMethod, isLoading: methodLoading } = useCalculationMethod();
 
   const {
@@ -390,8 +392,9 @@ export default function PrayerTimesScreen() {
               <Image
                 source={require('../../assets/images/3d-images/location.png')}
                 style={{ width: 120, height: 120 }}
-                resizeMode="contain"
-                fadeDuration={0}
+                contentFit="contain"
+                transition={0}
+                cachePolicy="memory"
               />
             </View>
 
@@ -674,6 +677,7 @@ export default function PrayerTimesScreen() {
                 progress={travelerProgress}
                 nextPrayerIndex={nextPrayerIndex}
                 celebrate={celebrateKey > 0}
+                celebratePrayerIndex={celebratePrayerIndex}
               />
             )}
           </View>
@@ -778,8 +782,8 @@ export default function PrayerTimesScreen() {
                       shadowOpacity: isDark ? 0 : 0.08,
                       shadowRadius: 8,
                       elevation: isDark ? 0 : 3,
-                      borderWidth: isCurrent ? 2 : (isDark ? 1 : 0),
-                      borderColor: isCurrent ? theme.primary : (isDark ? theme.border : 'transparent'),
+                      borderWidth: isDark ? 1 : 0,
+                      borderColor: isDark ? theme.border : 'transparent',
                     },
                   ]}
                 >
@@ -802,13 +806,17 @@ export default function PrayerTimesScreen() {
                         status={prayerStatus}
                         onStatusChange={handleStatusChange}
                         size="compact"
-                        isPastAndUnmarked={displayAsPast && !isCurrent && prayerStatus === 'unmarked'}
+                        isPastAndUnmarked={displayAsPast && !isCurrent && prayerStatus === 'unmarked' && !isAfterIshaRollover}
                         isCurrent={isCurrent && prayerStatus === 'unmarked'}
                         onCelebrate={() => {
                           setCelebrateKey(k => k + 1);
+                          setCelebratePrayerIndex(index);
                           // Reset after animation completes
                           if (celebrateTimerRef.current) clearTimeout(celebrateTimerRef.current);
-                          celebrateTimerRef.current = setTimeout(() => setCelebrateKey(0), 1200);
+                          celebrateTimerRef.current = setTimeout(() => {
+                            setCelebrateKey(0);
+                            setCelebratePrayerIndex(undefined);
+                          }, 1200);
                         }}
                       />
                     )}

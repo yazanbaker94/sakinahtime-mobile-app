@@ -5,7 +5,8 @@
  */
 
 import React from 'react';
-import { View, StyleSheet, ScrollView, Pressable, Image } from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { Image } from 'expo-image';
 import { ThemedText } from '@/components/ThemedText';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -62,7 +63,9 @@ export function QuickAccessStrip({ categories, onCategoryPress }: QuickAccessStr
             <Image
               source={CATEGORY_3D_ICONS[category.id] || CATEGORY_3D_ICONS.general}
               style={{ width: 26, height: 26 }}
-              resizeMode="contain"
+              contentFit="contain"
+              transition={0}
+              cachePolicy="memory"
             />
             <ThemedText
               type="caption"

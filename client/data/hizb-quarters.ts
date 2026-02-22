@@ -1,4 +1,4 @@
-import quranData from './quran-uthmani.json';
+import { QuranDataBridge } from '../services/QuranDataBridge';
 import { surahs } from './quran';
 
 export interface HizbQuarter {
@@ -28,6 +28,7 @@ let cachedQuarters: HizbQuarter[] | null = null;
 export function getHizbQuarters(): HizbQuarter[] {
   if (cachedQuarters) return cachedQuarters;
 
+  const quranData = QuranDataBridge.quranData;
   const quarters: HizbQuarter[] = [];
   let lastQuarter = 0;
 

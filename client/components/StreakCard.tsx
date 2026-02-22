@@ -75,7 +75,7 @@ export function StreakCard({ streak, compact = false }: StreakCardProps) {
 
       <View style={styles.streakRow}>
         <View style={styles.streakItem}>
-          <ThemedText type="h1" style={[styles.streakNumber, { color: theme.primary }]}>
+          <ThemedText type="h1" style={[styles.streakNumber, { color: currentStreak > 0 ? theme.primary : '#94A3B8' }]}>
             {currentStreak}
           </ThemedText>
           <ThemedText type="caption" secondary>{t('streak.currentStreak')}</ThemedText>
@@ -84,7 +84,7 @@ export function StreakCard({ streak, compact = false }: StreakCardProps) {
         {/* No divider — whitespace separates */}
 
         <View style={styles.streakItem}>
-          <ThemedText type="h1" style={[styles.streakNumber, { color: theme.primary }]}>
+          <ThemedText type="h1" style={[styles.streakNumber, { color: longestStreak > 0 ? theme.primary : '#94A3B8' }]}>
             {longestStreak}
           </ThemedText>
           <ThemedText type="caption" secondary>{t('streak.longestStreak')}</ThemedText>

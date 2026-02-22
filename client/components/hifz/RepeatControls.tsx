@@ -70,7 +70,7 @@ export function RepeatControls({ onStop, isRepeating, currentRepeat: externalCur
       style={[
         styles.optionButton,
         {
-          backgroundColor: isSelected ? activeColor : '#FFFFFF',
+          backgroundColor: isSelected ? activeColor : (isDark ? theme.cardBackground : '#FFFFFF'),
           borderWidth: 0,
           borderColor: 'transparent',
           ...(isSelected ? {

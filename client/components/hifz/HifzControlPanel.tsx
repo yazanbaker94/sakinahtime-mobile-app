@@ -148,7 +148,7 @@ export function HifzControlPanel({
       style={[
         styles.tabButton,
         {
-          backgroundColor: activeTab === tab ? activeColor : '#FFFFFF',
+          backgroundColor: activeTab === tab ? activeColor : (isDark ? theme.cardBackground : '#FFFFFF'),
           borderWidth: 0,
           borderColor: 'transparent',
           ...(activeTab === tab ? {
@@ -192,7 +192,7 @@ export function HifzControlPanel({
       style={[
         styles.delayOption,
         {
-          backgroundColor: settings.autoHideDelay === delay ? activeColor : '#FFFFFF',
+          backgroundColor: settings.autoHideDelay === delay ? activeColor : (isDark ? theme.cardBackground : '#FFFFFF'),
           borderWidth: 0,
           borderColor: 'transparent',
           ...(settings.autoHideDelay === delay ? {
@@ -284,7 +284,7 @@ export function HifzControlPanel({
                     style={[
                       styles.modeOption,
                       {
-                        backgroundColor: '#FFFFFF',
+                        backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
                         borderWidth: 0,
                         borderColor: 'transparent',
                         borderLeftWidth: settings.hideMode === option.value ? 4 : 0,
@@ -316,7 +316,7 @@ export function HifzControlPanel({
                     style={[
                       styles.modeOption,
                       {
-                        backgroundColor: '#FFFFFF',
+                        backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
                         borderWidth: 0,
                         borderColor: 'transparent',
                         shadowColor: '#000',
@@ -362,7 +362,7 @@ export function HifzControlPanel({
                   <TouchableOpacity
                     onPress={revealAll}
                     style={[styles.actionButton, {
-                      backgroundColor: '#FFFFFF',
+                      backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
                       borderWidth: 0,
                       borderColor: 'transparent',
                       shadowColor: '#000',
@@ -378,7 +378,7 @@ export function HifzControlPanel({
                   <TouchableOpacity
                     onPress={hideAll}
                     style={[styles.actionButton, {
-                      backgroundColor: '#FFFFFF',
+                      backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
                       borderWidth: 0,
                       borderColor: 'transparent',
                       shadowColor: '#000',
@@ -449,7 +449,7 @@ export function HifzControlPanel({
                       <TouchableOpacity
                         onPress={() => handleMarkStatus('not_started')}
                         style={[styles.statusButton, {
-                          backgroundColor: '#FFFFFF',
+                          backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
                           borderWidth: 0,
                           borderColor: 'transparent',
                           shadowColor: '#000',
@@ -466,7 +466,7 @@ export function HifzControlPanel({
                       <TouchableOpacity
                         onPress={() => handleMarkStatus('in_progress')}
                         style={[styles.statusButton, {
-                          backgroundColor: '#FFFFFF',
+                          backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
                           borderWidth: 0,
                           borderColor: 'transparent',
                           shadowColor: '#000',
@@ -483,7 +483,7 @@ export function HifzControlPanel({
                       <TouchableOpacity
                         onPress={() => handleMarkStatus('memorized')}
                         style={[styles.statusButton, {
-                          backgroundColor: '#FFFFFF',
+                          backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
                           borderWidth: 0,
                           borderColor: 'transparent',
                           shadowColor: '#000',

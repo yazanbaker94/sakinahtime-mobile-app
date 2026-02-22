@@ -109,13 +109,12 @@ export function PrayerStatusIndicator({
       // Haptics not available on this device
     }
 
-    // Dramatic shrink-bounce animation
+    // Spring outward then settle — feels like a satisfying snap
     if (nextStatus !== 'unmarked') {
-      scaleAnim.setValue(0.3); // Shrink down dramatically
       Animated.spring(scaleAnim, {
         toValue: 1,
-        friction: 3,   // Less friction = more overshoot bounce
-        tension: 180,
+        friction: 4,
+        tension: 200,
         useNativeDriver: true,
       }).start();
     } else {
@@ -163,8 +162,25 @@ export function PrayerStatusIndicator({
       <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
         <Pressable
           onPress={handlePress}
+          onPressIn={() => {
+            // Press-in shrink — feels like pushing a glass button
+            Animated.timing(scaleAnim, {
+              toValue: 0.85,
+              duration: 100,
+              useNativeDriver: true,
+            }).start();
+          }}
+          onPressOut={() => {
+            // If not handled by handlePress, spring back
+            Animated.spring(scaleAnim, {
+              toValue: 1,
+              friction: 5,
+              tension: 200,
+              useNativeDriver: true,
+            }).start();
+          }}
           disabled={disabled}
-          style={({ pressed }) => [
+          style={[
             styles.button,
             {
               width: config.button,
@@ -179,7 +195,7 @@ export function PrayerStatusIndicator({
                     : currentStatusInfo.color,
               borderWidth: (isUnmarked && !showPastFill && !showCurrentPulse) ? 1.5 : showCurrentPulse ? 2 : 0,
               borderColor: showCurrentPulse ? `${theme.primary}50` : (isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.25)'),
-              opacity: pressed ? 0.7 : (disabled ? 0.4 : 1),
+              opacity: disabled ? 0.4 : 1,
             },
           ]}
         >

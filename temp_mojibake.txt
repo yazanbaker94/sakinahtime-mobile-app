@@ -1,0 +1,2 @@
+﻿2777: ? `${t('mushaf.play')} ${hifzMode.settings.repeatCount}Ã—`
+4633: {audioState.playbackRate}Ã—

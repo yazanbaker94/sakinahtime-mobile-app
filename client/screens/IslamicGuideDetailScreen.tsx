@@ -45,7 +45,7 @@ interface Props {
 export default function IslamicGuideDetailScreen({ route }: Props) {
   const { guide } = route.params;
   const insets = useSafeAreaInsets();
-  const { theme } = useTheme();
+  const { theme, isDark } = useTheme();
   const { t, locale } = useTranslation();
   const isAr = locale === 'ar';
   const navigation = useNavigation();
@@ -88,7 +88,7 @@ export default function IslamicGuideDetailScreen({ route }: Props) {
           style={[
             styles.descriptionCard,
             {
-              backgroundColor: '#FFFFFF',
+              backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
               shadowColor: '#000',
               shadowOffset: { width: 0, height: 6 },
               shadowOpacity: 0.05,
@@ -166,7 +166,7 @@ export default function IslamicGuideDetailScreen({ route }: Props) {
             style={[
               styles.referencesCard,
               {
-                backgroundColor: '#FFFFFF',
+                backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
                 shadowColor: '#000',
                 shadowOffset: { width: 0, height: 6 },
                 shadowOpacity: 0.05,

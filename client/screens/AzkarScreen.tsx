@@ -6,7 +6,7 @@
  */
 
 import React, { useCallback, useState, useMemo, useRef } from 'react';
-import { Image } from 'react-native';
+import { Image } from 'expo-image';
 import { View, StyleSheet, ScrollView, Pressable, TextInput, FlatList, Animated, Alert } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 import { ThemedText } from '@/components/ThemedText';
@@ -317,7 +317,7 @@ export default function AzkarScreen() {
   const renderEmptyState = useCallback((message: string, icon: keyof typeof Feather.glyphMap) => (
     <View style={styles.emptyState}>
       {icon === 'edit-3' ? (
-        <Image source={CUSTOM_DUA_ICON} style={{ width: 64, height: 64 }} resizeMode="contain" fadeDuration={0} />
+        <Image source={CUSTOM_DUA_ICON} style={{ width: 64, height: 64 }} contentFit="contain" transition={0} cachePolicy="memory" />
       ) : (
         <Feather name={icon} size={48} color={theme.textSecondary} />
       )}
@@ -386,7 +386,7 @@ export default function AzkarScreen() {
                       <Pressable key={category.id} onPress={() => handleDuaCategoryPress(category)} style={({ pressed }) => [styles.duaCategoryCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#FFFFFF', shadowColor: '#000', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.05, shadowRadius: 20, elevation: 3, borderWidth: 0, borderColor: 'transparent', opacity: pressed ? 0.7 : 1 }]}>
                         <View style={[styles.duaCategoryIcon, { backgroundColor: `${theme.primary}10` }]}>
                           {DUA_3D_ICONS[category.icon] ? (
-                            <Image source={DUA_3D_ICONS[category.icon]} style={{ width: 28, height: 28 }} resizeMode="contain" fadeDuration={0} />
+                            <Image source={DUA_3D_ICONS[category.icon]} style={{ width: 28, height: 28 }} contentFit="contain" transition={0} cachePolicy="memory" />
                           ) : (
                             <Feather name={DUA_ICON_MAP[category.icon] || 'star'} size={24} color={theme.primary} />
                           )}
@@ -439,7 +439,7 @@ export default function AzkarScreen() {
                 <View key={category.id} style={styles.guideCategory}>
                   <View style={styles.guideCategoryHeader}>
                     {GUIDE_3D_ICONS[category.id] && (
-                      <Image source={GUIDE_3D_ICONS[category.id]} style={{ width: 32, height: 32 }} resizeMode="contain" fadeDuration={0} />
+                      <Image source={GUIDE_3D_ICONS[category.id]} style={{ width: 32, height: 32 }} contentFit="contain" transition={0} cachePolicy="memory" />
                     )}
                     <View style={styles.guideCategoryTitles}>
                       <View style={styles.categoryTitleRow}><ThemedText type="h4" style={{ flex: 1 }}>{t(`guideCategories.${category.id}`)}</ThemedText></View>

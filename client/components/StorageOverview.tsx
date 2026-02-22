@@ -5,7 +5,8 @@
  */
 
 import React from 'react';
-import { View, StyleSheet, Pressable, Image } from 'react-native';
+import { View, StyleSheet, Pressable } from 'react-native';
+import { Image } from 'expo-image';
 import { ThemedText } from '@/components/ThemedText';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
@@ -46,7 +47,7 @@ export function StorageOverview({ storageInfo, onManagePress }: StorageOverviewP
     ]}>
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <Image source={require('../../assets/images/3d-images/Storage.png')} style={{ width: 36, height: 36, marginRight: Spacing.sm }} resizeMode="contain" />
+          <Image source={require('../../assets/images/3d-images/Storage.png')} style={{ width: 36, height: 36, marginRight: Spacing.sm }} contentFit="contain" transition={0} cachePolicy="memory" />
           <View>
             <ThemedText type="body" style={{ fontWeight: '600' }}>
               {t('storageOverview.storageUsed')}

@@ -157,17 +157,14 @@ Tracked with SakinahTime 🌙`;
 
   return (
     <ThemedView style={styles.container}>
-      <ScrollView
-        contentContainerStyle={[
-          styles.scrollContent,
-          {
-            paddingTop: insets.top + Spacing.lg,
-            paddingBottom: insets.bottom + Spacing.xl,
-          },
-        ]}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Header */}
+      {/* Pinned header — solid background so content scrolls behind it */}
+      <View style={[
+        styles.pinnedHeader,
+        {
+          paddingTop: insets.top + Spacing.md,
+          backgroundColor: theme.backgroundDefault,
+        },
+      ]}>
         <View style={styles.header}>
           <View style={styles.headerLeft}>
             <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
@@ -179,6 +176,18 @@ Tracked with SakinahTime 🌙`;
             <Feather name="share" size={20} color={theme.text} />
           </Pressable>
         </View>
+      </View>
+
+      <ScrollView
+        contentContainerStyle={[
+          styles.scrollContent,
+          {
+            paddingTop: Spacing.md,
+            paddingBottom: insets.bottom + Spacing.xl,
+          },
+        ]}
+        showsVerticalScrollIndicator={false}
+      >
 
         {/* Tracking Toggle */}
         <View style={[
@@ -461,6 +470,10 @@ Tracked with SakinahTime 🌙`;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  pinnedHeader: {
+    paddingHorizontal: Spacing.lg,
+    zIndex: 10,
   },
   scrollContent: {
     paddingHorizontal: Spacing.lg,

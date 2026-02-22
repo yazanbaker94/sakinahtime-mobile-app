@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import quranData from "@/data/quran-uthmani.json";
-import englishData from "@/data/quran-english.json";
+import QuranDatabase from "@/services/QuranDatabase";
 
 export interface QuranVerse {
   number: number;
@@ -23,37 +22,21 @@ export interface SurahData {
   ayahs: QuranVerse[];
 }
 
-interface QuranDataStructure {
-  code: number;
-  status: string;
-  data: {
-    surahs: SurahData[];
-  };
-}
-
-const typedQuranData = quranData as QuranDataStructure;
-const typedEnglishData = englishData as QuranDataStructure;
-
-// Create indexed maps for O(1) lookup
-const surahMap = new Map<number, SurahData>();
-const englishSurahMap = new Map<number, SurahData>();
-
-typedQuranData.data.surahs.forEach(surah => surahMap.set(surah.number, surah));
-typedEnglishData.data.surahs.forEach(surah => englishSurahMap.set(surah.number, surah));
-
-function getSurah(surahNumber: number): SurahData | null {
-  return surahMap.get(surahNumber) || null;
-}
-
-function getEnglishSurah(surahNumber: number): SurahData | null {
-  return englishSurahMap.get(surahNumber) || null;
+export interface CombinedVerse {
+  number: number;
+  numberInSurah: number;
+  textAr: string;
+  translation: string;
+  juz: number;
+  page: number;
 }
 
 export function useSurah(surahNumber: number) {
   return useQuery({
     queryKey: ["surah", surahNumber],
-    queryFn: () => {
-      const surah = getSurah(surahNumber);
+    queryFn: async () => {
+      await QuranDatabase.init();
+      const surah = await QuranDatabase.getSurah(surahNumber);
       if (!surah) {
         throw new Error(`Surah ${surahNumber} not found`);
       }
@@ -64,17 +47,9 @@ export function useSurah(surahNumber: number) {
   });
 }
 
-export interface CombinedVerse {
-  number: number;
-  numberInSurah: number;
-  textAr: string;
-  translation: string;
-  juz: number;
-  page: number;
-}
-
-export function combineVerses(arabic: SurahData): CombinedVerse[] {
-  const englishSurah = getEnglishSurah(arabic.number);
+export async function combineVerses(arabic: SurahData): Promise<CombinedVerse[]> {
+  await QuranDatabase.init();
+  const englishSurah = await QuranDatabase.getEnglishSurah(arabic.number);
   return arabic.ayahs.map((arabicVerse, index) => ({
     number: arabicVerse.number,
     numberInSurah: arabicVerse.numberInSurah,
@@ -85,6 +60,7 @@ export function combineVerses(arabic: SurahData): CombinedVerse[] {
   }));
 }
 
-export function getAllSurahs(): SurahData[] {
-  return typedQuranData.data.surahs;
+export async function getAllSurahs(): Promise<SurahData[]> {
+  await QuranDatabase.init();
+  return QuranDatabase.getAllSurahs();
 }

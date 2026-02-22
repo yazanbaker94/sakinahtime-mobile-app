@@ -1,0 +1,10 @@
+1834: {/* Note Modal */}
+1912: </Modal>
+1915: {/* Tafsir Modal */}
+2288: </Modal>
+2290: {/* Tafsir Sources Modal */}
+2292: {/* Reciter Picker Modal */}
+2334: </Modal>
+2337: {/* Audio Settings Modal */}
+2450: </Modal>
+2922: </Modal>

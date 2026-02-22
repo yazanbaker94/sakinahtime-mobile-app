@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, ScrollView, Pressable, Platform, ActivityIndicator, Switch, Image } from "react-native";
+import { View, StyleSheet, ScrollView, Pressable, Platform, ActivityIndicator, Switch, Alert } from "react-native";
+import { Image } from 'expo-image';
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -29,9 +30,6 @@ const WBW_LANGUAGES = [
   { id: 'tamil', name: 'Tamil', file: 'tamil-wbw-translation.json', flag: '🇮🇳', bundled: false },
   { id: 'french', name: 'French', file: 'french-wbw-translation.json', flag: '🇫🇷', bundled: false },
   { id: 'persian', name: 'Persian', file: 'persian-wbw-translation.json', flag: '🇮🇷', bundled: false },
-  { id: 'german', name: 'Deutsch', file: 'german-wbw-translation.json', flag: '🇩🇪', bundled: false },
-  { id: 'russian', name: 'Русский', file: 'russian-wbw-translation.json', flag: '🇷🇺', bundled: false },
-  { id: 'chinese', name: '中文', file: 'chinese-wbw-translation.json', flag: '🇨🇳', bundled: false },
 ];
 
 const WBW_CDN_BASE = 'https://sakinahtime.com/translations/wbw';
@@ -45,7 +43,9 @@ export default function WordByWordSettingsScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const [selectedLanguage, setSelectedLanguage] = useState('english');
-  const [downloadedLanguages, setDownloadedLanguages] = useState<Set<string>>(new Set(['english', 'arabic-gharib']));
+  const [downloadedLanguages, setDownloadedLanguages] = useState<Set<string>>(
+    new Set(WBW_LANGUAGES.map(l => l.id))
+  );
   const [downloadingLanguage, setDownloadingLanguage] = useState<string | null>(null);
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [audioEnabled, setAudioEnabled] = useState(true);
@@ -105,7 +105,16 @@ export default function WordByWordSettingsScreen() {
           const filePath = `${WBW_DIR}${lang.file}`;
           const fileInfo = await FileSystem.getInfoAsync(filePath);
           if (fileInfo.exists) {
-            downloaded.add(lang.id);
+            // Validate file is valid JSON (not a corrupted HTML error page)
+            try {
+              const content = await FileSystem.readAsStringAsync(filePath);
+              JSON.parse(content);
+              downloaded.add(lang.id);
+            } catch {
+              // Corrupted file — delete it silently
+              console.warn(`Deleting corrupted WBW file: ${lang.file}`);
+              await FileSystem.deleteAsync(filePath, { idempotent: true });
+            }
           }
         }
       }
@@ -140,12 +149,28 @@ export default function WordByWordSettingsScreen() {
       const result = await downloadResumable.downloadAsync();
 
       if (result?.uri) {
-        setDownloadedLanguages(prev => new Set([...prev, langId]));
-        // Auto-select after download
-        selectLanguage(langId);
+        // Validate downloaded file is valid JSON
+        try {
+          const content = await FileSystem.readAsStringAsync(filePath);
+          JSON.parse(content);
+          setDownloadedLanguages(prev => new Set([...prev, langId]));
+          // Auto-select after download
+          selectLanguage(langId);
+        } catch {
+          // Downloaded file is not valid JSON (e.g., HTML error page)
+          await FileSystem.deleteAsync(filePath, { idempotent: true });
+          Alert.alert(
+            'Download Failed',
+            'The downloaded file was corrupted. Please check your internet connection and try again.'
+          );
+        }
       }
     } catch (e) {
       console.error('Failed to download WBW language:', e);
+      Alert.alert(
+        'Download Failed',
+        'Could not download the language file. Please check your connection and try again.'
+      );
     } finally {
       setDownloadingLanguage(null);
       setDownloadProgress(0);
@@ -231,7 +256,9 @@ export default function WordByWordSettingsScreen() {
               shadowOpacity: 0.3,
               shadowRadius: 4,
             }}
-            resizeMode="contain"
+            contentFit="contain"
+            transition={0}
+            cachePolicy="memory"
           />
           <ThemedText type="caption" style={{ flex: 1, color: theme.textSecondary }}>
             {t('wordByWord.infoHint')}

@@ -6,7 +6,8 @@
  */
 
 import React from 'react';
-import { View, StyleSheet, Pressable, Image } from 'react-native';
+import { View, StyleSheet, Pressable } from 'react-native';
+import { Image } from 'expo-image';
 import { ThemedText } from '@/components/ThemedText';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -53,7 +54,9 @@ export function CompactCategoryCard({ category, onPress }: CompactCategoryCardPr
       <Image
         source={CATEGORY_3D_ICONS[category.id] || CATEGORY_3D_ICONS.general}
         style={{ width: 44, height: 44, marginBottom: Spacing.sm }}
-        resizeMode="contain"
+        contentFit="contain"
+        transition={0}
+        cachePolicy="memory"
       />
 
       {/* Title - locale aware via i18n */}

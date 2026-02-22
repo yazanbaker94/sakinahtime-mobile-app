@@ -49,10 +49,10 @@ export function AnimatedAudioWordHighlight({
         if (currentWordIndex >= 0 && currentWordIndex < wordCoords.length) {
             const coord = wordCoords[currentWordIndex];
             if (coord) {
-                const targetLeft = coord.x * imageScale;
-                const targetTop = (coord.y * imageScale) + imageOffsetY;
-                const targetWidth = Math.max(coord.width * imageScale, 20);
-                const targetHeight = Math.max(coord.height * imageScale, 20);
+                const targetLeft = (coord.x * imageScale) - 3;
+                const targetTop = (coord.y * imageScale) + imageOffsetY - 2;
+                const targetWidth = Math.max(coord.width * imageScale, 20) + 6;
+                const targetHeight = Math.max(coord.height * imageScale, 20) + 4;
 
                 // On first appearance, set position immediately (no animation)
                 // This prevents the "flying from above" effect

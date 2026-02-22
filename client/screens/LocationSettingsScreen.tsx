@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Pressable, StyleSheet, ScrollView, Platform, Image } from 'react-native';
+import { View, Pressable, StyleSheet, ScrollView, Platform } from 'react-native';
+import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
@@ -117,7 +118,7 @@ export default function LocationSettingsScreen() {
             borderWidth: 0,
           }]}>
             <View style={[styles.locationIconContainer, { backgroundColor: 'transparent' }]}>
-              <Image source={locationPin3D} style={{ width: 40, height: 40 }} resizeMode="contain" />
+              <Image source={locationPin3D} style={{ width: 40, height: 40 }} contentFit="contain" transition={0} cachePolicy="memory" />
             </View>
             <View style={{ flex: 1 }}>
               <ThemedText type="caption" secondary>

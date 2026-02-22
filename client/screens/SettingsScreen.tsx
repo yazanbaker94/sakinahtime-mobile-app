@@ -1,6 +1,7 @@
 import React from "react";
 
-import { View, StyleSheet, ScrollView, Pressable, Platform, Linking, Alert, Image } from "react-native";
+import { View, StyleSheet, ScrollView, Pressable, Platform, Linking, Alert } from "react-native";
+import { Image } from 'expo-image';
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
@@ -52,7 +53,7 @@ export default function SettingsScreen() {
           }]}>
             <View style={styles.settingRow}>
               <View style={styles.settingLeft}>
-                <Image source={ICON_THEMES} style={{ width: 44, height: 44, marginRight: Spacing.md }} resizeMode="contain" />
+                <Image source={ICON_THEMES} style={{ width: 44, height: 44, marginRight: Spacing.md }} contentFit="contain" transition={0} cachePolicy="memory" />
                 <View style={styles.settingText}>
                   <ThemedText type="body" style={{ fontWeight: '600' }}>
                     {t('settings.appearance')}

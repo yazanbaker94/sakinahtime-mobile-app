@@ -11,7 +11,7 @@ import quranWordsData from '../../assets/words/quran_words.json';
 import englishWbwData from '../../assets/words/english-wbw-translation.json';
 import englishTransliterationData from '../../assets/words/english-wbw-transliteration.json';
 import wordFrequencies from '../../assets/words/word-frequencies.json';
-import quranData from '../data/quran-uthmani.json';
+import { QuranDataBridge } from './QuranDataBridge';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as FileSystem from 'expo-file-system/legacy';
 
@@ -43,9 +43,6 @@ const WBW_LANGUAGES: Record<string, string> = {
   'tamil': 'tamil-wbw-translation.json',
   'french': 'french-wbw-translation.json',
   'persian': 'persian-wbw-translation.json',
-  'german': 'german-wbw-translation.json',
-  'russian': 'russian-wbw-translation.json',
-  'chinese': 'chinese-wbw-translation.json',
 };
 
 // Map app locale codes to WBW language names
@@ -53,9 +50,6 @@ const LOCALE_TO_WBW: Record<string, string> = {
   'en': 'english',
   'ar': 'arabic-gharib',
   'fr': 'french',
-  'de': 'german',
-  'ru': 'russian',
-  'zh': 'chinese',
   'ur': 'urdu',
   'id': 'indonesian',
   'bn': 'bangla',
@@ -121,7 +115,7 @@ const initializeIndex = () => {
  * Get the verse text from quran-uthmani.json
  */
 const getVerseText = (surah: number, ayah: number): string | null => {
-  const surahData = (quranData as any).data.surahs.find((s: any) => s.number === surah);
+  const surahData = (QuranDataBridge.quranData as any).data.surahs.find((s: any) => s.number === surah);
   if (!surahData) return null;
   const ayahData = surahData.ayahs.find((a: any) => a.numberInSurah === ayah);
   return ayahData?.text || null;
@@ -242,12 +236,23 @@ const loadWbwData = async (language: string): Promise<Record<string, string>> =>
     const fileInfo = await FileSystem.getInfoAsync(filePath);
     if (fileInfo.exists) {
       const content = await FileSystem.readAsStringAsync(filePath);
-      cachedWbwData = JSON.parse(content);
-      cachedLanguage = language;
-      return cachedWbwData!;
+      const parsed = JSON.parse(content);
+      // Validate it's actually a WBW object (keys like "1:1:1")
+      if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
+        cachedWbwData = parsed;
+        cachedLanguage = language;
+        return cachedWbwData!;
+      } else {
+        throw new Error('Invalid WBW data format');
+      }
     }
   } catch (e) {
     console.error(`Failed to load WBW data for ${language}:`, e);
+    // Self-heal: delete corrupted file so user can re-download
+    try {
+      await FileSystem.deleteAsync(filePath, { idempotent: true });
+      console.warn(`Deleted corrupted WBW file for ${language}`);
+    } catch (_) { }
   }
 
   // Fallback to English if file not found or error

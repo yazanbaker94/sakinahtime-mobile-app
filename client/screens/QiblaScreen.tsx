@@ -1,5 +1,6 @@
 import React, { useMemo, useEffect, useRef } from "react";
-import { View, StyleSheet, Platform, Pressable, useWindowDimensions, Image } from "react-native";
+import { View, StyleSheet, Platform, Pressable, useWindowDimensions } from "react-native";
+import { Image } from 'expo-image';
 import { ThemedText } from "@/components/ThemedText";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
@@ -27,7 +28,7 @@ import Animated, {
   interpolateColor,
 } from "react-native-reanimated";
 import { useTranslation } from "@/hooks/useTranslation";
-import { usePrayerColor } from "@/contexts/PrayerColorContext";
+import { usePrayerColorStore } from "@/stores/usePrayerColorStore";
 import { MosqueApiService } from "@/services/MosqueApiService";
 import { DEFAULT_RADIUS } from "@/constants/mosque";
 
@@ -78,7 +79,7 @@ export default function QiblaScreen() {
   const kaabaGlowScale = useSharedValue(1);
 
   // Dynamic prayer color
-  const { dynamicColor } = usePrayerColor();
+  const dynamicColor = usePrayerColorStore((s) => s.dynamicColor);
 
   // Get responsive dimensions
   const compassSize = useCompassSize();
@@ -286,8 +287,9 @@ export default function QiblaScreen() {
               <Image
                 source={require('../../assets/images/3d-images/location.png')}
                 style={{ width: 120, height: 120 }}
-                resizeMode="contain"
-                fadeDuration={0}
+                contentFit="contain"
+                transition={0}
+                cachePolicy="memory"
               />
             </View>
 

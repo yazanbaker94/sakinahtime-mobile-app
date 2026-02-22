@@ -8,11 +8,11 @@
 import * as FileSystem from 'expo-file-system/legacy';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StorageInfo, OfflineSettings, StorageCategory } from '../types/offline';
-import { 
-  DEFAULT_OFFLINE_SETTINGS, 
-  STORAGE_KEYS, 
+import {
+  DEFAULT_OFFLINE_SETTINGS,
+  STORAGE_KEYS,
   OFFLINE_DIRS,
-  STORAGE_LIMITS 
+  STORAGE_LIMITS
 } from '../constants/offline';
 
 class OfflineStorageServiceImpl {
@@ -20,7 +20,7 @@ class OfflineStorageServiceImpl {
   private settings: OfflineSettings = DEFAULT_OFFLINE_SETTINGS;
   private initialized = false;
 
-  private constructor() {}
+  private constructor() { }
 
   static getInstance(): OfflineStorageServiceImpl {
     if (!OfflineStorageServiceImpl.instance) {
@@ -86,7 +86,7 @@ class OfflineStorageServiceImpl {
       for (const file of files) {
         const filePath = `${dirPath}${file}`;
         const fileInfo = await FileSystem.getInfoAsync(filePath);
-        
+
         if (fileInfo.exists) {
           if ('size' in fileInfo && typeof fileInfo.size === 'number') {
             totalSize += fileInfo.size;
@@ -169,7 +169,7 @@ class OfflineStorageServiceImpl {
   async clearAudioCache(reciter?: string): Promise<void> {
     try {
       const audioDir = this.getCategoryDir('audio');
-      
+
       if (reciter) {
         // Clear specific reciter
         const reciterDir = `${audioDir}${reciter}/`;
@@ -201,7 +201,7 @@ class OfflineStorageServiceImpl {
   async clearTafsirCache(source?: string): Promise<void> {
     try {
       const tafsirDir = this.getCategoryDir('tafsir');
-      
+
       if (source) {
         const sourceDir = `${tafsirDir}${source}/`;
         const dirInfo = await FileSystem.getInfoAsync(sourceDir);
@@ -239,6 +239,8 @@ class OfflineStorageServiceImpl {
 
   /**
    * Clear other cache (system cache)
+   * Preserves image cache directories used by native image loaders (Glide/SDWebImage)
+   * to prevent 3D icons and other bundled images from disappearing.
    */
   async clearOtherCache(): Promise<void> {
     try {
@@ -247,9 +249,18 @@ class OfflineStorageServiceImpl {
         const dirInfo = await FileSystem.getInfoAsync(cacheDir);
         if (dirInfo.exists) {
           const files = await FileSystem.readDirectoryAsync(cacheDir);
+          // Directories used by native image loaders to cache decoded bitmaps
+          const IMAGE_CACHE_DIRS = new Set([
+            'image_cache',                    // Glide (Android) disk cache
+            'image_manager_disk_cache',       // Glide (Android) resource cache
+            'image_disk_cache',               // SDWebImage (iOS) disk cache
+            'http-cache',                     // URL cache (can contain images)
+            'com.hackemist.SDImageCache',      // SDWebImage (iOS) default cache
+            'ExponentExperienceData',         // Expo managed assets
+          ]);
           for (const file of files) {
-            // Skip system files
-            if (!file.startsWith('.')) {
+            // Skip system files and image cache directories
+            if (!file.startsWith('.') && !IMAGE_CACHE_DIRS.has(file)) {
               await FileSystem.deleteAsync(`${cacheDir}${file}`, { idempotent: true });
             }
           }
@@ -303,11 +314,11 @@ class OfflineStorageServiceImpl {
   async performCleanupIfNeeded(): Promise<void> {
     try {
       const info = await this.getStorageInfo();
-      
+
       if (info.totalUsed > this.settings.storageLimit) {
         // Clear other cache first
         await this.clearOtherCache();
-        
+
         // Check again
         const newInfo = await this.getStorageInfo();
         if (newInfo.totalUsed > this.settings.storageLimit) {
@@ -326,7 +337,7 @@ class OfflineStorageServiceImpl {
   async isStorageNearLimit(): Promise<{ warning: boolean; critical: boolean }> {
     const info = await this.getStorageInfo();
     const usage = info.totalUsed / this.settings.storageLimit;
-    
+
     return {
       warning: usage >= STORAGE_LIMITS.WARNING_THRESHOLD,
       critical: usage >= STORAGE_LIMITS.CRITICAL_THRESHOLD,

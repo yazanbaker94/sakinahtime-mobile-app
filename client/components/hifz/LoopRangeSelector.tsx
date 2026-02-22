@@ -65,7 +65,7 @@ export function LoopRangeSelector({
     <View style={[styles.container, style]}>
       {/* Current Range Display */}
       <View style={[styles.rangeDisplay, {
-        backgroundColor: '#FFFFFF',
+        backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 3 },
         shadowOpacity: 0.05,
@@ -100,7 +100,7 @@ export function LoopRangeSelector({
       {/* Help Text */}
       {!hasValidRange && (
         <View style={[styles.helpBox, {
-          backgroundColor: '#FFFFFF',
+          backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
           shadowColor: '#000',
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.04,

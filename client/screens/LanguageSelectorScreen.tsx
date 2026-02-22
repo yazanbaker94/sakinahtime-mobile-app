@@ -145,6 +145,7 @@ const styles = StyleSheet.create({
     },
     card: {
         borderRadius: BorderRadius.lg,
+        overflow: 'hidden',
         borderWidth: 0,
         borderColor: 'transparent',
         shadowColor: '#000',

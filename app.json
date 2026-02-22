@@ -82,7 +82,8 @@
       [
         "@jamsch/expo-speech-recognition",
         {}
-      ]
+      ],
+      "expo-sqlite"
     ],
     "extra": {
       "eas": {

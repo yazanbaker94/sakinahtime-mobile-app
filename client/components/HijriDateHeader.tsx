@@ -7,7 +7,8 @@
  */
 
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
+import { Image } from 'expo-image';
 import { HijriDate, MoonPhase, FastingDay } from '../types/hijri';
 import { EventWithDate } from '../services/IslamicEventsService';
 import { useTheme } from '../hooks/useTheme';
@@ -68,7 +69,7 @@ export const HijriDateHeader = React.memo(function HijriDateHeader({
     return (
       <View style={[styles.compactContainer, { backgroundColor: bgColor }]}>
         {showMoonPhase && (
-          <Image source={moon3D} style={{ width: 28, height: 28 }} resizeMode="contain" />
+          <Image source={moon3D} style={{ width: 28, height: 28 }} contentFit="contain" transition={0} cachePolicy="memory" />
         )}
         <View style={styles.compactContent}>
           <Text style={styles.compactHijri}>
@@ -96,7 +97,7 @@ export const HijriDateHeader = React.memo(function HijriDateHeader({
         {/* 3D Moon */}
         {showMoonPhase && (
           <View style={styles.moonContainer}>
-            <Image source={moon3D} style={{ width: 56, height: 56 }} resizeMode="contain" />
+            <Image source={moon3D} style={{ width: 56, height: 56 }} contentFit="contain" transition={0} cachePolicy="memory" />
           </View>
         )}
 

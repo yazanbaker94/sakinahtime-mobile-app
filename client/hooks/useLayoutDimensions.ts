@@ -1,5 +1,6 @@
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useWindowDimensions } from 'react-native';
+import { TAB_BAR_HEIGHT, TAB_BAR_BOTTOM } from '@/navigation/MainTabNavigator';
 
 // Constants for Mushaf image dimensions (original image size)
 const MUSHAF_IMAGE_WIDTH = 1300;
@@ -29,28 +30,29 @@ export interface LayoutDimensions {
 /**
  * Hook to calculate layout dimensions for MushafScreen.
  * Provides consistent measurements across all devices by accounting for
- * safe areas, tab bar, and calculating proper image positioning.
+ * safe areas, floating tab bar, footer zone, and calculating proper image positioning.
  * 
- * @param tabBarHeight - The tab bar height from useBottomTabBarHeight()
+ * @param tabBarHeight - The tab bar height from useBottomTabBarHeight() (used as fallback)
  * @returns LayoutDimensions object with all calculated values
  */
 export function useLayoutDimensions(tabBarHeight?: number): LayoutDimensions {
   const insets = useSafeAreaInsets();
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
 
-  // Use provided tab bar height or fallback
-  const effectiveTabBarHeight = tabBarHeight ?? DEFAULT_TAB_BAR_HEIGHT;
+  // Use actual floating tab bar footprint (height + bottom offset)
+  // This is the total space the tab bar occupies from the device bottom
+  const floatingTabBarClearance = TAB_BAR_HEIGHT + TAB_BAR_BOTTOM;
 
   const safeAreaTop = insets.top;
   const safeAreaBottom = insets.bottom;
 
   // Calculate available height for content zone
-  // Total screen - safe area top - header - tab bar
-  // Footer overlays on content zone, so not subtracted
+  // Total screen - safe area top - header - floating tab bar clearance - footer (page number)
   const contentZoneHeight = screenHeight
     - safeAreaTop
     - HEADER_ZONE_HEIGHT
-    - effectiveTabBarHeight;
+    - floatingTabBarClearance
+    - FOOTER_ZONE_HEIGHT;
 
   // Calculate image scaling to fit screen width
   const imageScale = screenWidth / MUSHAF_IMAGE_WIDTH;
@@ -64,7 +66,7 @@ export function useLayoutDimensions(tabBarHeight?: number): LayoutDimensions {
     screenHeight,
     safeAreaTop,
     safeAreaBottom,
-    tabBarHeight: effectiveTabBarHeight,
+    tabBarHeight: floatingTabBarClearance,
     headerZoneHeight: HEADER_ZONE_HEIGHT,
     footerZoneHeight: FOOTER_ZONE_HEIGHT,
     contentZoneHeight,
@@ -84,10 +86,12 @@ export function calculateLayoutDimensions(
   safeAreaBottom: number,
   tabBarHeight: number
 ): LayoutDimensions {
+  const floatingTabBarClearance = TAB_BAR_HEIGHT + TAB_BAR_BOTTOM;
   const contentZoneHeight = screenHeight
     - safeAreaTop
     - HEADER_ZONE_HEIGHT
-    - tabBarHeight;
+    - floatingTabBarClearance
+    - FOOTER_ZONE_HEIGHT;
 
   const imageScale = screenWidth / MUSHAF_IMAGE_WIDTH;
   const imageHeight = MUSHAF_IMAGE_HEIGHT * imageScale;
@@ -98,7 +102,7 @@ export function calculateLayoutDimensions(
     screenHeight,
     safeAreaTop,
     safeAreaBottom,
-    tabBarHeight,
+    tabBarHeight: floatingTabBarClearance,
     headerZoneHeight: HEADER_ZONE_HEIGHT,
     footerZoneHeight: FOOTER_ZONE_HEIGHT,
     contentZoneHeight,

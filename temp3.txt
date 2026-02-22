@@ -1,0 +1,63 @@
+114: const quranData = QuranDataBridge.quranData;
+116: const { t, locale } = useTranslation();
+204: audioState, setAudioState,
+329: if (!audioState?.isPlaying || !audioState?.segments?.length || audioState?.positionMs === undefined)
+333: const positionMs = audioState.positionMs;
+334: const segments = audioState.segments; // [[wordIdx, startMs, endMs], ...]
+339: verseKey: audioState?.current ? `${audioState.current.surah}:${audioState.current.ayah}` : 'unknown'
+363: }, [audioState?.isPlaying, audioState?.segments, audioState?.positionMs]);
+367: if (!audioState?.current) return null;
+368: return `${audioState.current.surah}:${audioState.current.ayah}`;
+369: }, [audioState?.current?.surah, audioState?.current?.ayah]);
+469: quranData.data.surahs.forEach((surah: any) => {
+602: const reciters = [
+633: const handleReciterChange = (reciter: string) => {
+639: const surahData = quranData.data.surahs.find((s: any) => s.number === surah);
+650: quranData.data.surahs.forEach((s: any) => {
+661: quranData.data.surahs.forEach((s: any) => {
+736: const surah = quranData.data.surahs.find((s: any) => s.number === params.surahNumber);
+930: quranData.data.surahs.forEach((surah: any) => {
+961: const verseData = quranData.data.surahs
+1129: const hasWordTiming = isCurrentVersePlaying && audioState?.segments?.length > 0;
+1145: const segmentCount = audioState?.segments?.length || 0;
+1163: const isAudioPlaying = audioState?.current && `${audioState.current.surah}:${audioState.current.ayah
+1341: const verseData = quranData.data.surahs
+1351: const verseData = quranData.data.surahs
+1683: const verseData = quranData.data.surahs
+1702: const verseData = quranData.data.surahs
+1938: data={reciters}
+1943: handleReciterChange(item.value);
+1957: <ThemedText type="body" style={{ fontWeight: selectedReciter === item.value ? '600' : '400', fontSiz
+1996: if (audioState?.current && audioState.isPlaying) {
+1997: const currentSurah = audioState.current.surah;
+1998: const currentAyah = audioState.current.ayah;
+2004: const surahData = quranData.data.surahs.find((s: any) => s.number === currentSurah);
+2015: quranData.data.surahs.forEach((s: any) => {
+2024: quranData.data.surahs.forEach((s: any) => {
+2075: <ThemedText type="body" style={{ fontSize: 15, pointerEvents: 'none' }}>{locale === 'ar' ? reciters.
+2085: audioState?.current && !isPlayerMinimized && (
+2139: backgroundColor: audioState.isPlaying ? theme.primary : (isDark ? '#666' : '#999'),
+2148: {audioState.isPlaying ? t('mushaf.nowPlaying') : t('mushaf.paused')}
+2162: {audioState.playbackRate}x
+2167: {(locale === 'ar' ? surahs.find(s => s.number === audioState.current.surah)?.nameAr : surahs.find(s 
+2171: {t('mushaf.verse')} {audioState.current.ayah}
+2174: {audioState.isRepeating && (
+2178: {t('mushaf.repeat')} {audioState.currentRepeat}/{audioState.totalRepeats === 0 ? 'âˆž' : audioState.
+2183: {audioState.isLooping && (
+2191: {audioState.queue.length > 0 && (
+2195: {audioState.queue.length} {t('mushaf.remaining')}
+2218: if (audioState.isPlaying) {
+2234: shadowColor: audioState.isPlaying ? theme.primary : '#000',
+2235: shadowOffset: { width: 0, height: audioState.isPlaying ? 0 : 4 },
+2236: shadowOpacity: audioState.isPlaying ? 0.7 : 0.3,
+2237: shadowRadius: audioState.isPlaying ? 20 : 8,
+2238: elevation: audioState.isPlaying ? 16 : 6,
+2241: <Feather name={audioState.isPlaying ? 'pause' : 'play'} size={20 * playerScale} color="#FFF" />
+2302: backgroundColor: audioState.playbackRate === speed ? `${theme.primary}26` : 'transparent',
+2306: <ThemedText type="small" style={{ fontWeight: audioState.playbackRate === speed ? '600' : '400', col
+2319: audioState?.current && isPlayerMinimized && (
+2349: <Feather name={audioState.isPlaying ? 'pause' : 'play'} size={14 * playerScale} color={theme.primary
+2351: {(locale === 'ar' ? surahs.find(s => s.number === audioState.current.surah)?.nameAr : surahs.find(s 
+2357: if (audioState.isPlaying) {
+2378: <Feather name={audioState.isPlaying ? 'pause' : 'play'} size={18 * playerScale} color="#FFF" />
+2567: const verseData = quranData.data.surahs

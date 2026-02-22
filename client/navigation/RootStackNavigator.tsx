@@ -1,6 +1,7 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MainTabNavigator from "@/navigation/MainTabNavigator";
+import OnboardingScreen from "@/screens/OnboardingScreen";
 import AzkarDetailScreen from "@/screens/AzkarDetailScreen";
 import IslamicGuideDetailScreen from "@/screens/IslamicGuideDetailScreen";
 import MushafScreen from "@/screens/MushafScreen";
@@ -31,7 +32,6 @@ import WordByWordSettingsScreen from "@/screens/WordByWordSettingsScreen";
 import { ReciterSelectionScreen } from "@/screens/ReciterSelectionScreen";
 import LocationSettingsScreen from "@/screens/LocationSettingsScreen";
 import LanguageSelectorScreen from "@/screens/LanguageSelectorScreen";
-import OnboardingScreen from "@/screens/OnboardingScreen";
 import { useOnboarding } from "@/hooks/useOnboarding";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 import type { AzkarCategory } from "@/data/azkar";

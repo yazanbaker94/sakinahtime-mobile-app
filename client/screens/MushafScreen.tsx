@@ -1,4 +1,5 @@
-import React, { useState, useCallback, useMemo, useRef, useEffect, useLayoutEffect } from "react";
+﻿import React, { useState, useCallback, useMemo, useRef, useEffect, useLayoutEffect } from "react";
+import { useShallow } from 'zustand/react/shallow';
 import {
   View,
   StyleSheet,
@@ -10,6 +11,7 @@ import {
   ActivityIndicator,
   TextInput,
   Animated as RNAnimated,
+  InteractionManager,
   KeyboardAvoidingView,
   Platform,
   TouchableWithoutFeedback,
@@ -21,7 +23,7 @@ import { Image } from "expo-image";
 import { BlurView } from "expo-blur";
 import PagerView from "react-native-pager-view";
 import * as Haptics from "expo-haptics";
-import * as Clipboard from 'expo-clipboard';
+
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BottomTabBarHeightContext } from '@react-navigation/bottom-tabs';
 import { useFocusEffect, useRoute, RouteProp } from '@react-navigation/native';
@@ -42,10 +44,9 @@ import * as FileSystem from "expo-file-system/legacy";
 import { useKeepAwake } from "expo-keep-awake";
 import { mushafImages } from "@/data/mushaf-images";
 import { surahPages } from "@/data/surah-pages";
-import quranData from "@/data/quran-uthmani.json";
+import { QuranDataBridge } from "@/services/QuranDataBridge";
 import { surahs } from "@/data/quran";
 import AudioService from "@/services/AudioService";
-import { useCoordinates } from "@/contexts/CoordinatesContext";
 import { useProgressTracker } from "@/hooks/useProgressTracker";
 import { useLayoutDimensions } from "@/hooks/useLayoutDimensions";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
@@ -63,6 +64,48 @@ import type { MemorizationStatus } from "@/types/hifz";
 import { CoachMark } from "@/components/CoachMark";
 import { useFeatureHint } from "@/hooks/useFeatureHint";
 import { useTranslation } from "@/hooks/useTranslation";
+import { NotesHighlightsPanel } from "@/components/mushaf/NotesHighlightsPanel";
+import { BookmarksPanel } from "@/components/mushaf/BookmarksPanel";
+
+
+// === MODULE-LEVEL STABLE COMPONENTS ===
+// Smart PageSlot: Each slot independently subscribes to the Zustand store.
+// When currentPage changes, only ~7 slots where isNear flips actually re-render.
+// The parent never re-renders → O(1) instead of O(604).
+// Supports jumpTarget for Asymmetric Jump (window=0, mount only target page during jump).
+const PageSlot = React.memo(({ pageNum, screenWidth, renderPage }: {
+  pageNum: number;
+  screenWidth: number;
+  renderPage: (pageNum: number) => React.ReactNode;
+}) => {
+  // Per-slot Zustand selector: re-renders ONLY when this slot's isNear boolean changes
+  const isNear = useMushafNavigationStore((state) => {
+    if (state.jumpTarget !== null) {
+      // Asymmetric Jump: during jump, only mount the target page (window=0)
+      return Math.abs(state.jumpTarget - pageNum) <= 1;
+    }
+    return Math.abs(state.currentPage - pageNum) <= 3;
+  });
+
+  return (
+    <View style={{ flex: 1, width: screenWidth }}>
+      {isNear && renderPage(pageNum)}
+    </View>
+  );
+});
+import { SurahListOverlay } from "@/components/SurahListOverlay";
+import { TafsirSourcesModal } from "@/components/TafsirSourcesModal";
+import { TafsirViewerModal } from "@/components/TafsirViewerModal";
+import { ReciterPickerModal, AudioSettingsModal, reciters } from "@/components/AudioSettingsModal";
+import { AudioPlayerBar, getVersesToPlay } from "@/components/mushaf/AudioPlayerBar";
+import { HifzStatusMenu } from "@/components/mushaf/HifzStatusMenu";
+import { VerseContextMenu } from "@/components/mushaf/VerseContextMenu";
+import { NoteModal } from "@/components/mushaf/NoteModal";
+import { useMushafNavigationStore } from "@/stores/useMushafNavigationStore";
+import { useMushafAnnotationStore } from "@/stores/useMushafAnnotationStore";
+import { useMushafAudioStore } from "@/stores/useMushafAudioStore";
+import { useMushafSearchStore } from "@/stores/useMushafSearchStore";
+import { useMushafTafsirStore } from "@/stores/useMushafTafsirStore";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -101,6 +144,8 @@ export default function MushafScreen() {
 
 // Inner component that can use Hifz hooks
 function MushafScreenContent() {
+  // Loaded from SQLite at app startup via QuranDataBridge.init()
+  const quranData = QuranDataBridge.quranData;
   const { theme, isDark } = useTheme();
   const { t, locale } = useTranslation();
   useKeepAwake(); // Keep screen on while reading Quran
@@ -117,7 +162,7 @@ function MushafScreenContent() {
   // Calculate responsive scale for player UI (base: 375px iPhone width)
   const playerScale = Math.min(1.3, Math.max(0.85, layout.screenWidth / 375));
 
-  const { allCoords, isLoading: coordsLoading, loadCoordinates } = useCoordinates();
+  const allCoords = QuranDataBridge.allCoordinates;
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   // Progress tracking
@@ -127,10 +172,7 @@ function MushafScreenContent() {
   // Network status for offline indicator
   const { isOnline } = useNetworkStatus();
 
-  // Load coordinates when screen mounts
-  React.useEffect(() => {
-    loadCoordinates();
-  }, []);
+
 
   // Preload tafsir data in background after 2 seconds (doesn't block startup)
   React.useEffect(() => {
@@ -141,7 +183,7 @@ function MushafScreenContent() {
         import("@/data/abridged-explanation-of-the-quran.json"),
         import("@/data/en-sahih-international-inline-footnotes.json"),
       ]).then(() => {
-        console.log('📚 Tafsir data preloaded');
+        console.log('ðŸ“š Tafsir data preloaded');
       }).catch(e => {
         console.log('Tafsir preload skipped:', e.message);
       });
@@ -155,7 +197,96 @@ function MushafScreenContent() {
     // Coordinates loaded
   }, [allCoords]);
 
-  const [currentPage, setCurrentPage] = useState(1);
+  // ---- Zustand stores ----
+  const {
+    currentPage, setCurrentPage,
+    isNavigating, setIsNavigating,
+    showSurahList, setShowSurahList,
+    navigationMode, setNavigationMode,
+    recentPages, addRecentPage,
+    juzSortAsc, setJuzSortAsc,
+    hizbGranularity, setHizbGranularity,
+    showGranularityPicker, setShowGranularityPicker,
+    navigationToast, setNavigationToast,
+  } = useMushafNavigationStore();
+
+  const {
+    highlights, removeHighlight,
+    highlightTimestamps,
+    notes, deleteNote: storeDeleteNote,
+    noteTimestamps,
+    bookmarks, toggleBookmark,
+    showNotes, setShowNotes,
+    showBookmarks, setShowBookmarks,
+  } = useMushafAnnotationStore();
+
+  const {
+    showPlayMenu, setShowPlayMenu,
+    isLoading, setIsLoading,
+    showAudioSettings, setShowAudioSettings,
+    showReciterPicker, setShowReciterPicker,
+    playUntil, setPlayUntil,
+    selectedReciter, setSelectedReciter,
+    reciterSearch, setReciterSearch,
+    setAudioState,
+  } = useMushafAudioStore(useShallow((s) => ({
+    showPlayMenu: s.showPlayMenu, setShowPlayMenu: s.setShowPlayMenu,
+    isLoading: s.isLoading, setIsLoading: s.setIsLoading,
+    showAudioSettings: s.showAudioSettings, setShowAudioSettings: s.setShowAudioSettings,
+    showReciterPicker: s.showReciterPicker, setShowReciterPicker: s.setShowReciterPicker,
+    playUntil: s.playUntil, setPlayUntil: s.setPlayUntil,
+    selectedReciter: s.selectedReciter, setSelectedReciter: s.setSelectedReciter,
+    reciterSearch: s.reciterSearch, setReciterSearch: s.setReciterSearch,
+    setAudioState: s.setAudioState,
+    // NOTE: audioState intentionally EXCLUDED — managed via subscribe + local state
+  })));
+
+  // === AUDIO STATE DECOUPLING ===
+  // The Zustand audioState updates ~10x/sec (positionMs). If we let it trigger
+  // React re-renders, MushafPageInner (defined inside component) gets a new type
+  // each render → unmount/remount → image flash.
+  //
+  // Solution: ALL audio state tracked via refs only. No state = no re-renders.
+  const audioStateRef = React.useRef<any>(useMushafAudioStore.getState().audioState);
+
+  React.useEffect(() => {
+    const unsub = useMushafAudioStore.subscribe((state) => {
+      audioStateRef.current = state.audioState;
+      audioPositionRef.current = state.audioState?.positionMs ?? 0;
+    });
+    return unsub;
+  }, []);
+
+  // positionMs ref — updated in the subscriber above (OUTSIDE React render cycle)
+  const audioPositionRef = React.useRef(0);
+
+  const {
+    showSearchBar, setShowSearchBar,
+    searchQuery, setSearchQuery,
+    searchResults, setSearchResults,
+    isSearching, setIsSearching,
+    includeTafsirInSearch, setIncludeTafsirInSearch,
+    highlightedVerse, setHighlightedVerse,
+    lastSearchTerm, setLastSearchTerm,
+  } = useMushafSearchStore();
+
+  const {
+    tafsirData, setTafsirData,
+    showArabicTafsir, setShowArabicTafsir,
+    showTafsirSources, setShowTafsirSources,
+    expandedTranslations, setExpandedTranslations,
+    expandedTafsirs, setExpandedTafsirs,
+    expandedAvailable, setExpandedAvailable,
+    expandedAvailableTranslations, setExpandedAvailableTranslations,
+    expandedAvailableTafsirs, setExpandedAvailableTafsirs,
+    translationLanguageFilter, setTranslationLanguageFilter,
+    tafsirLanguageFilter, setTafsirLanguageFilter,
+    tafsirVerse, setTafsirVerse,
+    availableTafsirs, setAvailableTafsirs,
+    downloadingTafsir, setDownloadingTafsir,
+    selectedTafsirId, setSelectedTafsirId,
+    isSwipingTafsir, setIsSwipingTafsir,
+  } = useMushafTafsirStore();
 
   // Navigate to page from route params (e.g., from reading reminder notification)
   useEffect(() => {
@@ -205,119 +336,25 @@ function MushafScreenContent() {
   // Track recent pages for the Recent tab
   useEffect(() => {
     if (currentPage > 0) {
-      setRecentPages(prev => {
-        // Remove if already exists, then add to front
-        const filtered = prev.filter(p => p !== currentPage);
-        // Keep only last 20 pages
-        return [currentPage, ...filtered].slice(0, 20);
-      });
+      addRecentPage(currentPage);
     }
   }, [currentPage]);
 
   const [selectedVerse, setSelectedVerse] = useState<VerseRegion | null>(null);
-  const [tafsirData, setTafsirData] = useState<any>(null);
-  const [showArabicTafsir, setShowArabicTafsir] = useState(false);
-  const [showSurahList, setShowSurahList] = useState(false);
-  const [isNavigating, setIsNavigating] = useState(false);
 
-  // Prefetch surah start pages when Mushaf screen is focused for instant page jumps
-  // This runs in the background so pages are pre-decoded before user opens navigation
-  useFocusEffect(
-    useCallback(() => {
-      // Pre-decode all 114 surah start pages in background
-      const surahStartPages = Object.values(surahPages);
-      // Use unique pages only (some surahs share pages at end of Quran)
-      const uniquePages = [...new Set(surahStartPages)];
-
-      // Prefetch all pages aggressively - they're small WebP files (~130KB each)
-      const prefetchAll = async () => {
-        // Prefetch in parallel batches for speed
-        const batchSize = 15;
-        for (let i = 0; i < uniquePages.length; i += batchSize) {
-          const batch = uniquePages.slice(i, i + batchSize);
-          await Promise.all(
-            batch.map(page => {
-              const imageSource = mushafImages[page];
-              if (imageSource) {
-                return Image.prefetch(imageSource).catch(() => { });
-              }
-              return Promise.resolve();
-            })
-          );
-        }
-      };
-
-      // Start prefetching immediately
-      prefetchAll();
-
-      return () => { };
-    }, [])
-  );
-  const [bookmarks, setBookmarks] = useState<string[]>([]);
+  // Note: Image.prefetch() only works with remote URLs, not local require() assets.
+  // Local images are already on disk; the bottleneck is bitmap decode which happens
+  // automatically when the Image component mounts. No prefetch needed.
   const [isWordScrubberActive, setIsWordScrubberActive] = useState(false);
   const wordScrubberRef = useRef<WordScrubberHandle>(null);
-  const [showSearchBar, setShowSearchBar] = useState(false);
-  const searchInputRef = useRef<TextInput>(null);
-  const surahListRef = useRef<FlatList>(null);
-  const justNavigatedRef = useRef(false); // Track if user just selected a surah (prevents re-scroll)
-  const [showBookmarks, setShowBookmarks] = useState(false);
-  const [recentPages, setRecentPages] = useState<number[]>([]);
-  const [juzSortAsc, setJuzSortAsc] = useState(true);
-  const [hizbGranularity, setHizbGranularity] = useState<'quarter' | 'half' | 'fullJuz'>('quarter');
-  const [showGranularityPicker, setShowGranularityPicker] = useState(false);
-  const [navigationMode, setNavigationMode] = useState<'surah' | 'juz' | 'recent'>('surah');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<any[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
-  const [includeTafsirInSearch, setIncludeTafsirInSearch] = useState(false);
-  const [highlightedVerse, setHighlightedVerse] = useState<string | null>(null);
-  const [lastSearchTerm, setLastSearchTerm] = useState<string>('');
-  const [audioState, setAudioState] = useState<any>(null);
 
-  // Compute the current word index being highlighted during audio playback
-  // Uses timing segments from alignment data to sync word highlights with audio
-  const currentAudioWordIndex = useMemo(() => {
-    if (!audioState?.isPlaying || !audioState?.segments?.length || audioState?.positionMs === undefined) {
-      return -1; // No word highlighted
-    }
 
-    const positionMs = audioState.positionMs;
-    const segments = audioState.segments; // [[wordIdx, startMs, endMs], ...]
+  // currentAudioWordIndexRef is now computed inside MushafPageInner's local rAF loop.
+  // This ref is shared across MushafPageInner instances for the coach mark check.
+  const currentAudioWordIndexRef = React.useRef(-1);
 
-    // Debug: Log segment info on first render for this verse
-    if (positionMs < 100 && segments.length > 0) {
-      console.log('[MushafScreen] Word timing debug:', {
-        verseKey: audioState?.current ? `${audioState.current.surah}:${audioState.current.ayah}` : 'unknown',
-        positionMs,
-        segmentCount: segments.length,
-        firstSegment: segments[0],
-        lastSegment: segments[segments.length - 1],
-      });
-    }
-
-    // Find the word where startMs <= positionMs < endMs
-    for (const segment of segments) {
-      const [wordIdx, startMs, endMs] = segment;
-      if (positionMs >= startMs && positionMs < endMs) {
-        return wordIdx;
-      }
-    }
-
-    // If position is before first word starts (initial silence), highlight first word
-    // This provides immediate visual feedback when audio starts
-    if (segments.length > 0 && positionMs < segments[0][1]) {
-      return segments[0][0]; // Return first word's index
-    }
-
-    // If position is after last word, return -1
-    return -1;
-  }, [audioState?.isPlaying, audioState?.segments, audioState?.positionMs]);
-
-  // Get the current playing verse key for word-level highlighting
-  const currentPlayingVerseKey = useMemo(() => {
-    if (!audioState?.current) return null;
-    return `${audioState.current.surah}:${audioState.current.ayah}`;
-  }, [audioState?.current?.surah, audioState?.current?.ayah]);
+  // Get the current playing verse key for word-level highlighting (from ref, no re-render)
+  const currentPlayingVerseKeyRef = React.useRef<string | null>(null);
 
   const [showHifzStatusMenu, setShowHifzStatusMenu] = useState(false);
   const [showHifzControlPanel, setShowHifzControlPanel] = useState(false);
@@ -325,7 +362,6 @@ function MushafScreenContent() {
   const [hifzMenuPosition, setHifzMenuPosition] = useState({ x: 0, y: 0 });
   const [showHifzTooltip, setShowHifzTooltip] = useState(false);
   const [showHifzCoachMark, setShowHifzCoachMark] = useState(false);
-  const [navigationToast, setNavigationToast] = useState<string | null>(null);
 
   // Hifz Mode hooks
   const hifzMode = useHifzMode();
@@ -339,45 +375,23 @@ function MushafScreenContent() {
 
   // Show word scrubber coach mark on first audio play with word highlighting
   useEffect(() => {
-    if (
-      currentAudioWordIndex >= 0 &&
-      !hasShownScrubberHint.current &&
-      shouldShowHint('word_scrubber')
-    ) {
-      hasShownScrubberHint.current = true;
-      // Delay slightly so user sees the highlighting first
-      setTimeout(() => setShowScrubberCoachMark(true), 1500);
-    }
-  }, [currentAudioWordIndex, shouldShowHint]);
-
-  const getLanguageName = (code: string): string => {
-    const languageMap: Record<string, string> = {
-      'ar': 'Arabic', 'en': 'English', 'bn': 'Bengali', 'id': 'Indonesian', 'tr': 'Turkish',
-      'ur': 'Urdu', 'fa': 'Persian', 'fr': 'French', 'de': 'German', 'es': 'Spanish',
-      'ru': 'Russian', 'zh': 'Chinese', 'ja': 'Japanese', 'ko': 'Korean', 'it': 'Italian',
-      'nl': 'Dutch', 'pl': 'Polish', 'sv': 'Swedish', 'no': 'Norwegian', 'fi': 'Finnish',
-      'cs': 'Czech', 'ro': 'Romanian', 'el': 'Greek', 'uk': 'Ukrainian', 'hi': 'Hindi',
-      'ta': 'Tamil', 'ml': 'Malayalam', 'as': 'Assamese', 'bs': 'Bosnian', 'km': 'Khmer',
-      'ps': 'Pashto', 'uz': 'Uzbek', 'ne': 'Nepali', 'ks': 'Kashmiri', 'si': 'Sinhalese',
-      'tl': 'Tagalog', 'vi': 'Vietnamese', 'sq': 'Albanian'
+    if (!audioStateRef.current?.isPlaying) return;
+    const checkCoachMark = () => {
+      if (
+        currentAudioWordIndexRef.current >= 0 &&
+        !hasShownScrubberHint.current &&
+        shouldShowHint('word_scrubber')
+      ) {
+        hasShownScrubberHint.current = true;
+        setTimeout(() => setShowScrubberCoachMark(true), 1500);
+      }
     };
-    return languageMap[code] || code.toUpperCase();
-  };
+    // Check once after a delay
+    const timer = setTimeout(checkCoachMark, 2000);
+    return () => clearTimeout(timer);
+  }, [shouldShowHint]);
 
-  // Function to check if item is a tafsir (commentary) or translation
-  const isTafsir = (id: string): boolean => {
-    const tafsirIds = ['jalalayn', 'abridged', 'abu-bakr-jabir-al-jazairi', 'al-i-rab-al-muyassar',
-      'ar-tafseer-al-saddi', 'ar-tafsir-al-baghawi', 'ar-tafsir-al-wasit', 'arabic-al-mukhtasar',
-      'assamese-mokhtasar', 'asseraj-fi-bayan', 'bengali-mokhtasar', 'bn-tafseer-ibn-e-kaseer',
-      'bosnian-mokhtasar', 'chinese-mokhtasar', 'en-tafisr-ibn-kathir', 'french-mokhtasar',
-      'i-rab-al-quran', 'id-tafsir-as-saadi', 'indonesian-mokhtasar', 'italian-mokhtasar',
-      'japanese-mokhtasar', 'khmer-mokhtasar', 'malayalam-mokhtasar', 'persian-mokhtasar',
-      'ru-tafsir-ibne-kahtir', 'russian-mokhtasar', 'sinhalese-mokhtasar', 'sq-saadi',
-      'tafseer-ibn-e-kaseer-urdu', 'tafsir-as-saadi-russian', 'tafsir-as-saadi',
-      'tafsir-bayan-ul-quran', 'tafsir-ibn-abi-zamanin', 'tagalog-mokhtasar',
-      'tr-tafsir-ibne-kathir', 'turkish-mokhtasar', 'vietnamese-mokhtasar'];
-    return tafsirIds.includes(id);
-  };
+
 
   // Function to remove Arabic diacritics and normalize text for better search matching
   const normalizeArabicText = (text: string) => {
@@ -390,13 +404,13 @@ function MushafScreenContent() {
       // Remove Quranic symbols and markers
       .replace(/[\u0600-\u0605\u0610-\u061A\u06D6-\u06ED]/g, '')
       // Normalize alef variations
-      .replace(/[\u0622\u0623\u0625\u0671]/g, '\u0627') // أ إ آ ٱ -> ا
+      .replace(/[\u0622\u0623\u0625\u0671]/g, '\u0627') // Ø£ Ø¥ Ø¢ Ù± -> Ø§
       // Normalize teh marbuta and heh
-      .replace(/\u0629/g, '\u0647') // ة -> ه
+      .replace(/\u0629/g, '\u0647') // Ø© -> Ù‡
       // Normalize yeh variations
-      .replace(/[\u0649\u064A\u06CC\u06D0]/g, '\u064A') // ى ي ی ې -> ي
+      .replace(/[\u0649\u064A\u06CC\u06D0]/g, '\u064A') // Ù‰ ÙŠ ÛŒ Û -> ÙŠ
       // Normalize waw with hamza
-      .replace(/\u0624/g, '\u0648') // ؤ -> و
+      .replace(/\u0624/g, '\u0648') // Ø¤ -> Ùˆ
       // Remove zero-width characters and special spaces
       .replace(/[\u200B-\u200F\u202A-\u202E\uFEFF]/g, '')
       // Remove Arabic presentation forms
@@ -452,7 +466,7 @@ function MushafScreenContent() {
         const surahNameEn = surahs.find(s => s.number === surah.number)?.nameEn?.toLowerCase() || '';
         const surahNameAr = normalizeArabicText(surahs.find(s => s.number === surah.number)?.nameAr || '');
 
-        let matchType = null;
+        let matchType: string | null = null;
 
         // Check if matches verse reference (e.g., "2:255")
         if (verseKey.includes(searchTerm)) {
@@ -562,233 +576,10 @@ function MushafScreenContent() {
     }, 300);
     return () => clearTimeout(timer);
   }, [searchQuery, includeTafsirInSearch, performSearch]);
-  const [showPlayMenu, setShowPlayMenu] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [showSpeedMenu, setShowSpeedMenu] = useState(false);
-  const [showAudioSettings, setShowAudioSettings] = useState(false);
-  const [showReciterPicker, setShowReciterPicker] = useState(false);
-  const [playUntil, setPlayUntil] = useState<'verse' | 'surah' | 'page' | 'juz'>('surah');
-  const [selectedReciter, setSelectedReciter] = useState('Alafasy_128kbps');
-  const [reciterSearch, setReciterSearch] = useState('');
   const buttonOpacity = useSharedValue(1);
-  const [highlights, setHighlights] = useState<Record<string, string>>({});
-  const [highlightTimestamps, setHighlightTimestamps] = useState<Record<string, number>>({});
-  const [notes, setNotes] = useState<Record<string, string>>({});
-  const [noteTimestamps, setNoteTimestamps] = useState<Record<string, number>>({});
-  const [showColorPicker, setShowColorPicker] = useState(false);
-  const [showNotes, setShowNotes] = useState(false);
-  const [showNoteModal, setShowNoteModal] = useState(false);
-  const [noteText, setNoteText] = useState('');
-  const [noteVerseKey, setNoteVerseKey] = useState<string | null>(null);
-  const [selectedColor, setSelectedColor] = useState('rgba(255, 235, 59, 0.4)');
-  const [showTafsirSources, setShowTafsirSources] = useState(false);
-  const [expandedTranslations, setExpandedTranslations] = useState(true);
-  const [expandedTafsirs, setExpandedTafsirs] = useState(true);
-  const [expandedAvailable, setExpandedAvailable] = useState(true);
-  const [expandedAvailableTranslations, setExpandedAvailableTranslations] = useState(true);
-  const [expandedAvailableTafsirs, setExpandedAvailableTafsirs] = useState(true);
-  const [translationLanguageFilter, setTranslationLanguageFilter] = useState<string | null>(null);
-  const [tafsirLanguageFilter, setTafsirLanguageFilter] = useState<string | null>(null);
-  const translationLangScrollRef = useRef<ScrollView>(null);
-  const tafsirLangScrollRef = useRef<ScrollView>(null);
-  const [isPlayerMinimized, setIsPlayerMinimized] = useState(false);
-  const playerPositionX = useSharedValue(20);
-  const playerPositionY = useSharedValue(0);
-  const savedX = useSharedValue(20);
-  const savedY = useSharedValue(0);
-  const [tafsirVerse, setTafsirVerse] = useState<VerseRegion | null>(null);
-  const [availableTafsirs, setAvailableTafsirs] = useState([
-    { id: 'jalalayn', name: 'Tafsir Jalalayn', language: 'ar', downloaded: true, url: null },
-    { id: 'abridged', name: 'Abridged Explanation', language: 'en', downloaded: true, url: null },
-    { id: 'sahih-international', name: 'Sahih International', language: 'en', downloaded: true, url: null },
 
-    // New Translations
-    { id: 'abdul-hameed-baqavi', name: 'Abdul Hameed Baqavi', language: 'ml', downloaded: false, url: 'https://sakinahtime.com/translations/abdul-hameed-baqavi-simple.json' },
-    { id: 'ahl-al-hadith-nepal', name: 'Ahl Al-Hadith Central Society', language: 'ne', downloaded: false, url: 'https://sakinahtime.com/translations/ahl-al-hadith-central-society-of-nepal-simple.json' },
-    { id: 'bayanul-furqan-koshur', name: 'Bayanul Furqan (Koshur)', language: 'ks', downloaded: false, url: 'https://sakinahtime.com/translations/bayanul-furqan-koshur-quran-simple.json' },
-    { id: 'cs-unknown', name: 'Czech Translation', language: 'cs', downloaded: false, url: 'https://sakinahtime.com/translations/cs-unknown-simple.json' },
-    { id: 'dar-al-salam', name: 'Dar Al-Salam Center', language: 'en', downloaded: false, url: 'https://sakinahtime.com/translations/dar-al-salam-center-simple.json' },
-    { id: 'de-bubenheim', name: 'Bubenheim & Elyas', language: 'de', downloaded: false, url: 'https://sakinahtime.com/translations/de-bubenheim-simple.json' },
-    { id: 'dr-abdullah-abu-bakr', name: 'Dr. Abdullah & Sheikh Nasir', language: 'ar', downloaded: false, url: 'https://sakinahtime.com/translations/dr-abdullah-muhammad-abu-bakr-and-sheikh-nasir-khamis-simple.json' },
-    { id: 'dr-abu-bakr-zakaria', name: 'Dr. Abu Bakr Muhammad Zakaria', language: 'bn', downloaded: false, url: 'https://sakinahtime.com/translations/dr-abu-bakr-muhammad-zakaria-simple.json' },
-    { id: 'dr-mikhailo-yaqubovic', name: 'Dr. Mikhailo Yaqubovic', language: 'uk', downloaded: false, url: 'https://sakinahtime.com/translations/dr-mikhailo-yaqubovic-simple.json' },
-    { id: 'es-isa-garcia', name: 'Isa García', language: 'es', downloaded: false, url: 'https://sakinahtime.com/translations/es-isa-garcia-with-footnote-tags.json' },
-    { id: 'fi-unknown', name: 'Finnish Translation', language: 'fi', downloaded: false, url: 'https://sakinahtime.com/translations/fi-unknown-simple.json' },
-    { id: 'greek-translation', name: 'Greek Translation', language: 'el', downloaded: false, url: 'https://sakinahtime.com/translations/greek-translation-simple.json' },
-    { id: 'hasan-abdul-karim', name: 'Hasan Abdul Karim', language: 'ar', downloaded: false, url: 'https://sakinahtime.com/translations/hasan-abdul-karim-simple.json' },
-    { id: 'helmi-nasr', name: 'Helmi Nasr', language: 'ar', downloaded: false, url: 'https://sakinahtime.com/translations/helmi-nasr-simple.json' },
-    { id: 'hindi-wbw', name: 'Hindi Word by Word', language: 'hi', downloaded: false, url: 'https://sakinahtime.com/translations/hindi-wbw-translation.json' },
-    { id: 'indonesian-wbw', name: 'Indonesian Word by Word', language: 'id', downloaded: false, url: 'https://sakinahtime.com/translations/indonesian-word-by-word-translation.json' },
-    { id: 'islamhouse', name: 'IslamHouse.com', language: 'en', downloaded: false, url: 'https://sakinahtime.com/translations/islamhouse-com-simple.json' },
-    { id: 'ko-unknown', name: 'Korean Translation', language: 'ko', downloaded: false, url: 'https://sakinahtime.com/translations/ko-unknown-simple.json' },
-    { id: 'ml-karakunnu', name: 'Karakunnu', language: 'ml', downloaded: false, url: 'https://sakinahtime.com/translations/ml-karakunnu-simple.json' },
-    { id: 'muhammad-makin', name: 'Muhammad Makin', language: 'id', downloaded: false, url: 'https://sakinahtime.com/translations/muhammad-makin-simple.json' },
-    { id: 'nl-sofian-siregar', name: 'Sofian S. Siregar', language: 'nl', downloaded: false, url: 'https://sakinahtime.com/translations/nl-sofian-s-siregar-simple.json' },
-    { id: 'no-unknown', name: 'Norwegian Translation', language: 'no', downloaded: false, url: 'https://sakinahtime.com/translations/no-unknown-simple.json' },
-    { id: 'pashto-sarfaraz', name: 'Sarfaraz Khan', language: 'ps', downloaded: false, url: 'https://sakinahtime.com/translations/pashto-sarfaraz-simple.json' },
-    { id: 'pl-jozef-bielawski', name: 'Józef Bielawski', language: 'pl', downloaded: false, url: 'https://sakinahtime.com/translations/pl-jozef-bielawski-simple.json' },
-    { id: 'quran-ml-abdul-hameed', name: 'Abdul Hameed (Malayalam)', language: 'ml', downloaded: false, url: 'https://sakinahtime.com/translations/quran-ml-abdul-hameed-simple.json' },
-    { id: 'quran-uz-sodik', name: 'Sodik (Uzbek)', language: 'uz', downloaded: false, url: 'https://sakinahtime.com/translations/quran-uz-sodik-simple.json' },
-    { id: 'rabila-al-umry', name: 'Rabila Al-Umry', language: 'ar', downloaded: false, url: 'https://sakinahtime.com/translations/rabila-al-umry-simple.json' },
-    { id: 'romanian-translation', name: 'Romanian Translation', language: 'ro', downloaded: false, url: 'https://sakinahtime.com/translations/romanian-translation-simple.json' },
-    { id: 'ru-nuri', name: 'Nuri (Russian)', language: 'ru', downloaded: false, url: 'https://sakinahtime.com/translations/ru-nuri-simple.json' },
-    { id: 'suliman-kanti', name: 'Suliman Kanti', language: 'bn', downloaded: false, url: 'https://sakinahtime.com/translations/suliman-kanti-simple.json' },
-    { id: 'sv-knut', name: 'Knut Bernström', language: 'sv', downloaded: false, url: 'https://sakinahtime.com/translations/sv-knut-simple.json' },
-    { id: 'tamil-wbw', name: 'Tamil Word by Word', language: 'ta', downloaded: false, url: 'https://sakinahtime.com/translations/tamil-wbw-translation.json' },
-    { id: 'translation-pioneers', name: 'Translation Pioneers Center', language: 'en', downloaded: false, url: 'https://sakinahtime.com/translations/translation-pioneers-center-simple.json' },
-    { id: 'turkish-wbw', name: 'Turkish Word by Word', language: 'tr', downloaded: false, url: 'https://sakinahtime.com/translations/turkish-wbw-translation.json' },
-    { id: 'ur-al-maududi', name: 'Al-Maududi (Urdu)', language: 'ur', downloaded: false, url: 'https://sakinahtime.com/translations/ur-al-maududi-simple.json' },
 
-    // Existing Tafsirs
-    { id: 'abu-bakr-jabir-al-jazairi', name: 'Abu Bakr Al-Jazairi', language: 'ar', downloaded: false, url: 'https://sakinahtime.com/tafsirs/abu-bakr-jabir-al-jazairi.json' },
-    { id: 'al-i-rab-al-muyassar', name: 'Al-Irab Al-Muyassar', language: 'ar', downloaded: false, url: 'https://sakinahtime.com/tafsirs/al-i-rab-al-muyassar.json' },
-    { id: 'ar-tafseer-al-saddi', name: 'Tafseer Al-Saddi', language: 'ar', downloaded: false, url: 'https://sakinahtime.com/tafsirs/ar-tafseer-al-saddi.json' },
-    { id: 'ar-tafsir-al-baghawi', name: 'Tafsir Al-Baghawi', language: 'ar', downloaded: false, url: 'https://sakinahtime.com/tafsirs/ar-tafsir-al-baghawi.json' },
-    { id: 'ar-tafsir-al-wasit', name: 'Tafsir Al-Wasit', language: 'ar', downloaded: false, url: 'https://sakinahtime.com/tafsirs/ar-tafsir-al-wasit.json' },
-    { id: 'arabic-al-mukhtasar', name: 'Al-Mukhtasar', language: 'ar', downloaded: false, url: 'https://sakinahtime.com/tafsirs/arabic-al-mukhtasar-in-interpreting-the-noble-quran.json' },
-    { id: 'assamese-mokhtasar', name: 'Mokhtasar', language: 'as', downloaded: false, url: 'https://sakinahtime.com/tafsirs/assamese-mokhtasar.json' },
-    { id: 'asseraj-fi-bayan', name: 'Asseraj Fi Bayan', language: 'ar', downloaded: false, url: 'https://sakinahtime.com/tafsirs/asseraj-fi-bayan-gharib-alquran.json' },
-    { id: 'bengali-mokhtasar', name: 'Mokhtasar', language: 'bn', downloaded: false, url: 'https://sakinahtime.com/tafsirs/bengali-mokhtasar.json' },
-    { id: 'bn-tafseer-ibn-e-kaseer', name: 'Tafseer Ibn Kathir', language: 'bn', downloaded: false, url: 'https://sakinahtime.com/tafsirs/bn-tafseer-ibn-e-kaseer.json' },
-    { id: 'bosnian-mokhtasar', name: 'Mokhtasar', language: 'bs', downloaded: false, url: 'https://sakinahtime.com/tafsirs/bosnian-mokhtasar.json' },
-    { id: 'chinese-mokhtasar', name: 'Mokhtasar', language: 'zh', downloaded: false, url: 'https://sakinahtime.com/tafsirs/chinese-mokhtasar.json' },
-    { id: 'en-tafisr-ibn-kathir', name: 'Tafsir Ibn Kathir', language: 'en', downloaded: false, url: 'https://sakinahtime.com/tafsirs/en-tafisr-ibn-kathir.json' },
-    { id: 'french-mokhtasar', name: 'Mokhtasar', language: 'fr', downloaded: false, url: 'https://sakinahtime.com/tafsirs/french-mokhtasar.json' },
-    { id: 'i-rab-al-quran', name: 'Irab Al-Quran', language: 'ar', downloaded: false, url: 'https://sakinahtime.com/tafsirs/i-rab-al-quran-li-al-darwish.json' },
-    { id: 'id-tafsir-as-saadi', name: 'Tafsir As-Saadi', language: 'id', downloaded: false, url: 'https://sakinahtime.com/tafsirs/id-tafsir-as-saadi.json' },
-    { id: 'indonesian-mokhtasar', name: 'Mokhtasar', language: 'id', downloaded: false, url: 'https://sakinahtime.com/tafsirs/indonesian-mokhtasar.json' },
-    { id: 'italian-mokhtasar', name: 'Mokhtasar', language: 'it', downloaded: false, url: 'https://sakinahtime.com/tafsirs/italian-mokhtasar.json' },
-    { id: 'japanese-mokhtasar', name: 'Mokhtasar', language: 'ja', downloaded: false, url: 'https://sakinahtime.com/tafsirs/japanese-mokhtasar.json' },
-    { id: 'khmer-mokhtasar', name: 'Mokhtasar', language: 'km', downloaded: false, url: 'https://sakinahtime.com/tafsirs/khmer-mokhtasar.json' },
-    { id: 'malayalam-mokhtasar', name: 'Mokhtasar', language: 'ml', downloaded: false, url: 'https://sakinahtime.com/tafsirs/malayalam-mokhtasar.json' },
-    { id: 'persian-mokhtasar', name: 'Mokhtasar', language: 'fa', downloaded: false, url: 'https://sakinahtime.com/tafsirs/persian-mokhtasar.json' },
-    { id: 'ru-tafsir-ibne-kahtir', name: 'Tafsir Ibn Kathir', language: 'ru', downloaded: false, url: 'https://sakinahtime.com/tafsirs/ru-tafsir-ibne-kahtir.json' },
-    { id: 'russian-mokhtasar', name: 'Mokhtasar', language: 'ru', downloaded: false, url: 'https://sakinahtime.com/tafsirs/russian-mokhtasar.json' },
-    { id: 'sinhalese-mokhtasar', name: 'Mokhtasar', language: 'si', downloaded: false, url: 'https://sakinahtime.com/tafsirs/sinhalese-mokhtasar.json' },
-    { id: 'sq-saadi', name: 'Tafsir As-Saadi', language: 'sq', downloaded: false, url: 'https://sakinahtime.com/tafsirs/sq-saadi.json' },
-    { id: 'tafseer-ibn-e-kaseer-urdu', name: 'Tafseer Ibn Kathir', language: 'ur', downloaded: false, url: 'https://sakinahtime.com/tafsirs/tafseer-ibn-e-kaseer-urdu.json' },
-    { id: 'tafsir-as-saadi-russian', name: 'Tafsir As-Saadi', language: 'ru', downloaded: false, url: 'https://sakinahtime.com/tafsirs/tafsir-as-saadi-russian.json' },
-    { id: 'tafsir-as-saadi', name: 'Tafsir As-Saadi', language: 'ar', downloaded: false, url: 'https://sakinahtime.com/tafsirs/tafsir-as-saadi.json' },
-    { id: 'tafsir-bayan-ul-quran', name: 'Bayan-ul-Quran', language: 'ur', downloaded: false, url: 'https://sakinahtime.com/tafsirs/tafsir-bayan-ul-quran.json' },
-    { id: 'tafsir-ibn-abi-zamanin', name: 'Tafsir Ibn Abi Zamanin', language: 'ar', downloaded: false, url: 'https://sakinahtime.com/tafsirs/tafsir-ibn-abi-zamanin.json' },
-    { id: 'tagalog-mokhtasar', name: 'Mokhtasar', language: 'tl', downloaded: false, url: 'https://sakinahtime.com/tafsirs/tagalog-mokhtasar.json' },
-    { id: 'tr-tafsir-ibne-kathir', name: 'Tafsir Ibn Kathir', language: 'tr', downloaded: false, url: 'https://sakinahtime.com/tafsirs/tr-tafsir-ibne-kathir.json' },
-    { id: 'turkish-mokhtasar', name: 'Mokhtasar', language: 'tr', downloaded: false, url: 'https://sakinahtime.com/tafsirs/turkish-mokhtasar.json' },
-    { id: 'vietnamese-mokhtasar', name: 'Mokhtasar', language: 'vi', downloaded: false, url: 'https://sakinahtime.com/tafsirs/vietnamese-mokhtasar.json' },
-  ]);
-  const [downloadingTafsir, setDownloadingTafsir] = useState<string | null>(null);
-  const [selectedTafsirId, setSelectedTafsirId] = useState('abridged');
-  const [isSwipingTafsir, setIsSwipingTafsir] = useState(false);
 
-  const highlightColors = [
-    { name: 'Yellow', value: 'rgba(255, 235, 59, 0.4)' },
-    { name: 'Green', value: 'rgba(76, 175, 80, 0.4)' },
-    { name: 'Blue', value: 'rgba(33, 150, 243, 0.4)' },
-    { name: 'Pink', value: 'rgba(233, 30, 99, 0.4)' },
-    { name: 'Orange', value: 'rgba(255, 152, 0, 0.4)' },
-  ];
-
-  const reciters = [
-    { value: 'Alafasy_128kbps', label: 'Mishary Alafasy', labelAr: 'مشاري العفاسي' },
-    { value: 'Abdul_Basit_Murattal_192kbps', label: 'Abdul Basit', labelAr: 'عبد الباسط عبد الصمد' },
-    { value: 'Abdullah_Basfar_192kbps', label: 'Abdullah Basfar', labelAr: 'عبدالله بصفر' },
-    { value: 'Abdurrahmaan_As-Sudais_192kbps', label: 'Abdurrahman As-Sudais', labelAr: 'عبدالرحمن السديس' },
-    { value: 'Abu_Bakr_Ash-Shaatree_128kbps', label: 'Abu Bakr Ash-Shatri', labelAr: 'أبو بكر الشاطري' },
-    { value: 'Ahmed_Neana_128kbps', label: 'Ahmed Neana', labelAr: 'أحمد نعينع' },
-    { value: 'Ahmed_ibn_Ali_al-Ajamy_128kbps_ketaballah.net', label: 'Ahmed Al-Ajamy', labelAr: 'أحمد العجمي' },
-    { value: 'Akram_AlAlaqimy_128kbps', label: 'Akram AlAlaqimy', labelAr: 'أكرم العلاقمي' },
-    { value: 'Ali_Jaber_64kbps', label: 'Ali Jaber', labelAr: 'علي جابر' },
-    { value: 'Ayman_Sowaid_64kbps', label: 'Ayman Sowaid', labelAr: 'أيمن سويد' },
-    { value: 'Fares_Abbad_64kbps', label: 'Fares Abbad', labelAr: 'فارس عبّاد' },
-    { value: 'Ghamadi_40kbps', label: 'Saad Al-Ghamadi', labelAr: 'سعد الغامدي' },
-    { value: 'Hani_Rifai_192kbps', label: 'Hani Rifai', labelAr: 'هاني الرفاعي' },
-    { value: 'Hudhaify_128kbps', label: 'Ali Hudhaify', labelAr: 'علي الحذيفي' },
-    { value: 'Husary_128kbps', label: 'Mahmoud Al-Hussary', labelAr: 'محمود الحصري' },
-    { value: 'Ibrahim_Akhdar_32kbps', label: 'Ibrahim Akhdar', labelAr: 'إبراهيم الأخضر' },
-    { value: 'Khaalid_Abdullaah_al-Qahtaanee_192kbps', label: 'Khalid Al-Qahtani', labelAr: 'خالد القحطاني' },
-    { value: 'MaherAlMuaiqly128kbps', label: 'Maher Al-Muaiqly', labelAr: 'ماهر المعيقلي' },
-    { value: 'Minshawy_Murattal_128kbps', label: 'Mohamed Al-Minshawi', labelAr: 'محمد المنشاوي' },
-    { value: 'Mohammad_al_Tablaway_128kbps', label: 'Mohammad Al-Tablaway', labelAr: 'محمد الطبلاوي' },
-    { value: 'Muhammad_Ayyoub_128kbps', label: 'Muhammad Ayyub', labelAr: 'محمد أيوب' },
-    { value: 'Muhammad_Jibreel_128kbps', label: 'Muhammad Jibreel', labelAr: 'محمد جبريل' },
-    { value: 'Muhsin_Al_Qasim_192kbps', label: 'Muhsin Al-Qasim', labelAr: 'محسن القاسم' },
-    { value: 'Nasser_Alqatami_128kbps', label: 'Nasser Al-Qatami', labelAr: 'ناصر القطامي' },
-    { value: 'Salaah_AbdulRahman_Bukhatir_128kbps', label: 'Salah Bukhatir', labelAr: 'صلاح بوخاطر' },
-    { value: 'Salah_Al_Budair_128kbps', label: 'Salah Al-Budair', labelAr: 'صالح البدير' },
-    { value: 'Saood_ash-Shuraym_128kbps', label: 'Saud Ash-Shuraim', labelAr: 'سعود الشريم' },
-    { value: 'warsh/warsh_yassin_al_jazaery_64kbps', label: 'Yassin Al-Jazaery (Warsh)', labelAr: 'ياسين الجزائري (ورش)' },
-  ];
-
-  const handleReciterChange = (reciter: string) => {
-    setSelectedReciter(reciter);
-    AudioService.setReciter(reciter);
-  };
-
-  const getVersesToPlay = (surah: number, ayah: number) => {
-    const surahData = quranData.data.surahs.find((s: any) => s.number === surah);
-    if (!surahData) return [];
-
-    if (playUntil === 'verse') {
-      // Single verse only
-      return [{ surah, ayah }];
-    } else if (playUntil === 'surah') {
-      return surahData.ayahs.filter((a: any) => a.numberInSurah >= ayah).map((a: any) => ({ surah, ayah: a.numberInSurah }));
-    } else if (playUntil === 'page') {
-      const currentPage = surahData.ayahs.find((a: any) => a.numberInSurah === ayah)?.page;
-      const allVerses: any[] = [];
-      quranData.data.surahs.forEach((s: any) => {
-        s.ayahs.forEach((a: any) => {
-          if (a.page === currentPage && (s.number > surah || (s.number === surah && a.numberInSurah >= ayah))) {
-            allVerses.push({ surah: s.number, ayah: a.numberInSurah });
-          }
-        });
-      });
-      return allVerses;
-    } else {
-      const currentJuz = surahData.ayahs.find((a: any) => a.numberInSurah === ayah)?.juz;
-      const allVerses: any[] = [];
-      quranData.data.surahs.forEach((s: any) => {
-        s.ayahs.forEach((a: any) => {
-          if (a.juz === currentJuz && (s.number > surah || (s.number === surah && a.numberInSurah >= ayah))) {
-            allVerses.push({ surah: s.number, ayah: a.numberInSurah });
-          }
-        });
-      });
-      return allVerses;
-    }
-  };
-
-  // Draggable player gesture - memoized to prevent hooks issues
-  const SCREEN_WIDTH = Dimensions.get('window').width;
-  const SCREEN_HEIGHT = Dimensions.get('window').height;
-  const topSafeArea = useSharedValue(insets.top + 60); // Keep below top safe area + buttons
-
-  const panGesture = useMemo(() => Gesture.Pan()
-    .onStart(() => {
-      savedX.value = playerPositionX.value;
-      savedY.value = playerPositionY.value;
-    })
-    .onUpdate((e) => {
-      playerPositionX.value = Math.max(10, Math.min(SCREEN_WIDTH - 160, savedX.value + e.translationX));
-      // Keep between top safe area and starting position (bottom: insets.bottom + 65)
-      const minY = -SCREEN_HEIGHT + topSafeArea.value + 100; // Don't go above top safe area
-      playerPositionY.value = Math.max(minY, Math.min(0, savedY.value + e.translationY));
-    })
-    .onEnd(() => {
-      // Snap to edges if close
-      if (playerPositionX.value < 60) {
-        playerPositionX.value = withTiming(20);
-      } else if (playerPositionX.value > SCREEN_WIDTH - 180) {
-        playerPositionX.value = withTiming(SCREEN_WIDTH - 160);
-      }
-    }), []);
-
-  const playerAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [
-      { translateX: playerPositionX.value },
-      { translateY: playerPositionY.value }
-    ],
-  }));
 
   // Navigation fade overlay animation
   const navigationFadeOpacity = useSharedValue(0);
@@ -844,7 +635,7 @@ function MushafScreenContent() {
         setTimeout(() => {
           const pageIndex = Math.max(0, Math.min(603, 604 - targetPage!));
           const offset = pageIndex * layout.screenWidth;
-          (pagerViewRef.current as any)?.scrollToOffset({ offset, animated: false });
+          pagerViewRef.current?.setPageWithoutAnimation(604 - targetPage!);
           setCurrentPage(targetPage!);
 
           // If ayah is specified, highlight it with a flash effect
@@ -873,87 +664,12 @@ function MushafScreenContent() {
   }, [route.params]);
 
   React.useEffect(() => {
-    loadBookmarks();
-    loadRecentPages();
-    loadHighlights();
-    loadNotes();
-    loadTimestamps();
     AsyncStorage.getItem('@selectedTafsir').then(id => {
       if (id) setSelectedTafsirId(id);
     });
     const unsubscribe = AudioService.subscribe(setAudioState);
-    return unsubscribe;
+    return () => { unsubscribe(); };
   }, []);
-
-  // Load downloaded tafsirs from FileSystem
-  // Re-check downloaded tafsirs when screen is focused (in case files were deleted from Storage settings)
-  useFocusEffect(
-    React.useCallback(() => {
-      const loadDownloadedTafsirs = async () => {
-        try {
-          // Clean up old tafsir data from AsyncStorage to free up space
-          console.log('Checking AsyncStorage for old tafsir data...');
-          const keys = await AsyncStorage.getAllKeys();
-          console.log('Total AsyncStorage keys:', keys.length);
-          const tafsirKeys = keys.filter(key => key.startsWith('@tafsir_') && !key.includes('_downloaded_'));
-          console.log('Old tafsir keys to remove:', tafsirKeys.length);
-          if (tafsirKeys.length > 0) {
-            await AsyncStorage.multiRemove(tafsirKeys);
-            console.log(`✅ Cleaned up ${tafsirKeys.length} old tafsir entries from AsyncStorage`);
-          }
-
-          // Also check for any large items in AsyncStorage
-          if (Platform.OS === 'android') {
-            console.log('Android: Checking AsyncStorage size...');
-            for (const key of keys) {
-              try {
-                const value = await AsyncStorage.getItem(key);
-                if (value && value.length > 100000) { // > 100KB
-                  console.log(`Large item found: ${key} (${(value.length / 1024).toFixed(2)}KB)`);
-                }
-              } catch (e) {
-                console.log(`Error checking key ${key}:`, e);
-              }
-            }
-          }
-
-          const tafsirDir = `${FileSystem.documentDirectory}tafsirs/`;
-          const dirInfo = await FileSystem.getInfoAsync(tafsirDir);
-
-          if (dirInfo.exists) {
-            const files = await FileSystem.readDirectoryAsync(tafsirDir);
-            const downloadedIds = files.map(f => f.replace('.json', ''));
-            console.log('Downloaded tafsirs from FileSystem:', downloadedIds);
-
-            // Update downloaded status based on actual files (not preserving old state)
-            setAvailableTafsirs(prev => prev.map(t => ({
-              ...t,
-              // Built-in tafsirs are always downloaded, others only if file exists
-              downloaded: (t.id === 'jalalayn' || t.id === 'abridged' || t.id === 'sahih-international')
-                ? true
-                : downloadedIds.includes(t.id)
-            })));
-          } else {
-            // No tafsirs directory - reset all to not downloaded except built-ins
-            setAvailableTafsirs(prev => prev.map(t => ({
-              ...t,
-              downloaded: t.id === 'jalalayn' || t.id === 'abridged' || t.id === 'sahih-international'
-            })));
-          }
-        } catch (error) {
-          console.error('Failed to load downloaded tafsirs:', error);
-        }
-      };
-
-      loadDownloadedTafsirs();
-    }, [])
-  );
-
-  React.useEffect(() => {
-    if (currentPage > 0) {
-      saveRecentPage(currentPage);
-    }
-  }, [currentPage]);
 
   React.useEffect(() => {
     const timer = setTimeout(() => {
@@ -966,224 +682,20 @@ function MushafScreenContent() {
     buttonOpacity.value = withTiming(1, { duration: 200 });
   };
 
-  // Navigate to page and close overlay - scrolls FIRST, then closes modal to prevent flash
-  const navigateToPageFromOverlay = useCallback((page: number) => {
-    const pageIndex = 604 - page;
-    const offset = pageIndex * layout.screenWidth;
-
-    // Scroll to the page first (while overlay is still shown)
-    (pagerViewRef.current as any)?.scrollToOffset({ offset, animated: false });
-    setCurrentPage(page);
-
-    // Then close the overlay after a brief delay to ensure scroll is complete
-    requestAnimationFrame(() => {
-      setShowSurahList(false);
-    });
-  }, [layout.screenWidth]);
-
   const animatedButtonStyle = useAnimatedStyle(() => ({
     opacity: buttonOpacity.value,
   }));
 
-  // Calculate current surah from current page for initial scroll position
-  const currentSurahIndex = useMemo(() => {
-    const currentSurahNumber = Object.entries(surahPages).reduce((found, [surahNum, startPage]) => {
-      if (startPage <= currentPage) {
-        return parseInt(surahNum);
-      }
-      return found;
-    }, 1);
-    return currentSurahNumber - 1; // 0-based index
-  }, [currentPage]);
-
-  // Keep surah list scroll position synced with current page
-  // Scrolls whenever currentSurahIndex changes, so list is ALWAYS at right position
-  // This ensures when overlay opens, it's already positioned correctly (no visible scroll)
-  useLayoutEffect(() => {
-    // Skip if we just navigated by clicking a surah (list should stay where user clicked)
-    if (justNavigatedRef.current) {
-      justNavigatedRef.current = false;
-      return;
-    }
-    // Scroll to current surah position
-    if (surahListRef.current && currentSurahIndex > 0) {
-      surahListRef.current.scrollToOffset({
-        offset: currentSurahIndex * 80,
-        animated: false,
-      });
-    }
-  }, [currentSurahIndex]); // Only depends on currentSurahIndex, runs even when overlay hidden
+  // Callback for SurahListOverlay to scroll the pager
+  const scrollToPage = useCallback((page: number) => {
+    const pageIndex = 604 - page;
+    pagerViewRef.current?.setPageWithoutAnimation(pageIndex);
+  }, []);
 
 
-  const loadBookmarks = async () => {
-    try {
-      const saved = await AsyncStorage.getItem('@bookmarks');
-      if (saved) setBookmarks(JSON.parse(saved));
-    } catch (e) {
-      console.error('Failed to load bookmarks:', e);
-    }
-  };
 
-  const loadRecentPages = async () => {
-    try {
-      const saved = await AsyncStorage.getItem('@recentPages');
-      if (saved) setRecentPages(JSON.parse(saved));
-    } catch (e) {
-      console.error('Failed to load recent pages:', e);
-    }
-  };
 
-  const loadHighlights = async () => {
-    try {
-      const saved = await AsyncStorage.getItem('@highlights');
-      if (saved) setHighlights(JSON.parse(saved));
-    } catch (e) {
-      console.error('Failed to load highlights:', e);
-    }
-  };
 
-  const loadNotes = async () => {
-    try {
-      const saved = await AsyncStorage.getItem('@notes');
-      if (saved) setNotes(JSON.parse(saved));
-    } catch (e) {
-      console.error('Failed to load notes:', e);
-    }
-  };
-
-  const loadTimestamps = async () => {
-    try {
-      const hTimestamps = await AsyncStorage.getItem('@highlightTimestamps');
-      const nTimestamps = await AsyncStorage.getItem('@noteTimestamps');
-      if (hTimestamps) setHighlightTimestamps(JSON.parse(hTimestamps));
-      if (nTimestamps) setNoteTimestamps(JSON.parse(nTimestamps));
-    } catch (e) {
-      console.error('Failed to load timestamps:', e);
-    }
-  };
-
-  const saveNote = async (verseKey: string, note: string) => {
-    const newNotes = { ...notes, [verseKey]: note };
-    const newTimestamps = { ...noteTimestamps, [verseKey]: Date.now() };
-    setNotes(newNotes);
-    setNoteTimestamps(newTimestamps);
-
-    // Add highlight if it doesn't exist
-    if (!highlights[verseKey]) {
-      const newHighlights = { ...highlights, [verseKey]: `${theme.primary}26` };
-      const newHighlightTimestamps = { ...highlightTimestamps, [verseKey]: Date.now() };
-      setHighlights(newHighlights);
-      setHighlightTimestamps(newHighlightTimestamps);
-
-      try {
-        await AsyncStorage.setItem('@highlights', JSON.stringify(newHighlights));
-        await AsyncStorage.setItem('@highlightTimestamps', JSON.stringify(newHighlightTimestamps));
-      } catch (e) {
-        console.error('Failed to save highlight:', e);
-      }
-    }
-
-    try {
-      await AsyncStorage.setItem('@notes', JSON.stringify(newNotes));
-      await AsyncStorage.setItem('@noteTimestamps', JSON.stringify(newTimestamps));
-      console.log('📝 [SAVE NOTE] ✅ Persisted to AsyncStorage successfully');
-    } catch (e) {
-      console.error('📝 [SAVE NOTE] ❌ Failed to save note:', e);
-    }
-  };
-
-  const deleteNote = async (verseKey: string) => {
-    const newNotes = { ...notes };
-    delete newNotes[verseKey];
-    setNotes(newNotes);
-    if (highlights[verseKey] === `${theme.primary}26`) {
-      removeHighlight(verseKey);
-    }
-    try {
-      await AsyncStorage.setItem('@notes', JSON.stringify(newNotes));
-    } catch (e) {
-      console.error('Failed to delete note:', e);
-    }
-  };
-
-  const addHighlight = async (verseKey: string, color: string) => {
-    const newHighlights = { ...highlights, [verseKey]: color };
-    const newTimestamps = { ...highlightTimestamps, [verseKey]: Date.now() };
-    setHighlights(newHighlights);
-    setHighlightTimestamps(newTimestamps);
-    try {
-      await AsyncStorage.setItem('@highlights', JSON.stringify(newHighlights));
-      await AsyncStorage.setItem('@highlightTimestamps', JSON.stringify(newTimestamps));
-    } catch (e) {
-      console.error('Failed to save highlight:', e);
-    }
-  };
-
-  const removeHighlight = async (verseKey: string) => {
-    const newHighlights = { ...highlights };
-    delete newHighlights[verseKey];
-    setHighlights(newHighlights);
-    try {
-      await AsyncStorage.setItem('@highlights', JSON.stringify(newHighlights));
-    } catch (e) {
-      console.error('Failed to remove highlight:', e);
-    }
-  };
-
-  const saveRecentPage = async (page: number) => {
-    try {
-      const updated = [page, ...recentPages.filter(p => p !== page)].slice(0, 3);
-      setRecentPages(updated);
-      await AsyncStorage.setItem('@recentPages', JSON.stringify(updated));
-    } catch (e) {
-      console.error('Failed to save recent page:', e);
-    }
-  };
-
-  const deleteTafsir = async (tafsirId: string) => {
-    console.log('🗑️ deleteTafsir called for:', tafsirId);
-    console.log('📱 Platform:', Platform.OS);
-    try {
-      // Delete from FileSystem
-      const tafsirPath = `${FileSystem.documentDirectory}tafsirs/${tafsirId}.json`;
-      console.log('📂 Checking file at:', tafsirPath);
-      const fileInfo = await FileSystem.getInfoAsync(tafsirPath);
-      console.log('📄 File exists:', fileInfo.exists);
-
-      if (fileInfo.exists) {
-        await FileSystem.deleteAsync(tafsirPath);
-        console.log('✅ Deleted tafsir file:', tafsirId);
-      }
-
-      // Update state to mark as not downloaded
-      setAvailableTafsirs(prev => prev.map(t =>
-        t.id === tafsirId ? { ...t, downloaded: false } : t
-      ));
-      console.log('✅ Updated state for:', tafsirId);
-
-      // If this was the active tafsir, switch to default
-      if (selectedTafsirId === tafsirId) {
-        setSelectedTafsirId('abridged');
-        await AsyncStorage.setItem('@selectedTafsir', 'abridged');
-        console.log('✅ Switched to default tafsir');
-      }
-    } catch (error) {
-      console.error('❌ Failed to delete tafsir:', error);
-      alert('Failed to delete. Please try again.');
-    }
-  };
-
-  const toggleBookmark = async (verseKey: string) => {
-    const newBookmarks = bookmarks.includes(verseKey)
-      ? bookmarks.filter(b => b !== verseKey)
-      : [...bookmarks, verseKey];
-    setBookmarks(newBookmarks);
-    try {
-      await AsyncStorage.setItem('@bookmarks', JSON.stringify(newBookmarks));
-    } catch (e) {
-      console.error('Failed to save bookmark:', e);
-    }
-  };
 
 
   const handleVersePress = useCallback((verse: VerseRegion) => {
@@ -1201,10 +713,10 @@ function MushafScreenContent() {
     try {
       const savedTafsirId = await AsyncStorage.getItem('@selectedTafsir') || 'abridged';
       const key = selectedVerse.verseKey;
-      let tafsirContent = null;
+      let tafsirContent: { text: string } | null = null;
 
       if (savedTafsirId === 'abridged') {
-        console.log('📚 [MushafScreen] Loading abridged tafsir...');
+        console.log('ðŸ“š [MushafScreen] Loading abridged tafsir...');
         const enTafsir = await import("@/data/abridged-explanation-of-the-quran.json");
         tafsirContent = { text: (enTafsir as any)[key]?.text || 'No tafsir available' };
       } else if (savedTafsirId === 'jalalayn') {
@@ -1301,1585 +813,485 @@ function MushafScreenContent() {
     return allVerses;
   };
 
-  const renderPage = ({ item: pageNum }: { item: number }) => {
-    const pageCoords = allCoords?.[pageNum];
+  // === STABLE COMPONENT TYPE via useRef ===
+  // MushafPageInner must have a stable type identity across re-renders.
+  // If defined as `const MushafPageInner = React.memo(...)` inside the component,
+  // each render creates a NEW type → React unmounts/remounts → showOverlays resets → flash.
+  //
+  // Fix: create the component ONCE in a ref. It reads parent state from depsRef.current
+  // (always up-to-date) instead of closures (stale after first render).
+  const pageInnerDepsRef = useRef<any>({});
+  pageInnerDepsRef.current = {
+    allCoords, layout, surahs, quranData, mushafImages: (mushafImages as any),
+    isDark, theme, hifzMode, hifzProgress, isVerseDueForRevision,
+    highlights, notes, selectedVerse, highlightedVerse, handleVersePress,
+    isWordScrubberActive, setIsWordScrubberActive, wordScrubberRef,
+    setShowHifzStatusMenu, setHifzMenuVerseKey, setHifzMenuPosition,
+    currentAudioWordIndexRef, setSelectedVerse,
+  };
 
-    // Use layout dimensions for consistent positioning across devices
-    const { screenWidth, imageScale, imageHeight, imageOffsetY, contentZoneHeight } = layout;
+  // Create MushafPageInner ONCE — type is stable forever
+  const mushafPageInnerRef = useRef<React.FC<{ pageNum: number }> | null>(null);
+  if (!mushafPageInnerRef.current) {
+    mushafPageInnerRef.current = ({ pageNum }: { pageNum: number }) => {
+      // Read ALL parent state from depsRef (always latest values via .current)
+      const {
+        allCoords, layout, surahs, quranData, mushafImages,
+        isDark, theme, hifzMode, hifzProgress, isVerseDueForRevision,
+        highlights, notes, selectedVerse, highlightedVerse, handleVersePress,
+        isWordScrubberActive, setIsWordScrubberActive, wordScrubberRef,
+        setShowHifzStatusMenu, setHifzMenuVerseKey, setHifzMenuPosition,
+        currentAudioWordIndexRef,
+      } = pageInnerDepsRef.current;
 
-    const verseGroups = new Map<string, any[]>();
-    pageCoords?.forEach((coord: any) => {
-      const key = `${coord.sura}:${coord.ayah}`;
-      if (!verseGroups.has(key)) verseGroups.set(key, []);
-      verseGroups.get(key).push(coord);
-    });
+      const [showOverlays, setShowOverlays] = React.useState(false);
 
-    const firstVerse = pageCoords?.[0];
-    const pageSurahNum = firstVerse?.sura || 1;
-    const pageSurah = surahs.find(s => s.number === pageSurahNum);
+      // === LOCAL AUDIO STATE ===
+      // Each MushafPageInner subscribes to Zustand directly (not rAF polling).
+      // Only fires when store changes (~10x/sec during playback, 0 when idle).
+      const [localAudioState, setLocalAudioState] = React.useState(() => {
+        const as = useMushafAudioStore.getState().audioState;
+        const isPlaying = !!as?.isPlaying;
+        const verseKey = as?.current ? `${as.current.surah}:${as.current.ayah}` : null;
+        const segments = as?.segments || null;
+        const positionMs = as?.positionMs ?? 0;
+        let wordIdx = -1;
+        if (isPlaying && segments?.length) {
+          for (const seg of segments) {
+            const [wIdx, startMs, endMs] = seg;
+            if (positionMs >= startMs && positionMs < endMs) { wordIdx = wIdx; break; }
+          }
+          if (wordIdx === -1 && segments.length > 0 && positionMs < segments[0][1]) {
+            wordIdx = segments[0][0];
+          }
+        }
+        return { wordIndex: wordIdx, playingVerseKey: verseKey, isPlaying, segments };
+      });
 
-    const verseData = quranData.data.surahs
-      .find((s: any) => s.number === pageSurahNum)
-      ?.ayahs.find((a: any) => a.numberInSurah === firstVerse?.ayah);
-    const pageJuz = verseData?.juz || 1;
-    const pageHizb = verseData?.hizbQuarter ? Math.ceil(verseData.hizbQuarter / 4) : 1;
+      React.useEffect(() => {
+        let prevWordIdx = -1;
+        let prevVerseKey: string | null = null;
+        let prevIsPlaying = false;
 
-    return (
-      <Pressable
-        onLongPress={(e) => {
-          const { pageX, pageY } = e.nativeEvent;
-          console.log('[MushafScreen] Long press detected at:', pageX, pageY);
-          setIsWordScrubberActive(true);
-          // Use ref-based position update — no setState, no parent re-render
-          setTimeout(() => wordScrubberRef.current?.updatePosition(pageX, pageY), 0);
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-        }}
-        onTouchMove={(e) => {
-          // Forward touch moves to WordScrubber when active
-          if (isWordScrubberActive) {
+        const unsub = useMushafAudioStore.subscribe((state) => {
+          const as = state.audioState;
+          const isPlaying = !!as?.isPlaying;
+          const verseKey = as?.current ? `${as.current.surah}:${as.current.ayah}` : null;
+          const segments = as?.segments || null;
+          const positionMs = as?.positionMs ?? 0;
+
+          // Compute word index
+          let wordIdx = -1;
+          if (isPlaying && segments?.length) {
+            for (const seg of segments) {
+              const [wIdx, startMs, endMs] = seg;
+              if (positionMs >= startMs && positionMs < endMs) {
+                wordIdx = wIdx;
+                break;
+              }
+            }
+            if (wordIdx === -1 && segments.length > 0 && positionMs < segments[0][1]) {
+              wordIdx = segments[0][0];
+            }
+          }
+
+          // Only setState when something visually changed
+          if (wordIdx !== prevWordIdx || verseKey !== prevVerseKey || isPlaying !== prevIsPlaying) {
+            prevWordIdx = wordIdx;
+            prevVerseKey = verseKey;
+            prevIsPlaying = isPlaying;
+            currentAudioWordIndexRef.current = wordIdx;
+            setLocalAudioState({ wordIndex: wordIdx, playingVerseKey: verseKey, isPlaying, segments });
+          }
+        });
+
+        return unsub;
+      }, []);
+
+      React.useEffect(() => {
+        const task = InteractionManager.runAfterInteractions(() => {
+          setShowOverlays(true);
+        });
+        return () => task.cancel();
+      }, [pageNum]);
+
+      const pageCoords = allCoords?.[pageNum];
+
+      // Use layout dimensions for consistent positioning across devices
+      const { screenWidth, imageScale, imageHeight, imageOffsetY, contentZoneHeight } = layout;
+
+      // Memoize heavy coordinate computation - only runs when overlays are shown
+      const verseGroups = React.useMemo(() => {
+        if (!showOverlays || !pageCoords) return new Map<string, any[]>();
+        const groups = new Map<string, any[]>();
+        pageCoords.forEach((coord: any) => {
+          const key = `${coord.sura}:${coord.ayah}`;
+          if (!groups.has(key)) groups.set(key, []);
+          groups.get(key)!.push(coord);
+        });
+        return groups;
+      }, [pageCoords, showOverlays]);
+
+      const firstVerse = pageCoords?.[0];
+      const pageSurahNum = firstVerse?.sura || 1;
+      const pageSurah = surahs.find(s => s.number === pageSurahNum);
+
+      const verseData = quranData.data.surahs
+        .find((s: any) => s.number === pageSurahNum)
+        ?.ayahs.find((a: any) => a.numberInSurah === firstVerse?.ayah);
+      const pageJuz = verseData?.juz || 1;
+      const pageHizb = verseData?.hizbQuarter ? Math.ceil(verseData.hizbQuarter / 4) : 1;
+
+      return (
+        <Pressable
+          onLongPress={(e) => {
             const { pageX, pageY } = e.nativeEvent;
-            wordScrubberRef.current?.updatePosition(pageX, pageY);
-          }
-        }}
-        onTouchEnd={() => {
-          // Close WordScrubber when finger lifts
-          if (isWordScrubberActive) {
-            setIsWordScrubberActive(false);
-          }
-        }}
-        delayLongPress={400}
-        style={[styles.pageContainer, {
-          width: screenWidth,
-          height: contentZoneHeight,
-        }]}
-      >
-        <Image
-          source={mushafImages[pageNum]}
-          style={[styles.mushafImage, {
+            console.log('[MushafScreen] Long press detected at:', pageX, pageY);
+            setIsWordScrubberActive(true);
+            // Use ref-based position update â€” no setState, no parent re-render
+            setTimeout(() => wordScrubberRef.current?.updatePosition(pageX, pageY), 0);
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          }}
+          onTouchMove={(e) => {
+            // Forward touch moves to WordScrubber when active
+            if (isWordScrubberActive) {
+              const { pageX, pageY } = e.nativeEvent;
+              wordScrubberRef.current?.updatePosition(pageX, pageY);
+            }
+          }}
+          onTouchEnd={() => {
+            // Close WordScrubber when finger lifts
+            if (isWordScrubberActive) {
+              setIsWordScrubberActive(false);
+            }
+          }}
+          delayLongPress={400}
+          style={[styles.pageContainer, {
             width: screenWidth,
-            height: imageHeight,
-            top: imageOffsetY,
-            tintColor: isDark ? '#FFFFFF' : undefined,
+            height: contentZoneHeight,
           }]}
-          contentFit="contain"
-          cachePolicy="memory-disk"
-          transition={0}
-          key={`theme-${isDark}-${pageNum}`}
-        />
-        {Array.from(verseGroups.entries()).flatMap(([verseKey, coords]) => {
-          const [surah, ayah] = verseKey.split(':');
+        >
+          <Image
+            source={mushafImages[pageNum]}
+            style={[styles.mushafImage, {
+              width: screenWidth,
+              height: imageHeight,
+              top: imageOffsetY,
+              tintColor: isDark ? '#FFFFFF' : undefined,
+            }]}
+            contentFit="contain"
+            cachePolicy="memory-disk"
+            transition={0}
+            key={`theme-${isDark}-${pageNum}`}
+          />
+          {showOverlays && Array.from(verseGroups.entries()).flatMap(([verseKey, coords]) => {
+            const [surah, ayah] = verseKey.split(':');
 
-          // Hifz mode state (shared for all rendering modes)
-          const isHifzActive = hifzMode.isActive;
-          const isWordMode = isHifzActive && hifzMode.settings.hideMode === 'word';
-          const isVerseRevealed = hifzMode.isVerseRevealed(verseKey) || hifzMode.revealedVerses.has('__ALL__');
-          const isDueForRevision = isVerseDueForRevision(verseKey);
-          const verseProgress = hifzProgress?.verses?.[verseKey];
-          const hifzActiveColor = theme.primary;
-          const hiddenBgColor = isDark ? HIDDEN_TEXT_BG.dark : HIDDEN_TEXT_BG.light;
+            // Hifz mode state (shared for all rendering modes)
+            const isHifzActive = hifzMode.isActive;
+            const isWordMode = isHifzActive && hifzMode.settings.hideMode === 'word';
+            const isVerseRevealed = hifzMode.isVerseRevealed(verseKey) || hifzMode.revealedVerses.has('__ALL__');
+            const isDueForRevision = isVerseDueForRevision(verseKey);
+            const verseProgress = hifzProgress?.verses?.[verseKey];
+            const hifzActiveColor = theme.primary;
+            const hiddenBgColor = isDark ? HIDDEN_TEXT_BG.dark : HIDDEN_TEXT_BG.light;
 
-          // Word-by-word mode: render individual word overlays
-          if (isWordMode) {
-            // Filter out null ayah entries (verse markers) and render each word
-            const rawWordCoords = coords.filter((c: any) => c.ayah !== null);
-
-            // Deduplicate coords - some verses have duplicate coordinate entries
-            const seenCoords = new Set<string>();
-            const wordCoords = rawWordCoords.filter((c: any) => {
-              const key = `${c.x}-${c.y}-${c.width}-${c.height}`;
-              if (seenCoords.has(key)) return false;
-              seenCoords.add(key);
-              return true;
-            });
-
-            const lastWordIdx = wordCoords.length - 1;
-
-            return wordCoords.map((coord: any, wordIdx: number) => {
-              const wordKey = `${verseKey}:${wordIdx}`;
-              // Check directly against the Set to ensure we get the latest value
-              const isWordRevealed = hifzMode.revealedWords.has(wordKey) || isVerseRevealed;
-              const isWordHidden = !isWordRevealed;
-              const isLastWord = wordIdx === lastWordIdx;
-              const actualBgColor = isWordHidden ? hiddenBgColor : 'transparent';
-
-              return (
-                <Pressable
-                  key={`word-${wordKey}`}
-                  accessible={true}
-                  accessibilityRole="button"
-                  accessibilityLabel={`Word ${wordIdx + 1} of verse ${surah}:${ayah}${isWordHidden ? ', hidden, tap to reveal' : ''}`}
-                  accessibilityHint="Tap to reveal this word, long press for memorization options"
-                  style={[styles.verseRegion, {
-                    left: coord.x * imageScale,
-                    top: (coord.y * imageScale) + imageOffsetY,
-                    width: Math.max(coord.width * imageScale, 20),
-                    height: Math.max(coord.height * imageScale, 20),
-                    backgroundColor: actualBgColor,
-                    borderRadius: isWordHidden ? 4 : 6,
-                  }]}
-                  onPress={() => {
-                    if (isWordHidden) {
-                      hifzMode.revealWord(wordKey);
-                    } else {
-                      // If verse is revealed (from full verse mode or reveal all), 
-                      // we need to hide the verse first, then reveal all OTHER words except this one
-                      if (isVerseRevealed) {
-                        hifzMode.hideVerse(verseKey);
-                        for (let i = 0; i < wordCoords.length; i++) {
-                          if (i !== wordIdx) {
-                            hifzMode.revealWord(`${verseKey}:${i}`);
-                          }
-                        }
-                      } else {
-                        hifzMode.hideWord(wordKey);
-                      }
-                    }
-                  }}
-                  onLongPress={(e) => {
-                    // Long press shows Hifz status menu (same as solid mode)
-                    const { pageX, pageY } = e.nativeEvent;
-                    setHifzMenuVerseKey(verseKey);
-                    setHifzMenuPosition({ x: pageX, y: pageY });
-                    setShowHifzStatusMenu(true);
-                  }}
-                  delayLongPress={500}
-                >
-                  {/* Loop start indicator (A) on first word - right side for RTL */}
-                  {wordIdx === 0 && hifzMode.loopStart === verseKey && (
-                    <View style={[styles.loopIndicator, { backgroundColor: '#3B82F6', right: 0 }]}>
-                      <ThemedText style={styles.loopIndicatorText}>A</ThemedText>
-                    </View>
-                  )}
-                  {/* Loop end indicator (B) on first word - right side for RTL (same position as A but different verse) */}
-                  {wordIdx === 0 && hifzMode.loopEnd === verseKey && (
-                    <View style={[styles.loopIndicator, { backgroundColor: '#3B82F6', right: 16 }]}>
-                      <ThemedText style={styles.loopIndicatorText}>B</ThemedText>
-                    </View>
-                  )}
-                  {/* Memorization status indicator on first word (start of verse in RTL) */}
-                  {wordIdx === 0 && verseProgress && (
-                    <View style={[
-                      styles.memorizationIndicator,
-                      {
-                        backgroundColor: verseProgress.status === 'memorized'
-                          ? theme.primary
-                          : verseProgress.status === 'in_progress'
-                            ? '#F59E0B'
-                            : 'transparent'
-                      }
-                    ]} />
-                  )}
-                  {/* Due for revision badge on first word */}
-                  {wordIdx === 0 && isDueForRevision && (
-                    <View style={[styles.revisionBadge, { backgroundColor: '#EF4444' }]} />
-                  )}
-                </Pressable>
-              );
-            });
-          } else {
-            // Solid mode (default): render merged verse regions per line
-            const lineGroups = new Map<number, any[]>();
-            coords.forEach((c: any) => {
-              if (!lineGroups.has(c.line)) lineGroups.set(c.line, []);
-              lineGroups.get(c.line)!.push(c);
-            });
-
-            // Check if this verse is currently playing AND has word-level timing data
-            const isCurrentVersePlaying = currentPlayingVerseKey === verseKey;
-            const hasWordTiming = isCurrentVersePlaying && audioState?.segments?.length > 0;
-
-            // Prepare word coordinates for word-level highlighting (if needed)
-            let wordCoords: any[] = [];
-            if (hasWordTiming) {
-              // Filter out null ayah entries (verse markers) and deduplicate
+            // Word-by-word mode: render individual word overlays
+            if (isWordMode) {
+              // Filter out null ayah entries (verse markers) and render each word
               const rawWordCoords = coords.filter((c: any) => c.ayah !== null);
+
+              // Deduplicate coords - some verses have duplicate coordinate entries
               const seenCoords = new Set<string>();
-              wordCoords = rawWordCoords.filter((c: any) => {
+              const wordCoords = rawWordCoords.filter((c: any) => {
                 const key = `${c.x}-${c.y}-${c.width}-${c.height}`;
                 if (seenCoords.has(key)) return false;
                 seenCoords.add(key);
                 return true;
               });
 
-              // Debug: Log word count mismatch
-              const segmentCount = audioState?.segments?.length || 0;
-              if (wordCoords.length !== segmentCount) {
-                console.log('[MushafScreen] Word count mismatch:', {
-                  verseKey,
-                  wordCoordsCount: wordCoords.length,
-                  segmentCount,
-                  currentWordIndex: currentAudioWordIndex,
-                });
-              }
-            }
+              const lastWordIdx = wordCoords.length - 1;
 
-            // Render line-based verse regions + word-level highlights
-            const lineElements = Array.from(lineGroups.values()).map((lineCoords, idx) => {
-              const minX = Math.min(...lineCoords.map(c => c.x));
-              const minY = Math.min(...lineCoords.map(c => c.y));
-              const maxX = Math.max(...lineCoords.map(c => c.x + c.width));
-              const maxY = Math.max(...lineCoords.map(c => c.y + c.height));
+              return wordCoords.map((coord: any, wordIdx: number) => {
+                const wordKey = `${verseKey}:${wordIdx}`;
+                // Check directly against the Set to ensure we get the latest value
+                const isWordRevealed = hifzMode.revealedWords.has(wordKey) || isVerseRevealed;
+                const isWordHidden = !isWordRevealed;
+                const isLastWord = wordIdx === lastWordIdx;
+                const actualBgColor = isWordHidden ? hiddenBgColor : 'transparent';
 
-              const isAudioPlaying = audioState?.current && `${audioState.current.surah}:${audioState.current.ayah}` === verseKey;
-              const isSelected = selectedVerse?.verseKey === verseKey;
-              const isHighlighted = highlightedVerse === verseKey;
-              const highlightColor = highlights[verseKey] || (notes[verseKey] ? `${theme.primary}26` : null);
-
-              const isHidden = isHifzActive && !isVerseRevealed;
-
-              // Determine background color with Hifz mode priority
-              // When word-level timing is available, use lighter verse highlight (words will be highlighted individually)
-              let bgColor = 'transparent';
-              if (isHidden) {
-                bgColor = hiddenBgColor;
-              } else if (isHighlighted) {
-                bgColor = `${theme.primary}80`; // Bright highlight for navigation
-              } else if (isAudioPlaying) {
-                // Always use subtle verse highlight when audio is playing
-                // Word overlay provides bright highlight on the current word when timing data is available
-                // This prevents flash from full verse -> word highlight when segments load
-                bgColor = `${theme.primary}1A`; // 10% opacity - subtle verse indicator
-              } else if (highlightColor) {
-                bgColor = highlightColor;
-              } else if (isSelected) {
-                bgColor = 'rgba(76, 175, 80, 0.2)';
-              } else if (isHifzActive && isDueForRevision) {
-                bgColor = 'rgba(239, 68, 68, 0.15)'; // Red tint for due revision
-              }
-
-              return (
-                <Pressable
-                  key={`${verseKey}-${idx}`}
-                  accessible={true}
-                  accessibilityRole="button"
-                  accessibilityLabel={`Verse ${surah}:${ayah}${isHidden ? ', hidden, tap to reveal' : ''}${isDueForRevision ? ', due for revision' : ''}`}
-                  accessibilityHint={isHifzActive ? 'Tap to reveal verse, long press for memorization options' : 'Tap to select verse'}
-                  style={[styles.verseRegion, {
-                    left: minX * imageScale,
-                    top: (minY * imageScale) + imageOffsetY,
-                    width: (maxX - minX) * imageScale,
-                    height: (maxY - minY) * imageScale,
-                    backgroundColor: bgColor,
-                    borderRadius: isHidden ? 4 : 6,
-                  }]}
-                  onPress={(e) => {
-                    const { pageX, pageY } = e.nativeEvent;
-                    // In Hifz mode, tap only reveals/hides verse (no menu)
-                    if (isHifzActive) {
-                      if (isVerseRevealed) {
-                        hifzMode.hideVerse(verseKey);
+                return (
+                  <Pressable
+                    key={`word-${wordKey}`}
+                    accessible={true}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Word ${wordIdx + 1} of verse ${surah}:${ayah}${isWordHidden ? ', hidden, tap to reveal' : ''}`}
+                    accessibilityHint="Tap to reveal this word, long press for memorization options"
+                    style={[styles.verseRegion, {
+                      left: (coord.x * imageScale) - 3,
+                      top: (coord.y * imageScale) + imageOffsetY - 2,
+                      width: Math.max(coord.width * imageScale, 20) + 6,
+                      height: Math.max(coord.height * imageScale, 20) + 4,
+                      backgroundColor: actualBgColor,
+                      borderRadius: isWordHidden ? 4 : 6,
+                    }]}
+                    onPress={() => {
+                      if (isWordHidden) {
+                        hifzMode.revealWord(wordKey);
                       } else {
-                        hifzMode.revealVerse(verseKey);
+                        // If verse is revealed (from full verse mode or reveal all), 
+                        // we need to hide the verse first, then reveal all OTHER words except this one
+                        if (isVerseRevealed) {
+                          hifzMode.hideVerse(verseKey);
+                          for (let i = 0; i < wordCoords.length; i++) {
+                            if (i !== wordIdx) {
+                              hifzMode.revealWord(`${verseKey}:${i}`);
+                            }
+                          }
+                        } else {
+                          hifzMode.hideWord(wordKey);
+                        }
                       }
-                      return; // Don't open verse menu in Hifz mode
-                    }
-                    // Normal mode: open verse menu
-                    handleVersePress({ surah: parseInt(surah), ayah: parseInt(ayah), verseKey, touchX: pageX, touchY: pageY });
-                  }}
-                  onLongPress={(e) => {
-                    const { pageX, pageY } = e.nativeEvent;
-                    // Long press shows Hifz status menu in Hifz mode
-                    if (isHifzActive) {
+                    }}
+                    onLongPress={(e) => {
+                      // Long press shows Hifz status menu (same as solid mode)
+                      const { pageX, pageY } = e.nativeEvent;
                       setHifzMenuVerseKey(verseKey);
                       setHifzMenuPosition({ x: pageX, y: pageY });
                       setShowHifzStatusMenu(true);
-                    } else {
-                      // Normal mode: activate WordScrubber
-                      console.log('[MushafScreen] Word long press at:', pageX, pageY);
-                      setIsWordScrubberActive(true);
-                      setTimeout(() => wordScrubberRef.current?.updatePosition(pageX, pageY), 0);
-                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                    }
-                  }}
-                  onTouchMove={(e) => {
-                    // Forward touch moves to WordScrubber when active
-                    if (isWordScrubberActive) {
-                      const { pageX, pageY } = e.nativeEvent;
-                      wordScrubberRef.current?.updatePosition(pageX, pageY);
-                    }
-                  }}
-                  onTouchEnd={() => {
-                    // Close WordScrubber when finger lifts
-                    if (isWordScrubberActive) {
-                      setIsWordScrubberActive(false);
-                    }
-                  }}
-                  delayLongPress={500}
-                >
-                  {/* Loop start indicator (A) - right side for RTL (first word position) */}
-                  {isHifzActive && hifzMode.loopStart === verseKey && idx === 0 && (
-                    <View style={[styles.loopIndicator, { backgroundColor: '#3B82F6', right: 0 }]}>
-                      <ThemedText style={styles.loopIndicatorText}>A</ThemedText>
-                    </View>
-                  )}
-                  {/* Loop end indicator (B) - right side for RTL (first word position, offset from A) */}
-                  {isHifzActive && hifzMode.loopEnd === verseKey && idx === 0 && (
-                    <View style={[styles.loopIndicator, { backgroundColor: '#3B82F6', right: 16 }]}>
-                      <ThemedText style={styles.loopIndicatorText}>B</ThemedText>
-                    </View>
-                  )}
-                  {/* Hidden verse indicator */}
-                  {isHidden && (
-                    <View style={styles.hiddenVerseOverlay}>
-                      <View style={[styles.hiddenLine, { backgroundColor: theme.border }]} />
-                      <View style={[styles.hiddenLineShort, { backgroundColor: theme.border }]} />
-                    </View>
-                  )}
-                  {/* Due for revision badge */}
-                  {isHifzActive && isDueForRevision && idx === 0 && (
-                    <View style={[styles.revisionBadge, { backgroundColor: '#EF4444' }]} />
-                  )}
-                  {/* Memorization status indicator */}
-                  {isHifzActive && verseProgress && idx === 0 && (
-                    <View style={[
-                      styles.memorizationIndicator,
-                      {
-                        backgroundColor: verseProgress.status === 'memorized'
-                          ? theme.primary
-                          : verseProgress.status === 'in_progress'
-                            ? '#F59E0B'
-                            : 'transparent'
-                      }
-                    ]} />
-                  )}
-                </Pressable>
-              );
-            });
-
-            // Add word-level highlight overlay for the currently playing word (animated)
-            const wordHighlightElements: React.ReactNode[] = [];
-            if (hasWordTiming && wordCoords.length > 0) {
-              wordHighlightElements.push(
-                <AnimatedAudioWordHighlight
-                  key={`word-highlight-${verseKey}`}
-                  wordCoords={wordCoords}
-                  currentWordIndex={currentAudioWordIndex}
-                  imageScale={imageScale}
-                  imageOffsetY={imageOffsetY}
-                  primaryColor={theme.primary}
-                  verseKey={verseKey}
-                />
-              );
-            }
-
-            return [...lineElements, ...wordHighlightElements];
-          }
-        })}
-      </Pressable>
-    );
-  };
-
-  const goToSurah = (surahNumber: number) => {
-    const page = surahPages[surahNumber];
-    if (page) {
-      const pageIndex = 604 - page;
-      const offset = pageIndex * layout.screenWidth;
-
-      // Mark that we just navigated (prevents useLayoutEffect from re-scrolling the list)
-      justNavigatedRef.current = true;
-
-      // Update state immediately
-      setCurrentPage(page);
-      saveRecentPage(page);
-
-      // NAVIGATE-THEN-REVEAL PATTERN:
-      // 1. Scroll Mushaf FIRST (while overlay still covers it)
-      (pagerViewRef.current as any)?.scrollToOffset({ offset, animated: false });
-
-      // 2. THEN close overlay (revealing already-positioned Mushaf)
-      // The overlay acts as the "curtain" - no need for extra fade animation
-      requestAnimationFrame(() => {
-        setShowSurahList(false);
-      });
-    }
-  };
-
-  const renderSurahItem = React.useCallback(({ item }: { item: any }) => (
-    <Pressable
-      onPress={() => goToSurah(item.number)}
-      style={({ pressed }) => [
-        styles.surahItem,
-        {
-          backgroundColor: isDark ? 'rgba(255, 255, 255, 0.04)' : '#FFFFFF',
-          transform: [{ scale: pressed ? 0.98 : 1 }, { translateY: pressed ? 1 : 0 }],
-          elevation: isDark ? 0 : 1,
-          shadowOpacity: isDark ? 0 : 0.04,
-        },
-      ]}
-    >
-      <View style={styles.surahItemContent}>
-        <View style={styles.surahLeft}>
-          <View style={[styles.surahNumber, {
-            backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#FFFFFF',
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 3 },
-            shadowOpacity: 0.06,
-            shadowRadius: 8,
-            elevation: 2,
-          }]}>
-            <ThemedText type="small" style={{ color: theme.text, fontWeight: '800', fontSize: 13 }}>{item.number}</ThemedText>
-          </View>
-          <View style={styles.surahInfo}>
-            <ThemedText type="body" style={{ fontWeight: '600', fontSize: 16, letterSpacing: -0.3 }}>{item.nameEn}</ThemedText>
-            <View style={styles.versesBadge}>
-              <View style={[styles.verseDot, { backgroundColor: theme.primary }]} />
-              <ThemedText type="caption" style={{ fontSize: 12, opacity: 0.6, marginLeft: 4 }}>{item.versesCount} {t('mushaf.verses')}</ThemedText>
-            </View>
-          </View>
-        </View>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-          <Image
-            source={item.revelationType === 'Meccan' ? require('../../assets/images/qibla3d/kaaba.png') : require('../../assets/images/qibla3d/madinah.png')}
-            style={{ width: 16, height: 16, opacity: 0.7 }}
-            contentFit="contain"
-          />
-          <ThemedText type="arabic" style={{ fontFamily: 'AlMushafQuran', fontSize: 20, opacity: 0.85, letterSpacing: 1 }}>{item.nameAr}</ThemedText>
-        </View>
-      </View>
-    </Pressable>
-  ), [isDark, theme, goToSurah]);
-
-  // Memoized Juz data for FlatList
-  const juzData = React.useMemo(() => {
-    const data: any[] = [];
-    const hizbQuarters = new Map();
-    quranData.data.surahs.forEach((s: any) => {
-      s.ayahs.forEach((a: any) => {
-        const key = a.hizbQuarter;
-        if (!hizbQuarters.has(key)) {
-          const hizb = Math.ceil(key / 4);
-          const quarter = ((key - 1) % 4) + 1;
-          const juz = a.juz;
-          hizbQuarters.set(key, { juz, hizb, quarter, verse: { ...a, surah: s.number }, surah: surahs.find(su => su.number === s.number) });
-        }
-      });
-    });
-
-    // Filter based on granularity
-    let filtered = Array.from(hizbQuarters.values());
-    if (hizbGranularity === 'half') {
-      // Show only half-hizb boundaries (quarters 2 and 4)
-      filtered = filtered.filter(item => item.quarter === 2 || item.quarter === 4);
-    } else if (hizbGranularity === 'fullJuz') {
-      // Show only the first entry of each Juz (quarter 1 of the first hizb of each juz)
-      // Each Juz has 2 hizbs: Juz 1 has hizbs 1-2, Juz 2 has hizbs 3-4, etc.
-      // First hizb of each juz = (juz - 1) * 2 + 1
-      filtered = filtered.filter(item => item.quarter === 1 && item.hizb === (item.juz - 1) * 2 + 1);
-    }
-    // 'quarter' shows everything (no filter)
-
-    filtered
-      .sort((a, b) => juzSortAsc ? (a.juz - b.juz || a.hizb - b.hizb || a.quarter - b.quarter) : (b.juz - a.juz || b.hizb - a.hizb || b.quarter - a.quarter))
-      .forEach(item => data.push(item));
-    return data;
-  }, [quranData, surahs, juzSortAsc, hizbGranularity]);
-
-  // Render function for Juz FlatList item
-  const renderJuzItem = React.useCallback(({ item, index }: { item: any; index: number }) => {
-    const isNewJuz = index === 0 || item.juz !== juzData[index - 1]?.juz;
-    const isNewHizb = isNewJuz || item.hizb !== juzData[index - 1]?.hizb;
-    const quarterLabel = ['¼', '½', '¾', '1'][item.quarter - 1];
-    const hizbLabel = `${t('mushaf.hizbLabel')} ${(item.juz - 1) * 2 + item.hizb}`;
-
-    return (
-      <View>
-        {isNewJuz && (
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: index === 0 ? 0 : Spacing.lg, marginBottom: Spacing.sm }}>
-            <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#FFFFFF', alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 2 }}>
-              <ThemedText type="small" style={{ fontWeight: '800', fontSize: 13, color: theme.text }}>{item.juz}</ThemedText>
-            </View>
-            <ThemedText type="body" style={{ fontSize: 14, fontWeight: '600', opacity: 0.7 }}>{t('mushaf.juzLabel')} {item.juz}</ThemedText>
-          </View>
-        )}
-        {isNewHizb && (
-          <View style={{ alignSelf: 'center', marginTop: Spacing.sm, marginBottom: Spacing.sm, paddingHorizontal: 16, paddingVertical: 6, borderRadius: 14, backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)' }}>
-            <ThemedText type="caption" style={{ fontSize: 12, fontWeight: '600', opacity: 0.6 }}>{hizbLabel}</ThemedText>
-          </View>
-        )}
-        <Pressable
-          onPress={() => {
-            navigateToPageFromOverlay(item.verse.page);
-          }}
-          style={({ pressed }) => [{
-            marginLeft: 44,
-            marginBottom: Spacing.xs,
-            paddingVertical: 12,
-            paddingHorizontal: 12,
-            borderRadius: 12,
-            backgroundColor: isDark ? 'rgba(255, 255, 255, 0.04)' : '#FFFFFF',
-            opacity: pressed ? 0.7 : 1,
-          }]}
-        >
-          <View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#FFFFFF', alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 6, elevation: 1 }}>
-                  <ThemedText type="small" style={{ fontSize: 10, fontWeight: '800', color: theme.text }}>{quarterLabel}</ThemedText>
-                </View>
-                <ThemedText type="body" style={{ fontWeight: '600', fontSize: 14 }}>{item.surah?.nameEn} {item.verse.numberInSurah}</ThemedText>
-              </View>
-              <ThemedText type="arabic" style={{ fontFamily: 'AlMushafQuran', fontSize: 16, opacity: 0.7 }}>{item.surah?.nameAr}</ThemedText>
-            </View>
-            <ThemedText type="arabic" style={{ fontFamily: 'AlMushafQuran', fontSize: 14, opacity: 0.6, textAlign: 'right', lineHeight: 24 }} numberOfLines={2}>{item.verse.text}</ThemedText>
-          </View>
-        </Pressable>
-      </View>
-    );
-  }, [juzData, isDark, theme.primary, layout.screenWidth]);
-
-  if (showNotes) {
-    return (
-      <ThemedView style={styles.container}>
-        <View style={[styles.surahListHeader, { backgroundColor: isDark ? 'rgba(0, 0, 0, 0.95)' : 'rgba(255, 255, 255, 0.95)', paddingTop: Platform.OS === 'android' ? Math.max(insets.top, 10) + 10 : insets.top + 10 }]}>
-          <View style={styles.headerContent}>
-            <View style={[styles.headerTop, { justifyContent: 'flex-start' }]}>
-              <Pressable
-                onPress={() => {
-                  setShowNotes(false);
-                  requestAnimationFrame(() => {
-                    const pageIndex = 604 - currentPage;
-                    (pagerViewRef.current as any)?.scrollToOffset({ offset: pageIndex * layout.screenWidth, animated: false });
-                  });
-                }}
-                style={({ pressed }) => [{ padding: Spacing.xs, opacity: pressed ? 0.6 : 1 }]}
-              >
-                <Feather name="arrow-left" size={24} color={theme.text} />
-              </Pressable>
-              <View style={{ flex: 1, alignItems: 'center', marginRight: 32 }}>
-                <ThemedText type="h3" style={{ fontWeight: '700', letterSpacing: -1, fontSize: 22 }}>{t('mushaf.notes')}</ThemedText>
-              </View>
-            </View>
-          </View>
-        </View>
-        {Object.keys(highlights).length === 0 && Object.keys(notes).length === 0 ? (
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: Spacing.xl }}>
-            <Feather name="edit-3" size={48} color={theme.textSecondary} style={{ opacity: 0.3, marginBottom: Spacing.md }} />
-            <ThemedText type="body" style={{ opacity: 0.5, textAlign: 'center' }}>{t('mushaf.noNotesYet')}</ThemedText>
-            <ThemedText type="caption" style={{ opacity: 0.4, textAlign: 'center', marginTop: Spacing.xs }}>{t('mushaf.tapToAddNote')}</ThemedText>
-          </View>
-        ) : (
-          <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
-            {/* Notes with Text Section */}
-            {Object.keys(notes).length > 0 && (
-              <View style={{ marginTop: Spacing.lg }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.lg, marginBottom: Spacing.md }}>
-                  <Image source={require('../../assets/images/3d-images/Notes.png')} style={{ width: 36, height: 36, marginRight: 10 }} contentFit="contain" />
-                  <ThemedText type="body" style={{ fontWeight: '700', fontSize: 15, letterSpacing: 0.5, opacity: 0.9 }}>
-                    {t('mushaf.notesSection')} ({Object.keys(notes).length})
-                  </ThemedText>
-                </View>
-                {Object.keys(notes).map((verseKey) => {
-                  const [surah, ayah] = verseKey.split(':');
-                  const surahData = quranData.data.surahs.find((s: any) => s.number === parseInt(surah));
-                  const surahInfo = surahs.find((s: any) => s.number === parseInt(surah));
-                  const ayahData = surahData?.ayahs.find((a: any) => a.numberInSurah === parseInt(ayah));
-                  const verseText = ayahData?.text || '';
-                  const preview = verseText;
-                  const timestamp = noteTimestamps[verseKey];
-                  const timeAgo = timestamp ? (() => {
-                    const diff = Date.now() - timestamp;
-                    const mins = Math.floor(diff / 60000);
-                    const hrs = Math.floor(diff / 3600000);
-                    const days = Math.floor(diff / 86400000);
-                    if (days > 0) return `${days}${t('mushaf.daysAgo', { count: days }).replace(`${days}`, '')}`;
-                    if (hrs > 0) return `${hrs}${t('mushaf.hoursAgo', { count: hrs }).replace(`${hrs}`, '')}`;
-                    if (mins > 0) return `${mins}${t('mushaf.minutesAgo', { count: mins }).replace(`${mins}`, '')}`;
-                    return t('mushaf.justNow');
-                  })() : '';
-
-                  const renderRightActions = (progress: RNAnimated.AnimatedInterpolation<number>, dragX: RNAnimated.AnimatedInterpolation<number>) => {
-                    const trans = dragX.interpolate({
-                      inputRange: [-100, 0],
-                      outputRange: [0, 100],
-                      extrapolate: 'clamp',
-                    });
-                    return (
-                      <RNAnimated.View style={{ transform: [{ translateX: trans }], flexDirection: 'row' }}>
-                        <Pressable
-                          onPress={() => {
-                            deleteNote(verseKey);
-                            if (highlights[verseKey]) {
-                              removeHighlight(verseKey);
-                            }
-                          }}
-                          style={{ width: 80, backgroundColor: '#FF4444', justifyContent: 'center', alignItems: 'center', marginHorizontal: Spacing.lg, borderRadius: 12 }}
-                        >
-                          <Feather name="trash-2" size={20} color="#FFF" />
-                          <ThemedText type="caption" style={{ color: '#FFF', fontSize: 11, marginTop: 4 }}>{t('mushaf.delete')}</ThemedText>
-                        </Pressable>
-                      </RNAnimated.View>
-                    );
-                  };
-
-                  return (
-                    <Swipeable
-                      key={verseKey}
-                      renderRightActions={renderRightActions}
-                      onSwipeableOpen={(direction) => {
-                        if (direction === 'right') {
-                          deleteNote(verseKey);
-                          if (highlights[verseKey]) {
-                            removeHighlight(verseKey);
-                          }
+                    }}
+                    delayLongPress={500}
+                  >
+                    {/* Loop start indicator (A) on first word - right side for RTL */}
+                    {wordIdx === 0 && hifzMode.loopStart === verseKey && (
+                      <View style={[styles.loopIndicator, { backgroundColor: '#3B82F6', right: 0 }]}>
+                        <ThemedText style={styles.loopIndicatorText}>A</ThemedText>
+                      </View>
+                    )}
+                    {/* Loop end indicator (B) on first word - right side for RTL (same position as A but different verse) */}
+                    {wordIdx === 0 && hifzMode.loopEnd === verseKey && (
+                      <View style={[styles.loopIndicator, { backgroundColor: '#3B82F6', right: 16 }]}>
+                        <ThemedText style={styles.loopIndicatorText}>B</ThemedText>
+                      </View>
+                    )}
+                    {/* Memorization status indicator on first word (start of verse in RTL) */}
+                    {wordIdx === 0 && verseProgress && (
+                      <View style={[
+                        styles.memorizationIndicator,
+                        {
+                          backgroundColor: verseProgress.status === 'memorized'
+                            ? theme.primary
+                            : verseProgress.status === 'in_progress'
+                              ? '#F59E0B'
+                              : 'transparent'
                         }
-                      }}
-                      overshootRight={false}
-                    >
-                      <Pressable
-                        onPress={() => {
-                          const page = ayahData?.page || 1;
-                          const pageIndex = 604 - page;
-                          setShowNotes(false);
-                          setIsNavigating(true);
-                          setCurrentPage(page);
-                          requestAnimationFrame(() => {
-                            (pagerViewRef.current as any)?.scrollToOffset({ offset: pageIndex * layout.screenWidth, animated: false });
-                            setTimeout(() => setIsNavigating(false), 300);
-                          });
-                        }}
-                        style={({ pressed }) => [{
-                          marginHorizontal: Spacing.lg,
-                          marginBottom: Spacing.sm,
-                          padding: Spacing.md,
-                          borderRadius: 12,
-                          backgroundColor: isDark ? 'rgba(255, 255, 255, 0.04)' : '#FFFFFF',
-                          borderWidth: 0,
-                          borderColor: 'transparent',
-                          shadowColor: '#000',
-                          shadowOffset: { width: 0, height: 4 },
-                          shadowOpacity: 0.05,
-                          shadowRadius: 12,
-                          elevation: 2,
-                          opacity: pressed ? 0.7 : 1,
-                        }]}
-                      >
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
-                          <View style={{ flex: 1 }}>
-                            <ThemedText type="body" style={{ fontWeight: '600', fontSize: 15 }}>{surahInfo?.nameEn} {surah}:{ayah}</ThemedText>
-                            {timeAgo && <ThemedText type="caption" style={{ fontSize: 11, opacity: 0.5, marginTop: 2 }}>{timeAgo}</ThemedText>}
-                          </View>
-                          {highlights[verseKey] && (
-                            <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: highlights[verseKey], marginLeft: 8, shadowColor: highlights[verseKey], shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.6, shadowRadius: 5, elevation: 4 }} />
-                          )}
-                        </View>
-                        <ThemedText type="arabic" style={{ fontFamily: 'AlMushafQuran', fontSize: 16, opacity: 0.7, marginBottom: 8, textAlign: 'right', lineHeight: 28 }}>{preview}</ThemedText>
-                        <View style={{
-                          padding: 10,
-                          borderRadius: 8,
-                          backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : '#F3F4F6',
-                          borderLeftWidth: 3,
-                          borderLeftColor: theme.primary,
-                          shadowColor: '#000',
-                          shadowOffset: { width: 0, height: 2 },
-                          shadowOpacity: 0.05,
-                          shadowRadius: 3,
-                        }}>
-                          <ThemedText type="caption" style={{ fontSize: 13, fontStyle: 'italic' }}>{notes[verseKey]}</ThemedText>
-                        </View>
-                      </Pressable>
-                    </Swipeable>
-                  );
-                })}
-              </View>
-            )}
-
-            {/* Highlights Only Section */}
-            {Object.keys(highlights).filter(key => !notes[key]).length > 0 && (
-              <View style={{ marginTop: Spacing.lg }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.lg, marginBottom: Spacing.md }}>
-                  <Image source={require('../../assets/images/3d-images/Highlights.png')} style={{ width: 36, height: 36, marginRight: 10 }} contentFit="contain" />
-                  <ThemedText type="body" style={{ fontWeight: '700', fontSize: 15, letterSpacing: 0.5, opacity: 0.9 }}>
-                    {t('mushaf.highlightsSection')} ({Object.keys(highlights).filter(key => !notes[key]).length})
-                  </ThemedText>
-                </View>
-                {Object.keys(highlights).filter(key => !notes[key]).map((verseKey) => {
-                  const color = highlights[verseKey];
-                  const [surah, ayah] = verseKey.split(':');
-                  const surahData = quranData.data.surahs.find((s: any) => s.number === parseInt(surah));
-                  const surahInfo = surahs.find((s: any) => s.number === parseInt(surah));
-                  const ayahData = surahData?.ayahs.find((a: any) => a.numberInSurah === parseInt(ayah));
-                  const verseText = ayahData?.text || '';
-                  const preview = verseText;
-                  const timestamp = highlightTimestamps[verseKey];
-                  const timeAgo = timestamp ? (() => {
-                    const diff = Date.now() - timestamp;
-                    const mins = Math.floor(diff / 60000);
-                    const hrs = Math.floor(diff / 3600000);
-                    const days = Math.floor(diff / 86400000);
-                    if (days > 0) return t('mushaf.daysAgo', { count: days });
-                    if (hrs > 0) return t('mushaf.hoursAgo', { count: hrs });
-                    if (mins > 0) return t('mushaf.minutesAgo', { count: mins });
-                    return t('mushaf.justNow');
-                  })() : '';
-
-                  const renderRightActions = (progress: RNAnimated.AnimatedInterpolation<number>, dragX: RNAnimated.AnimatedInterpolation<number>) => {
-                    const trans = dragX.interpolate({
-                      inputRange: [-100, 0],
-                      outputRange: [0, 100],
-                      extrapolate: 'clamp',
-                    });
-                    return (
-                      <RNAnimated.View style={{ transform: [{ translateX: trans }], flexDirection: 'row' }}>
-                        <Pressable
-                          onPress={() => removeHighlight(verseKey)}
-                          style={{ width: 80, backgroundColor: '#FF4444', justifyContent: 'center', alignItems: 'center', marginHorizontal: Spacing.lg, borderRadius: 12 }}
-                        >
-                          <Feather name="trash-2" size={20} color="#FFF" />
-                          <ThemedText type="caption" style={{ color: '#FFF', fontSize: 11, marginTop: 4 }}>{t('mushaf.delete')}</ThemedText>
-                        </Pressable>
-                      </RNAnimated.View>
-                    );
-                  };
-
-                  return (
-                    <Swipeable
-                      key={verseKey}
-                      renderRightActions={renderRightActions}
-                      overshootRight={false}
-                      onSwipeableOpen={(direction) => {
-                        if (direction === 'right') {
-                          removeHighlight(verseKey);
-                        }
-                      }}
-                    >
-                      <Pressable
-                        onPress={() => {
-                          const page = ayahData?.page || 1;
-                          const pageIndex = 604 - page;
-                          setShowNotes(false);
-                          setIsNavigating(true);
-                          setCurrentPage(page);
-                          requestAnimationFrame(() => {
-                            (pagerViewRef.current as any)?.scrollToOffset({ offset: pageIndex * layout.screenWidth, animated: false });
-                            setTimeout(() => setIsNavigating(false), 300);
-                          });
-                        }}
-                        style={({ pressed }) => [{
-                          marginHorizontal: Spacing.lg,
-                          marginBottom: Spacing.sm,
-                          padding: Spacing.md,
-                          borderRadius: 12,
-                          backgroundColor: isDark ? 'rgba(255, 255, 255, 0.04)' : '#FFFFFF',
-                          borderWidth: 0,
-                          borderColor: 'transparent',
-                          shadowColor: '#000',
-                          shadowOffset: { width: 0, height: 4 },
-                          shadowOpacity: 0.05,
-                          shadowRadius: 12,
-                          elevation: 2,
-                          opacity: pressed ? 0.7 : 1,
-                        }]}
-                      >
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
-                          <View style={{ flex: 1 }}>
-                            <ThemedText type="body" style={{ fontWeight: '600', fontSize: 15 }}>{surahInfo?.nameEn} {surah}:{ayah}</ThemedText>
-                            {timeAgo && <ThemedText type="caption" style={{ fontSize: 11, opacity: 0.5, marginTop: 2 }}>{timeAgo}</ThemedText>}
-                          </View>
-                          <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: color, marginLeft: 8, shadowColor: color, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.6, shadowRadius: 5, elevation: 4 }} />
-                        </View>
-                        <ThemedText type="arabic" style={{ fontFamily: 'AlMushafQuran', fontSize: 16, opacity: 0.7, textAlign: 'right', lineHeight: 28 }}>{preview}</ThemedText>
-                      </Pressable>
-                    </Swipeable>
-                  );
-                })}
-              </View>
-            )}
-          </ScrollView>
-        )}
-      </ThemedView>
-    );
-  }
-
-  if (showBookmarks) {
-    return (
-      <ThemedView style={styles.container}>
-        <View style={[styles.surahListHeader, {
-          backgroundColor: isDark ? 'rgba(0, 0, 0, 0.95)' : 'rgba(255, 255, 255, 0.95)',
-          paddingTop: Platform.OS === 'android' ? Math.max(insets.top, 10) + 10 : insets.top + 10,
-        }]}>
-          <View style={styles.headerContent}>
-            <View style={[styles.headerTop, { justifyContent: 'flex-start' }]}>
-              <Pressable
-                onPress={() => {
-                  setShowBookmarks(false);
-                  requestAnimationFrame(() => {
-                    const pageIndex = 604 - currentPage;
-                    (pagerViewRef.current as any)?.scrollToOffset({ offset: pageIndex * layout.screenWidth, animated: false });
-                  });
-                }}
-                style={({ pressed }) => [{ padding: Spacing.xs, opacity: pressed ? 0.6 : 1 }]}
-              >
-                <Feather name="arrow-left" size={24} color={theme.text} />
-              </Pressable>
-              <View style={{ flex: 1, alignItems: 'center', marginRight: 32 }}>
-                <ThemedText type="h3" style={{ fontWeight: '700', letterSpacing: -1, fontSize: 22 }}>{t('mushaf.bookmarks')}</ThemedText>
-              </View>
-            </View>
-          </View>
-        </View>
-        {bookmarks.length === 0 ? (
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: Spacing.xl }}>
-            <Feather name="bookmark" size={48} color={theme.textSecondary} style={{ opacity: 0.3, marginBottom: Spacing.md }} />
-            <ThemedText type="body" style={{ opacity: 0.5, textAlign: 'center' }}>{t('mushaf.noBookmarksYet')}</ThemedText>
-            <ThemedText type="caption" style={{ opacity: 0.4, textAlign: 'center', marginTop: Spacing.xs }}>{t('mushaf.tapToBookmark')}</ThemedText>
-          </View>
-        ) : (
-          <FlatList
-            data={bookmarks}
-            keyExtractor={(item) => item}
-            renderItem={({ item }) => {
-              const [surah, ayah] = item.split(':');
-              const surahData = quranData.data.surahs.find((s: any) => s.number === parseInt(surah));
-              const surahInfo = surahs.find((s: any) => s.number === parseInt(surah));
-              const ayahData = surahData?.ayahs.find((a: any) => a.numberInSurah === parseInt(ayah));
-              const verseText = ayahData?.text || '';
-              const preview = verseText.length > 60 ? verseText.substring(0, 60) + '...' : verseText;
-
-              const renderRightActions = (progress: RNAnimated.AnimatedInterpolation<number>, dragX: RNAnimated.AnimatedInterpolation<number>) => {
-                const trans = dragX.interpolate({
-                  inputRange: [-100, 0],
-                  outputRange: [0, 100],
-                  extrapolate: 'clamp',
-                });
-                return (
-                  <RNAnimated.View style={{ transform: [{ translateX: trans }], flexDirection: 'row' }}>
-                    <Pressable
-                      onPress={() => toggleBookmark(item)}
-                      style={{ width: 80, backgroundColor: '#FF4444', justifyContent: 'center', alignItems: 'center', marginHorizontal: Spacing.lg, borderRadius: 12 }}
-                    >
-                      <Feather name="trash-2" size={20} color="#FFF" />
-                      <ThemedText type="caption" style={{ color: '#FFF', fontSize: 11, marginTop: 4 }}>{t('mushaf.delete')}</ThemedText>
-                    </Pressable>
-                  </RNAnimated.View>
+                      ]} />
+                    )}
+                    {/* Due for revision badge on first word */}
+                    {wordIdx === 0 && isDueForRevision && (
+                      <View style={[styles.revisionBadge, { backgroundColor: '#EF4444' }]} />
+                    )}
+                  </Pressable>
                 );
-              };
+              });
+            } else {
+              // Solid mode (default): render merged verse regions per line
+              const lineGroups = new Map<number, any[]>();
+              coords.forEach((c: any) => {
+                if (!lineGroups.has(c.line)) lineGroups.set(c.line, []);
+                lineGroups.get(c.line)!.push(c);
+              });
 
-              return (
-                <Swipeable
-                  renderRightActions={renderRightActions}
-                  onSwipeableOpen={(direction) => {
-                    if (direction === 'right') {
-                      toggleBookmark(item);
-                    }
-                  }}
-                  overshootRight={false}
-                >
-                  <Pressable
-                    onPress={() => {
-                      console.log('Bookmark clicked:', { item, surah, ayah });
-                      const page = ayahData?.page || 1;
-                      console.log('Page number:', page);
-                      const pageIndex = 604 - page;
-                      setShowBookmarks(false);
-                      setIsNavigating(true);
-                      setCurrentPage(page);
-                      requestAnimationFrame(() => {
-                        (pagerViewRef.current as any)?.scrollToOffset({ offset: pageIndex * layout.screenWidth, animated: false });
-                        setTimeout(() => setIsNavigating(false), 300);
-                      });
-                    }}
-                    style={({ pressed }) => [
-                      styles.surahItem,
-                      {
-                        backgroundColor: isDark ? 'rgba(255, 255, 255, 0.04)' : '#FFFFFF',
-                        borderWidth: 0,
-                        borderColor: 'transparent',
-                        transform: [{ scale: pressed ? 0.98 : 1 }],
-                        shadowColor: '#000',
-                        shadowOffset: { width: 0, height: 4 },
-                        shadowOpacity: isDark ? 0 : 0.05,
-                        shadowRadius: 12,
-                        elevation: isDark ? 0 : 2,
-                      },
-                    ]}
-                  >
-                    <View style={styles.surahItemContent}>
-                      <View style={styles.surahLeft}>
-                        <View style={[styles.surahNumber, {
-                          backgroundColor: 'transparent',
-                        }]}>
-                          <Image source={require('../../assets/images/3d-images/Bookmark.png')} style={{ width: 36, height: 36 }} contentFit="contain" />
-                        </View>
-                        <View style={styles.surahInfo}>
-                          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                            <ThemedText type="body" style={{ fontWeight: '600', fontSize: 16 }}>{surahInfo?.nameEn || `Surah ${surah}`}, Verse {ayah}</ThemedText>
-                            <ThemedText type="arabic" style={{ fontFamily: 'AlMushafQuran', fontSize: 16, opacity: 0.7 }}>({surahInfo?.nameAr})</ThemedText>
-                          </View>
-                          <ThemedText type="arabic" style={{ fontFamily: 'AlMushafQuran', marginTop: 4, opacity: 0.7, lineHeight: 22, fontSize: 16, textAlign: 'right' }} numberOfLines={2}>{preview}</ThemedText>
-                        </View>
-                      </View>
-                    </View>
-                  </Pressable>
-                </Swipeable>
-              );
-            }}
-            contentContainerStyle={{ padding: Spacing.lg }}
-          />
-        )}
-      </ThemedView>
-    );
-  }
+              // Check if this verse is currently playing AND has word-level timing data
+              const isCurrentVersePlaying = localAudioState.playingVerseKey === verseKey;
+              const hasWordTiming = isCurrentVersePlaying && localAudioState.segments?.length > 0;
 
-  // Surah list overlay - ALWAYS MOUNTED (preserves scroll position, no flash on open)
-  const renderSurahListOverlay = () => (
-    <View
-      pointerEvents={showSurahList ? 'auto' : 'none'}
-      style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: isDark ? '#000000' : '#FFFFFF',
-        zIndex: showSurahList ? 100 : -1,
-        opacity: showSurahList ? 1 : 0,
-      }}
-    >
-      <View style={[styles.surahListHeader, {
-        backgroundColor: isDark ? 'rgba(0, 0, 0, 0.95)' : 'rgba(255, 255, 255, 0.95)',
-        paddingTop: Platform.OS === 'android' ? Math.max(insets.top, 10) + 10 : insets.top + 10,
-        zIndex: 10,
-      }]}>
-        <View style={styles.headerContent}>
-          <View style={styles.headerTop}>
-            <View>
-              <ThemedText type="h3" style={{ fontWeight: '700', letterSpacing: -1, fontSize: 28 }}>{t('mushaf.quran')}</ThemedText>
-              <ThemedText type="caption" style={{ opacity: 0.5, marginTop: 2, fontSize: 13 }}>{navigationMode === 'surah' ? t('mushaf.surahs114') : navigationMode === 'juz' ? t('mushaf.juz30') : `${recentPages.length} ${t('mushaf.recentCount')}`}</ThemedText>
-            </View>
-            <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
-              <Pressable
-                onPress={() => setShowSearchBar(!showSearchBar)}
-                style={({ pressed }) => [{
-                  width: 36,
-                  height: 36,
-                  borderRadius: 18,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: showSearchBar ? `${theme.primary}20` : (isDark ? 'rgba(255,255,255,0.1)' : '#FFFFFF'),
-                  shadowColor: '#000',
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: showSearchBar ? 0 : 0.05,
-                  shadowRadius: 10,
-                  elevation: showSearchBar ? 0 : 2,
-                  transform: [{ scale: pressed ? 0.92 : 1 }],
-                }]}
-              >
-                <Feather name="search" size={18} color={showSearchBar ? theme.primary : theme.text} />
-              </Pressable>
-              <Pressable
-                onPress={() => {
-                  setShowSurahList(false);
-                  requestAnimationFrame(() => {
-                    const pageIndex = 604 - currentPage;
-                    (pagerViewRef.current as any)?.scrollToOffset({ offset: pageIndex * layout.screenWidth, animated: false });
+              // Prepare word coordinates for word-level highlighting (if needed)
+              let wordCoords: any[] = [];
+              if (hasWordTiming) {
+                // Filter out null ayah entries (verse markers) and deduplicate
+                const rawWordCoords = coords.filter((c: any) => c.ayah !== null);
+                const seenCoords = new Set<string>();
+                wordCoords = rawWordCoords.filter((c: any) => {
+                  const key = `${c.x}-${c.y}-${c.width}-${c.height}`;
+                  if (seenCoords.has(key)) return false;
+                  seenCoords.add(key);
+                  return true;
+                });
+
+                // Debug: Log word count mismatch
+                const segmentCount = localAudioState.segments?.length || 0;
+                if (wordCoords.length !== segmentCount) {
+                  console.log('[MushafScreen] Word count mismatch:', {
+                    verseKey,
+                    wordCoordsCount: wordCoords.length,
+                    segmentCount,
+                    currentWordIndex: localAudioState.wordIndex,
                   });
-                }}
-                style={({ pressed }) => [{
-                  width: 36,
-                  height: 36,
-                  borderRadius: 18,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : '#FFFFFF',
-                  shadowColor: '#000',
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.05,
-                  shadowRadius: 10,
-                  elevation: 2,
-                  transform: [{ scale: pressed ? 0.92 : 1 }],
-                }]}
-              >
-                <Feather name="x" size={20} color={theme.text} />
-              </Pressable>
-            </View>
-          </View>
-          <View style={{ flexDirection: 'row', gap: 4, marginTop: Spacing.md, backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)', padding: 4, borderRadius: 14 }}>
-            <Pressable
-              onPress={() => setNavigationMode('surah')}
-              style={({ pressed }) => [{
-                flex: 1,
-                paddingVertical: 10,
-                borderRadius: 12,
-                alignItems: 'center',
-                backgroundColor: navigationMode === 'surah' ? theme.primary : 'transparent',
-                shadowColor: navigationMode === 'surah' ? '#000' : 'transparent',
-                shadowOffset: { width: 0, height: 6 },
-                shadowOpacity: navigationMode === 'surah' ? 0.15 : 0,
-                shadowRadius: 12,
-                elevation: navigationMode === 'surah' ? 4 : 0,
-                transform: [{ scale: pressed ? 0.96 : 1 }],
-              }]}
-            >
-              <ThemedText type="body" style={{ fontWeight: navigationMode === 'surah' ? '700' : '500', color: navigationMode === 'surah' ? '#FFF' : (isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)'), fontSize: 14 }}>{t('mushaf.surahTab')}</ThemedText>
-            </Pressable>
-            <Pressable
-              onPress={() => setNavigationMode('juz')}
-              style={({ pressed }) => [{
-                flex: 1,
-                paddingVertical: 10,
-                borderRadius: 12,
-                alignItems: 'center',
-                backgroundColor: navigationMode === 'juz' ? theme.primary : 'transparent',
-                shadowColor: navigationMode === 'juz' ? '#000' : 'transparent',
-                shadowOffset: { width: 0, height: 6 },
-                shadowOpacity: navigationMode === 'juz' ? 0.15 : 0,
-                shadowRadius: 12,
-                elevation: navigationMode === 'juz' ? 4 : 0,
-                transform: [{ scale: pressed ? 0.96 : 1 }],
-              }]}
-            >
-              <ThemedText type="body" style={{ fontWeight: navigationMode === 'juz' ? '700' : '500', color: navigationMode === 'juz' ? '#FFF' : (isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)'), fontSize: 14 }}>{t('mushaf.juzTab')}</ThemedText>
-            </Pressable>
-            <Pressable
-              onPress={() => setNavigationMode('recent')}
-              style={({ pressed }) => [{
-                flex: 1,
-                paddingVertical: 10,
-                borderRadius: 12,
-                alignItems: 'center',
-                backgroundColor: navigationMode === 'recent' ? theme.primary : 'transparent',
-                shadowColor: navigationMode === 'recent' ? '#000' : 'transparent',
-                shadowOffset: { width: 0, height: 6 },
-                shadowOpacity: navigationMode === 'recent' ? 0.15 : 0,
-                shadowRadius: 12,
-                elevation: navigationMode === 'recent' ? 4 : 0,
-                transform: [{ scale: pressed ? 0.96 : 1 }],
-              }]}
-            >
-              <ThemedText type="body" style={{ fontWeight: navigationMode === 'recent' ? '700' : '500', color: navigationMode === 'recent' ? '#FFF' : (isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)'), fontSize: 14 }}>{t('mushaf.recentTab')}</ThemedText>
-            </Pressable>
-          </View>
+                }
+              }
 
-          {/* Search Bar - collapsible */}
-          {showSearchBar && (
-            <View style={{ marginTop: Spacing.md }}>
-              <View style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                backgroundColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)',
-                borderRadius: 12,
-                paddingHorizontal: 12,
-                paddingVertical: 10,
-              }}>
-                <Feather name="search" size={18} color={theme.textSecondary} style={{ marginRight: 8 }} />
-                <TextInput
-                  ref={searchInputRef}
-                  value={searchQuery}
-                  onChangeText={setSearchQuery}
-                  placeholder={t('mushaf.searchPlaceholder')}
-                  placeholderTextColor={theme.textSecondary}
-                  autoFocus={true}
-                  style={{
-                    flex: 1,
-                    fontSize: 15,
-                    color: theme.text,
-                    height: Platform.OS === 'ios' ? 36 : 40,
-                    paddingVertical: Platform.OS === 'ios' ? 8 : 0,
-                    textAlignVertical: 'center',
-                  }}
-                />
-                {searchQuery.length > 0 && (
-                  <Pressable onPress={() => setSearchQuery('')} style={{ padding: 4 }}>
-                    <Feather name="x" size={16} color={theme.textSecondary} />
-                  </Pressable>
-                )}
-              </View>
-              {searchQuery.length > 0 && searchQuery.length < 2 && (
-                <ThemedText type="caption" style={{ marginTop: 4, marginLeft: 4, opacity: 0.5, fontSize: 11 }}>
-                  Type at least 2 characters to search
-                </ThemedText>
-              )}
+              // Render line-based verse regions + word-level highlights
+              const lineElements = Array.from(lineGroups.values()).map((lineCoords, idx) => {
+                const minX = Math.min(...lineCoords.map(c => c.x));
+                const minY = Math.min(...lineCoords.map(c => c.y));
+                const maxX = Math.max(...lineCoords.map(c => c.x + c.width));
+                const maxY = Math.max(...lineCoords.map(c => c.y + c.height));
 
-              {/* Tafsir Search Toggle */}
-              <Pressable
-                onPress={() => setIncludeTafsirInSearch(!includeTafsirInSearch)}
-                style={({ pressed }) => [{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  marginTop: 8,
-                  paddingVertical: 8,
-                  paddingHorizontal: 12,
-                  borderRadius: 10,
-                  backgroundColor: includeTafsirInSearch
-                    ? `${theme.primary}15`
-                    : (isDark ? 'rgba(255, 255, 255, 0.04)' : 'rgba(0, 0, 0, 0.02)'),
-                  opacity: pressed ? 0.7 : 1,
-                }]}
-              >
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                  <Feather
-                    name="book-open"
-                    size={14}
-                    color={includeTafsirInSearch ? theme.primary : theme.textSecondary}
-                  />
-                  <ThemedText
-                    type="caption"
-                    style={{
-                      fontSize: 13,
-                      fontWeight: includeTafsirInSearch ? '600' : '400',
-                      color: includeTafsirInSearch ? theme.primary : theme.text
+                const isAudioPlaying = localAudioState.playingVerseKey === verseKey;
+                const isSelected = selectedVerse?.verseKey === verseKey;
+                const isHighlighted = highlightedVerse === verseKey;
+                const highlightColor = highlights[verseKey] || (notes[verseKey] ? `${theme.primary}26` : null);
+
+                const isHidden = isHifzActive && !isVerseRevealed;
+
+                // Determine background color with Hifz mode priority
+                // When word-level timing is available, use lighter verse highlight (words will be highlighted individually)
+                let bgColor = 'transparent';
+                if (isHidden) {
+                  bgColor = hiddenBgColor;
+                } else if (isHighlighted) {
+                  bgColor = `${theme.primary}80`; // Bright highlight for navigation
+                } else if (isAudioPlaying) {
+                  // Always use subtle verse highlight when audio is playing
+                  // Word overlay provides bright highlight on the current word when timing data is available
+                  // This prevents flash from full verse -> word highlight when segments load
+                  bgColor = `${theme.primary}1A`; // 10% opacity - subtle verse indicator
+                } else if (highlightColor) {
+                  bgColor = highlightColor;
+                } else if (isSelected) {
+                  bgColor = 'rgba(76, 175, 80, 0.2)';
+                } else if (isHifzActive && isDueForRevision) {
+                  bgColor = 'rgba(239, 68, 68, 0.15)'; // Red tint for due revision
+                }
+
+                return (
+                  <Pressable
+                    key={`${verseKey}-${idx}`}
+                    accessible={true}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Verse ${surah}:${ayah}${isHidden ? ', hidden, tap to reveal' : ''}${isDueForRevision ? ', due for revision' : ''}`}
+                    accessibilityHint={isHifzActive ? 'Tap to reveal verse, long press for memorization options' : 'Tap to select verse'}
+                    style={[styles.verseRegion, {
+                      left: (minX * imageScale) - 3,
+                      top: (minY * imageScale) + imageOffsetY - 2,
+                      width: ((maxX - minX) * imageScale) + 6,
+                      height: ((maxY - minY) * imageScale) + 4,
+                      backgroundColor: bgColor,
+                      borderRadius: isHidden ? 4 : 6,
+                    }]}
+                    onPress={(e) => {
+                      const { pageX, pageY } = e.nativeEvent;
+                      // In Hifz mode, tap only reveals/hides verse (no menu)
+                      if (isHifzActive) {
+                        if (isVerseRevealed) {
+                          hifzMode.hideVerse(verseKey);
+                        } else {
+                          hifzMode.revealVerse(verseKey);
+                        }
+                        return; // Don't open verse menu in Hifz mode
+                      }
+                      // Normal mode: open verse menu
+                      handleVersePress({ surah: parseInt(surah), ayah: parseInt(ayah), verseKey, touchX: pageX, touchY: pageY });
                     }}
+                    onLongPress={(e) => {
+                      const { pageX, pageY } = e.nativeEvent;
+                      // Long press shows Hifz status menu in Hifz mode
+                      if (isHifzActive) {
+                        setHifzMenuVerseKey(verseKey);
+                        setHifzMenuPosition({ x: pageX, y: pageY });
+                        setShowHifzStatusMenu(true);
+                      } else {
+                        // Normal mode: activate WordScrubber
+                        console.log('[MushafScreen] Word long press at:', pageX, pageY);
+                        setIsWordScrubberActive(true);
+                        setTimeout(() => wordScrubberRef.current?.updatePosition(pageX, pageY), 0);
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                      }
+                    }}
+                    onTouchMove={(e) => {
+                      // Forward touch moves to WordScrubber when active
+                      if (isWordScrubberActive) {
+                        const { pageX, pageY } = e.nativeEvent;
+                        wordScrubberRef.current?.updatePosition(pageX, pageY);
+                      }
+                    }}
+                    onTouchEnd={() => {
+                      // Close WordScrubber when finger lifts
+                      if (isWordScrubberActive) {
+                        setIsWordScrubberActive(false);
+                      }
+                    }}
+                    delayLongPress={500}
                   >
-                    {t('mushaf.includeTafsir')}
-                  </ThemedText>
-                </View>
-                <View style={{
-                  width: 40,
-                  height: 22,
-                  borderRadius: 11,
-                  backgroundColor: includeTafsirInSearch
-                    ? theme.primary
-                    : (isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)'),
-                  padding: 2,
-                  justifyContent: 'center',
-                  alignItems: includeTafsirInSearch ? 'flex-end' : 'flex-start',
-                }}>
-                  <View style={{
-                    width: 18,
-                    height: 18,
-                    borderRadius: 9,
-                    backgroundColor: '#FFF',
-                  }} />
-                </View>
-              </Pressable>
-            </View>
-          )}
-        </View>
-      </View>
-      {/* ScrollView - only for Search results and Recent tab */}
-      {
-        (searchQuery.trim().length >= 2 || navigationMode === 'recent') && (
-          <ScrollView contentContainerStyle={{ paddingBottom: tabBarHeight + 60 }}>
-            {/* Search Results */}
-            {searchQuery.trim().length >= 2 && (
-              <View style={{ padding: Spacing.lg }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: Spacing.md }}>
-                  {isSearching ? (
-                    <ActivityIndicator size="small" color={theme.primary} style={{ marginRight: 8 }} />
-                  ) : (
-                    <Feather name="search" size={16} color={theme.primary} style={{ marginRight: 8 }} />
-                  )}
-                  <ThemedText type="body" style={{ fontWeight: '600', fontSize: 13, opacity: 0.6 }}>
-                    {isSearching ? t('mushaf.searching') : `${searchResults.length} ${t('mushaf.resultsCount')}`}
-                  </ThemedText>
-                </View>
-                {searchResults.length === 0 && !isSearching ? (
-                  <View style={{ alignItems: 'center', paddingVertical: 40 }}>
-                    <Feather name="search" size={48} color={theme.textSecondary} style={{ opacity: 0.3, marginBottom: 16 }} />
-                    <ThemedText type="body" style={{ opacity: 0.5 }}>{t('mushaf.noResults')}</ThemedText>
-                    <ThemedText type="caption" style={{ opacity: 0.4, marginTop: 4 }}>{t('mushaf.tryDifferent')}</ThemedText>
-                  </View>
-                ) : (
-                  searchResults.map((result, index) => {
-                    const surahInfo = surahs.find(s => s.number === result.surah);
-                    return (
-                      <Pressable
-                        key={`${result.verseKey}-${index}`}
-                        onPress={async () => {
-                          const page = result.page;
-                          const pageIndex = 604 - page;
-                          setShowSurahList(false);
-                          setSearchQuery('');
-                          setIsNavigating(true);
-                          setCurrentPage(page);
-
-                          // If match is from tafsir, load that tafsir and skip selection menu
-                          if (result.matchType === 'tafsir' && result.tafsirSource) {
-                            // Set the tafsir source first
-                            setSelectedTafsirId(result.tafsirSource);
-
-                            // Load the tafsir data for this specific verse
-                            try {
-                              const tafsirPath = `${FileSystem.documentDirectory}tafsir-${result.tafsirSource}.json`;
-                              const fileInfo = await FileSystem.getInfoAsync(tafsirPath);
-
-                              let verseData;
-                              if (fileInfo.exists) {
-                                const content = await FileSystem.readAsStringAsync(tafsirPath);
-                                const fullData = JSON.parse(content);
-                                verseData = fullData[result.verseKey];
-                              } else {
-                                // Fallback to bundled tafsir
-                                let fullData;
-                                if (result.tafsirSource === 'jalalayn') {
-                                  fullData = await import("@/data/tafsir-jalalayn.json");
-                                } else if (result.tafsirSource === 'sahih-international') {
-                                  fullData = await import("@/data/en-sahih-international-inline-footnotes.json");
-                                } else {
-                                  fullData = await import("@/data/abridged-explanation-of-the-quran.json");
-                                }
-                                verseData = fullData[result.verseKey];
-                              }
-
-                              // Set the tafsir data in the expected format
-                              if (verseData) {
-                                setTafsirData({ text: verseData.text || verseData.t || verseData });
-                              }
-                            } catch (error) {
-                              console.error('Error loading tafsir:', error);
-                            }
-                          }
-
-                          requestAnimationFrame(() => {
-                            (pagerViewRef.current as any)?.scrollToOffset({ offset: pageIndex * layout.screenWidth, animated: false });
-                            setTimeout(() => {
-                              setIsNavigating(false);
-                              // Set highlighted verse and search term
-                              setHighlightedVerse(result.verseKey);
-                              setLastSearchTerm(searchQuery);
-                              // Clear highlight after 3 seconds
-                              setTimeout(() => setHighlightedVerse(null), 3000);
-
-                              // If match is from tafsir, open the tafsir modal directly
-                              if (result.matchType === 'tafsir') {
-                                setTafsirVerse({
-                                  verseKey: result.verseKey,
-                                  surah: result.surah,
-                                  ayah: result.ayah
-                                } as VerseRegion);
-                                setShowArabicTafsir(result.tafsirSource === 'jalalayn');
-                              }
-                            }, 300);
-                          });
-                        }}
-                        style={({ pressed }) => [{
-                          padding: 14,
-                          marginBottom: 8,
-                          borderRadius: 12,
-                          backgroundColor: isDark ? 'rgba(255, 255, 255, 0.04)' : '#FFFFFF',
-                          borderWidth: 1,
-                          borderColor: isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.04)',
-                          transform: [{ scale: pressed ? 0.98 : 1 }],
-                        }]}
-                      >
-                        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
-                          <View style={{
-                            paddingHorizontal: 8,
-                            paddingVertical: 4,
-                            borderRadius: 6,
-                            backgroundColor: `${theme.primary}15`,
-                            marginRight: 8,
-                          }}>
-                            <ThemedText type="caption" style={{ fontSize: 11, fontWeight: '700', color: theme.primary }}>
-                              {result.verseKey}
-                            </ThemedText>
-                          </View>
-                          {result.matchType === 'tafsir' && (
-                            <>
-                              <View style={{
-                                paddingHorizontal: 6,
-                                paddingVertical: 3,
-                                borderRadius: 4,
-                                backgroundColor: `${theme.primary}1A`,
-                                marginRight: 8,
-                              }}>
-                                <ThemedText type="caption" style={{
-                                  fontSize: 10,
-                                  fontWeight: '600',
-                                  color: theme.primary,
-                                }}>
-                                  {result.tafsirSource === 'sahih-international' ? 'TRANSLATION' : 'TAFSIR'}
-                                </ThemedText>
-                              </View>
-                              <View style={{
-                                paddingHorizontal: 6,
-                                paddingVertical: 3,
-                                borderRadius: 4,
-                                backgroundColor: `${theme.primary}1A`,
-                                marginRight: 8,
-                              }}>
-                                <ThemedText type="caption" style={{
-                                  fontSize: 10,
-                                  fontWeight: '600',
-                                  color: theme.primary,
-                                }}>
-                                  {result.tafsirSource === 'jalalayn' ? 'JALALAYN' : result.tafsirSource === 'sahih-international' ? 'SAHIH INT\'L' : 'ABRIDGED'}
-                                </ThemedText>
-                              </View>
-                            </>
-                          )}
-                          <ThemedText type="body" style={{ fontWeight: '600', fontSize: 14 }}>
-                            {surahInfo?.nameEn}
-                          </ThemedText>
-                          <ThemedText type="arabic" style={{ fontFamily: 'AlMushafQuran', fontSize: 14, opacity: 0.6, marginLeft: 6 }}>
-                            {surahInfo?.nameAr}
-                          </ThemedText>
-                        </View>
-                        {result.matchType === 'tafsir' ? (
-                          <ThemedText
-                            type="body"
-                            style={{
-                              fontSize: 13,
-                              lineHeight: 20,
-                              opacity: 0.7,
-                              fontStyle: 'italic',
-                            }}
-                            numberOfLines={3}
-                          >
-                            {result.tafsirPreview}
-                          </ThemedText>
-                        ) : (
-                          <ThemedText
-                            type="arabic"
-                            style={{ fontFamily: 'AlMushafQuran', fontSize: 15, lineHeight: 26, textAlign: 'right', opacity: 0.8 }}
-                            numberOfLines={2}
-                          >
-                            {result.text}
-                          </ThemedText>
-                        )}
-                      </Pressable>
-                    );
-                  })
-                )}
-              </View>
-            )}
-
-            {/* Surah and Juz content now rendered via FlatLists outside ScrollView for virtualization */}
-
-            {/* Recent Tab Content */}
-            {navigationMode === 'recent' && searchQuery.trim().length < 2 && (
-              <View style={{ paddingHorizontal: Spacing.lg, paddingTop: Spacing.sm }}>
-                {recentPages.length === 0 ? (
-                  <View style={{ alignItems: 'center', paddingVertical: 60 }}>
-                    <Image
-                      source={require('../../assets/images/3d-images/quranstand.png')}
-                      style={{ width: 96, height: 96, marginBottom: 20 }}
-                      resizeMode="contain"
-                    />
-                    <ThemedText type="body" style={{ color: theme.textSecondary, textAlign: 'center', fontWeight: '600' }}>
-                      {t('mushaf.noRecentPages')}
-                    </ThemedText>
-                    <ThemedText type="caption" style={{ color: theme.textSecondary, textAlign: 'center', marginTop: 6, opacity: 0.7 }}>
-                      {t('mushaf.pagesYouVisit')}
-                    </ThemedText>
-                  </View>
-                ) : (
-                  <>
-                    <ThemedText type="body" style={{ fontWeight: '600', opacity: 0.6, fontSize: 13, marginBottom: Spacing.md }}>{t('mushaf.recentlyViewedLabel')}</ThemedText>
-                    {recentPages.map((page, index) => {
-                      // Find which surah this page belongs to
-                      const pageSurah = Object.entries(surahPages).find(([surahNum, startPage]) => {
-                        const nextSurahStart = Object.values(surahPages).find(p => p > startPage) || 605;
-                        return page >= startPage && page < nextSurahStart;
-                      });
-                      const surahNum = pageSurah ? parseInt(pageSurah[0]) : 1;
-                      const surah = surahs.find(s => s.number === surahNum);
-                      const timeAgo = index === 0 ? t('mushaf.justNow') : index < 3 ? t('mushaf.recently') : t('mushaf.earlier');
-
-                      return (
-                        <Pressable
-                          key={`recent-${page}-${index}`}
-                          onPress={() => navigateToPageFromOverlay(page)}
-                          style={({ pressed }) => [{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            paddingVertical: 14,
-                            paddingHorizontal: 16,
-                            marginBottom: 8,
-                            borderRadius: 12,
-                            backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : '#FFFFFF',
-                            opacity: pressed ? 0.7 : 1,
-                          }]}
-                        >
-                          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-                            <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#FFFFFF', alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 2 }}>
-                              <ThemedText type="body" style={{ fontWeight: '800', fontSize: 12, color: theme.text }}>{surah?.number || page}</ThemedText>
-                            </View>
-                            <View>
-                              <ThemedText type="body" style={{ fontWeight: '600', fontSize: 15 }}>{surah?.nameEn || `${t('mushaf.pageNumber')} ${page}`}</ThemedText>
-                              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 2 }}>
-                                <Image
-                                  source={surah?.revelationType === 'Meccan' ? require('../../assets/images/qibla3d/kaaba.png') : require('../../assets/images/qibla3d/madinah.png')}
-                                  style={{ width: 14, height: 14, opacity: 0.7 }}
-                                  resizeMode="contain"
-                                />
-                                <ThemedText type="arabic" style={{ fontFamily: 'AlMushafQuran', fontSize: 14, opacity: 0.7 }}>{surah?.nameAr}</ThemedText>
-                              </View>
-                            </View>
-                          </View>
-                          <View style={{ alignItems: 'flex-end' }}>
-                            <ThemedText type="caption" style={{ color: theme.textSecondary, fontSize: 11 }}>{timeAgo}</ThemedText>
-                            <ThemedText type="caption" style={{ color: theme.textSecondary, fontSize: 11, marginTop: 2 }}>{t('mushaf.pageNumber')} {page}</ThemedText>
-                          </View>
-                        </Pressable>
-                      );
-                    })}
-                  </>
-                )}
-              </View>
-            )
-            }
-          </ScrollView>
-        )
-      }
-
-      {/* Surah Tab - Direct FlatList for virtualization (only renders ~12 visible items) */}
-      {
-        navigationMode === 'surah' && searchQuery.trim().length < 2 && (
-          <FlatList
-            ref={surahListRef}
-            data={surahs}
-            keyExtractor={(item) => `surah-${item.number}`}
-            renderItem={renderSurahItem}
-            contentContainerStyle={{ paddingHorizontal: Spacing.lg, paddingBottom: tabBarHeight + 60 }}
-            showsVerticalScrollIndicator={false}
-            ListHeaderComponent={
-              <ThemedText type="body" style={{ fontWeight: '600', opacity: 0.6, fontSize: 13, marginTop: Spacing.sm, marginBottom: Spacing.md }}>{t('mushaf.allSurahs')}</ThemedText>
-            }
-            initialNumToRender={114}
-            getItemLayout={(data, index) => ({
-              length: 80,
-              offset: 80 * index,
-              index,
-            })}
-            initialScrollIndex={currentSurahIndex > 0 ? currentSurahIndex : undefined}
-            onScrollToIndexFailed={() => { }}
-          />
-        )
-      }
-
-      {/* Juz Tab - Direct FlatList for virtualization (only renders ~15 visible items) */}
-      {
-        navigationMode === 'juz' && searchQuery.trim().length < 2 && (
-          <FlatList
-            data={juzData}
-            keyExtractor={(item, index) => `juz-${item.juz}-${item.hizb}-${item.quarter}-${index}`}
-            renderItem={renderJuzItem}
-            contentContainerStyle={{ paddingHorizontal: Spacing.lg, paddingBottom: tabBarHeight + 60 }}
-            showsVerticalScrollIndicator={false}
-            ListHeaderComponent={
-              <View style={{ marginTop: Spacing.sm, marginBottom: Spacing.md }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <ThemedText type="body" style={{ fontWeight: '600', opacity: 0.6, fontSize: 13 }}>
-                    {juzData.length} {hizbGranularity === 'quarter' ? t('mushaf.quartersLabel') : hizbGranularity === 'half' ? t('mushaf.halvesLabel') : t('mushaf.juzLabel')}
-                  </ThemedText>
-                  <View style={{ flexDirection: 'row', gap: 8 }}>
-                    {/* Granularity Dropdown Button - Clay Pill */}
-                    <Pressable
-                      onPress={() => setShowGranularityPicker(!showGranularityPicker)}
-                      style={({ pressed }) => [{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        gap: 4,
-                        paddingVertical: 6,
-                        paddingHorizontal: 12,
-                        borderRadius: 10,
-                        backgroundColor: showGranularityPicker ? `${theme.primary}20` : (isDark ? 'rgba(255,255,255,0.1)' : '#FFFFFF'),
-                        shadowColor: '#000',
-                        shadowOffset: { width: 0, height: 4 },
-                        shadowOpacity: showGranularityPicker ? 0 : 0.08,
-                        shadowRadius: 10,
-                        elevation: showGranularityPicker ? 0 : 3,
-                        transform: [{ scale: pressed ? 0.92 : 1 }],
-                      }]}
-                    >
-                      <ThemedText style={{ fontSize: 12, fontWeight: '600', color: showGranularityPicker ? theme.primary : theme.text }}>
-                        {hizbGranularity === 'quarter' ? '¼' : hizbGranularity === 'half' ? '½' : 'Juz'}
-                      </ThemedText>
-                      <Feather name={showGranularityPicker ? 'chevron-up' : 'chevron-down'} size={14} color={showGranularityPicker ? theme.primary : theme.text} />
-                    </Pressable>
-                    {/* Sort Button - Clay Pill */}
-                    <Pressable
-                      onPress={() => setJuzSortAsc(!juzSortAsc)}
-                      style={({ pressed }) => [{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        gap: 4,
-                        paddingVertical: 6,
-                        paddingHorizontal: 12,
-                        borderRadius: 10,
-                        backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : '#FFFFFF',
-                        shadowColor: '#000',
-                        shadowOffset: { width: 0, height: 4 },
-                        shadowOpacity: 0.08,
-                        shadowRadius: 10,
-                        elevation: 3,
-                        transform: [{ scale: pressed ? 0.92 : 1 }],
-                      }]}
-                    >
-                      <Feather name={juzSortAsc ? 'arrow-up' : 'arrow-down'} size={14} color={theme.text} />
-                    </Pressable>
-                  </View>
-                </View>
-                {/* Dropdown Options */}
-                {showGranularityPicker && (
-                  <View style={{
-                    marginTop: Spacing.sm,
-                    backgroundColor: isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.03)',
-                    borderRadius: 10,
-                    overflow: 'hidden',
-                  }}>
-                    <Pressable
-                      onPress={() => { setHizbGranularity('quarter'); setShowGranularityPicker(false); }}
-                      style={({ pressed }) => [{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        paddingVertical: 12,
-                        paddingHorizontal: 14,
-                        backgroundColor: hizbGranularity === 'quarter' ? `${theme.primary}15` : 'transparent',
-                        opacity: pressed ? 0.7 : 1,
-                      }]}
-                    >
-                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                        <ThemedText style={{ fontSize: 16, fontWeight: '600' }}>¼</ThemedText>
-                        <ThemedText style={{ fontSize: 13 }}>{t('mushaf.quarterHizb')}</ThemedText>
+                    {/* Loop start indicator (A) - right side for RTL (first word position) */}
+                    {isHifzActive && hifzMode.loopStart === verseKey && idx === 0 && (
+                      <View style={[styles.loopIndicator, { backgroundColor: '#3B82F6', right: 0 }]}>
+                        <ThemedText style={styles.loopIndicatorText}>A</ThemedText>
                       </View>
-                      {hizbGranularity === 'quarter' && <Feather name="check" size={16} color={theme.primary} />}
-                    </Pressable>
-                    <View style={{ height: 1, backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)' }} />
-                    <Pressable
-                      onPress={() => { setHizbGranularity('half'); setShowGranularityPicker(false); }}
-                      style={({ pressed }) => [{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        paddingVertical: 12,
-                        paddingHorizontal: 14,
-                        backgroundColor: hizbGranularity === 'half' ? `${theme.primary}15` : 'transparent',
-                        opacity: pressed ? 0.7 : 1,
-                      }]}
-                    >
-                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                        <ThemedText style={{ fontSize: 16, fontWeight: '600' }}>½</ThemedText>
-                        <ThemedText style={{ fontSize: 13 }}>{t('mushaf.halfHizb')}</ThemedText>
+                    )}
+                    {/* Loop end indicator (B) - right side for RTL (first word position, offset from A) */}
+                    {isHifzActive && hifzMode.loopEnd === verseKey && idx === 0 && (
+                      <View style={[styles.loopIndicator, { backgroundColor: '#3B82F6', right: 16 }]}>
+                        <ThemedText style={styles.loopIndicatorText}>B</ThemedText>
                       </View>
-                      {hizbGranularity === 'half' && <Feather name="check" size={16} color={theme.primary} />}
-                    </Pressable>
-                    <View style={{ height: 1, backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)' }} />
-                    <Pressable
-                      onPress={() => { setHizbGranularity('fullJuz'); setShowGranularityPicker(false); }}
-                      style={({ pressed }) => [{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        paddingVertical: 12,
-                        paddingHorizontal: 14,
-                        backgroundColor: hizbGranularity === 'fullJuz' ? `${theme.primary}15` : 'transparent',
-                        opacity: pressed ? 0.7 : 1,
-                      }]}
-                    >
-                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                        <ThemedText style={{ fontSize: 16, fontWeight: '600' }}>{t('mushaf.juz')}</ThemedText>
-                        <ThemedText style={{ fontSize: 13 }}>{t('mushaf.fullJuzOnly')}</ThemedText>
+                    )}
+                    {/* Hidden verse indicator */}
+                    {isHidden && (
+                      <View style={styles.hiddenVerseOverlay}>
+                        <View style={[styles.hiddenLine, { backgroundColor: theme.border }]} />
+                        <View style={[styles.hiddenLineShort, { backgroundColor: theme.border }]} />
                       </View>
-                      {hizbGranularity === 'fullJuz' && <Feather name="check" size={16} color={theme.primary} />}
-                    </Pressable>
-                  </View>
-                )}
-              </View>
-            }
-            initialNumToRender={15}
-            maxToRenderPerBatch={10}
-            windowSize={5}
-          />
-        )
-      }
+                    )}
+                    {/* Due for revision badge */}
+                    {isHifzActive && isDueForRevision && idx === 0 && (
+                      <View style={[styles.revisionBadge, { backgroundColor: '#EF4444' }]} />
+                    )}
+                    {/* Memorization status indicator */}
+                    {isHifzActive && verseProgress && idx === 0 && (
+                      <View style={[
+                        styles.memorizationIndicator,
+                        {
+                          backgroundColor: verseProgress.status === 'memorized'
+                            ? theme.primary
+                            : verseProgress.status === 'in_progress'
+                              ? '#F59E0B'
+                              : 'transparent'
+                        }
+                      ]} />
+                    )}
+                  </Pressable>
+                );
+              });
 
-    </View >
-  );
+              // Add word-level highlight overlay for the currently playing word (animated)
+              const wordHighlightElements: React.ReactNode[] = [];
+              if (hasWordTiming && wordCoords.length > 0) {
+                wordHighlightElements.push(
+                  <AnimatedAudioWordHighlight
+                    key={`word-highlight-${verseKey}`}
+                    wordCoords={wordCoords}
+                    currentWordIndex={localAudioState.wordIndex}
+                    imageScale={imageScale}
+                    imageOffsetY={imageOffsetY}
+                    primaryColor={theme.primary}
+                    verseKey={verseKey}
+                  />
+                );
+              }
+
+              return [...lineElements, ...wordHighlightElements];
+            }
+          })}
+        </Pressable>
+      );
+    };
+  }
+  const MushafPageInner = mushafPageInnerRef.current!;
+
+
+
+
 
   return (
     <ThemedView style={styles.container}>
@@ -2888,7 +1300,7 @@ function MushafScreenContent() {
 
       {/* Header Zone - contains Juz/Hizb, Action Pill, Surah info */}
       <View style={[styles.headerZone, { height: layout.headerZoneHeight }]}>
-        {/* Juz/Hizb Badge - Left — Frosted Glass Pill */}
+        {/* Juz/Hizb Badge - Left â€” Frosted Glass Pill */}
         <View style={[styles.headerLeft, {
           backgroundColor: isDark ? 'rgba(30, 30, 30, 0.85)' : 'rgba(255, 255, 255, 0.82)',
           borderRadius: 14,
@@ -3003,7 +1415,7 @@ function MushafScreenContent() {
           </Pressable>
         </View>
 
-        {/* Surah Badge - Right — Frosted Glass Pill with Makki/Madani Icon */}
+        {/* Surah Badge - Right â€” Frosted Glass Pill with Makki/Madani Icon */}
         <View style={[styles.headerRight, {
           backgroundColor: isDark ? 'rgba(30, 30, 30, 0.85)' : 'rgba(255, 255, 255, 0.82)',
           borderRadius: 14,
@@ -3056,55 +1468,39 @@ function MushafScreenContent() {
 
       {/* Content Zone - FlatList with Mushaf pages */}
       <View style={[styles.contentZone, { height: layout.contentZoneHeight }]}>
-        <FlatList
-          ref={pagerViewRef as any}
-          data={Array.from({ length: 604 }, (_, i) => 604 - i)}
-          renderItem={renderPage}
-          keyExtractor={(item) => String(item)}
-          extraData={`${isDark}-${hifzMode.isActive}-${hifzMode.revealCounter}-${hifzMode.settings.hideMode}-${hifzMode.revealedWords.size}-${hifzProgress?.totalMemorized || 0}`}
-          horizontal
-          pagingEnabled
+        <PagerView
+          ref={pagerViewRef}
+          style={{ flex: 1 }}
+          initialPage={604 - currentPage}
+          offscreenPageLimit={1}
+          orientation="horizontal"
           scrollEnabled={!isWordScrubberActive}
-          showsHorizontalScrollIndicator={false}
-          snapToInterval={layout.screenWidth}
-          decelerationRate="fast"
-          overScrollMode="never"
-          disableIntervalMomentum={true}
-          initialScrollIndex={603}
-          onScroll={(e) => {
-            // Update page number during scroll for responsive UI
-            const offset = e.nativeEvent.contentOffset.x;
-            const index = Math.round(offset / layout.screenWidth);
-            const page = 604 - index;
-            if (page !== currentPage && page >= 1 && page <= 604) {
+          onPageSelected={(e) => {
+            const page = 604 - e.nativeEvent.position;
+            if (page >= 1 && page <= 604) {
               setCurrentPage(page);
             }
           }}
-          scrollEventThrottle={16}
-          onMomentumScrollEnd={(e) => {
-            const offset = e.nativeEvent.contentOffset.x;
-            const index = Math.round(offset / layout.screenWidth);
-            const page = 604 - index;
-            setCurrentPage(page);
-          }}
-          onScrollToIndexFailed={(info) => {
-            (pagerViewRef.current as any)?.scrollToOffset({ offset: info.averageItemLength * info.index, animated: false });
-          }}
-          getItemLayout={(_, index) => ({
-            length: layout.screenWidth,
-            offset: layout.screenWidth * index,
-            index,
-          })}
-          initialNumToRender={3}
-          maxToRenderPerBatch={5}
-          windowSize={11}
-          removeClippedSubviews={false}
-          updateCellsBatchingPeriod={10}
-        />
+        >
+          {useMemo(() => {
+            const renderPage = (pn: number) => <MushafPageInner pageNum={pn} />;
+            return Array.from({ length: 604 }).map((_, index) => {
+              const pageNum = 604 - index;
+              return (
+                <PageSlot
+                  key={pageNum}
+                  pageNum={pageNum}
+                  screenWidth={layout.screenWidth}
+                  renderPage={renderPage}
+                />
+              );
+            });
+          }, [layout.screenWidth])}
+        </PagerView>
       </View>
 
-      {/* Footer Zone - Page Number (absolute overlay, doesn't take layout space) */}
-      <View style={{ position: 'absolute', bottom: layout.tabBarHeight, left: 0, right: 0, height: layout.footerZoneHeight, alignItems: 'center', justifyContent: 'center', zIndex: 5 }}>
+      {/* Footer Zone - Page Number (absolute overlay, above floating tab bar) */}
+      <View style={{ position: 'absolute', bottom: layout.tabBarHeight + 4, left: 0, right: 0, height: layout.footerZoneHeight, alignItems: 'center', justifyContent: 'center', zIndex: 5 }}>
         <ThemedText type="caption" style={{ fontSize: 14, opacity: isDark ? 0.6 : 0.4 }}>
           {currentPage}
         </ThemedText>
@@ -3128,7 +1524,7 @@ function MushafScreenContent() {
       />
 
       {/* Loading overlay while coordinates load */}
-      {coordsLoading && (
+      {false && (
         <View style={{
           position: 'absolute',
           top: 0,
@@ -3155,2515 +1551,88 @@ function MushafScreenContent() {
 
       {/* Verse Menu */}
       {selectedVerse && (
-        <Pressable style={styles.menuOverlay} onPress={closeMenu}>
-          <Animated.View
-            entering={SlideInDown.duration(200)}
-            exiting={SlideOutDown.duration(150)}
-            style={[
-              styles.verseMenu,
-              {
-                backgroundColor: isDark ? 'rgba(20, 20, 20, 0.88)' : 'rgba(255, 255, 255, 0.85)',
-                borderRadius: 16,
-                position: 'absolute',
-                left: (() => {
-                  const menuWidth = 180;
-                  const x = selectedVerse.touchX || 0;
-                  // Keep menu within screen bounds
-                  if (x + menuWidth > SCREEN_WIDTH) {
-                    return SCREEN_WIDTH - menuWidth - 10;
-                  }
-                  return Math.max(10, x);
-                })(),
-                top: (() => {
-                  const menuHeight = 430; // Updated height with Generate Video button
-                  const y = selectedVerse.touchY || 0;
-                  const headerHeight = insets.top + 100;
-                  const bottomSafeArea = insets.bottom + 20;
-
-                  // If menu would go below screen, position it above the touch point
-                  if (y + menuHeight > SCREEN_HEIGHT - bottomSafeArea) {
-                    return Math.max(headerHeight, y - menuHeight - 20);
-                  }
-                  // If menu would go above header, position it below header
-                  if (y < headerHeight) {
-                    return headerHeight + 10;
-                  }
-                  return y;
-                })(),
-              },
-            ]}
-          >
-            <Pressable
-              onPress={async () => {
-                closeMenu();
-                // In Hifz mode, use repeat settings
-                if (hifzMode.isActive && hifzMode.settings.repeatCount > 1) {
-                  // Set playback speed first
-                  await AudioService.setPlaybackRate(hifzMode.settings.playbackSpeed);
-                  // Play with repeat
-                  await AudioService.playWithRepeat(
-                    selectedVerse.surah,
-                    selectedVerse.ayah,
-                    hifzMode.settings.repeatCount,
-                    hifzMode.settings.pauseBetweenRepeats
-                  );
-                } else {
-                  // Normal playback
-                  const verses = getVersesToPlay(selectedVerse.surah, selectedVerse.ayah);
-                  if (verses.length > 1) {
-                    AudioService.playQueue(verses);
-                  } else {
-                    // Apply Hifz speed even for single play
-                    if (hifzMode.isActive) {
-                      await AudioService.setPlaybackRate(hifzMode.settings.playbackSpeed);
-                    }
-                    await AudioService.play(selectedVerse.surah, selectedVerse.ayah, 'single');
-                  }
-                }
-              }}
-              style={({ pressed }) => [
-                styles.menuItem,
-                { opacity: pressed ? 0.6 : 1 },
-              ]}
-            >
-              <Feather name="play" size={20} color={theme.primary} />
-              <ThemedText type="body" style={{ marginLeft: 12, fontWeight: '500' }}>
-                {hifzMode.isActive && hifzMode.settings.repeatCount > 1
-                  ? `${t('mushaf.play')} ${hifzMode.settings.repeatCount}×`
-                  : t('mushaf.play')}
-              </ThemedText>
-            </Pressable>
-            <View style={[styles.menuDivider, { backgroundColor: `${theme.primary}33` }]} />
-            <Pressable
-              onPress={async () => {
-                const verseData = quranData.data.surahs
-                  .find((s: any) => s.number === selectedVerse.surah)
-                  ?.ayahs.find((a: any) => a.numberInSurah === selectedVerse.ayah);
-                const surah = surahs.find(s => s.number === selectedVerse.surah);
-                const text = `${verseData?.text || ''}\n\n${surah?.nameAr || ''} (${surah?.nameEn || ''}), Ayah ${selectedVerse.ayah}`;
-                await Clipboard.setStringAsync(text);
-                closeMenu();
-              }}
-              style={({ pressed }) => [
-                styles.menuItem,
-                { opacity: pressed ? 0.6 : 1 },
-              ]}
-            >
-              <Feather name="copy" size={20} color={theme.primary} />
-              <ThemedText type="body" style={{ marginLeft: 12, fontWeight: '500' }}>{t('mushaf.copyVerse')}</ThemedText>
-            </Pressable>
-            <View style={[styles.menuDivider, { backgroundColor: `${theme.primary}33` }]} />
-            <Pressable
-              onPress={async () => {
-                const verseData = quranData.data.surahs
-                  .find((s: any) => s.number === selectedVerse.surah)
-                  ?.ayahs.find((a: any) => a.numberInSurah === selectedVerse.ayah);
-                const surah = surahs.find(s => s.number === selectedVerse.surah);
-                const text = `${verseData?.text || ''}\n\n${surah?.nameAr || ''} (${surah?.nameEn || ''}), Ayah ${selectedVerse.ayah}`;
-                try {
-                  await Share.share({ message: text });
-                } catch (error) {
-                  console.error('Error sharing:', error);
-                }
-                closeMenu();
-              }}
-              style={({ pressed }) => [
-                styles.menuItem,
-                { opacity: pressed ? 0.6 : 1 },
-              ]}
-            >
-              <Feather name="share-2" size={20} color={theme.primary} />
-              <ThemedText type="body" style={{ marginLeft: 12, fontWeight: '500' }}>{t('mushaf.shareVerse')}</ThemedText>
-            </Pressable>
-            <View style={[styles.menuDivider, { backgroundColor: `${theme.primary}33` }]} />
-            <Pressable
-              onPress={() => {
-                toggleBookmark(selectedVerse.verseKey);
-                closeMenu();
-              }}
-              style={({ pressed }) => [
-                styles.menuItem,
-                { opacity: pressed ? 0.6 : 1 },
-              ]}
-            >
-              <Feather
-                name="bookmark"
-                size={20}
-                color={theme.primary}
-                fill={bookmarks.includes(selectedVerse.verseKey) ? theme.primary : 'none'}
-              />
-              <ThemedText type="body" style={{ marginLeft: 12, fontWeight: '500' }}>
-                {bookmarks.includes(selectedVerse.verseKey) ? t('mushaf.removeBookmark') : t('mushaf.bookmark')}
-              </ThemedText>
-            </Pressable>
-            <View style={[styles.menuDivider, { backgroundColor: `${theme.primary}33` }]} />
-            <Pressable
-              onPress={() => {
-                handleTafsirPress();
-              }}
-              style={({ pressed }) => [
-                styles.menuItem,
-                { opacity: pressed ? 0.6 : 1 },
-              ]}
-            >
-              <Feather name="book" size={20} color={theme.primary} />
-              <ThemedText type="body" style={{ marginLeft: 12, fontWeight: '500' }}>{t('mushaf.tafsirTranslation')}</ThemedText>
-            </Pressable>
-            <View style={[styles.menuDivider, { backgroundColor: `${theme.primary}33` }]} />
-            <Pressable
-              onPress={() => {
-                setNoteVerseKey(selectedVerse.verseKey);
-                setNoteText(notes[selectedVerse.verseKey] || '');
-                setShowNoteModal(true);
-                closeMenu();
-              }}
-              style={({ pressed }) => [
-                styles.menuItem,
-                { opacity: pressed ? 0.6 : 1 },
-              ]}
-            >
-              <Feather name="file-text" size={20} color={theme.primary} />
-              <ThemedText type="body" style={{ marginLeft: 12, fontWeight: '500' }}>
-                {notes[selectedVerse.verseKey] ? t('mushaf.editNote') : t('mushaf.addNote')}
-              </ThemedText>
-            </Pressable>
-            <View style={[styles.menuDivider, { backgroundColor: `${theme.primary}33` }]} />
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Pressable
-                onPress={() => {
-                  if (highlights[selectedVerse.verseKey]) {
-                    removeHighlight(selectedVerse.verseKey);
-                  } else {
-                    addHighlight(selectedVerse.verseKey, selectedColor);
-                  }
-                  closeMenu();
-                }}
-                style={({ pressed }) => [
-                  styles.menuItem,
-                  { opacity: pressed ? 0.6 : 1, flex: 1 },
-                ]}
-              >
-                <Feather name="edit-3" size={20} color={theme.primary} />
-                <ThemedText type="body" style={{ marginLeft: 12, fontWeight: '500' }}>
-                  {highlights[selectedVerse.verseKey] ? t('mushaf.removeHighlight') : t('mushaf.highlight')}
-                </ThemedText>
-              </Pressable>
-              <Pressable
-                onPress={() => setShowColorPicker(true)}
-                style={({ pressed }) => [{
-                  width: 32,
-                  height: 32,
-                  borderRadius: 16,
-                  backgroundColor: highlights[selectedVerse.verseKey] || selectedColor,
-                  marginRight: 12,
-                  borderWidth: 2,
-                  borderColor: theme.primary,
-                  opacity: pressed ? 0.7 : 1,
-                }]}
-              />
-            </View>
-          </Animated.View>
-        </Pressable>
+        <VerseContextMenu
+          selectedVerse={selectedVerse}
+          onClose={closeMenu}
+          onTafsirPress={handleTafsirPress}
+        />
       )}
 
-      {/* Color Picker Modal */}
-      {showColorPicker && selectedVerse && (
-        <Modal visible={true} transparent animationType="fade" onRequestClose={() => setShowColorPicker(false)}>
-          <Pressable style={styles.modalOverlay} onPress={() => setShowColorPicker(false)}>
-            <Animated.View
-              entering={SlideInUp.duration(200)}
-              style={[
-                styles.colorPickerModal,
-                { backgroundColor: isDark ? `${theme.primary}FA` : 'rgba(245, 245, 245, 0.98)' },
-              ]}
-            >
-              <ThemedText type="body" style={{ fontWeight: '600', marginBottom: 16, textAlign: 'center' }}>{t('mushaf.chooseHighlight')}</ThemedText>
-              <View style={{ flexDirection: 'row', gap: 12, marginBottom: 16, justifyContent: 'center' }}>
-                {highlightColors.map((color) => (
-                  <Pressable
-                    key={color.name}
-                    onPress={() => {
-                      setSelectedColor(color.value);
-                      if (highlights[selectedVerse.verseKey]) {
-                        addHighlight(selectedVerse.verseKey, color.value);
-                      }
-                      setShowColorPicker(false);
-                    }}
-                    style={({ pressed }) => [{
-                      width: 50,
-                      height: 50,
-                      borderRadius: 25,
-                      backgroundColor: color.value,
-                      borderWidth: 3,
-                      borderColor: (highlights[selectedVerse.verseKey] === color.value || (!highlights[selectedVerse.verseKey] && selectedColor === color.value)) ? theme.primary : 'transparent',
-                      opacity: pressed ? 0.7 : 1,
-                    }]}
-                  />
-                ))}
-              </View>
-              {highlights[selectedVerse.verseKey] && (
-                <Pressable
-                  onPress={() => {
-                    removeHighlight(selectedVerse.verseKey);
-                    setShowColorPicker(false);
-                    closeMenu();
-                  }}
-                  style={({ pressed }) => [{
-                    paddingVertical: 12,
-                    paddingHorizontal: 20,
-                    borderRadius: 10,
-                    backgroundColor: isDark ? 'rgba(255, 0, 0, 0.2)' : 'rgba(255, 0, 0, 0.1)',
-                    opacity: pressed ? 0.7 : 1,
-                  }]}
-                >
-                  <ThemedText type="body" style={{ textAlign: 'center', fontWeight: '600', color: '#FF0000' }}>{t('mushaf.removeHighlight')}</ThemedText>
-                </Pressable>
-              )}
-            </Animated.View>
-          </Pressable>
-        </Modal>
+      {/* Bookmarks Panel */}
+      {showBookmarks && (
+        <View style={[StyleSheet.absoluteFill, { zIndex: 100 }]}>
+          <BookmarksPanel
+            bookmarks={bookmarks}
+            quranData={quranData}
+            surahs={surahs}
+            isDark={isDark}
+            theme={theme}
+            insets={insets}
+            styles={styles}
+            t={t}
+            onClose={() => setShowBookmarks(false)}
+            onToggleBookmark={toggleBookmark}
+            onNavigateToPage={(page) => {
+              scrollToPage(page);
+              setCurrentPage(page);
+              setShowBookmarks(false);
+            }}
+          />
+        </View>
+      )}
+
+      {/* Notes & Highlights Panel */}
+      {showNotes && (
+        <View style={[StyleSheet.absoluteFill, { zIndex: 100 }]}>
+          <NotesHighlightsPanel
+            notes={notes}
+            highlights={highlights}
+            noteTimestamps={noteTimestamps}
+            highlightTimestamps={highlightTimestamps}
+            quranData={quranData}
+            surahs={surahs}
+            isDark={isDark}
+            theme={theme}
+            insets={insets}
+            styles={styles}
+            t={t}
+            onClose={() => setShowNotes(false)}
+            onDeleteNote={(verseKey) => storeDeleteNote(verseKey, `${theme.primary}26`)}
+            onRemoveHighlight={removeHighlight}
+            onNavigateToPage={(page) => {
+              scrollToPage(page);
+              setCurrentPage(page);
+              setShowNotes(false);
+            }}
+          />
+        </View>
       )}
 
       {/* Note Modal */}
-      {showNoteModal && noteVerseKey && (
-        <Modal visible={true} transparent animationType="fade" onRequestClose={() => setShowNoteModal(false)}>
-          <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={{ flex: 1 }}
-          >
-            <Pressable style={styles.modalOverlay} onPress={() => setShowNoteModal(false)}>
-              <Animated.View
-                entering={SlideInUp.duration(200)}
-                style={[
-                  styles.noteModal,
-                  { backgroundColor: isDark ? `${theme.primary}FA` : 'rgba(245, 245, 245, 0.98)' },
-                ]}
-              >
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                  <ThemedText type="body" style={{ fontWeight: '600', fontSize: 18 }}>{t('mushaf.addNote')}</ThemedText>
-                  <Pressable onPress={() => { setShowNoteModal(false); setNoteVerseKey(null); }}>
-                    <Feather name="x" size={20} color={theme.text} />
-                  </Pressable>
-                </View>
-                <TextInput
-                  value={noteText}
-                  onChangeText={setNoteText}
-                  placeholder={t('mushaf.noteInputPlaceholder')}
-                  placeholderTextColor={isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)'}
-                  multiline
-                  numberOfLines={6}
-                  style={[
-                    styles.noteInput,
-                    {
-                      color: theme.text,
-                      backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)',
-                      borderColor: `${theme.primary}4D`,
-                    },
-                  ]}
-                />
-                <View style={{ flexDirection: 'row', gap: 12 }}>
-                  {notes[noteVerseKey] && (
-                    <Pressable
-                      onPress={() => {
-                        deleteNote(noteVerseKey);
-                        setShowNoteModal(false);
-                        setNoteVerseKey(null);
-                      }}
-                      style={({ pressed }) => [{
-                        flex: 1,
-                        paddingVertical: 12,
-                        borderRadius: 10,
-                        backgroundColor: isDark ? 'rgba(255, 0, 0, 0.2)' : 'rgba(255, 0, 0, 0.1)',
-                        opacity: pressed ? 0.7 : 1,
-                      }]}
-                    >
-                      <ThemedText type="body" style={{ textAlign: 'center', fontWeight: '600', color: '#FF0000' }}>{t('mushaf.delete')}</ThemedText>
-                    </Pressable>
-                  )}
-                  <Pressable
-                    onPress={() => {
-                      if (noteText.trim()) {
-                        saveNote(noteVerseKey, noteText.trim());
-                      }
-                      setShowNoteModal(false);
-                      setNoteVerseKey(null);
-                    }}
-                    style={({ pressed }) => [{
-                      flex: 1,
-                      paddingVertical: 12,
-                      borderRadius: 10,
-                      backgroundColor: theme.primary,
-                      opacity: pressed ? 0.7 : 1,
-                    }]}
-                  >
-                    <ThemedText type="body" style={{ textAlign: 'center', fontWeight: '600', color: '#FFF' }}>{t('mushaf.save')}</ThemedText>
-                  </Pressable>
-                </View>
-              </Animated.View>
-            </Pressable>
-          </KeyboardAvoidingView>
-        </Modal>
-      )}
+      <NoteModal />
 
-      {/* Tafsir Modal */}
-      <Modal
-        visible={tafsirData !== null && !showTafsirSources}
-        transparent
-        animationType="fade"
-        onRequestClose={() => {
-          console.log('Modal onRequestClose called');
-          setTafsirData(null);
-        }}
-        hardwareAccelerated={true}
-        statusBarTranslucent={false}
-      >
-        <View style={styles.modalOverlay}>
-          <Animated.View
-            entering={SlideInUp.duration(300).springify()}
-            exiting={SlideOutDown.duration(200)}
-            style={[
-              styles.modalContainer,
-              {
-                backgroundColor: isDark ? 'rgba(15, 15, 15, 0.92)' : 'rgba(255, 255, 255, 0.82)',
-                maxHeight: SCREEN_HEIGHT * 0.85,
-                width: SCREEN_WIDTH * 0.9,
-                height: SCREEN_HEIGHT * 0.75,
-                overflow: 'hidden',
-              },
-            ]}
-          >
-            {Platform.OS === 'ios' && (
-              <BlurView
-                intensity={60}
-                tint={isDark ? 'dark' : 'light'}
-                style={StyleSheet.absoluteFill}
-              />
-            )}
-            {/* Elegant Header */}
-            <View style={{
-              paddingHorizontal: 20,
-              paddingTop: Platform.OS === 'android' ? Math.max(insets.top, 10) + 10 : 20,
-              paddingBottom: 16,
-              borderBottomWidth: StyleSheet.hairlineWidth,
-              borderBottomColor: isDark ? 'rgba(255, 255, 255, 0.04)' : 'rgba(0, 0, 0, 0.03)',
-            }}>
-              {/* Verse Reference */}
-              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                  <View style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 20,
-                    backgroundColor: `${theme.primary}15`,
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
-                    <Feather name="book-open" size={18} color={theme.primary} />
-                  </View>
-                  <View>
-                    <ThemedText type="body" style={{ fontWeight: "700", fontSize: 18, letterSpacing: -0.3 }}>
-                      {surahs.find(s => s.number === tafsirVerse?.surah)?.nameEn || `Surah ${tafsirVerse?.surah}`}, Ayah {tafsirVerse?.ayah}
-                    </ThemedText>
-                    <ThemedText type="caption" style={{ fontSize: 12, opacity: 0.6, marginTop: 2 }}>
-                      Surah {tafsirVerse?.surah}
-                    </ThemedText>
-                  </View>
-                </View>
-                <TouchableOpacity
-                  onPress={() => {
-                    console.log('🔴 X button onPress fired');
-                    requestAnimationFrame(() => {
-                      setTafsirData(null);
-                    });
-                  }}
-                  activeOpacity={0.7}
-                  hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
-                  style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 20,
-                    backgroundColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.06)',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <Feather name="x" size={22} color={theme.text} />
-                </TouchableOpacity>
-              </View>
-
-              {/* Tafsir Source Selector */}
-              <TouchableOpacity
-                onPress={() => {
-                  console.log('🟢 Tafsir source selector pressed');
-                  setTafsirData(null);
-                  setShowTafsirSources(true);
-                }}
-                activeOpacity={0.7}
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  paddingVertical: 12,
-                  paddingHorizontal: 14,
-                  borderRadius: 14,
-                  backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.7)',
-                  shadowColor: '#000',
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.06,
-                  shadowRadius: 12,
-                  elevation: 3,
-                }}
-              >
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1 }}>
-                  <View style={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: 16,
-                    backgroundColor: `${theme.primary}33`,
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
-                    <Feather name="layers" size={14} color={theme.primary} />
-                  </View>
-                  <View style={{ flex: 1 }}>
-                    <ThemedText type="caption" style={{ fontSize: 10, opacity: 0.6, marginBottom: 2, letterSpacing: 0.5 }}>
-                      TAFSIR SOURCE
-                    </ThemedText>
-                    <ThemedText type="body" style={{ fontWeight: "600", fontSize: 14, letterSpacing: -0.2 }}>
-                      {availableTafsirs.find(t => t.id === selectedTafsirId)?.name || 'Abridged Explanation'}
-                    </ThemedText>
-                  </View>
-                </View>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                  <ThemedText type="caption" style={{ fontSize: 12, color: darkenHex(theme.primary, 0.55), fontWeight: '600' }}>
-                    Change
-                  </ThemedText>
-                  <Feather name="chevron-right" size={16} color={theme.primary} />
-                </View>
-              </TouchableOpacity>
-            </View>
-
-            {/* Content Area */}
-            <ScrollView
-              style={{ flex: 1 }}
-              contentContainerStyle={{ padding: 20, paddingBottom: 30, flexGrow: 1 }}
-              showsVerticalScrollIndicator={true}
-            >
-              {tafsirData ? (
-                <View>
-                  {/* Decorative Quote Mark */}
-                  <View style={{
-                    width: 48,
-                    height: 48,
-                    borderRadius: 24,
-                    backgroundColor: `${theme.primary}1A`,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginBottom: 16
-                  }}>
-                    <ThemedText style={{ fontSize: 24, opacity: 0.4, lineHeight: 28, textAlign: 'center', includeFontPadding: false }}>"</ThemedText>
-                  </View>
-
-                  {/* Tafsir Text */}
-                  <View style={{ padding: 0 }}>
-                    <ThemedText
-                      style={{
-                        fontSize: 16,
-                        lineHeight: 26,
-                        letterSpacing: -0.2,
-                        color: theme.text,
-                      }}
-                    >
-                      {(() => {
-                        // Try all possible text locations
-                        const text = tafsirData?.en?.text || tafsirData?.ar?.text || tafsirData?.text;
-
-                        if (!text) {
-                          console.log('❌ No text found');
-                          return t('mushaf.noTafsirAvailable');
-                        }
-
-                        // Strip HTML tags more aggressively
-                        let cleanText = typeof text === 'string' ? text : String(text);
-
-                        // Remove all HTML tags including nested ones
-                        cleanText = cleanText.replace(/<[^>]*>/g, '');
-                        // Remove HTML entities
-                        cleanText = cleanText.replace(/&nbsp;/g, ' ');
-                        cleanText = cleanText.replace(/&amp;/g, '&');
-                        cleanText = cleanText.replace(/&lt;/g, '<');
-                        cleanText = cleanText.replace(/&gt;/g, '>');
-                        cleanText = cleanText.replace(/&quot;/g, '"');
-                        // Trim whitespace
-                        cleanText = cleanText.trim();
-
-                        console.log('✅ Displaying text, length:', cleanText.length);
-
-                        // If we have a search term, highlight it
-                        if (lastSearchTerm && cleanText) {
-                          const normalizedSearch = showArabicTafsir ? normalizeArabicText(lastSearchTerm) : lastSearchTerm.toLowerCase();
-
-                          // For Arabic, we need to find matches by sliding window since normalization changes length
-                          if (showArabicTafsir) {
-                            const parts: JSX.Element[] = [];
-                            let partKey = 0;
-                            let lastIndex = 0;
-                            let i = 0;
-
-                            while (i < cleanText.length) {
-                              let matchFound = false;
-
-                              // Try to match starting at position i
-                              for (let len = lastSearchTerm.length; len <= cleanText.length - i && len <= lastSearchTerm.length * 3; len++) {
-                                const substring = cleanText.substring(i, i + len);
-                                const normalizedSubstring = normalizeArabicText(substring);
-
-                                if (normalizedSubstring === normalizedSearch) {
-                                  // Found a match!
-                                  // Add text before match
-                                  if (i > lastIndex) {
-                                    parts.push(
-                                      <ThemedText key={`text-${partKey++}`} style={{ fontSize: 16, lineHeight: 26, letterSpacing: -0.2, color: theme.text }}>
-                                        {cleanText.substring(lastIndex, i)}
-                                      </ThemedText>
-                                    );
-                                  }
-
-                                  // Add highlighted match
-                                  parts.push(
-                                    <ThemedText
-                                      key={`highlight-${partKey++}`}
-                                      style={{
-                                        fontSize: 16,
-                                        lineHeight: 26,
-                                        letterSpacing: -0.2,
-                                        backgroundColor: 'rgba(255, 215, 0, 0.4)',
-                                        color: theme.text,
-                                        fontWeight: '600',
-                                      }}
-                                    >
-                                      {substring}
-                                    </ThemedText>
-                                  );
-
-                                  i += len;
-                                  lastIndex = i;
-                                  matchFound = true;
-                                  break;
-                                }
-                              }
-
-                              if (!matchFound) {
-                                i++;
-                              }
-                            }
-
-                            // Add remaining text
-                            if (lastIndex < cleanText.length) {
-                              parts.push(
-                                <ThemedText key={`text-${partKey++}`} style={{ fontSize: 16, lineHeight: 26, letterSpacing: -0.2, color: theme.text }}>
-                                  {cleanText.substring(lastIndex)}
-                                </ThemedText>
-                              );
-                            }
-
-                            return parts.length > 0 ? parts : cleanText;
-                          } else {
-                            // For English, use simple case-insensitive matching
-                            const lowerText = cleanText.toLowerCase();
-                            const lowerSearch = normalizedSearch;
-
-                            if (lowerText.includes(lowerSearch)) {
-                              const parts: JSX.Element[] = [];
-                              let partKey = 0;
-                              let lastIndex = 0;
-                              let searchIndex = lowerText.indexOf(lowerSearch);
-
-                              while (searchIndex !== -1) {
-                                // Add text before match
-                                if (searchIndex > lastIndex) {
-                                  parts.push(
-                                    <ThemedText key={`text-${partKey++}`} style={{ fontSize: 16, lineHeight: 26, letterSpacing: -0.2, color: theme.text }}>
-                                      {cleanText.substring(lastIndex, searchIndex)}
-                                    </ThemedText>
-                                  );
-                                }
-
-                                // Add highlighted match
-                                parts.push(
-                                  <ThemedText
-                                    key={`highlight-${partKey++}`}
-                                    style={{
-                                      fontSize: 16,
-                                      lineHeight: 26,
-                                      letterSpacing: -0.2,
-                                      backgroundColor: 'rgba(255, 215, 0, 0.4)',
-                                      color: theme.text,
-                                      fontWeight: '600',
-                                    }}
-                                  >
-                                    {cleanText.substring(searchIndex, searchIndex + lowerSearch.length)}
-                                  </ThemedText>
-                                );
-
-                                lastIndex = searchIndex + lowerSearch.length;
-                                searchIndex = lowerText.indexOf(lowerSearch, lastIndex);
-                              }
-
-                              // Add remaining text
-                              if (lastIndex < cleanText.length) {
-                                parts.push(
-                                  <ThemedText key={`text-${partKey++}`} style={{ fontSize: 16, lineHeight: 26, letterSpacing: -0.2, color: theme.text }}>
-                                    {cleanText.substring(lastIndex)}
-                                  </ThemedText>
-                                );
-                              }
-
-                              return parts;
-                            }
-                          }
-                        }
-
-                        return cleanText || t('mushaf.noTafsirAvailable');
-                      })()}
-                    </ThemedText>
-                  </View>
-
-                  {/* Bottom Decoration */}
-                  <View style={{
-                    marginTop: 24,
-                    paddingTop: 20,
-                    borderTopWidth: 1,
-                    borderTopColor: isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.04)',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 8
-                  }}>
-                    <View style={{
-                      width: 6,
-                      height: 6,
-                      borderRadius: 3,
-                      backgroundColor: `${theme.primary}66`
-                    }} />
-                    <ThemedText type="caption" style={{ fontSize: 11, opacity: 0.4, letterSpacing: 1 }}>
-                      END OF TAFSIR
-                    </ThemedText>
-                    <View style={{
-                      width: 6,
-                      height: 6,
-                      borderRadius: 3,
-                      backgroundColor: `${theme.primary}66`
-                    }} />
-                  </View>
-                </View>
-              ) : (
-                <View style={{ alignItems: 'center', justifyContent: 'center', paddingVertical: 40 }}>
-                  <View style={{
-                    width: 64,
-                    height: 64,
-                    borderRadius: 32,
-                    backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginBottom: 16
-                  }}>
-                    <Feather name="book" size={28} color={theme.textSecondary} style={{ opacity: 0.3 }} />
-                  </View>
-                  <ThemedText type="body" style={{ opacity: 0.5, textAlign: 'center' }}>
-                    No tafsir available
-                  </ThemedText>
-                </View>
-              )}
-            </ScrollView>
-          </Animated.View>
-        </View>
-      </Modal>
+      {/* Tafsir Viewer Modal */}
+      <TafsirViewerModal />
 
       {/* Tafsir Sources Modal */}
-      <Modal
-        visible={showTafsirSources}
-        animationType="fade"
-        presentationStyle={Platform.OS === 'ios' ? 'fullScreen' : undefined}
-        onRequestClose={() => {
-          console.log('📱 Tafsir modal closing');
-          setShowTafsirSources(false);
-        }}
-        statusBarTranslucent={Platform.OS === 'android'}
-      >
-        <ThemedView style={styles.container}>
-          <View style={[styles.settingsHeader, { backgroundColor: isDark ? 'rgba(0, 0, 0, 0.98)' : 'rgba(255, 255, 255, 0.98)', paddingTop: Platform.OS === 'android' ? Math.max(insets.top, 10) + 10 : insets.top + 10, paddingHorizontal: 20, paddingBottom: 16 }]}>
-            <Pressable onPress={() => setShowTafsirSources(false)} style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1, marginRight: 12 }]}>
-              <Feather name="arrow-left" size={24} color={theme.text} />
-            </Pressable>
-            <View style={{ flex: 1 }}>
-              <ThemedText type="h3" style={{ fontWeight: '700', fontSize: 24 }}>{t('mushaf.tafsirAndTranslations')}</ThemedText>
-              <ThemedText type="caption" style={{ opacity: 0.5, marginTop: 2, fontSize: 13 }}>
-                {availableTafsirs.filter(tf => tf.downloaded).length} {t('mushaf.downloadedCount')}
-              </ThemedText>
-            </View>
-          </View>
-          <ScrollView
-            contentContainerStyle={{ padding: Spacing.lg, paddingBottom: 40 }}
-            scrollEnabled={!isSwipingTafsir}
-          >
-            {/* Downloaded Translations */}
-            {availableTafsirs.filter(t => t.downloaded && !isTafsir(t.id)).length > 0 && (
-              <>
-                <Pressable
-                  onPress={() => setExpandedTranslations(!expandedTranslations)}
-                  style={({ pressed }) => [{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    marginBottom: expandedTranslations ? Spacing.md : Spacing.sm,
-                    marginTop: Spacing.xs,
-                    opacity: pressed ? 0.7 : 1
-                  }]}
-                >
-                  <View style={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: 16,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginRight: 10
-                  }}>
-                    <Image source={require('../../assets/images/3d-images/globe.png')} style={{ width: 28, height: 28 }} contentFit="contain" />
-                  </View>
-                  <ThemedText type="body" style={{ fontWeight: '700', fontSize: 15, letterSpacing: 0.5, opacity: 0.9, flex: 1 }}>
-                    {t('mushaf.myTranslations')}
-                  </ThemedText>
-                  <View style={{
-                    width: 24,
-                    height: 24,
-                    borderRadius: 12,
-                    backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
-                    <Feather
-                      name={expandedTranslations ? "chevron-up" : "chevron-down"}
-                      size={16}
-                      color={theme.textSecondary}
-                    />
-                  </View>
-                </Pressable>
-                {expandedTranslations && availableTafsirs.filter(t => t.downloaded && !isTafsir(t.id)).map((tafsir) => {
-                  const handleTafsirAction = async () => {
-                    if (tafsir.downloaded) {
-                      setSelectedTafsirId(tafsir.id);
-                      await AsyncStorage.setItem('@selectedTafsir', tafsir.id);
+      <TafsirSourcesModal />
 
-                      // If there's a tafsir verse, reload tafsir data
-                      if (tafsirVerse) {
-                        try {
-                          const key = tafsirVerse.verseKey;
-                          let tafsirContent = null;
-
-                          if (tafsir.id === 'abridged') {
-                            const enTafsir = await import("@/data/abridged-explanation-of-the-quran.json");
-                            tafsirContent = { text: enTafsir[key]?.text || 'No tafsir available' };
-                          } else if (tafsir.id === 'jalalayn') {
-                            const arTafsir = await import("@/data/tafsir-jalalayn.json");
-                            tafsirContent = { text: arTafsir[key]?.text || 'No tafsir available' };
-                          } else if (tafsir.id === 'sahih-international') {
-                            const sahihTafsir = await import("@/data/en-sahih-international-inline-footnotes.json");
-                            tafsirContent = { text: sahihTafsir[key]?.t || 'No tafsir available' };
-                          } else {
-                            // Try to load from FileSystem
-                            const tafsirPath = `${FileSystem.documentDirectory}tafsirs/${tafsir.id}.json`;
-                            const fileInfo = await FileSystem.getInfoAsync(tafsirPath);
-
-                            if (fileInfo.exists) {
-                              const fileContent = await FileSystem.readAsStringAsync(tafsirPath);
-                              const response = JSON.parse(fileContent);
-                              const tafsirData = response.data || response;
-
-                              if (tafsirData.surahs) {
-                                const surah = tafsirData.surahs.find((s: any) => s.number === tafsirVerse.surah);
-                                const ayah = surah?.ayahs?.find((a: any) => a.numberInSurah === tafsirVerse.ayah);
-                                tafsirContent = ayah ? { text: ayah.text || 'No tafsir available' } : { text: 'No tafsir available for this verse' };
-                              } else {
-                                const entry = tafsirData[key];
-
-                                // Check if it's a word-by-word translation (has keys like "1:1:1", "1:1:2", etc.)
-                                if (!entry && key) {
-                                  const [surah, ayah] = key.split(':');
-                                  const wordKeys = Object.keys(tafsirData).filter(k => k.startsWith(`${surah}:${ayah}:`));
-
-                                  if (wordKeys.length > 0) {
-                                    // Combine all words for this verse
-                                    const words = wordKeys
-                                      .sort((a, b) => {
-                                        const aWord = parseInt(a.split(':')[2]);
-                                        const bWord = parseInt(b.split(':')[2]);
-                                        return aWord - bWord;
-                                      })
-                                      .map(k => tafsirData[k])
-                                      .join(' ');
-                                    tafsirContent = { text: words };
-                                  } else {
-                                    tafsirContent = { text: 'No tafsir available for this verse' };
-                                  }
-                                } else {
-                                  tafsirContent = entry ? { text: entry.t || entry.text || entry.tafsir || entry.content || 'No tafsir available' } : { text: 'No tafsir available for this verse' };
-                                }
-                              }
-                            }
-                          }
-
-                          // Set tafsir data first
-                          setTafsirData(tafsirContent ? { en: tafsirContent, ar: tafsirContent } : null);
-
-                          // Then close sources modal after a brief delay
-                          setTimeout(() => {
-                            setShowTafsirSources(false);
-                          }, 50);
-                        } catch (e) {
-                          console.error("Failed to reload tafsir:", e);
-                          setShowTafsirSources(false);
-                        }
-                      } else {
-                        // No verse to show tafsir for, just close the modal
-                        setShowTafsirSources(false);
-                      }
-                    } else if (tafsir.url) {
-                      setDownloadingTafsir(tafsir.id);
-                      try {
-                        console.log('Starting download for:', tafsir.id);
-
-                        // Check available storage on Android
-                        if (Platform.OS === 'android') {
-                          try {
-                            const freeDiskStorage = await FileSystem.getFreeDiskStorageAsync();
-                            console.log('Free disk storage:', (freeDiskStorage / 1024 / 1024).toFixed(2), 'MB');
-                          } catch (e) {
-                            console.log('Could not check free storage:', e);
-                          }
-                        }
-
-                        const tafsirDir = `${FileSystem.documentDirectory}tafsirs/`;
-                        const tafsirPath = `${tafsirDir}${tafsir.id}.json`;
-                        console.log('Download path:', tafsirPath);
-                        console.log('Download URL:', tafsir.url);
-
-                        // Create directory if it doesn't exist
-                        const dirInfo = await FileSystem.getInfoAsync(tafsirDir);
-                        console.log('Directory exists:', dirInfo.exists);
-                        if (!dirInfo.exists) {
-                          console.log('Creating directory...');
-                          await FileSystem.makeDirectoryAsync(tafsirDir, { intermediates: true });
-                          console.log('Directory created');
-                        }
-
-                        // Download the tafsir file
-                        console.log('Starting download from:', tafsir.url);
-                        const downloadResult = await FileSystem.downloadAsync(tafsir.url, tafsirPath);
-                        console.log('Download result:', downloadResult);
-
-                        if (downloadResult.status === 200) {
-                          console.log('Download successful');
-                          setAvailableTafsirs(prev => prev.map(t => t.id === tafsir.id ? { ...t, downloaded: true } : t));
-                        } else {
-                          throw new Error(`Download failed with status: ${downloadResult.status}`);
-                        }
-                      } catch (error) {
-                        console.error('Download failed:', error);
-                        console.error('Error type:', error.constructor.name);
-                        console.error('Error message:', error.message);
-                        if (error.message?.includes('SQLITE_FULL')) {
-                          alert(t('mushaf.storageFull'));
-                        } else {
-                          alert(t('mushaf.downloadFailed'));
-                        }
-                      } finally {
-                        setDownloadingTafsir(null);
-                      }
-                    }
-                  };
-
-                  const isActive = selectedTafsirId === tafsir.id;
-
-                  // Don't allow deleting bundled tafsirs
-                  const canDelete = !['jalalayn', 'abridged', 'sahih-international'].includes(tafsir.id);
-
-                  const renderRightActions = () => (
-                    <View style={{
-                      justifyContent: 'center',
-                      alignItems: 'flex-end',
-                      paddingRight: 10
-                    }}>
-                      <Pressable
-                        onPress={() => deleteTafsir(tafsir.id)}
-                        style={({ pressed }) => [{
-                          backgroundColor: '#EF4444',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          width: 80,
-                          height: '90%',
-                          borderRadius: 12,
-                          opacity: pressed ? 0.8 : 1
-                        }]}
-                      >
-                        <Feather name="trash-2" size={20} color="#FFF" />
-                        <ThemedText style={{ color: '#FFF', fontSize: 12, fontWeight: '600', marginTop: 4 }}>{t('mushaf.delete')}</ThemedText>
-                      </Pressable>
-                    </View>
-                  );
-
-                  const itemContent = (
-                    <Pressable
-                      key={tafsir.id}
-                      onPress={handleTafsirAction}
-                      onLongPress={() => {
-                        if (canDelete && Platform.OS === 'android') {
-                          Alert.alert(
-                            t('mushaf.deleteTafsir'),
-                            t('mushaf.deleteTafsirConfirm', { name: tafsir.name }),
-                            [
-                              { text: t('common.cancel'), style: 'cancel' },
-                              { text: t('mushaf.delete'), style: 'destructive', onPress: () => deleteTafsir(tafsir.id) }
-                            ]
-                          );
-                        }
-                      }}
-                      disabled={downloadingTafsir === tafsir.id}
-                      style={({ pressed }) => [{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        padding: 16,
-                        marginBottom: 10,
-                        borderRadius: 16,
-                        backgroundColor: isActive
-                          ? `${theme.primary}0D`
-                          : (isDark ? '#1f2937' : '#FFFFFF'),
-                        borderWidth: 0,
-                        borderColor: 'transparent',
-                        shadowColor: '#000',
-                        shadowOffset: { width: 0, height: 8 },
-                        shadowOpacity: isActive ? 0.08 : 0.04,
-                        shadowRadius: 24,
-                        elevation: isActive ? 4 : 2,
-                        transform: [{ scale: pressed ? 0.98 : 1 }],
-                      }]}
-                    >
-                      <View style={{ flex: 1, marginRight: 12 }}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 6, marginBottom: 4 }}>
-                          <ThemedText type="body" style={{ fontWeight: '600', fontSize: 16, letterSpacing: -0.2, flexShrink: 1 }}>{tafsir.name}</ThemedText>
-                        </View>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 6, marginTop: 6 }}>
-                          <View style={{
-                            paddingHorizontal: 8,
-                            paddingVertical: 4,
-                            borderRadius: 8,
-                            backgroundColor: `${theme.primary}33`
-                          }}>
-                            <ThemedText type="caption" style={{
-                              fontSize: 11,
-                              fontWeight: '700',
-                              color: darkenHex(theme.primary, 0.55),
-                              letterSpacing: 0.3
-                            }}>
-                              {getLanguageName(tafsir.language)}
-                            </ThemedText>
-                          </View>
-                          {isTafsir(tafsir.id) ? (
-                            <View style={{
-                              paddingHorizontal: 6,
-                              paddingVertical: 3,
-                              borderRadius: 6,
-                              backgroundColor: `${theme.primary}1A`
-                            }}>
-                              <ThemedText type="caption" style={{
-                                fontSize: 10,
-                                fontWeight: '700',
-                                color: darkenHex(theme.primary, 0.55),
-                                letterSpacing: 0.5
-                              }}>
-                                {t('mushaf.tafsirBadge')}
-                              </ThemedText>
-                            </View>
-                          ) : (
-                            <View style={{
-                              paddingHorizontal: 6,
-                              paddingVertical: 3,
-                              borderRadius: 6,
-                              backgroundColor: `${theme.primary}1A`
-                            }}>
-                              <ThemedText type="caption" style={{
-                                fontSize: 10,
-                                fontWeight: '700',
-                                color: darkenHex(theme.primary, 0.55),
-                                letterSpacing: 0.5
-                              }}>
-                                {t('mushaf.translationBadge')}
-                              </ThemedText>
-                            </View>
-                          )}
-                        </View>
-                        {isActive && (
-                          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                            <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: theme.primary }} />
-                            <ThemedText type="caption" style={{ fontSize: 12, color: theme.primary, fontWeight: '600' }}>
-                              {t('mushaf.currentlyActive')}
-                            </ThemedText>
-                          </View>
-                        )}
-                      </View>
-                      {downloadingTafsir === tafsir.id ? (
-                        <ActivityIndicator size="small" color={theme.primary} />
-                      ) : isActive ? (
-                        <View style={{
-                          width: 40,
-                          height: 40,
-                          borderRadius: 20,
-                          backgroundColor: theme.primary,
-                          alignItems: 'center',
-                          justifyContent: 'center'
-                        }}>
-                          <Feather name="check" size={20} color="#FFFFFF" />
-                        </View>
-                      ) : (
-                        <View style={{
-                          paddingHorizontal: 12,
-                          paddingVertical: 8,
-                          borderRadius: 8,
-                          backgroundColor: `${theme.primary}26`
-                        }}>
-                          <ThemedText type="caption" style={{ fontSize: 12, color: darkenHex(theme.primary, 0.55), fontWeight: '600' }}>
-                            {t('mushaf.select')}
-                          </ThemedText>
-                        </View>
-                      )}
-                    </Pressable>
-                  );
-
-                  return canDelete ? (
-                    <Swipeable
-                      key={tafsir.id}
-                      renderRightActions={renderRightActions}
-                      overshootRight={false}
-                      onSwipeableOpen={(direction) => {
-                        if (direction === 'right') {
-                          deleteTafsir(tafsir.id);
-                        }
-                      }}
-                    >
-                      {itemContent}
-                    </Swipeable>
-                  ) : itemContent;
-                })}
-              </>
-            )}
-
-            {/* Downloaded Tafsirs */}
-            {availableTafsirs.filter(t => t.downloaded && isTafsir(t.id)).length > 0 && (
-              <>
-                <Pressable
-                  onPress={() => setExpandedTafsirs(!expandedTafsirs)}
-                  style={({ pressed }) => [{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    marginBottom: expandedTafsirs ? Spacing.md : Spacing.sm,
-                    marginTop: Spacing.lg,
-                    opacity: pressed ? 0.7 : 1
-                  }]}
-                >
-                  <View style={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: 16,
-                    backgroundColor: 'transparent',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginRight: 10
-                  }}>
-                    <Image source={require('../../assets/images/3d-images/book.png')} style={{ width: 28, height: 28 }} contentFit="contain" />
-                  </View>
-                  <ThemedText type="body" style={{ fontWeight: '700', fontSize: 15, letterSpacing: 0.5, opacity: 0.9, flex: 1 }}>
-                    {t('mushaf.myTafsirs')}
-                  </ThemedText>
-                  <View style={{
-                    width: 24,
-                    height: 24,
-                    borderRadius: 12,
-                    backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
-                    <Feather
-                      name={expandedTafsirs ? "chevron-up" : "chevron-down"}
-                      size={16}
-                      color={theme.textSecondary}
-                    />
-                  </View>
-                </Pressable>
-                {expandedTafsirs && availableTafsirs.filter(t => t.downloaded && isTafsir(t.id)).map((tafsir) => {
-                  const handleTafsirAction = async () => {
-                    if (tafsir.downloaded) {
-                      setSelectedTafsirId(tafsir.id);
-                      await AsyncStorage.setItem('@selectedTafsir', tafsir.id);
-
-                      // If there's a tafsir verse, reload tafsir data
-                      if (tafsirVerse) {
-                        try {
-                          const key = tafsirVerse.verseKey;
-                          let tafsirContent = null;
-
-                          if (tafsir.id === 'abridged') {
-                            const enTafsir = await import("@/data/abridged-explanation-of-the-quran.json");
-                            tafsirContent = { text: enTafsir[key]?.text || 'No tafsir available' };
-                          } else if (tafsir.id === 'jalalayn') {
-                            const arTafsir = await import("@/data/tafsir-jalalayn.json");
-                            tafsirContent = { text: arTafsir[key]?.text || 'No tafsir available' };
-                          } else if (tafsir.id === 'sahih-international') {
-                            const sahihTafsir = await import("@/data/en-sahih-international-inline-footnotes.json");
-                            tafsirContent = { text: sahihTafsir[key]?.t || 'No tafsir available' };
-                          } else {
-                            // Try to load from FileSystem
-                            const tafsirPath = `${FileSystem.documentDirectory}tafsirs/${tafsir.id}.json`;
-                            const fileInfo = await FileSystem.getInfoAsync(tafsirPath);
-
-                            if (fileInfo.exists) {
-                              const fileContent = await FileSystem.readAsStringAsync(tafsirPath);
-                              const response = JSON.parse(fileContent);
-                              const tafsirData = response.data || response;
-
-                              if (tafsirData.surahs) {
-                                const surah = tafsirData.surahs.find((s: any) => s.number === tafsirVerse.surah);
-                                const ayah = surah?.ayahs?.find((a: any) => a.numberInSurah === tafsirVerse.ayah);
-                                tafsirContent = ayah ? { text: ayah.text || 'No tafsir available' } : { text: 'No tafsir available for this verse' };
-                              } else {
-                                const entry = tafsirData[key];
-
-                                // Check if it's a word-by-word translation (has keys like "1:1:1", "1:1:2", etc.)
-                                if (!entry && key) {
-                                  const [surah, ayah] = key.split(':');
-                                  const wordKeys = Object.keys(tafsirData).filter(k => k.startsWith(`${surah}:${ayah}:`));
-
-                                  if (wordKeys.length > 0) {
-                                    // Combine all words for this verse
-                                    const words = wordKeys
-                                      .sort((a, b) => {
-                                        const aWord = parseInt(a.split(':')[2]);
-                                        const bWord = parseInt(b.split(':')[2]);
-                                        return aWord - bWord;
-                                      })
-                                      .map(k => tafsirData[k])
-                                      .join(' ');
-                                    tafsirContent = { text: words };
-                                  } else {
-                                    tafsirContent = { text: 'No tafsir available for this verse' };
-                                  }
-                                } else {
-                                  tafsirContent = entry ? { text: entry.t || entry.text || entry.tafsir || entry.content || 'No tafsir available' } : { text: 'No tafsir available for this verse' };
-                                }
-                              }
-                            }
-                          }
-
-                          // Set tafsir data first
-                          setTafsirData(tafsirContent ? { en: tafsirContent, ar: tafsirContent } : null);
-
-                          // Then close sources modal after a brief delay
-                          setTimeout(() => {
-                            setShowTafsirSources(false);
-                          }, 50);
-                        } catch (e) {
-                          console.error("Failed to reload tafsir:", e);
-                          setShowTafsirSources(false);
-                        }
-                      } else {
-                        // No verse to show tafsir for, just close the modal
-                        setShowTafsirSources(false);
-                      }
-                    }
-                  };
-
-                  const isActive = selectedTafsirId === tafsir.id;
-
-                  // Don't allow deleting bundled tafsirs
-                  const canDelete = !['jalalayn', 'abridged', 'sahih-international'].includes(tafsir.id);
-
-                  const renderRightActions = () => (
-                    <View style={{
-                      justifyContent: 'center',
-                      alignItems: 'flex-end',
-                      paddingRight: 10
-                    }}>
-                      <Pressable
-                        onPress={() => deleteTafsir(tafsir.id)}
-                        style={({ pressed }) => [{
-                          backgroundColor: '#EF4444',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          width: 80,
-                          height: '90%',
-                          borderRadius: 12,
-                          opacity: pressed ? 0.8 : 1
-                        }]}
-                      >
-                        <Feather name="trash-2" size={20} color="#FFF" />
-                        <ThemedText style={{ color: '#FFF', fontSize: 12, fontWeight: '600', marginTop: 4 }}>{t('mushaf.delete')}</ThemedText>
-                      </Pressable>
-                    </View>
-                  );
-
-                  const itemContent = (
-                    <Pressable
-                      key={tafsir.id}
-                      onPress={handleTafsirAction}
-                      style={({ pressed }) => [{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        padding: 16,
-                        marginBottom: 10,
-                        borderRadius: 16,
-                        backgroundColor: isActive
-                          ? `${theme.primary}0D`
-                          : (isDark ? '#1f2937' : '#FFFFFF'),
-                        borderWidth: 0,
-                        borderColor: 'transparent',
-                        shadowColor: '#000',
-                        shadowOffset: { width: 0, height: 8 },
-                        shadowOpacity: isActive ? 0.08 : 0.04,
-                        shadowRadius: 24,
-                        elevation: isActive ? 4 : 2,
-                        transform: [{ scale: pressed ? 0.98 : 1 }],
-                      }]}
-                    >
-                      <View style={{ flex: 1, marginRight: 12 }}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 6, marginBottom: 4 }}>
-                          <ThemedText type="body" style={{ fontWeight: '600', fontSize: 16, letterSpacing: -0.2, flexShrink: 1 }}>{tafsir.name}</ThemedText>
-                        </View>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 6, marginTop: 6 }}>
-                          <View style={{
-                            paddingHorizontal: 8,
-                            paddingVertical: 4,
-                            borderRadius: 8,
-                            backgroundColor: `${theme.primary}33`
-                          }}>
-                            <ThemedText type="caption" style={{
-                              fontSize: 11,
-                              fontWeight: '700',
-                              color: darkenHex(theme.primary, 0.55),
-                              letterSpacing: 0.3
-                            }}>
-                              {getLanguageName(tafsir.language)}
-                            </ThemedText>
-                          </View>
-                          {isTafsir(tafsir.id) ? (
-                            <View style={{
-                              paddingHorizontal: 6,
-                              paddingVertical: 3,
-                              borderRadius: 6,
-                              backgroundColor: `${theme.primary}1A`
-                            }}>
-                              <ThemedText type="caption" style={{
-                                fontSize: 10,
-                                fontWeight: '700',
-                                color: darkenHex(theme.primary, 0.55),
-                                letterSpacing: 0.5
-                              }}>
-                                {t('mushaf.tafsirBadge')}
-                              </ThemedText>
-                            </View>
-                          ) : (
-                            <View style={{
-                              paddingHorizontal: 6,
-                              paddingVertical: 3,
-                              borderRadius: 6,
-                              backgroundColor: `${theme.primary}1A`
-                            }}>
-                              <ThemedText type="caption" style={{
-                                fontSize: 10,
-                                fontWeight: '700',
-                                color: darkenHex(theme.primary, 0.55),
-                                letterSpacing: 0.5
-                              }}>
-                                {t('mushaf.translationBadge')}
-                              </ThemedText>
-                            </View>
-                          )}
-                        </View>
-                        {isActive && (
-                          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 8 }}>
-                            <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: theme.primary }} />
-                            <ThemedText type="caption" style={{ fontSize: 12, color: theme.primary, fontWeight: '600' }}>
-                              {t('mushaf.currentlyActive')}
-                            </ThemedText>
-                          </View>
-                        )}
-                      </View>
-                      {isActive ? (
-                        <View style={{
-                          width: 40,
-                          height: 40,
-                          borderRadius: 20,
-                          backgroundColor: theme.primary,
-                          alignItems: 'center',
-                          justifyContent: 'center'
-                        }}>
-                          <Feather name="check" size={20} color="#FFFFFF" />
-                        </View>
-                      ) : null}
-                    </Pressable>
-                  );
-
-                  return canDelete ? (
-                    <Swipeable
-                      key={tafsir.id}
-                      renderRightActions={renderRightActions}
-                      overshootRight={false}
-                      onSwipeableOpen={(direction) => {
-                        if (direction === 'right') {
-                          deleteTafsir(tafsir.id);
-                        }
-                      }}
-                    >
-                      {itemContent}
-                    </Swipeable>
-                  ) : itemContent;
-                })}
-              </>
-            )}
-
-            {/* Available to Download Section */}
-            {availableTafsirs.filter(t => !t.downloaded).length > 0 && (
-              <>
-                <Pressable
-                  onPress={() => setExpandedAvailable(!expandedAvailable)}
-                  style={({ pressed }) => [{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    marginBottom: expandedAvailable ? Spacing.md : Spacing.sm,
-                    marginTop: Spacing.lg,
-                    opacity: pressed ? 0.7 : 1
-                  }]}
-                >
-                  <View style={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: 16,
-                    backgroundColor: 'transparent',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginRight: 10
-                  }}>
-                    <Image source={require('../../assets/images/3d-images/cloud.png')} style={{ width: 28, height: 28 }} contentFit="contain" />
-                  </View>
-                  <ThemedText type="body" style={{ fontWeight: '700', fontSize: 15, letterSpacing: 0.5, opacity: 0.9, flex: 1 }}>
-                    {t('mushaf.availableToDownload')}
-                  </ThemedText>
-                  <View style={{
-                    width: 24,
-                    height: 24,
-                    borderRadius: 12,
-                    backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
-                    <Feather
-                      name={expandedAvailable ? "chevron-up" : "chevron-down"}
-                      size={16}
-                      color={theme.textSecondary}
-                    />
-                  </View>
-                </Pressable>
-                {expandedAvailable && (
-                  <>
-                    {/* Available Translations */}
-                    {availableTafsirs.filter(t => !t.downloaded && !isTafsir(t.id)).length > 0 && (
-                      <>
-                        <Pressable
-                          onPress={() => setExpandedAvailableTranslations(!expandedAvailableTranslations)}
-                          style={({ pressed }) => [{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            marginBottom: expandedAvailableTranslations ? 8 : 8,
-                            marginTop: 8,
-                            opacity: pressed ? 0.7 : 1
-                          }]}
-                        >
-                          <ThemedText type="body" style={{ fontWeight: '600', fontSize: 13, letterSpacing: 0.5, opacity: 0.6, flex: 1 }}>
-                            {t('mushaf.translationsCount')} ({availableTafsirs.filter(tf => !tf.downloaded && !isTafsir(tf.id) && (!translationLanguageFilter || tf.language === translationLanguageFilter)).length})
-                          </ThemedText>
-                          <Feather
-                            name={expandedAvailableTranslations ? "chevron-up" : "chevron-down"}
-                            size={14}
-                            color={theme.textSecondary}
-                            style={{ opacity: 0.6 }}
-                          />
-                        </Pressable>
-                        {expandedAvailableTranslations && (
-                          <ScrollView
-                            ref={translationLangScrollRef}
-                            horizontal
-                            showsHorizontalScrollIndicator={false}
-                            style={{ marginBottom: 12 }}
-                            onContentSizeChange={() => {
-                              if (translationLanguageFilter && translationLangScrollRef.current) {
-                                const langs = [...new Set(availableTafsirs.filter(t => !t.downloaded && !isTafsir(t.id)).map(t => t.language))].sort();
-                                const idx = langs.indexOf(translationLanguageFilter);
-                                if (idx >= 0) {
-                                  // "All" button is ~50px, each language chip is ~70px average
-                                  const scrollX = 50 + (idx * 70) - 40;
-                                  translationLangScrollRef.current.scrollTo({ x: Math.max(0, scrollX), animated: false });
-                                }
-                              }
-                            }}
-                          >
-                            <Pressable
-                              onPress={() => setTranslationLanguageFilter(null)}
-                              style={{
-                                paddingHorizontal: 12,
-                                paddingVertical: 6,
-                                borderRadius: 16,
-                                marginRight: 8,
-                                backgroundColor: translationLanguageFilter === null ? theme.primary : (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'),
-                              }}
-                            >
-                              <ThemedText type="caption" style={{ color: translationLanguageFilter === null ? '#fff' : theme.textSecondary, fontWeight: '600' }}>{t('mushaf.all')}</ThemedText>
-                            </Pressable>
-                            {[...new Set(availableTafsirs.filter(t => !t.downloaded && !isTafsir(t.id)).map(t => t.language))].sort().map(lang => (
-                              <Pressable
-                                key={lang}
-                                onPress={() => setTranslationLanguageFilter(translationLanguageFilter === lang ? null : lang)}
-                                style={{
-                                  paddingHorizontal: 12,
-                                  paddingVertical: 6,
-                                  borderRadius: 16,
-                                  marginRight: 8,
-                                  backgroundColor: translationLanguageFilter === lang ? theme.primary : (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'),
-                                }}
-                              >
-                                <ThemedText type="caption" style={{ color: translationLanguageFilter === lang ? '#fff' : theme.textSecondary, fontWeight: '600' }}>{getLanguageName(lang)}</ThemedText>
-                              </Pressable>
-                            ))}
-                          </ScrollView>
-                        )}
-                        {expandedAvailableTranslations && availableTafsirs.filter(t => !t.downloaded && !isTafsir(t.id) && (!translationLanguageFilter || t.language === translationLanguageFilter)).map((tafsir) => {
-                          const handleTafsirAction = async () => {
-                            if (tafsir.url) {
-                              setDownloadingTafsir(tafsir.id);
-                              try {
-                                console.log('Starting download for:', tafsir.id);
-
-                                // Check available storage on Android
-                                if (Platform.OS === 'android') {
-                                  try {
-                                    const freeDiskStorage = await FileSystem.getFreeDiskStorageAsync();
-                                    console.log('Free disk storage:', (freeDiskStorage / 1024 / 1024).toFixed(2), 'MB');
-                                  } catch (e) {
-                                    console.log('Could not check free storage:', e);
-                                  }
-                                }
-
-                                const tafsirDir = `${FileSystem.documentDirectory}tafsirs/`;
-                                const tafsirPath = `${tafsirDir}${tafsir.id}.json`;
-                                console.log('Download path:', tafsirPath);
-                                console.log('Download URL:', tafsir.url);
-
-                                // Create directory if it doesn't exist
-                                const dirInfo = await FileSystem.getInfoAsync(tafsirDir);
-                                console.log('Directory exists:', dirInfo.exists);
-                                if (!dirInfo.exists) {
-                                  console.log('Creating directory...');
-                                  await FileSystem.makeDirectoryAsync(tafsirDir, { intermediates: true });
-                                  console.log('Directory created');
-                                }
-
-                                // Download the tafsir file
-                                console.log('Starting download from:', tafsir.url);
-                                const downloadResult = await FileSystem.downloadAsync(tafsir.url, tafsirPath);
-                                console.log('Download result:', downloadResult);
-
-                                if (downloadResult.status === 200) {
-                                  console.log('Download successful');
-                                  setAvailableTafsirs(prev => prev.map(t => t.id === tafsir.id ? { ...t, downloaded: true } : t));
-                                } else {
-                                  throw new Error(`Download failed with status: ${downloadResult.status}`);
-                                }
-                              } catch (error) {
-                                console.error('Download failed:', error);
-                                console.error('Error type:', error.constructor.name);
-                                console.error('Error message:', error.message);
-                                if (error.message?.includes('SQLITE_FULL')) {
-                                  alert(t('mushaf.storageFull'));
-                                } else {
-                                  alert(t('mushaf.downloadFailed'));
-                                }
-                              } finally {
-                                setDownloadingTafsir(null);
-                              }
-                            }
-                          };
-
-                          return (
-                            <Pressable
-                              key={tafsir.id}
-                              onPress={handleTafsirAction}
-                              disabled={downloadingTafsir === tafsir.id}
-                              style={({ pressed }) => [{
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                                padding: 16,
-                                marginBottom: 10,
-                                borderRadius: 16,
-                                backgroundColor: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)',
-                                borderWidth: 1,
-                                borderColor: isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.04)',
-                                transform: [{ scale: pressed ? 0.98 : 1 }],
-                                opacity: downloadingTafsir === tafsir.id ? 0.6 : 1,
-                              }]}
-                            >
-                              <View style={{ flex: 1, marginRight: 12 }}>
-                                <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 6, marginBottom: 4 }}>
-                                  <ThemedText type="body" style={{ fontWeight: '600', fontSize: 16, letterSpacing: -0.2, flexShrink: 1 }}>{tafsir.name}</ThemedText>
-                                </View>
-                                <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 6, marginTop: 6 }}>
-                                  <View style={{
-                                    paddingHorizontal: 8,
-                                    paddingVertical: 4,
-                                    borderRadius: 8,
-                                    backgroundColor: tafsir.language === 'ar'
-                                      ? `${theme.primary}33`
-                                      : `${theme.primary}33`
-                                  }}>
-                                    <ThemedText type="caption" style={{
-                                      fontSize: 11,
-                                      fontWeight: '700',
-                                      color: theme.primary,
-                                      letterSpacing: 0.3
-                                    }}>
-                                      {getLanguageName(tafsir.language)}
-                                    </ThemedText>
-                                  </View>
-                                  {isTafsir(tafsir.id) ? (
-                                    <View style={{
-                                      paddingHorizontal: 6,
-                                      paddingVertical: 3,
-                                      borderRadius: 6,
-                                      backgroundColor: `${theme.primary}1A`
-                                    }}>
-                                      <ThemedText type="caption" style={{
-                                        fontSize: 10,
-                                        fontWeight: '700',
-                                        color: darkenHex(theme.primary, 0.55),
-                                        letterSpacing: 0.5
-                                      }}>
-                                        {t('mushaf.tafsirBadge')}
-                                      </ThemedText>
-                                    </View>
-                                  ) : (
-                                    <View style={{
-                                      paddingHorizontal: 6,
-                                      paddingVertical: 3,
-                                      borderRadius: 6,
-                                      backgroundColor: `${theme.primary}1A`
-                                    }}>
-                                      <ThemedText type="caption" style={{
-                                        fontSize: 10,
-                                        fontWeight: '700',
-                                        color: darkenHex(theme.primary, 0.55),
-                                        letterSpacing: 0.5
-                                      }}>
-                                        {t('mushaf.translationBadge')}
-                                      </ThemedText>
-                                    </View>
-                                  )}
-                                </View>
-                                <ThemedText type="caption" style={{ fontSize: 12, opacity: 0.5, marginTop: 8 }}>
-                                  {t('mushaf.tapToDownload')}
-                                </ThemedText>
-                              </View>
-                              {downloadingTafsir === tafsir.id ? (
-                                <ActivityIndicator size="small" color={theme.primary} />
-                              ) : (
-                                <View style={{
-                                  width: 40,
-                                  height: 40,
-                                  borderRadius: 20,
-                                  backgroundColor: `${theme.primary}26`,
-                                  alignItems: 'center',
-                                  justifyContent: 'center'
-                                }}>
-                                  <Feather name="download" size={18} color={theme.primary} />
-                                </View>
-                              )}
-                            </Pressable>
-                          );
-                        })}
-                      </>
-                    )}
-
-                    {/* Available Tafsirs */}
-                    {availableTafsirs.filter(t => !t.downloaded && isTafsir(t.id)).length > 0 && (
-                      <>
-                        <Pressable
-                          onPress={() => setExpandedAvailableTafsirs(!expandedAvailableTafsirs)}
-                          style={({ pressed }) => [{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            marginBottom: expandedAvailableTafsirs ? 8 : 8,
-                            marginTop: 20,
-                            opacity: pressed ? 0.7 : 1
-                          }]}
-                        >
-                          <ThemedText type="body" style={{ fontWeight: '600', fontSize: 13, letterSpacing: 0.5, opacity: 0.6, flex: 1 }}>
-                            {t('mushaf.tafsirsCount')} ({availableTafsirs.filter(tf => !tf.downloaded && isTafsir(tf.id) && (!tafsirLanguageFilter || tf.language === tafsirLanguageFilter)).length})
-                          </ThemedText>
-                          <Feather
-                            name={expandedAvailableTafsirs ? "chevron-up" : "chevron-down"}
-                            size={14}
-                            color={theme.textSecondary}
-                            style={{ opacity: 0.6 }}
-                          />
-                        </Pressable>
-                        {expandedAvailableTafsirs && (
-                          <ScrollView
-                            ref={tafsirLangScrollRef}
-                            horizontal
-                            showsHorizontalScrollIndicator={false}
-                            style={{ marginBottom: 12 }}
-                            onContentSizeChange={() => {
-                              if (tafsirLanguageFilter && tafsirLangScrollRef.current) {
-                                const langs = [...new Set(availableTafsirs.filter(t => !t.downloaded && isTafsir(t.id)).map(t => t.language))].sort();
-                                const idx = langs.indexOf(tafsirLanguageFilter);
-                                if (idx >= 0) {
-                                  // "All" button is ~50px, each language chip is ~70px average
-                                  const scrollX = 50 + (idx * 70) - 40;
-                                  tafsirLangScrollRef.current.scrollTo({ x: Math.max(0, scrollX), animated: false });
-                                }
-                              }
-                            }}
-                          >
-                            <Pressable
-                              onPress={() => setTafsirLanguageFilter(null)}
-                              style={{
-                                paddingHorizontal: 12,
-                                paddingVertical: 6,
-                                borderRadius: 16,
-                                marginRight: 8,
-                                backgroundColor: tafsirLanguageFilter === null ? theme.primary : (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'),
-                              }}
-                            >
-                              <ThemedText type="caption" style={{ color: tafsirLanguageFilter === null ? '#fff' : theme.textSecondary, fontWeight: '600' }}>{t('mushaf.all')}</ThemedText>
-                            </Pressable>
-                            {[...new Set(availableTafsirs.filter(t => !t.downloaded && isTafsir(t.id)).map(t => t.language))].sort().map(lang => (
-                              <Pressable
-                                key={lang}
-                                onPress={() => setTafsirLanguageFilter(tafsirLanguageFilter === lang ? null : lang)}
-                                style={{
-                                  paddingHorizontal: 12,
-                                  paddingVertical: 6,
-                                  borderRadius: 16,
-                                  marginRight: 8,
-                                  backgroundColor: tafsirLanguageFilter === lang ? theme.primary : (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'),
-                                }}
-                              >
-                                <ThemedText type="caption" style={{ color: tafsirLanguageFilter === lang ? '#fff' : theme.textSecondary, fontWeight: '600' }}>{getLanguageName(lang)}</ThemedText>
-                              </Pressable>
-                            ))}
-                          </ScrollView>
-                        )}
-                        {expandedAvailableTafsirs && availableTafsirs.filter(t => !t.downloaded && isTafsir(t.id) && (!tafsirLanguageFilter || t.language === tafsirLanguageFilter)).map((tafsir) => {
-                          const handleTafsirAction = async () => {
-                            if (tafsir.url) {
-                              setDownloadingTafsir(tafsir.id);
-                              try {
-                                console.log('Starting download for:', tafsir.id);
-
-                                // Check available storage on Android
-                                if (Platform.OS === 'android') {
-                                  try {
-                                    const freeDiskStorage = await FileSystem.getFreeDiskStorageAsync();
-                                    console.log('Free disk storage:', (freeDiskStorage / 1024 / 1024).toFixed(2), 'MB');
-                                  } catch (e) {
-                                    console.log('Could not check free storage:', e);
-                                  }
-                                }
-
-                                const tafsirDir = `${FileSystem.documentDirectory}tafsirs/`;
-                                const tafsirPath = `${tafsirDir}${tafsir.id}.json`;
-                                console.log('Download path:', tafsirPath);
-                                console.log('Download URL:', tafsir.url);
-
-                                // Create directory if it doesn't exist
-                                const dirInfo = await FileSystem.getInfoAsync(tafsirDir);
-                                console.log('Directory exists:', dirInfo.exists);
-                                if (!dirInfo.exists) {
-                                  console.log('Creating directory...');
-                                  await FileSystem.makeDirectoryAsync(tafsirDir, { intermediates: true });
-                                  console.log('Directory created');
-                                }
-
-                                // Download the tafsir file
-                                console.log('Starting download from:', tafsir.url);
-                                const downloadResult = await FileSystem.downloadAsync(tafsir.url, tafsirPath);
-                                console.log('Download result:', downloadResult);
-
-                                if (downloadResult.status === 200) {
-                                  console.log('Download successful');
-                                  setAvailableTafsirs(prev => prev.map(t => t.id === tafsir.id ? { ...t, downloaded: true } : t));
-                                } else {
-                                  throw new Error(`Download failed with status: ${downloadResult.status}`);
-                                }
-                              } catch (error) {
-                                console.error('Download failed:', error);
-                                console.error('Error type:', error.constructor.name);
-                                console.error('Error message:', error.message);
-                                if (error.message?.includes('SQLITE_FULL')) {
-                                  alert('Storage full. Please free up space on your device and try again.');
-                                } else {
-                                  alert('Download failed. Please check your connection and storage space.');
-                                }
-                              } finally {
-                                setDownloadingTafsir(null);
-                              }
-                            }
-                          };
-
-                          return (
-                            <Pressable
-                              key={tafsir.id}
-                              onPress={handleTafsirAction}
-                              disabled={downloadingTafsir === tafsir.id}
-                              style={({ pressed }) => [{
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                                padding: 16,
-                                marginBottom: 10,
-                                borderRadius: 16,
-                                backgroundColor: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)',
-                                borderWidth: 1,
-                                borderColor: isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.04)',
-                                transform: [{ scale: pressed ? 0.98 : 1 }],
-                                opacity: downloadingTafsir === tafsir.id ? 0.6 : 1,
-                              }]}
-                            >
-                              <View style={{ flex: 1, marginRight: 12 }}>
-                                <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 6, marginBottom: 4 }}>
-                                  <ThemedText type="body" style={{ fontWeight: '600', fontSize: 16, letterSpacing: -0.2, flexShrink: 1 }}>{tafsir.name}</ThemedText>
-                                </View>
-                                <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 6, marginTop: 6 }}>
-                                  <View style={{
-                                    paddingHorizontal: 8,
-                                    paddingVertical: 4,
-                                    borderRadius: 8,
-                                    backgroundColor: tafsir.language === 'ar'
-                                      ? `${theme.primary}33`
-                                      : `${theme.primary}33`
-                                  }}>
-                                    <ThemedText type="caption" style={{
-                                      fontSize: 11,
-                                      fontWeight: '700',
-                                      color: theme.primary,
-                                      letterSpacing: 0.3
-                                    }}>
-                                      {getLanguageName(tafsir.language)}
-                                    </ThemedText>
-                                  </View>
-                                  {isTafsir(tafsir.id) ? (
-                                    <View style={{
-                                      paddingHorizontal: 6,
-                                      paddingVertical: 3,
-                                      borderRadius: 6,
-                                      backgroundColor: `${theme.primary}1A`
-                                    }}>
-                                      <ThemedText type="caption" style={{
-                                        fontSize: 10,
-                                        fontWeight: '700',
-                                        color: darkenHex(theme.primary, 0.55),
-                                        letterSpacing: 0.5
-                                      }}>
-                                        TAFSIR
-                                      </ThemedText>
-                                    </View>
-                                  ) : (
-                                    <View style={{
-                                      paddingHorizontal: 6,
-                                      paddingVertical: 3,
-                                      borderRadius: 6,
-                                      backgroundColor: `${theme.primary}1A`
-                                    }}>
-                                      <ThemedText type="caption" style={{
-                                        fontSize: 10,
-                                        fontWeight: '700',
-                                        color: darkenHex(theme.primary, 0.55),
-                                        letterSpacing: 0.5
-                                      }}>
-                                        TRANSLATION
-                                      </ThemedText>
-                                    </View>
-                                  )}
-                                </View>
-                                <ThemedText type="caption" style={{ fontSize: 12, opacity: 0.5, marginTop: 8 }}>
-                                  Tap to download
-                                </ThemedText>
-                              </View>
-                              {downloadingTafsir === tafsir.id ? (
-                                <ActivityIndicator size="small" color={theme.primary} />
-                              ) : (
-                                <View style={{
-                                  width: 40,
-                                  height: 40,
-                                  borderRadius: 20,
-                                  backgroundColor: `${theme.primary}26`,
-                                  alignItems: 'center',
-                                  justifyContent: 'center'
-                                }}>
-                                  <Feather name="download" size={18} color={theme.primary} />
-                                </View>
-                              )}
-                            </Pressable>
-                          );
-                        })}
-                      </>
-                    )}
-                  </>
-                )}
-              </>
-            )}
-          </ScrollView>
-        </ThemedView>
-      </Modal>
 
       {/* Reciter Picker Modal */}
-      {showReciterPicker && (
-        <Modal
-          visible={true}
-          animationType="slide"
-          presentationStyle="fullScreen"
-          onRequestClose={() => setShowReciterPicker(false)}
-        >
-          <ThemedView style={styles.container}>
-            <View style={[styles.settingsHeader, { backgroundColor: isDark ? 'rgba(0, 0, 0, 0.98)' : 'rgba(255, 255, 255, 0.98)' }]}>
-              <Pressable onPress={() => setShowReciterPicker(false)} style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1, marginRight: 12 }]}>
-                <Feather name="arrow-left" size={24} color={theme.text} />
-              </Pressable>
-              <ThemedText type="h3" style={{ fontWeight: '700', fontSize: 24, flex: 1 }}>{t('mushaf.selectReciter')}</ThemedText>
-            </View>
-            <FlatList
-              data={reciters}
-              keyExtractor={(item) => item.value}
-              renderItem={({ item }) => (
-                <Pressable
-                  onPress={() => {
-                    handleReciterChange(item.value);
-                    setShowReciterPicker(false);
-                  }}
-                  style={({ pressed }) => [{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    paddingVertical: 16,
-                    paddingHorizontal: Spacing.lg,
-                    backgroundColor: pressed ? (isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)') : 'transparent',
-                    borderBottomWidth: 1,
-                    borderBottomColor: isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)',
-                  }]}
-                >
-                  <ThemedText type="body" style={{ fontWeight: selectedReciter === item.value ? '600' : '400', fontSize: 16 }}>{locale === 'ar' ? item.labelAr : item.label}</ThemedText>
-                  {selectedReciter === item.value && <Feather name="check" size={20} color={theme.primary} />}
-                </Pressable>
-              )}
-              contentContainerStyle={{ paddingBottom: insets.bottom + Spacing.xl }}
-            />
-          </ThemedView>
-        </Modal>
-      )}
+      <ReciterPickerModal />
 
       {/* Audio Settings Modal */}
-      <Modal
-        visible={showAudioSettings}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setShowAudioSettings(false)}
-      >
-        <ThemedView style={styles.settingsContainer}>
-          <View style={[styles.settingsHeader, { backgroundColor: isDark ? 'rgba(0, 0, 0, 0.98)' : 'rgba(255, 255, 255, 0.98)' }]}>
-            <ThemedText type="h3" style={{ fontWeight: '700', fontSize: 24 }}>{t('mushaf.audioSettings')}</ThemedText>
-            <Pressable onPress={() => setShowAudioSettings(false)} style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1 }]}>
-              <Feather name="x" size={24} color={theme.text} />
-            </Pressable>
-          </View>
+      <AudioSettingsModal />
 
-          <ScrollView style={styles.settingsContent}>
-            <View style={styles.settingsSection}>
-              <ThemedText type="body" style={{ fontWeight: '600', marginBottom: Spacing.sm, opacity: 0.6, fontSize: 13 }}>{t('mushaf.playUntil')}</ThemedText>
-              <View style={{ flexDirection: 'row', gap: 8 }}>
-                {[{ value: 'verse', label: t('mushaf.verse'), icon: 'type' }, { value: 'surah', label: t('mushaf.surah'), icon: 'book' }, { value: 'page', label: t('mushaf.page'), icon: 'file-text' }, { value: 'juz', label: t('mushaf.juz'), icon: 'layers' }].map((option) => (
-                  <Pressable
-                    key={option.value}
-                    onPress={async () => {
-                      const newPlayUntil = option.value as 'verse' | 'surah' | 'page' | 'juz';
-                      const oldPlayUntil = playUntil;
-                      setPlayUntil(newPlayUntil);
+      {/* Audio Player Bar — extracted component */}
+      <AudioPlayerBar />
 
-                      // If audio is currently playing, restart with new playUntil setting
-                      if (audioState?.current && audioState.isPlaying) {
-                        const currentSurah = audioState.current.surah;
-                        const currentAyah = audioState.current.ayah;
-
-                        await AudioService.stop();
-
-                        // Build new queue with the new playUntil mode
-                        setTimeout(() => {
-                          const surahData = quranData.data.surahs.find((s: any) => s.number === currentSurah);
-                          if (!surahData) return;
-
-                          let verses: any[] = [];
-                          if (newPlayUntil === 'verse') {
-                            // Single verse - no queue, just play current
-                            verses = [{ surah: currentSurah, ayah: currentAyah }];
-                          } else if (newPlayUntil === 'surah') {
-                            verses = surahData.ayahs.filter((a: any) => a.numberInSurah >= currentAyah).map((a: any) => ({ surah: currentSurah, ayah: a.numberInSurah }));
-                          } else if (newPlayUntil === 'page') {
-                            const currentPage = surahData.ayahs.find((a: any) => a.numberInSurah === currentAyah)?.page;
-                            quranData.data.surahs.forEach((s: any) => {
-                              s.ayahs.forEach((a: any) => {
-                                if (a.page === currentPage && (s.number > currentSurah || (s.number === currentSurah && a.numberInSurah >= currentAyah))) {
-                                  verses.push({ surah: s.number, ayah: a.numberInSurah });
-                                }
-                              });
-                            });
-                          } else {
-                            const currentJuz = surahData.ayahs.find((a: any) => a.numberInSurah === currentAyah)?.juz;
-                            quranData.data.surahs.forEach((s: any) => {
-                              s.ayahs.forEach((a: any) => {
-                                if (a.juz === currentJuz && (s.number > currentSurah || (s.number === currentSurah && a.numberInSurah >= currentAyah))) {
-                                  verses.push({ surah: s.number, ayah: a.numberInSurah });
-                                }
-                              });
-                            });
-                          }
-
-                          if (verses.length > 0) {
-                            AudioService.playQueue(verses);
-                          }
-                        }, 300);
-                      }
-                    }}
-                    style={({ pressed }) => [{
-                      flex: 1,
-                      paddingVertical: 14,
-                      borderRadius: 12,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      backgroundColor: playUntil === option.value ? theme.primary : (isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.05)'),
-                      opacity: pressed ? 0.7 : 1,
-                    }]}
-                  >
-                    <Feather name={option.icon as any} size={20} color={playUntil === option.value ? '#FFF' : theme.textSecondary} style={{ marginBottom: 4 }} />
-                    <ThemedText type="small" style={{ fontWeight: playUntil === option.value ? '600' : '400', color: playUntil === option.value ? '#FFF' : theme.text, fontSize: 12 }}>{option.label}</ThemedText>
-                  </Pressable>
-                ))}
-              </View>
-            </View>
-
-            <View style={styles.settingsSection}>
-              <ThemedText type="body" style={{ fontWeight: '600', marginBottom: Spacing.sm, opacity: 0.6, fontSize: 13 }}>{t('mushaf.reciterLabel')}</ThemedText>
-              <Pressable
-                onPress={() => {
-                  console.log('Reciter button pressed');
-                  setShowAudioSettings(false);
-                  setTimeout(() => setShowReciterPicker(true), 100);
-                }}
-                style={({ pressed }) => [{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  paddingVertical: 14,
-                  paddingHorizontal: 16,
-                  borderRadius: 12,
-                  backgroundColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.05)',
-                  opacity: pressed ? 0.7 : 1,
-                }]}
-              >
-                <ThemedText type="body" style={{ fontSize: 15, pointerEvents: 'none' }}>{locale === 'ar' ? reciters.find(r => r.value === selectedReciter)?.labelAr : reciters.find(r => r.value === selectedReciter)?.label}</ThemedText>
-                <Feather name="chevron-right" size={20} color={theme.textSecondary} />
-              </Pressable>
-            </View>
-          </ScrollView>
-        </ThemedView>
-      </Modal>
-
-      {/* Media Player Bar - Premium Design with Minimize */}
-      {audioState?.current && !isPlayerMinimized && (
-        <Animated.View
-          entering={SlideInDown.duration(400).springify()}
-          exiting={SlideOutDown.duration(250)}
-          style={[
-            styles.mediaPlayer,
-            {
-              backgroundColor: isDark ? 'rgba(20, 20, 20, 0.88)' : 'rgba(255, 255, 255, 0.85)',
-              paddingBottom: Math.max(insets.bottom - 10, 10),
-              borderTopWidth: 1,
-              borderTopColor: isDark ? 'rgba(255,255,255,0.08)' : `${theme.primary}33`,
-              borderWidth: 1,
-              borderColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: -4 },
-              shadowOpacity: 0.12,
-              shadowRadius: 16,
-              elevation: 12,
-            },
-          ]}
-        >
-          {/* Drag Handle */}
-          <Pressable
-            onPress={() => setIsPlayerMinimized(!isPlayerMinimized)}
-            style={{
-              paddingVertical: 8 * playerScale,
-              alignItems: 'center',
-              width: '100%'
-            }}
-          >
-            <View style={{
-              width: 36 * playerScale,
-              height: 4 * playerScale,
-              backgroundColor: `${theme.primary}4D`,
-              borderRadius: 2 * playerScale,
-              marginBottom: 4 * playerScale,
-            }} />
-            <ThemedText type="caption" style={{
-              fontSize: 10 * playerScale,
-              opacity: 0.4,
-              letterSpacing: 0.5
-            }}>
-              {t('mushaf.tapToMinimize')}
-            </ThemedText>
-          </Pressable>
-
-          {/* Expanded View - Full Controls */}
-          <View style={styles.playerContent}>
-            <View style={styles.playerInfo}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 * playerScale }}>
-                <View style={{
-                  width: 6 * playerScale,
-                  height: 6 * playerScale,
-                  borderRadius: 3 * playerScale,
-                  backgroundColor: audioState.isPlaying ? theme.primary : (isDark ? '#666' : '#999'),
-                  marginRight: 8 * playerScale
-                }} />
-                <ThemedText type="caption" style={{
-                  opacity: 0.6,
-                  fontSize: 11 * playerScale,
-                  letterSpacing: 0.5,
-                  fontWeight: '600'
-                }}>
-                  {audioState.isPlaying ? t('mushaf.nowPlaying') : t('mushaf.paused')}
-                </ThemedText>
-                <Pressable
-                  onPress={() => setShowSpeedMenu(!showSpeedMenu)}
-                  style={({ pressed }) => [{
-                    paddingHorizontal: 10 * playerScale,
-                    paddingVertical: 4 * playerScale,
-                    borderRadius: 10 * playerScale,
-                    backgroundColor: `${theme.primary}33`,
-                    transform: [{ scale: pressed ? 0.95 : 1 }],
-                    marginLeft: 'auto',
-                  }]}
-                >
-                  <ThemedText type="caption" style={{ fontSize: 11 * playerScale, fontWeight: '700', color: theme.primary, letterSpacing: 0.3 }}>
-                    {audioState.playbackRate}×
-                  </ThemedText>
-                </Pressable>
-              </View>
-              <ThemedText type="body" style={{ fontWeight: '700', fontSize: 16 * playerScale, letterSpacing: -0.3, marginBottom: 4 * playerScale }}>
-                {(locale === 'ar' ? surahs.find(s => s.number === audioState.current.surah)?.nameAr : surahs.find(s => s.number === audioState.current.surah)?.nameEn) || `${t('mushaf.surah')} ${audioState.current.surah}`}
-              </ThemedText>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 * playerScale, flexWrap: 'wrap' }}>
-                <ThemedText type="caption" style={{ opacity: 0.5, fontSize: 12 * playerScale }}>
-                  {t('mushaf.verse')} {audioState.current.ayah}
-                </ThemedText>
-                {/* Repeat Progress Indicator */}
-                {audioState.isRepeating && (
-                  <>
-                    <View style={{ width: 3 * playerScale, height: 3 * playerScale, borderRadius: 1.5 * playerScale, backgroundColor: theme.primary, opacity: 0.8 }} />
-                    <ThemedText type="caption" style={{ fontSize: 12 * playerScale, color: theme.primary, fontWeight: '600' }}>
-                      {t('mushaf.repeat')} {audioState.currentRepeat}/{audioState.totalRepeats === 0 ? '∞' : audioState.totalRepeats}
-                    </ThemedText>
-                  </>
-                )}
-                {/* Loop Indicator */}
-                {audioState.isLooping && (
-                  <>
-                    <View style={{ width: 3 * playerScale, height: 3 * playerScale, borderRadius: 1.5 * playerScale, backgroundColor: isDark ? '#8B5CF6' : '#7C3AED', opacity: 0.8 }} />
-                    <ThemedText type="caption" style={{ fontSize: 12 * playerScale, color: isDark ? '#8B5CF6' : '#7C3AED', fontWeight: '600' }}>
-                      {t('mushaf.loop')}
-                    </ThemedText>
-                  </>
-                )}
-                {audioState.queue.length > 0 && (
-                  <>
-                    <View style={{ width: 3 * playerScale, height: 3 * playerScale, borderRadius: 1.5 * playerScale, backgroundColor: theme.text, opacity: 0.3 }} />
-                    <ThemedText type="caption" style={{ opacity: 0.5, fontSize: 12 * playerScale }}>
-                      {audioState.queue.length} {t('mushaf.remaining')}
-                    </ThemedText>
-                  </>
-                )}
-              </View>
-            </View>
-            <View style={styles.playerControls}>
-              <Pressable
-                onPress={() => AudioService.skipToPrevious()}
-                style={({ pressed }) => [{
-                  width: 40 * playerScale,
-                  height: 40 * playerScale,
-                  borderRadius: 20 * playerScale,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: `${theme.primary}26`,
-                  transform: [{ scale: pressed ? 0.9 : 1 }],
-                }]}
-              >
-                <Feather name="skip-back" size={18 * playerScale} color={theme.primary} />
-              </Pressable>
-              <Pressable
-                onPress={() => {
-                  if (audioState.isPlaying) {
-                    AudioService.pause();
-                  } else {
-                    AudioService.resume();
-                  }
-                }}
-                style={({ pressed }) => [{
-                  width: 52 * playerScale,
-                  height: 52 * playerScale,
-                  borderRadius: 26 * playerScale,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: theme.primary,
-                  transform: [{ scale: pressed ? 0.92 : 1 }],
-                  marginHorizontal: 4 * playerScale,
-                  // Golden glow when playing — ethereal light emission
-                  shadowColor: audioState.isPlaying ? theme.primary : '#000',
-                  shadowOffset: { width: 0, height: audioState.isPlaying ? 0 : 4 },
-                  shadowOpacity: audioState.isPlaying ? 0.7 : 0.3,
-                  shadowRadius: audioState.isPlaying ? 20 : 8,
-                  elevation: audioState.isPlaying ? 16 : 6,
-                }]}
-              >
-                <Feather name={audioState.isPlaying ? 'pause' : 'play'} size={20 * playerScale} color="#FFF" />
-              </Pressable>
-              <Pressable
-                onPress={() => AudioService.skipToNext()}
-                style={({ pressed }) => [{
-                  width: 40 * playerScale,
-                  height: 40 * playerScale,
-                  borderRadius: 20 * playerScale,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: `${theme.primary}26`,
-                  transform: [{ scale: pressed ? 0.9 : 1 }],
-                }]}
-              >
-                <Feather name="skip-forward" size={18 * playerScale} color={theme.primary} />
-              </Pressable>
-              <Pressable
-                onPress={() => setShowAudioSettings(true)}
-                style={({ pressed }) => [{
-                  width: 40 * playerScale,
-                  height: 40 * playerScale,
-                  borderRadius: 20 * playerScale,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: `${theme.primary}26`,
-                  transform: [{ scale: pressed ? 0.9 : 1 }],
-                  marginLeft: 4 * playerScale,
-                }]}
-              >
-                <Feather name="sliders" size={16 * playerScale} color={theme.primary} />
-              </Pressable>
-              <Pressable
-                onPress={() => AudioService.stop()}
-                style={({ pressed }) => [{
-                  width: 36 * playerScale,
-                  height: 36 * playerScale,
-                  borderRadius: 18 * playerScale,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)',
-                  opacity: pressed ? 0.6 : 1,
-                  marginLeft: 8 * playerScale,
-                }]}
-              >
-                <Feather name="x" size={16 * playerScale} color={theme.text} />
-              </Pressable>
-            </View>
-          </View>
-          {showSpeedMenu && (
-            <View style={[styles.speedMenu, { backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)' }]}>
-              {[0.5, 0.75, 1.0, 1.25, 1.5, 2.0].map(speed => (
-                <Pressable
-                  key={speed}
-                  onPress={() => {
-                    AudioService.setPlaybackRate(speed);
-                    setShowSpeedMenu(false);
-                  }}
-                  style={({ pressed }) => [{
-                    paddingVertical: 8,
-                    paddingHorizontal: 16,
-                    opacity: pressed ? 0.6 : 1,
-                    backgroundColor: audioState.playbackRate === speed ? `${theme.primary}26` : 'transparent',
-                    borderRadius: 8,
-                  }]}
-                >
-                  <ThemedText type="small" style={{ fontWeight: audioState.playbackRate === speed ? '600' : '400', color: audioState.playbackRate === speed ? theme.primary : theme.text }}>
-                    {speed}x
-                  </ThemedText>
-                </Pressable>
-              ))}
-            </View>
-          )}
-        </Animated.View>
-      )}
-
-      {/* Minimized Floating Player - Draggable */}
-      {audioState?.current && isPlayerMinimized && (
-        <GestureDetector gesture={panGesture}>
-          <Animated.View style={[{
-            position: 'absolute',
-            bottom: insets.bottom + 65,
-            left: 0,
-            flexDirection: 'row',
-            gap: 8,
-            zIndex: 100,
-          }, playerAnimatedStyle]}>
-            <Pressable
-              onPress={() => setIsPlayerMinimized(false)}
-              style={({ pressed }) => [{
-                paddingHorizontal: 14 * playerScale,
-                paddingVertical: 10 * playerScale,
-                borderRadius: 20 * playerScale,
-                backgroundColor: isDark ? `${theme.primary}FA` : 'rgba(255, 255, 255, 0.98)',
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: 8 * playerScale,
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.2,
-                shadowRadius: 8,
-                elevation: 6,
-                borderWidth: 1,
-                borderColor: `${theme.primary}4D`,
-                transform: [{ scale: pressed ? 0.95 : 1 }],
-              }]}
-            >
-              <Feather name={audioState.isPlaying ? 'pause' : 'play'} size={14 * playerScale} color={theme.primary} />
-              <ThemedText type="caption" style={{ fontSize: 12 * playerScale, fontWeight: '600' }}>
-                {(locale === 'ar' ? surahs.find(s => s.number === audioState.current.surah)?.nameAr : surahs.find(s => s.number === audioState.current.surah)?.nameEn?.split(' ')[0]) || audioState.current.surah}:{audioState.current.ayah}
-              </ThemedText>
-            </Pressable>
-            <Pressable
-              onPress={(e) => {
-                e.stopPropagation();
-                if (audioState.isPlaying) {
-                  AudioService.pause();
-                } else {
-                  AudioService.resume();
-                }
-              }}
-              style={({ pressed }) => [{
-                width: 44 * playerScale,
-                height: 44 * playerScale,
-                borderRadius: 22 * playerScale,
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: theme.primary,
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.3,
-                shadowRadius: 8,
-                elevation: 6,
-                transform: [{ scale: pressed ? 0.9 : 1 }],
-              }]}
-            >
-              <Feather name={audioState.isPlaying ? 'pause' : 'play'} size={18 * playerScale} color="#FFF" />
-            </Pressable>
-          </Animated.View>
-        </GestureDetector>
-      )}
-
-      {/* Hifz Status Menu (Long Press) */}
-      <Modal
+      <HifzStatusMenu
         visible={showHifzStatusMenu}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShowHifzStatusMenu(false)}
-      >
-        <Pressable
-          style={{ flex: 1 }}
-          onPress={() => setShowHifzStatusMenu(false)}
-        >
-          <View
-            style={[
-              styles.hifzStatusMenu,
-              {
-                // Menu is approximately 320px tall, up to 240px wide
-                // Ensure it stays within screen bounds with padding
-                top: Math.max(
-                  insets.top + 10, // Don't go above safe area
-                  Math.min(
-                    hifzMenuPosition.y - 80, // Try to position near touch point
-                    SCREEN_HEIGHT - insets.bottom - 340 // Don't go below screen
-                  )
-                ),
-                left: Math.max(
-                  12, // Left padding
-                  Math.min(
-                    hifzMenuPosition.x - 100, // Center horizontally on touch point
-                    SCREEN_WIDTH - 252 // Right padding (240 width + 12 padding)
-                  )
-                ),
-                backgroundColor: theme.cardBackground,
-              },
-            ]}
-          >
-            <ThemedText style={{ fontSize: 11, opacity: 0.5, paddingHorizontal: 12, paddingTop: 6, paddingBottom: 4 }}>
-              {hifzMenuVerseKey}
-            </ThemedText>
-            <TouchableOpacity
-              style={styles.hifzStatusMenuItem}
-              onPress={async () => {
-                if (hifzMenuVerseKey) {
-                  await markHifzVerse(hifzMenuVerseKey, 'not_started');
-                }
-                setShowHifzStatusMenu(false);
-              }}
-            >
-              <View style={{ width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: theme.border }} />
-              <ThemedText style={styles.hifzStatusMenuText}>{t('mushaf.notStarted')}</ThemedText>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.hifzStatusMenuItem}
-              onPress={async () => {
-                if (hifzMenuVerseKey) {
-                  await markHifzVerse(hifzMenuVerseKey, 'in_progress');
-                }
-                setShowHifzStatusMenu(false);
-              }}
-            >
-              <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: '#F59E0B' }} />
-              <ThemedText style={styles.hifzStatusMenuText}>{t('mushaf.inProgress')}</ThemedText>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.hifzStatusMenuItem}
-              onPress={async () => {
-                if (hifzMenuVerseKey) {
-                  await markHifzVerse(hifzMenuVerseKey, 'memorized');
-                }
-                setShowHifzStatusMenu(false);
-              }}
-            >
-              <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: theme.primary }} />
-              <ThemedText style={styles.hifzStatusMenuText}>{t('mushaf.memorized')}</ThemedText>
-            </TouchableOpacity>
-
-            {/* Divider */}
-            <View style={{ height: 1, backgroundColor: theme.border, marginVertical: 8, marginHorizontal: 16 }} />
-
-            {/* Play Button */}
-            <TouchableOpacity
-              style={styles.hifzStatusMenuItem}
-              onPress={async () => {
-                if (hifzMenuVerseKey) {
-                  const [surah, ayah] = hifzMenuVerseKey.split(':').map(Number);
-                  // Use Hifz repeat settings
-                  if (hifzMode.settings.repeatCount > 1) {
-                    await AudioService.setPlaybackRate(hifzMode.settings.playbackSpeed);
-                    await AudioService.playWithRepeat(
-                      surah,
-                      ayah,
-                      hifzMode.settings.repeatCount,
-                      hifzMode.settings.pauseBetweenRepeats
-                    );
-                  } else {
-                    await AudioService.setPlaybackRate(hifzMode.settings.playbackSpeed);
-                    await AudioService.play(surah, ayah, 'single');
-                  }
-                }
-                setShowHifzStatusMenu(false);
-              }}
-            >
-              <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: theme.primary, alignItems: 'center', justifyContent: 'center' }}>
-                <Feather name="play" size={12} color="#FFFFFF" />
-              </View>
-              <ThemedText style={styles.hifzStatusMenuText}>
-                {hifzMode.settings.repeatCount > 1
-                  ? t('mushaf.playCount', { count: hifzMode.settings.repeatCount })
-                  : t('mushaf.play')}
-              </ThemedText>
-            </TouchableOpacity>
-
-            {/* Divider */}
-            <View style={{ height: 1, backgroundColor: theme.border, marginVertical: 8, marginHorizontal: 16 }} />
-
-            {/* Loop Start */}
-            <TouchableOpacity
-              style={styles.hifzStatusMenuItem}
-              onPress={() => {
-                if (hifzMenuVerseKey) {
-                  hifzMode.setLoopStart(hifzMenuVerseKey);
-                }
-                setShowHifzStatusMenu(false);
-              }}
-            >
-              <View style={{ width: 18, height: 18, borderRadius: 9, backgroundColor: hifzMode.loopStart ? theme.primary : 'transparent', borderWidth: 2, borderColor: theme.primary, alignItems: 'center', justifyContent: 'center' }}>
-                {hifzMode.loopStart && <ThemedText style={{ color: '#FFF', fontSize: 9, fontWeight: '700' }}>A</ThemedText>}
-              </View>
-              <ThemedText style={styles.hifzStatusMenuText}>
-                {t('mushaf.setLoopStart')}
-              </ThemedText>
-            </TouchableOpacity>
-
-            {/* Loop End */}
-            <TouchableOpacity
-              style={styles.hifzStatusMenuItem}
-              onPress={() => {
-                if (hifzMenuVerseKey) {
-                  hifzMode.setLoopEnd(hifzMenuVerseKey);
-                }
-                setShowHifzStatusMenu(false);
-              }}
-            >
-              <View style={{ width: 18, height: 18, borderRadius: 9, backgroundColor: hifzMode.loopEnd ? theme.primary : 'transparent', borderWidth: 2, borderColor: theme.primary, alignItems: 'center', justifyContent: 'center' }}>
-                {hifzMode.loopEnd && <ThemedText style={{ color: '#FFF', fontSize: 9, fontWeight: '700' }}>B</ThemedText>}
-              </View>
-              <ThemedText style={styles.hifzStatusMenuText}>
-                {t('mushaf.setLoopEnd')}
-              </ThemedText>
-            </TouchableOpacity>
-
-            {/* Start Loop (if both set) */}
-            {hifzMode.loopStart && hifzMode.loopEnd && (
-              <TouchableOpacity
-                style={[styles.hifzStatusMenuItem, { backgroundColor: `${theme.primary}15`, marginTop: 4 }]}
-                onPress={async () => {
-                  const [startSurah, startAyah] = hifzMode.loopStart!.split(':').map(Number);
-                  const [endSurah, endAyah] = hifzMode.loopEnd!.split(':').map(Number);
-                  await AudioService.setPlaybackRate(hifzMode.settings.playbackSpeed);
-                  await AudioService.playLoop(startSurah, startAyah, endSurah, endAyah, 0);
-                  setShowHifzStatusMenu(false);
-                }}
-              >
-                <View style={{ width: 18, height: 18, borderRadius: 9, backgroundColor: theme.primary, alignItems: 'center', justifyContent: 'center' }}>
-                  <Feather name="play" size={10} color="#FFFFFF" />
-                </View>
-                <ThemedText style={[styles.hifzStatusMenuText, { color: theme.primary }]}>
-                  {t('mushaf.playLoop')}
-                </ThemedText>
-              </TouchableOpacity>
-            )}
-          </View>
-        </Pressable>
-      </Modal>
+        onClose={() => setShowHifzStatusMenu(false)}
+        verseKey={hifzMenuVerseKey}
+        position={hifzMenuPosition}
+      />
 
       {/* Hifz Mode Overlay */}
       <MushafHifzOverlay
@@ -5718,8 +1687,8 @@ function MushafScreenContent() {
         position="center"
       />
 
-      {/* Surah List Overlay - renders on top to keep FlatList mounted */}
-      {renderSurahListOverlay()}
+      {/* Surah List Overlay - extracted component */}
+      <SurahListOverlay scrollToPage={scrollToPage} />
 
       {/* Word Scrubber - activated by long press on verse */}
       <WordScrubber
@@ -5738,7 +1707,7 @@ function MushafScreenContent() {
         screenWidth={layout.screenWidth}
         imageHeight={layout.imageHeight}
       />
-    </ThemedView>
+    </ThemedView >
   );
 }
 
@@ -5811,35 +1780,6 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-  },
-  hifzStatusMenu: {
-    position: 'absolute',
-    backgroundColor: 'white',
-    borderRadius: 12,
-    paddingVertical: 4,
-    paddingHorizontal: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 8,
-    minWidth: 180,
-    maxWidth: 240,
-    zIndex: 1000,
-  },
-  hifzStatusMenuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    gap: 10,
-    borderRadius: 8,
-  },
-  hifzStatusMenuText: {
-    fontSize: 13,
-    fontWeight: '500',
-    flex: 1,
-    flexShrink: 1,
   },
   loopIndicator: {
     position: 'absolute',
@@ -5951,37 +1891,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  menuOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    zIndex: 1000,
-  },
-  verseMenu: {
-    width: 180,
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 12,
-    elevation: 8,
-    borderWidth: 1,
-    borderColor: 'rgba(128, 128, 128, 0.3)',
-    overflow: 'hidden',
-  },
-  menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-  },
-  menuDivider: {
-    height: 1,
-    marginHorizontal: 20,
-  },
-  modalOverlay: {
-    flex: 1,
-    justifyContent: "center",
-    paddingHorizontal: Spacing.lg,
-  },
   modalBackdrop: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
@@ -6059,43 +1968,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginRight: Spacing.sm,
   },
-  mediaPlayer: {
-    position: 'absolute',
-    bottom: 75,
-    left: Spacing.md,
-    right: Spacing.md,
-    borderRadius: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 20,
-    zIndex: 100,
-    overflow: 'hidden',
-  },
-  playerContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md + 2,
-  },
-  playerInfo: {
-    flex: 1,
-  },
-  playerControls: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  speedMenu: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(128, 128, 128, 0.1)',
-  },
   juzHizbBadge: {
     // Legacy style - no longer used with new layout zones
     zIndex: 1,
@@ -6170,26 +2042,5 @@ const styles = StyleSheet.create({
     elevation: 8,
     borderWidth: 1,
     borderColor: 'rgba(128, 128, 128, 0.3)',
-  },
-  noteModal: {
-    marginHorizontal: Spacing.lg,
-    padding: Spacing.lg,
-    borderRadius: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 12,
-    elevation: 8,
-    borderWidth: 1,
-    borderColor: 'rgba(128, 128, 128, 0.3)',
-  },
-  noteInput: {
-    borderWidth: 1,
-    borderRadius: 12,
-    padding: 12,
-    fontSize: 15,
-    textAlignVertical: 'top',
-    marginBottom: 16,
-    minHeight: 120,
   },
 });

@@ -5,12 +5,13 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import * as Font from "expo-font";
-import { Asset } from "expo-asset";
+
 import * as SplashScreen from "expo-splash-screen";
 import * as Notifications from "expo-notifications";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { widgetDataService } from "./services/WidgetDataService";
 import audioService from "./services/AudioService";
+import { QuranDataBridge } from "./services/QuranDataBridge";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 
 import { hijriDateService } from "./services/HijriDateService";
@@ -59,11 +60,11 @@ import { queryClient } from "@/lib/query-client";
 import RootStackNavigator from "@/navigation/RootStackNavigator";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { LocationProvider } from "@/contexts/LocationContext";
-import { CoordinatesProvider } from "@/contexts/CoordinatesContext";
+
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { PrayerAdjustmentsProvider } from "@/contexts/PrayerAdjustmentsContext";
 import { RamadanProvider } from "@/contexts/RamadanContext";
-import { PrayerColorProvider } from "@/contexts/PrayerColorContext";
+
 
 // Sample verses for daily verse widget
 const DAILY_VERSES = [
@@ -123,48 +124,59 @@ export default function App() {
           Font.loadAsync({
             'AlMushafQuran': require('../assets/fonts/AlMushafQuran.ttf'),
           }),
-          // Pre-cache all 3D icon assets so they render instantly on tab navigation
-          Asset.loadAsync([
-            require('../assets/images/3d-images/travel.png'),
-            require('../assets/images/3d-images/eating.png'),
-            require('../assets/images/3d-images/entering.png'),
-            require('../assets/images/3d-images/cloud.png'),
-            require('../assets/images/3d-images/quranstand.png'),
-            require('../assets/images/3d-images/book.png'),
-            require('../assets/images/3d-images/globe.png'),
-            require('../assets/images/3d-images/Guidance.png'),
-            require('../assets/images/3d-images/Family.png'),
-            require('../assets/images/3d-images/Gratitude.png'),
-            require('../assets/images/3d-images/Forgiveness.png'),
-            require('../assets/images/3d-images/Weather.png'),
-            require('../assets/images/3d-images/customdua.png'),
-            require('../assets/images/3d-images/GeneralAzkar.png'),
-            require('../assets/images/3d-images/AfterPrayer.png'),
-            require('../assets/images/3d-images/WakingUp.png'),
-            require('../assets/images/3d-images/Worship.png'),
-            require('../assets/images/3d-images/Purification.png'),
-            require('../assets/images/3d-images/Knowledge.png'),
-            require('../assets/images/3d-images/Character.png'),
-            require('../assets/images/3d-images/Finance.png'),
-            require('../assets/images/3d-images/location.png'),
-            require('../assets/images/3d-images/currentstreak.png'),
-            require('../assets/images/3d-images/longeststreak.png'),
-            require('../assets/images/3d-images/todayprogress.png'),
-            require('../assets/images/3d-images/Bookmark.png'),
-            require('../assets/images/3d-images/Notes.png'),
-            require('../assets/images/3d-images/Highlights.png'),
-            require('../assets/images/3d-images/Themes.png'),
-            require('../assets/images/3d-images/Audio.png'),
-            require('../assets/images/3d-images/Clear.png'),
-            require('../assets/images/3d-images/Reciter.png'),
-            require('../assets/images/3d-images/Storage.png'),
-            require('../assets/images/3d-images/info.png'),
-            require('../assets/images/3d-images/moon.png'),
-            require('../assets/images/3d-images/crescent.png'),
-            require('../assets/images/3d-images/bell.png'),
-            require('../assets/images/3d-images/tick.png'),
-            require('../assets/images/3d-images/widget.png'),
-          ]),
+          // Pre-load Quran data from SQLite into sync bridge
+          QuranDataBridge.init(),
+          // Pre-warm all 3D icon assets into Glide/SDWebImage memory cache
+          // so they render instantly (Frame 1) on every screen — no pop-in
+          (async () => {
+            const { Image: ExpoImage } = require('expo-image');
+            const icon3dAssets = [
+              require('../assets/images/3d-images/travel.png'),
+              require('../assets/images/3d-images/eating.png'),
+              require('../assets/images/3d-images/entering.png'),
+              require('../assets/images/3d-images/cloud.png'),
+              require('../assets/images/3d-images/quranstand.png'),
+              require('../assets/images/3d-images/book.png'),
+              require('../assets/images/3d-images/globe.png'),
+              require('../assets/images/3d-images/Guidance.png'),
+              require('../assets/images/3d-images/Family.png'),
+              require('../assets/images/3d-images/Gratitude.png'),
+              require('../assets/images/3d-images/Forgiveness.png'),
+              require('../assets/images/3d-images/Weather.png'),
+              require('../assets/images/3d-images/customdua.png'),
+              require('../assets/images/3d-images/GeneralAzkar.png'),
+              require('../assets/images/3d-images/AfterPrayer.png'),
+              require('../assets/images/3d-images/WakingUp.png'),
+              require('../assets/images/3d-images/Worship.png'),
+              require('../assets/images/3d-images/Purification.png'),
+              require('../assets/images/3d-images/Knowledge.png'),
+              require('../assets/images/3d-images/Character.png'),
+              require('../assets/images/3d-images/Finance.png'),
+              require('../assets/images/3d-images/location.png'),
+              require('../assets/images/3d-images/currentstreak.png'),
+              require('../assets/images/3d-images/longeststreak.png'),
+              require('../assets/images/3d-images/todayprogress.png'),
+              require('../assets/images/3d-images/Bookmark.png'),
+              require('../assets/images/3d-images/Notes.png'),
+              require('../assets/images/3d-images/Highlights.png'),
+              require('../assets/images/3d-images/Themes.png'),
+              require('../assets/images/3d-images/Audio.png'),
+              require('../assets/images/3d-images/Clear.png'),
+              require('../assets/images/3d-images/Reciter.png'),
+              require('../assets/images/3d-images/Storage.png'),
+              require('../assets/images/3d-images/info.png'),
+              require('../assets/images/3d-images/moon.png'),
+              require('../assets/images/3d-images/crescent.png'),
+              require('../assets/images/3d-images/bell.png'),
+              require('../assets/images/3d-images/tick.png'),
+              require('../assets/images/3d-images/widget.png'),
+            ];
+            // Resolve bundled require() to URI strings, then decode into RAM cache
+            const iconUris = icon3dAssets.map(
+              (asset: any) => Image.resolveAssetSource(asset).uri
+            );
+            await ExpoImage.prefetch(iconUris, 'memory');
+          })(),
         ]);
         setFontsLoaded(true);
 
@@ -269,28 +281,24 @@ export default function App() {
         <ErrorBoundary>
           <PrayerAdjustmentsProvider>
             <QueryClientProvider client={queryClient}>
-              <CoordinatesProvider>
-                <LocationProvider>
-                  <RamadanProvider>
-                    <SafeAreaProvider>
-                      <GestureHandlerRootView style={styles.root}>
-                        <KeyboardProvider>
-                          <NavigationContainer ref={navigationRef} linking={linking}>
-                            <PrayerColorProvider>
-                              <RootStackNavigator />
-                            </PrayerColorProvider>
-                          </NavigationContainer>
-                        </KeyboardProvider>
-                      </GestureHandlerRootView>
-                    </SafeAreaProvider>
-                  </RamadanProvider>
-                </LocationProvider>
-              </CoordinatesProvider>
+              <LocationProvider>
+                <RamadanProvider>
+                  <SafeAreaProvider>
+                    <GestureHandlerRootView style={styles.root}>
+                      <KeyboardProvider>
+                        <NavigationContainer ref={navigationRef} linking={linking}>
+                          <RootStackNavigator />
+                        </NavigationContainer>
+                      </KeyboardProvider>
+                    </GestureHandlerRootView>
+                  </SafeAreaProvider>
+                </RamadanProvider>
+              </LocationProvider>
             </QueryClientProvider>
           </PrayerAdjustmentsProvider>
         </ErrorBoundary>
       </LanguageProvider>
-    </ThemeProvider>
+    </ThemeProvider >
   );
 }
 

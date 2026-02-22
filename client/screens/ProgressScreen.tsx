@@ -13,8 +13,8 @@ import {
   TextInput,
   Alert,
   Platform,
-  Image,
 } from 'react-native';
+import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
@@ -167,7 +167,7 @@ export default function ProgressScreen() {
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Overall Progress Card */}
         <View style={[styles.card, {
-          backgroundColor: '#FFFFFF',
+          backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
           borderWidth: 0,
           borderColor: 'transparent',
           shadowColor: '#000',
@@ -208,7 +208,7 @@ export default function ProgressScreen() {
 
         {/* Today's Progress Card */}
         <View style={[styles.card, {
-          backgroundColor: '#FFFFFF',
+          backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
           borderWidth: 0,
           borderColor: 'transparent',
           shadowColor: '#000',
@@ -223,7 +223,7 @@ export default function ProgressScreen() {
 
           <View style={styles.todayStats}>
             <View style={styles.todayStatItem}>
-              <Image source={ICON_TODAY_PROGRESS} style={{ width: 32, height: 32 }} resizeMode="contain" />
+              <Image source={ICON_TODAY_PROGRESS} style={{ width: 32, height: 32 }} contentFit="contain" transition={0} cachePolicy="memory" />
               <ThemedText type="body" style={styles.todayStatText}>
                 {progress?.dailyGoal.type === 'verses'
                   ? `${todayProgress?.versesRead || 0} ${t('progress.versesRead')}`
@@ -232,7 +232,7 @@ export default function ProgressScreen() {
             </View>
 
             {progress?.dailyGoal.enabled && (
-              <View style={styles.goalProgressBar}>
+              <View style={[styles.goalProgressBar, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : '#EDEFF2' }]}>
                 <View
                   style={[
                     styles.goalProgressFill,
@@ -263,7 +263,7 @@ export default function ProgressScreen() {
 
         {/* Streak Card */}
         <View style={[styles.card, {
-          backgroundColor: '#FFFFFF',
+          backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
           borderWidth: 0,
           borderColor: 'transparent',
           shadowColor: '#000',
@@ -285,7 +285,7 @@ export default function ProgressScreen() {
                 shadowRadius: 6,
                 elevation: 4,
               }}>
-                <Image source={ICON_CURRENT_STREAK} style={{ width: 48, height: 48 }} resizeMode="contain" />
+                <Image source={ICON_CURRENT_STREAK} style={{ width: 48, height: 48 }} contentFit="contain" transition={0} cachePolicy="memory" />
               </View>
               <ThemedText type="h2">{stats?.currentStreak || 0}</ThemedText>
               <ThemedText type="caption">{t('progress.currentStreak')}</ThemedText>
@@ -298,7 +298,7 @@ export default function ProgressScreen() {
                 shadowRadius: 6,
                 elevation: 4,
               }}>
-                <Image source={ICON_LONGEST_STREAK} style={{ width: 48, height: 48 }} resizeMode="contain" />
+                <Image source={ICON_LONGEST_STREAK} style={{ width: 48, height: 48 }} contentFit="contain" transition={0} cachePolicy="memory" />
               </View>
               <ThemedText type="h2">{stats?.longestStreak || 0}</ThemedText>
               <ThemedText type="caption">{t('progress.longestStreak')}</ThemedText>
@@ -309,7 +309,7 @@ export default function ProgressScreen() {
         {/* Weekly Chart */}
         {weeklyData && (
           <View style={[styles.card, {
-            backgroundColor: '#FFFFFF',
+            backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
             borderWidth: 0,
             borderColor: 'transparent',
             shadowColor: '#000',
@@ -349,7 +349,7 @@ export default function ProgressScreen() {
 
         {/* Goal Settings */}
         <View style={[styles.card, {
-          backgroundColor: '#FFFFFF',
+          backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
           borderWidth: 0,
           borderColor: 'transparent',
           shadowColor: '#000',
@@ -386,7 +386,7 @@ export default function ProgressScreen() {
               <View style={styles.settingRow}>
                 <ThemedText>{t('progress.goalType')}</ThemedText>
                 <View style={[styles.goalTypeButtons, {
-                  backgroundColor: '#F3F4F6',
+                  backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#F3F4F6',
                   borderRadius: 10,
                   padding: 3,
                   shadowColor: '#000',
@@ -399,7 +399,7 @@ export default function ProgressScreen() {
                       styles.goalTypeButton,
                       goalType === 'pages'
                         ? {
-                          backgroundColor: '#FFFFFF',
+                          backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
                           shadowColor: '#000',
                           shadowOffset: { width: 0, height: 2 },
                           shadowOpacity: 0.08,
@@ -419,7 +419,7 @@ export default function ProgressScreen() {
                       styles.goalTypeButton,
                       goalType === 'verses'
                         ? {
-                          backgroundColor: '#FFFFFF',
+                          backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
                           shadowColor: '#000',
                           shadowOffset: { width: 0, height: 2 },
                           shadowOpacity: 0.08,
@@ -475,7 +475,7 @@ export default function ProgressScreen() {
 
         {/* Reminder Settings */}
         <View style={[styles.card, {
-          backgroundColor: '#FFFFFF',
+          backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
           borderWidth: 0,
           borderColor: 'transparent',
           shadowColor: '#000',
@@ -504,7 +504,7 @@ export default function ProgressScreen() {
                 style={[styles.timeButton, {
                   borderWidth: 0,
                   borderColor: 'transparent',
-                  backgroundColor: '#FFFFFF',
+                  backgroundColor: isDark ? theme.cardBackground : '#FFFFFF',
                   shadowColor: '#000',
                   shadowOffset: { width: 0, height: 3 },
                   shadowOpacity: 0.05,

@@ -13,8 +13,8 @@ import {
     FlatList,
     NativeSyntheticEvent,
     NativeScrollEvent,
-    Image,
 } from 'react-native';
+import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import { ThemedText } from '@/components/ThemedText';
@@ -26,7 +26,7 @@ import { Feather } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import * as Notifications from 'expo-notifications';
 import * as Haptics from 'expo-haptics';
-import { Asset } from 'expo-asset';
+
 import { checkBatteryOptimization, requestBatteryOptimizationExemption, canScheduleExactAlarms, requestExactAlarmPermission } from '@/hooks/useNotifications';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -104,20 +104,8 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
     const [currentIndex, setCurrentIndex] = useState(0);
     const [locationGranted, setLocationGranted] = useState(false);
     const [notificationsGranted, setNotificationsGranted] = useState(false);
-    const [assetsReady, setAssetsReady] = useState(false);
-
-    // Preload all 3D hero images so they don't pop in
-    useEffect(() => {
-        const preload = async () => {
-            try {
-                await Asset.loadAsync(Object.values(HERO_ASSETS));
-            } catch (e) {
-                // Proceed even if preload fails
-            }
-            setAssetsReady(true);
-        };
-        preload();
-    }, []);
+    // Icons are now pre-warmed in App.tsx via expo-image prefetch
+    const assetsReady = true;
 
     const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
         const index = Math.round(event.nativeEvent.contentOffset.x / SCREEN_WIDTH);
@@ -330,8 +318,9 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
                                 <Image
                                     source={heroAsset}
                                     style={{ width: 150, height: 150 }}
-                                    resizeMode="contain"
-                                    fadeDuration={0}
+                                    contentFit="contain"
+                                    transition={0}
+                                    cachePolicy="memory"
                                 />
                             </View>
                         ) : (

@@ -11,7 +11,7 @@ import SettingsScreen from "@/screens/SettingsScreen";
 import { useTheme } from "@/hooks/useTheme";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 import { useTranslation } from "@/hooks/useTranslation";
-import { usePrayerColor } from "@/contexts/PrayerColorContext";
+import { usePrayerColorStore } from "@/stores/usePrayerColorStore";
 
 export type MainTabParamList = {
   QiblaTab: undefined;
@@ -23,11 +23,15 @@ export type MainTabParamList = {
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
+// Floating tab bar geometry (exported for screens that need to position above the bar)
+export const TAB_BAR_HEIGHT = 64;
+export const TAB_BAR_BOTTOM = Platform.OS === 'ios' ? 24 : 16;
+
 export default function MainTabNavigator() {
   const { theme, isDark } = useTheme();
   const screenOptions = useScreenOptions();
   const { t } = useTranslation();
-  const { dynamicColor } = usePrayerColor();
+  const dynamicColor = usePrayerColorStore((s) => s.dynamicColor);
 
   return (
     <Tab.Navigator
@@ -39,7 +43,7 @@ export default function MainTabNavigator() {
         tabBarHideOnKeyboard: true,
         tabBarStyle: {
           position: "absolute",
-          bottom: Platform.OS === "ios" ? 24 : 16,
+          bottom: TAB_BAR_BOTTOM,
           left: 16,
           right: 16,
           backgroundColor: isDark ? '#2A2A2C' : '#FFFFFF',
@@ -50,7 +54,7 @@ export default function MainTabNavigator() {
           shadowOffset: { width: 0, height: -10 },
           shadowOpacity: isDark ? 0.4 : 0.05,
           shadowRadius: 15,
-          height: 64,
+          height: TAB_BAR_HEIGHT,
           paddingBottom: Platform.OS === "ios" ? 0 : 8,
           paddingTop: 8,
           borderWidth: 0,
@@ -76,7 +80,6 @@ export default function MainTabNavigator() {
           title: t('tabs.prayer'),
           headerTitle: "",
           headerShown: false,
-          lazy: false, // Pre-render this screen so it's ready instantly
           tabBarIcon: ({ color, size }) => (
             <Feather name="clock" size={size} color={color} />
           ),
@@ -86,10 +89,10 @@ export default function MainTabNavigator() {
         name="QuranTab"
         component={MushafScreen}
         options={{
+          lazy: false, // Data is pre-loaded from SQLite at startup — mount immediately
           title: t('tabs.quran'),
           headerTitle: "",
           headerShown: false,
-          lazy: false, // Pre-render this screen so it's ready instantly
           tabBarIcon: ({ color, size }) => (
             <Feather name="book-open" size={size} color={color} />
           ),
