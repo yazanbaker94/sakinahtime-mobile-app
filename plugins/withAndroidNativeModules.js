@@ -12,6 +12,7 @@ module.exports = function withAndroidNativeModules(config) {
     const hasNotificationPackage = contents.includes('NotificationSoundPackage()');
     const hasPrayerPackage = contents.includes('PrayerAlarmPackage()');
     const hasWidgetPackage = contents.includes('WidgetBridgePackage()');
+    const hasDhikrPackage = contents.includes('DhikrPackage()');
 
     // Add import for WidgetBridgePackage if not present
     if (!contents.includes('import com.sakinahtime.app.bridge.WidgetBridgePackage')) {
@@ -21,35 +22,40 @@ module.exports = function withAndroidNativeModules(config) {
       );
     }
 
-    if (!hasNotificationPackage || !hasPrayerPackage || !hasWidgetPackage) {
+    if (!hasNotificationPackage || !hasPrayerPackage || !hasWidgetPackage || !hasDhikrPackage) {
       // Find the packages list
       const packagesRegex = /(override fun getPackages\(\): List<ReactPackage> =\s+PackageList\(this\)\.packages\.apply\s*\{[^}]*)/;
-      
+
       if (packagesRegex.test(contents)) {
         contents = contents.replace(
           packagesRegex,
           (match) => {
             let result = match;
-            
+
             // Add NotificationSoundPackage if not present
             if (!hasNotificationPackage) {
               result += '\n              add(NotificationSoundPackage())';
             }
-            
+
             // Add PrayerAlarmPackage if not present
             if (!hasPrayerPackage) {
               result += '\n              add(PrayerAlarmPackage())';
             }
-            
+
             // Add WidgetBridgePackage if not present
             if (!hasWidgetPackage) {
               result += '\n              add(WidgetBridgePackage())';
             }
-            
+
+            // Add DhikrPackage if not present
+            if (!hasDhikrPackage) {
+              result += '\n              add(DhikrPackage())';
+            }
+
             return result;
           }
         );
-        
+
         console.log('✅ Added native module packages to MainApplication.kt');
       } else {
         console.warn('⚠️ Could not find packages list in MainApplication.kt');

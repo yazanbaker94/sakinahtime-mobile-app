@@ -237,7 +237,7 @@ export function StorageManagementScreen() {
                   shadowOffset: { width: 0, height: 4 },
                   shadowOpacity: 0.15,
                   shadowRadius: 8,
-                  elevation: 4,
+                  elevation: isDark ? 0 : 4,
                   opacity: pressed ? 0.7 : 1,
                 }
               ]}
@@ -263,7 +263,7 @@ export function StorageManagementScreen() {
                   shadowOffset: { width: 0, height: 4 },
                   shadowOpacity: 0.15,
                   shadowRadius: 8,
-                  elevation: 4,
+                  elevation: isDark ? 0 : 4,
                   opacity: pressed ? 0.7 : 1,
                 }
               ]}
@@ -298,7 +298,7 @@ export function StorageManagementScreen() {
                   shadowOffset: { width: 0, height: 4 },
                   shadowOpacity: 0.15,
                   shadowRadius: 8,
-                  elevation: 4,
+                  elevation: isDark ? 0 : 4,
                   opacity: pressed ? 0.7 : 1,
                 }
               ]}
@@ -342,7 +342,7 @@ export function StorageManagementScreen() {
               shadowOffset: { width: 0, height: 4 },
               shadowOpacity: 0.15,
               shadowRadius: 8,
-              elevation: 4,
+              elevation: isDark ? 0 : 4,
               opacity: pressed ? 0.7 : 1,
             }
           ]}

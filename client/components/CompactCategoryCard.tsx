@@ -44,7 +44,8 @@ export function CompactCategoryCard({ category, onPress }: CompactCategoryCardPr
           shadowOffset: { width: 0, height: 6 },
           shadowOpacity: 0.04,
           shadowRadius: 20,
-          elevation: 2,
+          // Android elevation creates visible "box" outlines in dark mode — skip it
+          elevation: isDark ? 0 : 2,
           opacity: pressed ? 0.8 : 1,
           transform: [{ scale: pressed ? 0.97 : 1 }],
         },

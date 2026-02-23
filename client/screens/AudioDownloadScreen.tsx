@@ -179,7 +179,7 @@ export function AudioDownloadScreen() {
       <View style={{
         backgroundColor: isDark ? theme.backgroundRoot : theme.backgroundRoot,
         zIndex: 10,
-        elevation: 8,
+        elevation: isDark ? 0 : 8,
         paddingBottom: Spacing.sm,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 6 },
@@ -287,7 +287,7 @@ export function AudioDownloadScreen() {
                   shadowOffset: { width: 0, height: 4 },
                   shadowOpacity: 0.15,
                   shadowRadius: 8,
-                  elevation: 4,
+                  elevation: isDark ? 0 : 4,
                   opacity: pressed ? 0.7 : 1,
                 }
               ]}
@@ -327,7 +327,7 @@ export function AudioDownloadScreen() {
                   shadowOffset: { width: 0, height: 4 },
                   shadowOpacity: 0.15,
                   shadowRadius: 8,
-                  elevation: 4,
+                  elevation: isDark ? 0 : 4,
                   opacity: pressed || !isOnline || downloadedCount === totalSurahs ? 0.5 : 1,
                 }
               ]}
@@ -359,7 +359,7 @@ export function AudioDownloadScreen() {
                 shadowOffset: { width: 0, height: 4 },
                 shadowOpacity: 0.15,
                 shadowRadius: 8,
-                elevation: 4,
+                elevation: isDark ? 0 : 4,
                 opacity: pressed || downloadedCount === 0 ? 0.5 : 1,
               }
             ]}

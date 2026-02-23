@@ -73,10 +73,13 @@ import { BookmarksPanel } from "@/components/mushaf/BookmarksPanel";
 // When currentPage changes, only ~7 slots where isNear flips actually re-render.
 // The parent never re-renders → O(1) instead of O(604).
 // Supports jumpTarget for Asymmetric Jump (window=0, mount only target page during jump).
-const PageSlot = React.memo(({ pageNum, screenWidth, renderPage }: {
+// Page number renders INSIDE each slot → slides with page like a physical Mushaf (Android fix).
+const PageSlot = React.memo(({ pageNum, screenWidth, renderPage, pageNumBottomOffset, isDark }: {
   pageNum: number;
   screenWidth: number;
   renderPage: (pageNum: number) => React.ReactNode;
+  pageNumBottomOffset: number;
+  isDark: boolean;
 }) => {
   // Per-slot Zustand selector: re-renders ONLY when this slot's isNear boolean changes
   const isNear = useMushafNavigationStore((state) => {
@@ -90,6 +93,23 @@ const PageSlot = React.memo(({ pageNum, screenWidth, renderPage }: {
   return (
     <View style={{ flex: 1, width: screenWidth }}>
       {isNear && renderPage(pageNum)}
+      {/* Page number — positioned from TOP using known contentZoneHeight (consistent cross-platform) */}
+      {isNear && (
+        <View
+          pointerEvents="none"
+          style={{
+            position: 'absolute',
+            bottom: pageNumBottomOffset,
+            left: 0,
+            right: 0,
+            alignItems: 'center',
+          }}
+        >
+          <ThemedText type="caption" style={{ fontSize: 14, opacity: isDark ? 0.6 : 0.4 }}>
+            {pageNum}
+          </ThemedText>
+        </View>
+      )}
     </View>
   );
 });
@@ -200,6 +220,7 @@ function MushafScreenContent() {
   // ---- Zustand stores ----
   const {
     currentPage, setCurrentPage,
+    jumpTarget,
     isNavigating, setIsNavigating,
     showSurahList, setShowSurahList,
     navigationMode, setNavigationMode,
@@ -209,6 +230,9 @@ function MushafScreenContent() {
     showGranularityPicker, setShowGranularityPicker,
     navigationToast, setNavigationToast,
   } = useMushafNavigationStore();
+
+  // Eagerly resolve the active page for UI headers/footers so they display instantly during an asymmetric jump
+  const activePage = jumpTarget ?? currentPage;
 
   const {
     highlights, removeHighlight,
@@ -1433,7 +1457,7 @@ function MushafScreenContent() {
           gap: 6,
         }]}>
           {(() => {
-            const pageCoords = allCoords?.[currentPage];
+            const pageCoords = allCoords?.[activePage];
             const firstVerse = pageCoords?.[0];
             const pageSurah = surahs.find(s => s.number === (firstVerse?.sura || 1));
             const isMeccan = pageSurah?.revelationType === 'Meccan';
@@ -1448,7 +1472,7 @@ function MushafScreenContent() {
           <View style={{ alignItems: 'flex-end' }}>
             <ThemedText type="arabic" style={{ fontFamily: 'AlMushafQuran', fontSize: 14, opacity: isDark ? 0.8 : 0.7 }}>
               {(() => {
-                const pageCoords = allCoords?.[currentPage];
+                const pageCoords = allCoords?.[activePage];
                 const firstVerse = pageCoords?.[0];
                 const pageSurah = surahs.find(s => s.number === (firstVerse?.sura || 1));
                 return pageSurah?.nameAr;
@@ -1456,7 +1480,7 @@ function MushafScreenContent() {
             </ThemedText>
             <ThemedText type="caption" style={{ fontSize: 10, opacity: isDark ? 0.5 : 0.4, marginTop: 1 }}>
               {(() => {
-                const pageCoords = allCoords?.[currentPage];
+                const pageCoords = allCoords?.[activePage];
                 const firstVerse = pageCoords?.[0];
                 const pageSurah = surahs.find(s => s.number === (firstVerse?.sura || 1));
                 return pageSurah?.nameEn;
@@ -1492,18 +1516,13 @@ function MushafScreenContent() {
                   pageNum={pageNum}
                   screenWidth={layout.screenWidth}
                   renderPage={renderPage}
+                  pageNumBottomOffset={Platform.OS === 'android' ? layout.tabBarHeight + layout.safeAreaBottom + 16 : layout.tabBarHeight + 16}
+                  isDark={isDark}
                 />
               );
             });
           }, [layout.screenWidth])}
         </PagerView>
-      </View>
-
-      {/* Footer Zone - Page Number (absolute overlay, above floating tab bar) */}
-      <View style={{ position: 'absolute', bottom: layout.tabBarHeight + 4, left: 0, right: 0, height: layout.footerZoneHeight, alignItems: 'center', justifyContent: 'center', zIndex: 5 }}>
-        <ThemedText type="caption" style={{ fontSize: 14, opacity: isDark ? 0.6 : 0.4 }}>
-          {currentPage}
-        </ThemedText>
       </View>
 
       {/* Navigation fade overlay - smooth transition when jumping to distant pages */}

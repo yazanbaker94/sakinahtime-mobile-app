@@ -1,4 +1,4 @@
-const { withDangerousMod } = require('@expo/config-plugins');
+const { withDangerousMod, withAppBuildGradle } = require('@expo/config-plugins');
 const fs = require('fs');
 const path = require('path');
 
@@ -11,28 +11,28 @@ module.exports = function withAndroidWidgets(config) {
     async (config) => {
       const projectRoot = config.modRequest.projectRoot;
       const androidProjectRoot = config.modRequest.platformProjectRoot;
-      
+
       const sourceDir = path.join(projectRoot, 'native-modules', 'android');
       const javaTargetDir = path.join(androidProjectRoot, 'app', 'src', 'main', 'java', 'com', 'sakinahtime', 'app');
       const resTargetDir = path.join(androidProjectRoot, 'app', 'src', 'main', 'res');
-      
+
       // Helper to copy directory recursively
       function copyDirRecursive(src, dest) {
         if (!fs.existsSync(src)) {
           console.warn(`⚠️ Source directory not found: ${src}`);
           return;
         }
-        
+
         if (!fs.existsSync(dest)) {
           fs.mkdirSync(dest, { recursive: true });
         }
-        
+
         const entries = fs.readdirSync(src, { withFileTypes: true });
-        
+
         for (const entry of entries) {
           const srcPath = path.join(src, entry.name);
           const destPath = path.join(dest, entry.name);
-          
+
           if (entry.isDirectory()) {
             copyDirRecursive(srcPath, destPath);
           } else {
@@ -41,7 +41,7 @@ module.exports = function withAndroidWidgets(config) {
           }
         }
       }
-      
+
       // Copy widget Kotlin files
       const widgetDirs = ['widget', 'bridge'];
       for (const dir of widgetDirs) {
@@ -52,18 +52,18 @@ module.exports = function withAndroidWidgets(config) {
           console.log(`✅ Copied ${dir} directory`);
         }
       }
-      
+
       // Copy resource files
       const resDirs = ['layout', 'xml', 'drawable', 'values'];
       for (const dir of resDirs) {
         const srcDir = path.join(sourceDir, 'res', dir);
         const destDir = path.join(resTargetDir, dir);
-        
+
         if (fs.existsSync(srcDir)) {
           if (!fs.existsSync(destDir)) {
             fs.mkdirSync(destDir, { recursive: true });
           }
-          
+
           const files = fs.readdirSync(srcDir);
           for (const file of files) {
             // Only copy widget-related files
@@ -76,12 +76,12 @@ module.exports = function withAndroidWidgets(config) {
           }
         }
       }
-      
+
       // Update strings.xml with widget strings
       const stringsPath = path.join(resTargetDir, 'values', 'strings.xml');
       if (fs.existsSync(stringsPath)) {
         let stringsContent = fs.readFileSync(stringsPath, 'utf8');
-        
+
         const widgetStrings = `
   <!-- Widget Names -->
   <string name="widget_prayer_times_name">Prayer Times</string>
@@ -106,7 +106,7 @@ module.exports = function withAndroidWidgets(config) {
   <string name="prayer_isha">Isha</string>
   <string name="verse_of_day">Verse of the Day</string>
   <string name="reset">Reset</string>`;
-        
+
         // Check if widget strings already exist
         if (!stringsContent.includes('widget_prayer_times_name')) {
           // Insert before closing </resources> tag
@@ -115,12 +115,12 @@ module.exports = function withAndroidWidgets(config) {
           console.log('✅ Added widget strings to strings.xml');
         }
       }
-      
+
       // Update colors.xml with widget colors
       const colorsPath = path.join(resTargetDir, 'values', 'colors.xml');
       if (fs.existsSync(colorsPath)) {
         let colorsContent = fs.readFileSync(colorsPath, 'utf8');
-        
+
         const widgetColors = `
   <!-- Widget Colors -->
   <color name="widget_background">#FFFFFF</color>
@@ -134,7 +134,7 @@ module.exports = function withAndroidWidgets(config) {
   <color name="widget_tasbeeh_count">#10B981</color>
   <color name="widget_tasbeeh_target">#9CA3AF</color>
   <color name="widget_event_gold">#D4AF37</color>`;
-        
+
         // Check if widget colors already exist
         if (!colorsContent.includes('widget_background')) {
           // Insert before closing </resources> tag
@@ -143,8 +143,28 @@ module.exports = function withAndroidWidgets(config) {
           console.log('✅ Added widget colors to colors.xml');
         }
       }
-      
+
       return config;
     },
   ]);
+
+  // Inject WorkManager dependency into build.gradle for WidgetUpdateWorker
+  return withAppBuildGradle(config, (gradleConfig) => {
+    if (gradleConfig.modResults.language === 'groovy') {
+      let contents = gradleConfig.modResults.contents;
+      const dependency = "implementation 'androidx.work:work-runtime-ktx:2.9.0'";
+
+      if (!contents.includes(dependency)) {
+        const depsRegex = /dependencies\s*\{/;
+        if (depsRegex.test(contents)) {
+          contents = contents.replace(
+            depsRegex,
+            `dependencies {\n    ${dependency}`
+          );
+        }
+      }
+      gradleConfig.modResults.contents = contents;
+    }
+    return gradleConfig;
+  });
 };

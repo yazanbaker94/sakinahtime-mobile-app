@@ -16,12 +16,12 @@ module.exports = function withDhikrOverlay(config) {
       const assetsDir = path.join(projectRoot, 'android', 'app', 'src', 'main', 'assets', 'fonts');
       const fontSource = path.join(projectRoot, 'assets', 'fonts', 'AlMushafQuran.ttf');
       const fontDest = path.join(assetsDir, 'AlMushafQuran.ttf');
-      
+
       // Create fonts directory if it doesn't exist
       if (!fs.existsSync(assetsDir)) {
         fs.mkdirSync(assetsDir, { recursive: true });
       }
-      
+
       // Copy font if source exists
       if (fs.existsSync(fontSource)) {
         fs.copyFileSync(fontSource, fontDest);
@@ -29,11 +29,11 @@ module.exports = function withDhikrOverlay(config) {
       } else {
         console.warn('[withDhikrOverlay] Arabic font not found at:', fontSource);
       }
-      
+
       return config;
     },
   ]);
-  
+
   // Then, update AndroidManifest
   return withAndroidManifest(config, async (config) => {
     const manifest = config.modResults.manifest;
@@ -82,7 +82,7 @@ module.exports = function withDhikrOverlay(config) {
     if (!serviceExists) {
       application.service.push({
         $: {
-          'android:name': '.dhikr.DhikrForegroundService',
+          'android:name': '.DhikrForegroundService',
           'android:enabled': 'true',
           'android:exported': 'false',
           'android:foregroundServiceType': 'specialUse',
@@ -108,7 +108,7 @@ module.exports = function withDhikrOverlay(config) {
     if (!alarmReceiverExists) {
       application.receiver.push({
         $: {
-          'android:name': '.dhikr.DhikrAlarmReceiver',
+          'android:name': '.DhikrAlarmReceiver',
           'android:enabled': 'true',
           'android:exported': 'false',
         }
@@ -122,7 +122,7 @@ module.exports = function withDhikrOverlay(config) {
     if (!bootReceiverExists) {
       application.receiver.push({
         $: {
-          'android:name': '.dhikr.DhikrBootReceiver',
+          'android:name': '.DhikrBootReceiver',
           'android:enabled': 'true',
           'android:exported': 'true',
         },

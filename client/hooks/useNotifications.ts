@@ -2,7 +2,8 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { Platform, NativeModules } from "react-native";
 import * as Notifications from "expo-notifications";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { PrayerTimes } from "./usePrayerTimes";
+import { PrayerTimes, CALCULATION_METHODS, useCalculationMethod } from "./usePrayerTimes";
+import { useLocation } from "../contexts/LocationContext";
 import { IqamaSettings } from "./useIqamaSettings";
 import { PrayerName, PRAYER_NAMES } from "../types/prayerLog";
 import { prayerLogService, getTodayDateString } from "../services/PrayerLogService";
@@ -201,6 +202,8 @@ function parseTimeString(timeStr: string): { hours: number; minutes: number } | 
 }
 
 export function useNotifications() {
+  const { latitude, longitude } = useLocation();
+  const { method: calculationMethodId } = useCalculationMethod();
   const [permission, setPermission] = useState<Notifications.PermissionStatus | null>(null);
   const [settings, setSettings] = useState<NotificationSettings>(DEFAULT_SETTINGS);
   const [loading, setLoading] = useState(true);
@@ -209,6 +212,24 @@ export function useNotifications() {
   const lastIqamaScheduledRef = useRef<string | null>(null);
   const lastIqamaScheduleTimeRef = useRef<number>(0);
   const [scheduleVersion, setScheduleVersion] = useState(0); // Trigger re-scheduling
+
+  // Helper to map API calc method ID to adhan-java string
+  const getCalculationMethodString = (id: number) => {
+    switch (id) {
+      case 1: return "KARACHI";
+      case 2: return "ISNA";
+      case 3: return "MUSLIM_WORLD_LEAGUE";
+      case 4: return "MAKKAH";
+      case 5: return "EGYPTIAN";
+      case 7: return "TEHRAN";
+      case 8: return "GULF";
+      case 9: return "KUWAIT";
+      case 10: return "QATAR";
+      case 11: return "SINGAPORE";
+      case 16: return "JORDAN";
+      default: return "MUSLIM_WORLD_LEAGUE";
+    }
+  };
 
   // Force reschedule if more than 1 minute has passed since last schedule
   // This handles phone time changes
@@ -327,7 +348,7 @@ export function useNotifications() {
     await Notifications.cancelAllScheduledNotificationsAsync();
   };
 
-  const schedulePrayerNotifications = useCallback(async (timings: PrayerTimes, azanEnabled: boolean = false) => {
+  const schedulePrayerNotifications = useCallback(async (timings: PrayerTimes, azanEnabled: boolean = false, iqamaSettings?: IqamaSettings) => {
     // For expo notifications, we need both enabled and permission
     const canScheduleExpoNotifications = settings.enabled && permission === "granted";
 
@@ -348,6 +369,8 @@ export function useNotifications() {
       timings: { Fajr: timings.Fajr, Dhuhr: timings.Dhuhr, Asr: timings.Asr, Maghrib: timings.Maghrib, Isha: timings.Isha },
       prayers: settings.prayers,
       azanEnabled,
+      iqamaEnabled: iqamaSettings?.enabled,
+      iqamaDelay: iqamaSettings?.delayMinutes,
     });
 
     if (lastScheduledRef.current === scheduleKey && !shouldForceReschedule()) {
@@ -365,72 +388,41 @@ export function useNotifications() {
       console.log('📱 PrayerAlarmModule available?', !!PrayerAlarmModule);
 
       if (PrayerAlarmModule) {
-        console.log('✅ Using native PrayerAlarmModule');
+        console.log('✅ Using native PrayerAlarmModule Configuration Flow');
         try {
-          const prayers: Array<{ key: keyof NotificationSettings["prayers"]; time: string }> = [
-            { key: "Fajr", time: timings.Fajr },
-            { key: "Dhuhr", time: timings.Dhuhr },
-            { key: "Asr", time: timings.Asr },
-            { key: "Maghrib", time: timings.Maghrib },
-            { key: "Isha", time: timings.Isha },
-          ];
-
-          const now = new Date();
-          const prayerAlarms: Array<{ name: string; timestamp: number }> = [];
-
-          // Schedule 7 days of alarms for persistence even if app is never opened
-          const DAYS_TO_SCHEDULE = 7;
-
-          for (let dayOffset = 0; dayOffset < DAYS_TO_SCHEDULE; dayOffset++) {
-            for (const prayer of prayers) {
-              if (!settings.prayers[prayer.key]) continue;
-
-              const parsedTime = parseTimeString(prayer.time);
-              if (!parsedTime) {
-                console.warn(`Invalid time format for ${prayer.key}: ${prayer.time}`);
-                continue;
-              }
-
-              const { hours, minutes } = parsedTime;
-              const prayerDate = new Date(now);
-              prayerDate.setDate(prayerDate.getDate() + dayOffset);
-              prayerDate.setHours(hours, minutes, 0, 0);
-
-              // Skip if this alarm is in the past (for day 0)
-              if (prayerDate <= now) {
-                continue;
-              }
-
-              // Use unique name with day offset to allow multiple alarms per prayer
-              const alarmName = dayOffset === 0 ? prayer.key : `${prayer.key}_day${dayOffset}`;
-
-              prayerAlarms.push({
-                name: alarmName,
-                timestamp: prayerDate.getTime(),
-              });
-            }
+          // Send unified configuration to Native (Azan + Iqama Sidecar Shadow)
+          if (latitude !== null && longitude !== null && latitude !== undefined && longitude !== undefined) {
+            const result = await PrayerAlarmModule.saveConfiguration({
+              latitude,
+              longitude,
+              calculationMethod: getCalculationMethodString(calculationMethodId),
+              madhab: "SHAFI",
+              azanEnabled,
+              fajrEnabled: settings.prayers.Fajr,
+              dhuhrEnabled: settings.prayers.Dhuhr,
+              asrEnabled: settings.prayers.Asr,
+              maghribEnabled: settings.prayers.Maghrib,
+              ishaEnabled: settings.prayers.Isha,
+              // Iqama Sidecar Shadow config — native side schedules iqama
+              // as a trailing shadow of each Azan via setExactAndAllowWhileIdle
+              iqamaEnabled: iqamaSettings?.enabled ?? false,
+              iqamaDelayMinutes: iqamaSettings?.delayMinutes ?? 15,
+              iqamaFajrEnabled: iqamaSettings?.prayers?.Fajr ?? true,
+              iqamaDhuhrEnabled: iqamaSettings?.prayers?.Dhuhr ?? true,
+              iqamaAsrEnabled: iqamaSettings?.prayers?.Asr ?? true,
+              iqamaMaghribEnabled: iqamaSettings?.prayers?.Maghrib ?? true,
+              iqamaIshaEnabled: iqamaSettings?.prayers?.Isha ?? true,
+            });
+            console.log('✅ Native azan + iqama configured and Daisy Chain triggered:', result);
+          } else {
+            console.warn('⚠️ Missing location for native azan. Skipping.');
           }
 
-          const result = await PrayerAlarmModule.schedulePrayerAlarms(prayerAlarms, azanEnabled);
-          console.log('✅ Native alarms scheduled:', result);
-          console.log(`🔔 Scheduled ${prayerAlarms.length} alarms for next ${DAYS_TO_SCHEDULE} days`);
-
-          // Save prayer times for WorkManager to generate infinite alarms
-          // Only if the native method is implemented (future feature)
-          if (typeof PrayerAlarmModule.savePrayerTimes === 'function') {
-            const enabledPrayersList = Object.entries(settings.prayers)
-              .filter(([_, enabled]) => enabled)
-              .map(([name]) => name);
-            await PrayerAlarmModule.savePrayerTimes(
-              { Fajr: timings.Fajr, Dhuhr: timings.Dhuhr, Asr: timings.Asr, Maghrib: timings.Maghrib, Isha: timings.Isha },
-              enabledPrayersList
-            );
-            console.log('💾 Prayer times saved for native WorkManager scheduling');
-          }
-
-          // Native alarm will show notification, no need for expo notifications
+          // Fallback to Expo Notifications for visual notifications
+          // The native service only handles the alarm sound + foreground service currently
+          await scheduleExpoNotifications(timings, false); // false to avoid double sound
         } catch (error) {
-          console.error('❌ Failed to schedule native alarms:', error);
+          console.error('❌ Failed to configure native azan:', error);
           // Fallback to expo notifications only
           await scheduleExpoNotifications(timings, azanEnabled);
         }
@@ -443,8 +435,7 @@ export function useNotifications() {
       // iOS or fallback: use expo notifications
       await scheduleExpoNotifications(timings, azanEnabled);
     }
-  }, [settings, permission]);
-
+  }, [settings, permission, latitude, longitude, calculationMethodId]);
 
   const scheduleExpoNotifications = async (timings: PrayerTimes, azanEnabled: boolean) => {
     await cancelAllNotifications();
@@ -583,25 +574,24 @@ export function useNotifications() {
     timings: PrayerTimes,
     iqamaSettings: IqamaSettings
   ) => {
+    // Iqama scheduling is handled entirely by the native Sidecar Shadow architecture.
+    // saveConfiguration() already sends iqama config (enabled, delayMinutes, per-prayer toggles)
+    // to SharedPreferences. When PrayerAlarmReceiver fires for each Azan, it reads the config
+    // and schedules the iqama via setExactAndAllowWhileIdle → IqamaReceiver.
+    // This function only logs for debugging — no separate native call needed.
+
     if (!iqamaSettings.enabled) {
-      console.log('⏭️ Iqama disabled, cancelling any existing iqama alarms');
+      console.log('⏭️ [IQAMA] Iqama disabled — native side will skip iqama scheduling after azan');
       lastIqamaScheduledRef.current = null;
-      if (Platform.OS === 'android' && PrayerAlarmModule) {
-        try {
-          await PrayerAlarmModule.cancelIqamaAlarms();
-        } catch (error) {
-          console.error('Failed to cancel iqama alarms:', error);
-        }
-      }
       return;
     }
 
     if (permission !== "granted") {
-      console.log('⚠️ Notification permission not granted for iqama');
+      console.log('⚠️ [IQAMA] Notification permission not granted for iqama');
       return;
     }
 
-    // Create schedule key for deduplication
+    // Create schedule key for deduplication logging
     const today = new Date().toDateString();
     const iqamaScheduleKey = JSON.stringify({
       date: today,
@@ -612,112 +602,26 @@ export function useNotifications() {
     });
 
     if (lastIqamaScheduledRef.current === iqamaScheduleKey && !shouldForceIqamaReschedule()) {
-      console.log('⏭️ Skipping iqama - already scheduled with same settings for today');
+      console.log('⏭️ [IQAMA] Skipping — already configured with same settings for today');
       return;
     }
 
     lastIqamaScheduledRef.current = iqamaScheduleKey;
     lastIqamaScheduleTimeRef.current = Date.now();
 
-    console.log('📅 [IQAMA SCHEDULE] Starting iqama scheduling...', {
-      currentTime: new Date().toLocaleString(),
+    console.log('✅ [IQAMA] Iqama config active — native Sidecar Shadow will schedule after each azan:', {
       delayMinutes: iqamaSettings.delayMinutes,
-      enabledPrayers: Object.entries(iqamaSettings.prayers).filter(([_, v]) => v).map(([k]) => k)
+      enabledPrayers: Object.entries(iqamaSettings.prayers).filter(([_, v]) => v).map(([k]) => k),
     });
-
-    if (Platform.OS === 'android' && PrayerAlarmModule) {
-      try {
-        const prayers: Array<{ key: keyof IqamaSettings["prayers"]; time: string }> = [
-          { key: "Fajr", time: timings.Fajr },
-          { key: "Dhuhr", time: timings.Dhuhr },
-          { key: "Asr", time: timings.Asr },
-          { key: "Maghrib", time: timings.Maghrib },
-          { key: "Isha", time: timings.Isha },
-        ];
-
-        const now = new Date();
-        const iqamaAlarms: Array<{ name: string; timestamp: number }> = [];
-        const delayMs = iqamaSettings.delayMinutes * 60 * 1000;
-
-        console.log('📅 [IQAMA SCHEDULE] Processing prayers, current time:', now.toLocaleString());
-
-        for (const prayer of prayers) {
-          if (!iqamaSettings.prayers[prayer.key]) {
-            console.log(`⏭️ [IQAMA SCHEDULE] Skipping ${prayer.key} - disabled`);
-            continue;
-          }
-
-          const parsedTime = parseTimeString(prayer.time);
-          if (!parsedTime) {
-            console.warn(`Invalid time format for ${prayer.key}: ${prayer.time}`);
-            continue;
-          }
-
-          const { hours, minutes } = parsedTime;
-          const prayerDate = new Date(now);
-          prayerDate.setHours(hours, minutes, 0, 0);
-
-          // Calculate iqama time (prayer time + delay)
-          const iqamaDate = new Date(prayerDate.getTime() + delayMs);
-
-          console.log(`🕐 [IQAMA SCHEDULE] ${prayer.key}:`, {
-            azanTime: prayer.time,
-            prayerTimestamp: prayerDate.toLocaleString(),
-            iqamaTime: iqamaDate.toLocaleString(),
-            isPast: iqamaDate <= now
-          });
-
-          // Check if IQAMA time is in the past, not prayer time
-          if (iqamaDate <= now) {
-            console.log(`⏭️ [IQAMA SCHEDULE] ${prayer.key} iqama already passed, scheduling for tomorrow`);
-            prayerDate.setDate(prayerDate.getDate() + 1);
-          }
-
-          const finalIqamaTime = new Date(prayerDate.getTime() + delayMs);
-          const minutesUntilIqama = Math.round((finalIqamaTime.getTime() - now.getTime()) / 60000);
-
-          console.log(`✅ [IQAMA SCHEDULE] ${prayer.key} iqama will fire at ${finalIqamaTime.toLocaleString()} (in ${minutesUntilIqama} minutes)`);
-
-          iqamaAlarms.push({
-            name: prayer.key,
-            timestamp: prayerDate.getTime(),
-          });
-        }
-
-        console.log('📤 [IQAMA SCHEDULE] Sending to native module:', {
-          alarmCount: iqamaAlarms.length,
-          delayMinutes: iqamaSettings.delayMinutes
-        });
-
-        const result = await PrayerAlarmModule.scheduleIqamaAlarms(
-          iqamaAlarms,
-          iqamaSettings.delayMinutes
-        );
-
-        console.log('✅ [IQAMA SCHEDULE] Native module result:', result);
-        console.log('🔔 [IQAMA SCHEDULE] Summary - Iqama sounds will play at:');
-        iqamaAlarms.forEach(a => {
-          const iqamaTime = new Date(a.timestamp + iqamaSettings.delayMinutes * 60000);
-          const minutesUntil = Math.round((iqamaTime.getTime() - Date.now()) / 60000);
-          console.log(`   - ${a.name}: ${iqamaTime.toLocaleTimeString()} (in ${minutesUntil} min)`);
-        });
-      } catch (error) {
-        console.error('❌ [IQAMA SCHEDULE] Failed to schedule iqama alarms:', error);
-      }
-    } else {
-      console.log('⚠️ [IQAMA SCHEDULE] Only supported on Android with native module');
-    }
   }, [permission, scheduleVersion]);
 
   const cancelIqamaNotifications = useCallback(async () => {
-    if (Platform.OS === 'android' && PrayerAlarmModule) {
-      try {
-        await PrayerAlarmModule.cancelIqamaAlarms();
-        console.log('✅ Iqama alarms cancelled');
-      } catch (error) {
-        console.error('Failed to cancel iqama alarms:', error);
-      }
-    }
+    // Iqama cancellation is handled by saveConfiguration(iqamaEnabled: false).
+    // The native PrayerAlarmReceiver checks iqamaEnabled before scheduling.
+    // Just clear the JS-side cache so next config push is accepted.
+    lastIqamaScheduledRef.current = null;
+    lastIqamaScheduleTimeRef.current = 0;
+    console.log('✅ [IQAMA] Cleared iqama schedule cache — native side governed by saveConfiguration');
   }, []);
 
   /**
@@ -830,29 +734,11 @@ export function useNotifications() {
     }
   }, []);
 
-  // Test iqama notification - plays immediately for debugging
+  // Test iqama notification — fires a test azan alarm in 10s (iqama follows as sidecar)
   const testIqamaNotification = useCallback(async () => {
-    console.log('🧪 [TEST IQAMA] Starting test iqama notification...');
-
-    if (Platform.OS !== 'android') {
-      console.log('⚠️ [TEST IQAMA] Only supported on Android');
-      return { success: false, message: 'Only supported on Android' };
-    }
-
-    if (!PrayerAlarmModule) {
-      console.log('❌ [TEST IQAMA] PrayerAlarmModule not available');
-      return { success: false, message: 'PrayerAlarmModule not available' };
-    }
-
-    try {
-      // Use the native testIqamaSound method which handles silent mode gracefully
-      const result = await PrayerAlarmModule.testIqamaSound();
-      console.log('✅ [TEST IQAMA] Result:', result);
-      return { success: true, message: result };
-    } catch (error) {
-      console.error('❌ [TEST IQAMA] Failed:', error);
-      return { success: false, message: String(error) };
-    }
+    console.log('🧪 [TEST IQAMA] Iqama is tested as a sidecar of the test azan alarm');
+    console.log('🧪 [TEST IQAMA] Use sendTestNotification(true) — iqama will fire delayMinutes after');
+    return { success: true, message: 'Use test azan — iqama fires as sidecar shadow' };
   }, []);
 
   // Force clear the schedule cache to trigger rescheduling

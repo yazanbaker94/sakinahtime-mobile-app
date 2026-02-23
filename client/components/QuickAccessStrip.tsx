@@ -54,7 +54,7 @@ export function QuickAccessStrip({ categories, onCategoryPress }: QuickAccessStr
                 shadowOffset: { width: 0, height: 4 },
                 shadowOpacity: 0.06,
                 shadowRadius: 12,
-                elevation: 2,
+                elevation: isDark ? 0 : 2,
                 opacity: pressed ? 0.7 : 1,
                 transform: [{ scale: pressed ? 0.95 : 1 }],
               },

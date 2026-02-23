@@ -12,24 +12,30 @@ const withAndroidNotificationSound = (config) => {
       const projectRoot = config.modRequest.projectRoot;
       const platformProjectRoot = config.modRequest.platformProjectRoot;
 
-      // Source file
-      const sourceFile = path.join(projectRoot, 'assets', 'audio', 'azan.mp3');
-      
-      // Destination directory and file
+      // Destination directory
       const destDir = path.join(platformProjectRoot, 'app', 'src', 'main', 'res', 'raw');
-      const destFile = path.join(destDir, 'azan.mp3');
 
       // Create raw directory if it doesn't exist
       if (!fs.existsSync(destDir)) {
         fs.mkdirSync(destDir, { recursive: true });
       }
 
-      // Copy the sound file
-      if (fs.existsSync(sourceFile)) {
-        fs.copyFileSync(sourceFile, destFile);
-        console.log('✅ Copied azan.mp3 to Android res/raw directory');
-      } else {
-        console.warn('⚠️ Warning: azan.mp3 not found at', sourceFile);
+      // Audio files to copy to res/raw
+      const audioFiles = [
+        { src: 'azan.mp3', dest: 'azan.mp3' },
+        { src: 'haya_al_salat.mp3', dest: 'haya_al_salat.mp3' },
+      ];
+
+      for (const audio of audioFiles) {
+        const sourceFile = path.join(projectRoot, 'assets', 'audio', audio.src);
+        const destFile = path.join(destDir, audio.dest);
+
+        if (fs.existsSync(sourceFile)) {
+          fs.copyFileSync(sourceFile, destFile);
+          console.log(`✅ Copied ${audio.src} to Android res/raw directory`);
+        } else {
+          console.warn(`⚠️ Warning: ${audio.src} not found at`, sourceFile);
+        }
       }
 
       return config;

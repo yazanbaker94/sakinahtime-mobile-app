@@ -478,6 +478,7 @@ export default function NotificationSettingsScreen() {
           )}
         </View>
 
+
         {/* Fasting Reminders */}
         <FastingNotificationSettings />
       </ScrollView>

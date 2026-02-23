@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Feather } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { Platform, StyleSheet, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import QiblaScreen from "@/screens/QiblaScreen";
 import PrayerTimesScreen from "@/screens/PrayerTimesScreen";
 import MushafScreen from "@/screens/MushafScreen";
@@ -25,13 +26,18 @@ const Tab = createBottomTabNavigator<MainTabParamList>();
 
 // Floating tab bar geometry (exported for screens that need to position above the bar)
 export const TAB_BAR_HEIGHT = 64;
-export const TAB_BAR_BOTTOM = Platform.OS === 'ios' ? 24 : 16;
+// Base bottom offset; screens should use useTabBarBottom() for the dynamic inset-aware value
+export const TAB_BAR_BOTTOM_BASE = Platform.OS === 'ios' ? 24 : 16;
 
 export default function MainTabNavigator() {
   const { theme, isDark } = useTheme();
   const screenOptions = useScreenOptions();
   const { t } = useTranslation();
   const dynamicColor = usePrayerColorStore((s) => s.dynamicColor);
+  const insets = useSafeAreaInsets();
+
+  // Use actual device safe area bottom inset, with a minimum fallback
+  const tabBarBottom = Math.max(insets.bottom > 0 ? insets.bottom : TAB_BAR_BOTTOM_BASE, TAB_BAR_BOTTOM_BASE);
 
   return (
     <Tab.Navigator
@@ -43,7 +49,7 @@ export default function MainTabNavigator() {
         tabBarHideOnKeyboard: true,
         tabBarStyle: {
           position: "absolute",
-          bottom: TAB_BAR_BOTTOM,
+          bottom: tabBarBottom,
           left: 16,
           right: 16,
           backgroundColor: isDark ? '#2A2A2C' : '#FFFFFF',
@@ -67,7 +73,7 @@ export default function MainTabNavigator() {
         component={QiblaScreen}
         options={{
           title: t('tabs.qibla'),
-          headerTitle: "",
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Feather name="compass" size={size} color={color} />
           ),

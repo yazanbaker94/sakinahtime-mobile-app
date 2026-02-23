@@ -64,7 +64,7 @@ export interface DhikrOverlayConfig {
 }
 
 // Event types emitted by native module
-export type DhikrOverlayEvent = 
+export type DhikrOverlayEvent =
   | { type: 'shown'; dhikrId: string }
   | { type: 'dismissed'; dhikrId: string; method: 'tap' | 'swipe' | 'timeout' }
   | { type: 'serviceStarted' }
@@ -96,10 +96,10 @@ class DhikrOverlayServiceClass {
     });
 
     this.eventEmitter.addListener('onOverlayDismissed', (data: { dhikrId: string; method: string }) => {
-      this.emitEvent({ 
-        type: 'dismissed', 
-        dhikrId: data.dhikrId, 
-        method: data.method as 'tap' | 'swipe' | 'timeout' 
+      this.emitEvent({
+        type: 'dismissed',
+        dhikrId: data.dhikrId,
+        method: data.method as 'tap' | 'swipe' | 'timeout'
       });
     });
 
@@ -127,8 +127,9 @@ class DhikrOverlayServiceClass {
     }
 
     if (!this.nativeModule) {
-      console.warn('DhikrOverlay native module not available');
-      return false;
+      // Native module not available — fall back to notifications
+      const { status } = await Notifications.getPermissionsAsync();
+      return status === 'granted';
     }
 
     return this.nativeModule.checkOverlayPermission();
@@ -144,13 +145,14 @@ class DhikrOverlayServiceClass {
     }
 
     if (!this.nativeModule) {
-      console.warn('DhikrOverlay native module not available');
-      return false;
+      // Fall back to notification permission
+      const { status } = await Notifications.requestPermissionsAsync();
+      return status === 'granted';
     }
 
     // Opens system settings for overlay permission
     this.nativeModule.requestOverlayPermission();
-    
+
     // Return current status - user needs to grant in settings
     // The app should check again when returning from settings
     return this.nativeModule.checkOverlayPermission();
@@ -165,8 +167,8 @@ class DhikrOverlayServiceClass {
     }
 
     if (!this.nativeModule) {
-      console.warn('DhikrOverlay native module not available');
-      return false;
+      // Fall back to notification-based reminders (same as iOS)
+      return this.startIOSNotifications(config);
     }
 
     try {
@@ -201,7 +203,7 @@ class DhikrOverlayServiceClass {
     }
 
     if (!this.nativeModule) {
-      return false;
+      return this.stopIOSNotifications();
     }
 
     try {
@@ -222,7 +224,7 @@ class DhikrOverlayServiceClass {
     }
 
     if (!this.nativeModule) {
-      return false;
+      return this.iosNotificationIdentifier !== null;
     }
 
     return this.nativeModule.isServiceRunning();
@@ -233,14 +235,15 @@ class DhikrOverlayServiceClass {
    */
   async showNow(dhikr: DhikrItem, themeColors?: ThemeColors): Promise<void> {
     console.log('[DhikrOverlayService] showNow called with:', dhikr.id);
-    
+
     if (Platform.OS === 'ios') {
       await this.showIOSNotification(dhikr);
       return;
     }
 
     if (!this.nativeModule) {
-      console.warn('[DhikrOverlayService] Native module not available');
+      // Fall back to notification
+      await this.showIOSNotification(dhikr);
       return;
     }
 

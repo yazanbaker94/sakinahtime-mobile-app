@@ -11,7 +11,7 @@ import { View, StyleSheet, ScrollView, Pressable, TextInput, FlatList, Animated,
 import { Swipeable } from 'react-native-gesture-handler';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+import { TAB_BAR_HEIGHT, TAB_BAR_BOTTOM_BASE } from '@/navigation/MainTabNavigator';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Spacing, Colors, BorderRadius } from '@/constants/theme';
 import { useTheme } from '@/hooks/useTheme';
@@ -123,7 +123,6 @@ const GUIDE_CATEGORIES = [
 ];
 
 export default function AzkarScreen() {
-  const tabBarHeight = useBottomTabBarHeight();
   const insets = useSafeAreaInsets();
   const { isDark, theme } = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -262,7 +261,7 @@ export default function AzkarScreen() {
             shadowOffset: { width: 0, height: 4 },
             shadowOpacity: 0.1,
             shadowRadius: 12,
-            elevation: 3,
+            elevation: isDark ? 0 : 3,
           },
         ]}
       >
@@ -286,7 +285,7 @@ export default function AzkarScreen() {
           shadowOffset: { width: 0, height: isActive ? 4 : 3 },
           shadowOpacity: isActive ? 0.25 : 0.06,
           shadowRadius: isActive ? 10 : 8,
-          elevation: isActive ? 4 : 2,
+          elevation: isDark ? 0 : (isActive ? 4 : 2),
           borderWidth: 0,
           borderColor: 'transparent',
         }]}
@@ -336,7 +335,7 @@ export default function AzkarScreen() {
         </View>
       </View>
 
-      <ScrollView ref={scrollRef} contentContainerStyle={[styles.scrollContent, { paddingBottom: tabBarHeight + Spacing.xl }]} scrollIndicatorInsets={{ bottom: tabBarHeight }} showsVerticalScrollIndicator={false}>
+      <ScrollView ref={scrollRef} contentContainerStyle={[styles.scrollContent, { paddingBottom: TAB_BAR_HEIGHT + TAB_BAR_BOTTOM_BASE + insets.bottom + Spacing.xl }]} scrollIndicatorInsets={{ bottom: TAB_BAR_HEIGHT + TAB_BAR_BOTTOM_BASE }} showsVerticalScrollIndicator={false}>
         <View style={{ display: activeTab === 'azkar' ? 'flex' : 'none' }}>
           <QuickAccessStrip categories={azkarCategories} onCategoryPress={handleCategoryPress} />
           <TasbihCounter />
@@ -344,7 +343,7 @@ export default function AzkarScreen() {
           <View style={styles.categoriesGrid}>
             {azkarCategories.map((category) => (<CompactCategoryCard key={category.id} category={category} onPress={() => handleCategoryPress(category)} />))}
           </View>
-          <View style={[styles.tipCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#FFFFFF', shadowColor: '#000', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.04, shadowRadius: 20, elevation: 2 }]}>
+          <View style={[styles.tipCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#FFFFFF', shadowColor: '#000', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.04, shadowRadius: 20, elevation: isDark ? 0 : 2, borderWidth: 0, borderColor: 'transparent' }]}>
             <View style={styles.tipHeader}>
               <Feather name="info" size={20} color={theme.primary} />
               <ThemedText type="body" style={{ marginLeft: Spacing.sm, fontWeight: '600' }}>{t('azkar.dailyTip')}</ThemedText>
@@ -383,7 +382,7 @@ export default function AzkarScreen() {
                   <DuaOfTheDay dua={duaOfTheDay} onPress={() => handleDuaPress(duaOfTheDay)} />
                   <View style={styles.duaCategoriesGrid}>
                     {duaCategories.map((category) => (
-                      <Pressable key={category.id} onPress={() => handleDuaCategoryPress(category)} style={({ pressed }) => [styles.duaCategoryCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#FFFFFF', shadowColor: '#000', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.05, shadowRadius: 20, elevation: 3, borderWidth: 0, borderColor: 'transparent', opacity: pressed ? 0.7 : 1 }]}>
+                      <Pressable key={category.id} onPress={() => handleDuaCategoryPress(category)} style={({ pressed }) => [styles.duaCategoryCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#FFFFFF', shadowColor: '#000', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.05, shadowRadius: 20, elevation: isDark ? 0 : 3, borderWidth: 0, borderColor: 'transparent', opacity: pressed ? 0.7 : 1 }]}>
                         <View style={[styles.duaCategoryIcon, { backgroundColor: `${theme.primary}10` }]}>
                           {DUA_3D_ICONS[category.icon] ? (
                             <Image source={DUA_3D_ICONS[category.icon]} style={{ width: 28, height: 28 }} contentFit="contain" transition={0} cachePolicy="memory" />
@@ -414,7 +413,7 @@ export default function AzkarScreen() {
                   <FlatList data={favoriteDuas} renderItem={renderDuaItem} keyExtractor={item => item.id} scrollEnabled={false} ListEmptyComponent={renderEmptyState(t('azkar.tapHeartTip'), 'heart')} />
                 </View>
                 <View style={{ display: duaSubTab === 'custom' ? 'flex' : 'none' }}>
-                  <Pressable onPress={handleAddCustomDua} style={({ pressed }) => [styles.addButton, { backgroundColor: theme.primary, shadowColor: theme.primary, shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.3, shadowRadius: 12, elevation: 4, opacity: pressed ? 0.8 : 1 }]}>
+                  <Pressable onPress={handleAddCustomDua} style={({ pressed }) => [styles.addButton, { backgroundColor: theme.primary, shadowColor: theme.primary, shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.3, shadowRadius: 12, elevation: isDark ? 0 : 4, opacity: pressed ? 0.8 : 1 }]}>
                     <Feather name="plus" size={20} color="#fff" />
                     <ThemedText type="body" style={{ color: '#fff', marginLeft: Spacing.sm, fontWeight: '600' }}>{t('azkar.addCustomDua')}</ThemedText>
                   </Pressable>
@@ -446,7 +445,7 @@ export default function AzkarScreen() {
                     </View>
 
                   </View>
-                  <View style={[styles.guidesList, { backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : '#FFFFFF', shadowColor: '#000', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.04, shadowRadius: 20, elevation: 2, borderWidth: 0, borderColor: 'transparent' }]}>
+                  <View style={[styles.guidesList, { backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : '#FFFFFF', shadowColor: '#000', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.04, shadowRadius: 20, elevation: isDark ? 0 : 2, borderWidth: 0, borderColor: 'transparent' }]}>
                     {category.guides.map((guide, idx) => (
                       <React.Fragment key={guide.id}>
                         {idx > 0 && <View style={{ height: 1, backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)', marginHorizontal: Spacing.md }} />}

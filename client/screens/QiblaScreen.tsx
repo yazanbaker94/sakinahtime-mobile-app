@@ -2,8 +2,8 @@ import React, { useMemo, useEffect, useRef } from "react";
 import { View, StyleSheet, Platform, Pressable, useWindowDimensions } from "react-native";
 import { Image } from 'expo-image';
 import { ThemedText } from "@/components/ThemedText";
-import { useHeaderHeight } from "@react-navigation/elements";
-import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { TAB_BAR_HEIGHT, TAB_BAR_BOTTOM_BASE } from "@/navigation/MainTabNavigator";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/navigation/RootStackNavigator";
@@ -61,8 +61,9 @@ const CARDINALS = [
 
 export default function QiblaScreen() {
   const { t } = useTranslation();
-  const headerHeight = useHeaderHeight();
-  const tabBarHeight = useBottomTabBarHeight();
+  const insets = useSafeAreaInsets();
+  const topPadding = insets.top + Spacing.md;
+  const bottomPadding = TAB_BAR_HEIGHT + Math.max(insets.bottom, TAB_BAR_BOTTOM_BASE) + Spacing.md;
   const { theme, isDark } = useTheme();
   useKeepAwake();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -266,8 +267,8 @@ export default function QiblaScreen() {
           style={[
             styles.content,
             {
-              paddingTop: headerHeight + Spacing.xl,
-              paddingBottom: tabBarHeight + Spacing.xl,
+              paddingTop: topPadding + Spacing.xl,
+              paddingBottom: bottomPadding + Spacing.xl,
             },
           ]}
         >
@@ -387,8 +388,8 @@ export default function QiblaScreen() {
           style={[
             styles.content,
             {
-              paddingTop: headerHeight + Spacing.xl,
-              paddingBottom: tabBarHeight + Spacing.xl,
+              paddingTop: topPadding + Spacing.xl,
+              paddingBottom: bottomPadding + Spacing.xl,
             },
           ]}
         >
@@ -422,8 +423,8 @@ export default function QiblaScreen() {
         style={[
           styles.content,
           {
-            paddingTop: headerHeight + Spacing.md,
-            paddingBottom: tabBarHeight + Spacing["2xl"],
+            paddingTop: topPadding,
+            paddingBottom: bottomPadding,
           },
         ]}
       >

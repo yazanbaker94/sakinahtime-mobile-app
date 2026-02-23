@@ -4,13 +4,13 @@
     "slug": "sakinahtime",
     "version": "1.2.3",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/play-store-icon.png",
     "scheme": "sakinahtime",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff",
+      "backgroundColor": "#1B9B4B",
       "dark": {
         "image": "./assets/images/splash-icon-dark.png",
         "resizeMode": "contain",
@@ -36,8 +36,9 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "monochromeImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#1B9B4B"
       },
       "package": "com.sakinahtime.app",
       "permissions": [
@@ -72,6 +73,7 @@
         }
       ],
       "./plugins/withAndroidNotificationSound.js",
+      "./plugins/withAdhanJava.js",
       "./plugins/withAndroidNativeFiles.js",
       "./plugins/withAndroidNativeModules.js",
       "./plugins/withAndroidWidgets.js",

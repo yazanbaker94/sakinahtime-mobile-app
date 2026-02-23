@@ -96,7 +96,7 @@ export function TasbihCounter({
       shadowOffset: { width: 0, height: 8 },
       shadowOpacity: 0.05,
       shadowRadius: 24,
-      elevation: 3,
+      elevation: isDark ? 0 : 3,
     }]}>
       {/* Header */}
       <View style={styles.header}>

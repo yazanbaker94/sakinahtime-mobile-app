@@ -149,7 +149,7 @@ export default function AzkarDetailScreen() {
         shadowOffset: { width: 0, height: 3 },
         shadowOpacity: isActive ? 0 : 0.06,
         shadowRadius: 8,
-        elevation: isActive ? 0 : 2,
+        elevation: isActive ? 0 : (isDark ? 0 : 2),
         opacity: pressed ? 0.7 : 1,
       }]}
     >
@@ -186,7 +186,7 @@ export default function AzkarDetailScreen() {
               shadowOffset: { width: 0, height: 6 },
               shadowOpacity: 0.05,
               shadowRadius: 20,
-              elevation: 3,
+              elevation: isDark ? 0 : 3,
               opacity: pressed ? 0.7 : 1,
             },
             isQuran && {
@@ -283,11 +283,11 @@ export default function AzkarDetailScreen() {
                   <View style={[styles.counterBadge, {
                     backgroundColor: theme.primary,
                     borderWidth: 0,
-                    shadowColor: theme.primary,
-                    shadowOffset: { width: 0, height: 4 },
-                    shadowOpacity: 0.3,
-                    shadowRadius: 10,
-                    elevation: 4,
+                    shadowColor: isDark ? 'transparent' : theme.primary,
+                    shadowOffset: { width: 0, height: isDark ? 0 : 4 },
+                    shadowOpacity: isDark ? 0 : 0.3,
+                    shadowRadius: isDark ? 0 : 10,
+                    elevation: isDark ? 0 : 4,
                   }]}>
                     {isComplete && (
                       <Feather

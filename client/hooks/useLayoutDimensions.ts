@@ -1,6 +1,6 @@
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useWindowDimensions } from 'react-native';
-import { TAB_BAR_HEIGHT, TAB_BAR_BOTTOM } from '@/navigation/MainTabNavigator';
+import { TAB_BAR_HEIGHT, TAB_BAR_BOTTOM_BASE } from '@/navigation/MainTabNavigator';
 
 // Constants for Mushaf image dimensions (original image size)
 const MUSHAF_IMAGE_WIDTH = 1300;
@@ -41,7 +41,7 @@ export function useLayoutDimensions(tabBarHeight?: number): LayoutDimensions {
 
   // Use actual floating tab bar footprint (height + bottom offset)
   // This is the total space the tab bar occupies from the device bottom
-  const floatingTabBarClearance = TAB_BAR_HEIGHT + TAB_BAR_BOTTOM;
+  const floatingTabBarClearance = TAB_BAR_HEIGHT + TAB_BAR_BOTTOM_BASE;
 
   const safeAreaTop = insets.top;
   const safeAreaBottom = insets.bottom;
@@ -86,7 +86,7 @@ export function calculateLayoutDimensions(
   safeAreaBottom: number,
   tabBarHeight: number
 ): LayoutDimensions {
-  const floatingTabBarClearance = TAB_BAR_HEIGHT + TAB_BAR_BOTTOM;
+  const floatingTabBarClearance = TAB_BAR_HEIGHT + TAB_BAR_BOTTOM_BASE;
   const contentZoneHeight = screenHeight
     - safeAreaTop
     - HEADER_ZONE_HEIGHT
