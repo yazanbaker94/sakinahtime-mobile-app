@@ -1,0 +1,39 @@
+﻿Starting Metro Bundler
+Android client\index.js ΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæ  0.0% (0/1)
+| [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+| [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+| [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+| [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+Android client\index.js ΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûæΓûæΓûæΓûæ 77.8% (1385/3258)
+| [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+| [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+Android Bundling failed 6340ms client\index.js (3871 modules)
+node.exe : SyntaxError: SyntaxError: 
+C:\s\client\components\DownloadProgress.tsx: 
+Unexpected token, expected "," (60:22)
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (SyntaxErr 
+   or: Sy...ted "," (60:22):String) [], RemoteExcepti  
+  on
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+[0m [90m 58 |[39m             [33m/[39m[33m>[39m
+ [90m 59 |[39m           ) [33m:[39m (
+[31m[1m>[22m[39m[90m 60 |[39m             
+{isfailed [33m?[39m [33m<[39m[33mAlertCircle[39m 
+size[33m=[39m{[35m20[39m}
+ [90m    |[39m                       
+[31m[1m^[22m[39m
+ [90m 61 |[39m               
+color[33m=[39m{getStatusColor()}
+ [90m 62 |[39m             [33m/[39m[33m>[39m 
+[33m:[39m isPaused [33m?[39m 
+[33m<[39m[33mPauseCircle[39m 
+size[33m=[39m{[35m20[39m}
+ [90m 63 |[39m               
+color[33m=[39m{getStatusColor()}[0m

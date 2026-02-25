@@ -132,7 +132,7 @@ export const BookmarksPanel = React.memo(function BookmarksPanel({
                                             <View style={[styles.surahNumber, {
                                                 backgroundColor: 'transparent',
                                             }]}>
-                                                <Image source={require('../../../assets/images/3d-images/Bookmark.png')} style={{ width: 36, height: 36 }} contentFit="contain" transition={0} cachePolicy="memory" />
+                                                <Image source={require('../../../assets/images/3d-images/Bookmark.webp')} style={{ width: 36, height: 36 }} contentFit="contain" transition={0} cachePolicy="memory" />
                                             </View>
                                             <View style={styles.surahInfo}>
                                                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>

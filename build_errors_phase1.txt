@@ -1,0 +1,444 @@
+﻿Configuration on demand is an incubating feature.
+> Task :gradle-plugin:settings-plugin:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :gradle-plugin:shared:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :expo-gradle-plugin:expo-autolinking-settings-plugin:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :expo-gradle-plugin:expo-autolinking-plugin-shared:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :gradle-plugin:settings-plugin:pluginDescriptors UP-TO-DATE
+> Task :expo-gradle-plugin:expo-autolinking-settings-plugin:pluginDescriptors UP-TO-DATE
+> Task :gradle-plugin:settings-plugin:processResources UP-TO-DATE
+> Task :expo-gradle-plugin:expo-autolinking-settings-plugin:processResources UP-TO-DATE
+> Task :gradle-plugin:shared:compileKotlin UP-TO-DATE
+> Task :expo-gradle-plugin:expo-autolinking-plugin-shared:compileKotlin UP-TO-DATE
+> Task :gradle-plugin:shared:compileJava NO-SOURCE
+> Task :expo-gradle-plugin:expo-autolinking-plugin-shared:compileJava NO-SOURCE
+> Task :gradle-plugin:shared:processResources NO-SOURCE
+> Task :gradle-plugin:shared:classes UP-TO-DATE
+> Task :expo-gradle-plugin:expo-autolinking-plugin-shared:processResources NO-SOURCE
+> Task :expo-gradle-plugin:expo-autolinking-plugin-shared:classes UP-TO-DATE
+> Task :gradle-plugin:shared:jar UP-TO-DATE
+> Task :expo-gradle-plugin:expo-autolinking-plugin-shared:jar UP-TO-DATE
+> Task :gradle-plugin:settings-plugin:compileKotlin UP-TO-DATE
+> Task :gradle-plugin:settings-plugin:compileJava NO-SOURCE
+> Task :gradle-plugin:settings-plugin:classes UP-TO-DATE
+> Task :expo-gradle-plugin:expo-autolinking-settings-plugin:compileKotlin UP-TO-DATE
+> Task :expo-gradle-plugin:expo-autolinking-settings-plugin:compileJava NO-SOURCE
+> Task :expo-gradle-plugin:expo-autolinking-settings-plugin:classes UP-TO-DATE
+> Task :gradle-plugin:settings-plugin:jar UP-TO-DATE
+> Task :expo-gradle-plugin:expo-autolinking-settings-plugin:jar UP-TO-DATE
+> Task :expo-gradle-plugin:expo-autolinking-plugin:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :gradle-plugin:react-native-gradle-plugin:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :expo-module-gradle-plugin:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :expo-updates-gradle-plugin:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :expo-updates-gradle-plugin:pluginDescriptors UP-TO-DATE
+> Task :expo-module-gradle-plugin:pluginDescriptors UP-TO-DATE
+> Task :expo-updates-gradle-plugin:processResources UP-TO-DATE
+> Task :expo-module-gradle-plugin:processResources UP-TO-DATE
+> Task :expo-gradle-plugin:expo-autolinking-plugin:compileKotlin UP-TO-DATE
+> Task :expo-gradle-plugin:expo-autolinking-plugin:compileJava NO-SOURCE
+> Task :expo-gradle-plugin:expo-autolinking-plugin:pluginDescriptors UP-TO-DATE
+> Task :gradle-plugin:react-native-gradle-plugin:compileKotlin UP-TO-DATE
+> Task :expo-gradle-plugin:expo-autolinking-plugin:processResources UP-TO-DATE
+> Task :gradle-plugin:react-native-gradle-plugin:compileJava NO-SOURCE
+> Task :expo-gradle-plugin:expo-autolinking-plugin:classes UP-TO-DATE
+> Task :gradle-plugin:react-native-gradle-plugin:pluginDescriptors UP-TO-DATE
+> Task :gradle-plugin:react-native-gradle-plugin:processResources UP-TO-DATE
+> Task :gradle-plugin:react-native-gradle-plugin:classes UP-TO-DATE
+> Task :expo-gradle-plugin:expo-autolinking-plugin:jar UP-TO-DATE
+> Task :gradle-plugin:react-native-gradle-plugin:jar UP-TO-DATE
+> Task :expo-module-gradle-plugin:compileKotlin UP-TO-DATE
+> Task :expo-module-gradle-plugin:compileJava NO-SOURCE
+> Task :expo-module-gradle-plugin:classes UP-TO-DATE
+> Task :expo-module-gradle-plugin:jar UP-TO-DATE
+> Task :expo-updates-gradle-plugin:compileKotlin UP-TO-DATE
+> Task :expo-updates-gradle-plugin:compileJava NO-SOURCE
+> Task :expo-updates-gradle-plugin:classes UP-TO-DATE
+> Task :expo-updates-gradle-plugin:jar UP-TO-DATE
+
+> Configure project :app
+ ??  [33mApplying gradle plugin[0m '[32mexpo-updates-gradle-plugin[0m'
+
+> Configure project :
+[32m[ExpoRootProject][0m Using the following versions:
+  - buildTools:  [32m36.0.0[0m
+  - minSdk:      [32m24[0m
+  - compileSdk:  [32m36[0m
+  - targetSdk:   [32m36[0m
+  - ndk:         [32m27.1.12297006[0m
+  - kotlin:      [32m2.1.20[0m
+  - ksp:         [32m2.1.20-2.0.1[0m
+
+> Configure project :expo
+
+Using expo modules
+  - [32mjamsch-expo-speech-recognition[0m (0.1.0)
+  - [32mexpo-constants[0m (18.0.13)
+  - [32mexpo-eas-client[0m (1.0.8)
+  - [32mexpo-json-utils[0m (0.15.0)
+  - [32mexpo-manifests[0m (1.0.10)
+  - [32mexpo-modules-core[0m (3.0.29)
+  - [32mexpo-structured-headers[0m (5.0.0)
+  - [32mexpo-updates[0m (29.0.16)
+  - [32mexpo-updates-interface[0m (2.0.0)
+  - [33m[?][0m [32mexpo-application[0m (7.0.8)
+  - [33m[?][0m [32mexpo-asset[0m (12.0.12)
+  - [33m[?][0m [32mexpo-av[0m (16.0.8)
+  - [33m[?][0m [32mexpo-blur[0m (15.0.8)
+  - [33m[?][0m [32mexpo-clipboard[0m (8.0.8)
+  - [33m[?][0m [32mexpo-file-system[0m (19.0.21)
+  - [33m[?][0m [32mexpo-font[0m (14.0.10)
+  - [33m[?][0m [32mexpo-haptics[0m (15.0.8)
+  - [33m[?][0m [32mexpo-image[0m (3.0.11)
+  - [33m[?][0m [32mexpo-keep-awake[0m (15.0.8)
+  - [33m[?][0m [32mexpo-linking[0m (8.0.11)
+  - [33m[?][0m [32mexpo-localization[0m (17.0.8)
+  - [33m[?][0m [32mexpo-location[0m (19.0.8)
+  - [33m[?][0m [32mexpo-media-library[0m (18.2.1)
+  - [33m[?][0m [32mexpo-navigation-bar[0m (5.0.10)
+  - [33m[?][0m [32mexpo-notifications[0m (0.32.16)
+  - [33m[?][0m [32mexpo-sensors[0m (15.0.8)
+  - [33m[?][0m [32mexpo-splash-screen[0m (31.0.13)
+  - [33m[?][0m [32mexpo-sqlite[0m (16.0.10)
+  - [33m[?][0m [32mexpo-system-ui[0m (6.0.9)
+  - [33m[?][0m [32mexpo-web-browser[0m (15.0.10)
+
+
+[Incubating] Problems report is available at: file:///C:/s/android/build/reports/problems/problems-report.html
+c:\s\android\gradlew.bat : 
+At line:1 char:29
++ ... roduction'; c:\s\android\gradlew.bat 
+app:bundleRelease -x lint -x tes ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String)  
+   [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+FAILURE: Build completed with 11 failures.
+
+1: Task failed with an exception.
+-----------
+* What went wrong:
+Gradle could not start your build.
+> Cannot create service of type TaskExecuter using 
+method ProjectExecutionServices.createTaskExecuter() 
+as there is a problem with parameter #9 of type 
+ReservedFileSystemLocationRegistry.
+   > Cannot create service of type 
+ReservedFileSystemLocationRegistry using method Project
+ExecutionServices.createReservedFileLocationRegistry() 
+as there is a problem with parameter #1 of type 
+List<ReservedFileSystemLocation>.
+      > Could not create service of type 
+ExecutionHistoryStore using 
+ExecutionBuildServices.createExecutionHistoryStore().
+         > Cannot lock execution history cache 
+(C:\s\android\.gradle\8.14.3\executionHistory) as it 
+has already been locked by this process.
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log 
+output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+=======================================================
+=======================
+
+2: Task failed with an exception.
+-----------
+* What went wrong:
+Gradle could not start your build.
+> Cannot create service of type TaskExecuter using 
+method ProjectExecutionServices.createTaskExecuter() 
+as there is a problem with parameter #9 of type 
+ReservedFileSystemLocationRegistry.
+   > Cannot create service of type 
+ReservedFileSystemLocationRegistry using method Project
+ExecutionServices.createReservedFileLocationRegistry() 
+as there is a problem with parameter #1 of type 
+List<ReservedFileSystemLocation>.
+      > Could not create service of type 
+ExecutionHistoryStore using 
+ExecutionBuildServices.createExecutionHistoryStore().
+         > Cannot lock execution history cache 
+(C:\s\android\.gradle\8.14.3\executionHistory) as it 
+has already been locked by this process.
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log 
+output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+=======================================================
+=======================
+
+3: Task failed with an exception.
+-----------
+* What went wrong:
+Gradle could not start your build.
+> Cannot create service of type TaskExecuter using 
+method ProjectExecutionServices.createTaskExecuter() 
+as there is a problem with parameter #9 of type 
+ReservedFileSystemLocationRegistry.
+   > Cannot create service of type 
+ReservedFileSystemLocationRegistry using method Project
+ExecutionServices.createReservedFileLocationRegistry() 
+as there is a problem with parameter #1 of type 
+List<ReservedFileSystemLocation>.
+      > Could not create service of type 
+ExecutionHistoryStore using 
+ExecutionBuildServices.createExecutionHistoryStore().
+         > Cannot lock execution history cache 
+(C:\s\android\.gradle\8.14.3\executionHistory) as it 
+has already been locked by this process.
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log 
+output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+=======================================================
+=======================
+
+4: Task failed with an exception.
+-----------
+* What went wrong:
+Gradle could not start your build.
+> Cannot create service of type TaskExecuter using 
+method ProjectExecutionServices.createTaskExecuter() 
+as there is a problem with parameter #9 of type 
+ReservedFileSystemLocationRegistry.
+   > Cannot create service of type 
+ReservedFileSystemLocationRegistry using method Project
+ExecutionServices.createReservedFileLocationRegistry() 
+as there is a problem with parameter #1 of type 
+List<ReservedFileSystemLocation>.
+      > Could not create service of type 
+ExecutionHistoryStore using 
+ExecutionBuildServices.createExecutionHistoryStore().
+         > Cannot lock execution history cache 
+(C:\s\android\.gradle\8.14.3\executionHistory) as it 
+has already been locked by this process.
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log 
+output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+=======================================================
+=======================
+
+5: Task failed with an exception.
+-----------
+* What went wrong:
+Gradle could not start your build.
+> Cannot create service of type TaskExecuter using 
+method ProjectExecutionServices.createTaskExecuter() 
+as there is a problem with parameter #9 of type 
+ReservedFileSystemLocationRegistry.
+   > Cannot create service of type 
+ReservedFileSystemLocationRegistry using method Project
+ExecutionServices.createReservedFileLocationRegistry() 
+as there is a problem with parameter #1 of type 
+List<ReservedFileSystemLocation>.
+      > Could not create service of type 
+ExecutionHistoryStore using 
+ExecutionBuildServices.createExecutionHistoryStore().
+         > Cannot lock execution history cache 
+(C:\s\android\.gradle\8.14.3\executionHistory) as it 
+has already been locked by this process.
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log 
+output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+=======================================================
+=======================
+
+6: Task failed with an exception.
+-----------
+* What went wrong:
+Gradle could not start your build.
+> Cannot create service of type TaskExecuter using 
+method ProjectExecutionServices.createTaskExecuter() 
+as there is a problem with parameter #9 of type 
+ReservedFileSystemLocationRegistry.
+   > Cannot create service of type 
+ReservedFileSystemLocationRegistry using method Project
+ExecutionServices.createReservedFileLocationRegistry() 
+as there is a problem with parameter #1 of type 
+List<ReservedFileSystemLocation>.
+      > Could not create service of type 
+ExecutionHistoryStore using 
+ExecutionBuildServices.createExecutionHistoryStore().
+         > Cannot lock execution history cache 
+(C:\s\android\.gradle\8.14.3\executionHistory) as it 
+has already been locked by this process.
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log 
+output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+=======================================================
+=======================
+
+7: Task failed with an exception.
+-----------
+* What went wrong:
+Gradle could not start your build.
+> Cannot create service of type TaskExecuter using 
+method ProjectExecutionServices.createTaskExecuter() 
+as there is a problem with parameter #9 of type 
+ReservedFileSystemLocationRegistry.
+   > Cannot create service of type 
+ReservedFileSystemLocationRegistry using method Project
+ExecutionServices.createReservedFileLocationRegistry() 
+as there is a problem with parameter #1 of type 
+List<ReservedFileSystemLocation>.
+      > Could not create service of type 
+ExecutionHistoryStore using 
+ExecutionBuildServices.createExecutionHistoryStore().
+         > Cannot lock execution history cache 
+(C:\s\android\.gradle\8.14.3\executionHistory) as it 
+has already been locked by this process.
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log 
+output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+=======================================================
+=======================
+
+8: Task failed with an exception.
+-----------
+* What went wrong:
+Gradle could not start your build.
+> Cannot create service of type TaskExecuter using 
+method ProjectExecutionServices.createTaskExecuter() 
+as there is a problem with parameter #9 of type 
+ReservedFileSystemLocationRegistry.
+   > Cannot create service of type 
+ReservedFileSystemLocationRegistry using method Project
+ExecutionServices.createReservedFileLocationRegistry() 
+as there is a problem with parameter #1 of type 
+List<ReservedFileSystemLocation>.
+      > Could not create service of type 
+ExecutionHistoryStore using 
+ExecutionBuildServices.createExecutionHistoryStore().
+         > Cannot lock execution history cache 
+(C:\s\android\.gradle\8.14.3\executionHistory) as it 
+has already been locked by this process.
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log 
+output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+=======================================================
+=======================
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+28 actionable tasks: 28 up-to-date
+
+9: Task failed with an exception.
+-----------
+* What went wrong:
+Gradle could not start your build.
+> Cannot create service of type TaskExecuter using 
+method ProjectExecutionServices.createTaskExecuter() 
+as there is a problem with parameter #9 of type 
+ReservedFileSystemLocationRegistry.
+   > Cannot create service of type 
+ReservedFileSystemLocationRegistry using method Project
+ExecutionServices.createReservedFileLocationRegistry() 
+as there is a problem with parameter #1 of type 
+List<ReservedFileSystemLocation>.
+      > Could not create service of type 
+ExecutionHistoryStore using 
+ExecutionBuildServices.createExecutionHistoryStore().
+         > Cannot lock execution history cache 
+(C:\s\android\.gradle\8.14.3\executionHistory) as it 
+has already been locked by this process.
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log 
+output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+=======================================================
+=======================
+
+10: Task failed with an exception.
+-----------
+* What went wrong:
+Gradle could not start your build.
+> Cannot create service of type TaskExecuter using 
+method ProjectExecutionServices.createTaskExecuter() 
+as there is a problem with parameter #9 of type 
+ReservedFileSystemLocationRegistry.
+   > Cannot create service of type 
+ReservedFileSystemLocationRegistry using method Project
+ExecutionServices.createReservedFileLocationRegistry() 
+as there is a problem with parameter #1 of type 
+List<ReservedFileSystemLocation>.
+      > Could not create service of type 
+ExecutionHistoryStore using 
+ExecutionBuildServices.createExecutionHistoryStore().
+         > Cannot lock execution history cache 
+(C:\s\android\.gradle\8.14.3\executionHistory) as it 
+has already been locked by this process.
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log 
+output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+=======================================================
+=======================
+
+11: Task failed with an exception.
+-----------
+* What went wrong:
+Gradle could not start your build.
+> Cannot create service of type TaskExecuter using 
+method ProjectExecutionServices.createTaskExecuter() 
+as there is a problem with parameter #9 of type 
+ReservedFileSystemLocationRegistry.
+   > Cannot create service of type 
+ReservedFileSystemLocationRegistry using method Project
+ExecutionServices.createReservedFileLocationRegistry() 
+as there is a problem with parameter #1 of type 
+List<ReservedFileSystemLocation>.
+      > Could not create service of type 
+ExecutionHistoryStore using 
+ExecutionBuildServices.createExecutionHistoryStore().
+         > Cannot lock execution history cache 
+(C:\s\android\.gradle\8.14.3\executionHistory) as it 
+has already been locked by this process.
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log 
+output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+=======================================================
+=======================
+
+BUILD FAILED in 13s

@@ -1,0 +1,53 @@
+﻿Starting Metro Bundler
+Android client\index.js ΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæ  0.0% (0/1)
+| [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+| [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+| [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+| [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+| [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+| [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+| [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+| [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+| [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+| [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+Android client\index.js ΓûôΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæ  9.0% ( 20/136)
+Android client\index.js ΓûôΓûôΓûôΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæ 21.7% (178/450)
+Android client\index.js ΓûôΓûôΓûôΓûôΓûôΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæ 33.7% (480/846)
+Android client\index.js ΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæ 53.4% ( 756/1035)
+Android client\index.js ΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûæΓûæΓûæΓûæΓûæΓûæΓûæ 62.5% ( 966/1222)
+Android client\index.js ΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûæΓûæΓûæΓûæΓûæ 69.3% (1027/2924)
+Android client\index.js ΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûæΓûæΓûæΓûæΓûæ 69.3% (1521/3117)
+Android client\index.js ΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûæΓûæ 88.0% (2931/3142)
+Android client\index.js ΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûæΓûæ 93.6% (3315/3462)
+Android Bundling failed 37230ms client\index.js (3890 modules)
+node.exe : SyntaxError: SyntaxError: 
+C:\s\client\screens\PrayerStatsScreen.tsx: Identifier 
+'Share' has already been declared. (34:20)
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (SyntaxErr 
+   or: Sy...clared. (34:20):String) [], RemoteExcepti  
+  on
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+[0m [90m 32 |[39m [36mimport[39m { 
+[33mSpacing[39m[33m,[39m [33mBorderRadius[39m } 
+[36mfrom[39m [32m'@/constants/theme'[39m[33m;[39m
+ [90m 33 |[39m [36mimport[39m { useTranslation } 
+[36mfrom[39m 
+[32m'@/hooks/useTranslation'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 34 |[39m [36mimport[39m { 
+[33mArrowLeft[39m[33m,[39m [33mShare[39m } 
+[36mfrom[39m 
+[32m'lucide-react-native'[39m[33m;[39m
+ [90m    |[39m                     
+[31m[1m^[22m[39m
+ [90m 35 |[39m
+ [90m 36 |[39m [90m// 3D clay badge icons[39m
+ [90m 37 |[39m [36mconst[39m [33mICON_LOGGED[39m 
+[33m=[39m require([32m'../../assets/images/progress-
+tracker/logged.png'[39m)[33m;[39m[0m

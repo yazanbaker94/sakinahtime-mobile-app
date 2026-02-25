@@ -1,0 +1,42 @@
+﻿Starting Metro Bundler
+Android client\index.js ΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæ  0.0% (0/1)
+Android client\index.js ΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûæΓûæΓûæΓûæΓûæΓûæ 67.9% (1069/1297)
+| [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+| [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+| [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+| [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+| [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+Android client\index.js ΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûæΓûæΓûæΓûæ 77.8% (1377/3251)
+| [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+| [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+Android Bundling failed 9678ms client\index.js (3903 modules)
+node.exe : SyntaxError: SyntaxError: 
+C:\s\client\components\DuaCard.tsx: Unexpected token 
+(134:22)
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (SyntaxErr 
+   or: Sy... token (134:22):String) [], RemoteExcepti  
+  on
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+[0m [90m 132 |[39m           { 
+backgroundColor[33m:[39m 
+[32m`${theme.primary}15`[39m }
+ [90m 133 |[39m         ]}[33m>[39m
+[31m[1m>[22m[39m[90m 134 |[39m           
+[33m<[39m[33mIsstandard[39m [33m&&[39m 
+dua[33m.[39msource [33m===[39m [32m'quran'[39m 
+[33m?[39m [32m'book-open'[39m [33m:[39m 
+[32m'bookmark'[39m}
+ [90m     |[39m                       
+[31m[1m^[22m[39m
+ [90m 135 |[39m             
+size[33m=[39m{[35m12[39m}
+ [90m 136 |[39m             
+color[33m=[39m{theme[33m.[39mprimary}
+ [90m 137 |[39m           [33m/[39m[33m>[39m[0m

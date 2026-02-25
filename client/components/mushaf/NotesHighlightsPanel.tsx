@@ -90,7 +90,7 @@ export const NotesHighlightsPanel = React.memo(function NotesHighlightsPanel({
                     {Object.keys(notes).length > 0 && (
                         <View style={{ marginTop: Spacing.lg }}>
                             <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.lg, marginBottom: Spacing.md }}>
-                                <Image source={require('../../../assets/images/3d-images/Notes.png')} style={{ width: 36, height: 36, marginRight: 10 }} contentFit="contain" transition={0} cachePolicy="memory" />
+                                <Image source={require('../../../assets/images/3d-images/Notes.webp')} style={{ width: 36, height: 36, marginRight: 10 }} contentFit="contain" transition={0} cachePolicy="memory" />
                                 <ThemedText type="body" style={{ fontWeight: '700', fontSize: 15, letterSpacing: 0.5, opacity: 0.9 }}>
                                     {t('mushaf.notesSection')} ({Object.keys(notes).length})
                                 </ThemedText>
@@ -194,7 +194,7 @@ export const NotesHighlightsPanel = React.memo(function NotesHighlightsPanel({
                     {Object.keys(highlights).filter(key => !notes[key]).length > 0 && (
                         <View style={{ marginTop: Spacing.lg }}>
                             <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.lg, marginBottom: Spacing.md }}>
-                                <Image source={require('../../../assets/images/3d-images/Highlights.png')} style={{ width: 36, height: 36, marginRight: 10 }} contentFit="contain" transition={0} cachePolicy="memory" />
+                                <Image source={require('../../../assets/images/3d-images/Highlights.webp')} style={{ width: 36, height: 36, marginRight: 10 }} contentFit="contain" transition={0} cachePolicy="memory" />
                                 <ThemedText type="body" style={{ fontWeight: '700', fontSize: 15, letterSpacing: 0.5, opacity: 0.9 }}>
                                     {t('mushaf.highlightsSection')} ({Object.keys(highlights).filter(key => !notes[key]).length})
                                 </ThemedText>

@@ -390,7 +390,7 @@ export default function PrayerTimesScreen() {
                 top: 10,
               }} />
               <Image
-                source={require('../../assets/images/3d-images/location.png')}
+                source={require('../../assets/images/3d-images/location.webp')}
                 style={{ width: 120, height: 120 }}
                 contentFit="contain"
                 transition={0}

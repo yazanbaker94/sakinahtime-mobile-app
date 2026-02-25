@@ -19,7 +19,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { SUPPORTED_LANGUAGES } from "@/i18n";
 import * as Updates from "expo-updates";
 
-const ICON_THEMES = require('../../assets/images/3d-images/Themes.png');
+const ICON_THEMES = require('../../assets/images/3d-images/Themes.webp');
 
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets();

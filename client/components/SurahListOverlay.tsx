@@ -713,7 +713,7 @@ export const SurahListOverlay = React.memo(function SurahListOverlay({
                                 {recentPages.length === 0 ? (
                                     <View style={{ alignItems: 'center', paddingVertical: 60 }}>
                                         <Image
-                                            source={require('../../assets/images/3d-images/quranstand.png')}
+                                            source={require('../../assets/images/3d-images/quranstand.webp')}
                                             style={{ width: 96, height: 96, marginBottom: 20 }}
                                             contentFit="contain"
                                             transition={0}

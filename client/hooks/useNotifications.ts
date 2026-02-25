@@ -216,6 +216,7 @@ export function useNotifications() {
   // Helper to map API calc method ID to adhan-java string
   const getCalculationMethodString = (id: number) => {
     switch (id) {
+      case 0: return "SHIA";  // Not supported natively, falls to MWL
       case 1: return "KARACHI";
       case 2: return "ISNA";
       case 3: return "MUSLIM_WORLD_LEAGUE";
@@ -226,6 +227,10 @@ export function useNotifications() {
       case 9: return "KUWAIT";
       case 10: return "QATAR";
       case 11: return "SINGAPORE";
+      case 12: return "UOIF";
+      case 13: return "DIYANET";
+      case 14: return "RUSSIA";
+      case 15: return "MOONSIGHTING";
       case 16: return "JORDAN";
       default: return "MUSLIM_WORLD_LEAGUE";
     }
@@ -403,6 +408,12 @@ export function useNotifications() {
               asrEnabled: settings.prayers.Asr,
               maghribEnabled: settings.prayers.Maghrib,
               ishaEnabled: settings.prayers.Isha,
+              // Exact API times — single source of truth (matches prayer screen)
+              timeFajr: timings.Fajr,
+              timeDhuhr: timings.Dhuhr,
+              timeAsr: timings.Asr,
+              timeMaghrib: timings.Maghrib,
+              timeIsha: timings.Isha,
               // Iqama Sidecar Shadow config — native side schedules iqama
               // as a trailing shadow of each Azan via setExactAndAllowWhileIdle
               iqamaEnabled: iqamaSettings?.enabled ?? false,

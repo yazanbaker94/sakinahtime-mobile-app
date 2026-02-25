@@ -33,11 +33,11 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 // 3D Hero Assets
 const HERO_ASSETS: Record<string, any> = {
-    welcome: require('../../assets/images/3d-images/crescent.png'),
-    location: require('../../assets/images/3d-images/location.png'),
-    notifications: require('../../assets/images/3d-images/bell.png'),
-    widget: require('../../assets/images/3d-images/widget.png'),
-    done: require('../../assets/images/3d-images/tick.png'),
+    welcome: require('../../assets/images/3d-images/crescent.webp'),
+    location: require('../../assets/images/3d-images/location.webp'),
+    notifications: require('../../assets/images/3d-images/bell.webp'),
+    widget: require('../../assets/images/3d-images/widget.webp'),
+    done: require('../../assets/images/3d-images/tick.webp'),
 };
 
 interface OnboardingSlide {

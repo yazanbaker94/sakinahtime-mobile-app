@@ -243,7 +243,7 @@ export function StorageManagementScreen() {
               ]}
               onPress={() => navigation.navigate('AudioDownload')}
             >
-              <Image source={require('../../assets/images/3d-images/Audio.png')} style={{ width: 40, height: 40 }} contentFit="contain" transition={0} cachePolicy="memory" />
+              <Image source={require('../../assets/images/3d-images/Audio.webp')} style={{ width: 40, height: 40 }} contentFit="contain" transition={0} cachePolicy="memory" />
               <ThemedText type="small" style={{ fontWeight: '500', marginTop: Spacing.xs }}>
                 {t('storage.manageAudio')}
               </ThemedText>
@@ -274,7 +274,7 @@ export function StorageManagementScreen() {
                 <ActivityIndicator size="small" color={theme.primary} />
               ) : (
                 <>
-                  <Image source={require('../../assets/images/3d-images/book.png')} style={{ width: 40, height: 40 }} contentFit="contain" transition={0} cachePolicy="memory" />
+                  <Image source={require('../../assets/images/3d-images/book.webp')} style={{ width: 40, height: 40 }} contentFit="contain" transition={0} cachePolicy="memory" />
                   <ThemedText type="small" style={{ fontWeight: '500', marginTop: Spacing.xs }}>
                     {t('storage.wbwTitle')}
                   </ThemedText>
@@ -309,7 +309,7 @@ export function StorageManagementScreen() {
                 <ActivityIndicator size="small" color={isDark ? '#F87171' : '#EF4444'} />
               ) : (
                 <>
-                  <Image source={require('../../assets/images/3d-images/Clear.png')} style={{ width: 40, height: 40 }} contentFit="contain" transition={0} cachePolicy="memory" />
+                  <Image source={require('../../assets/images/3d-images/Clear.webp')} style={{ width: 40, height: 40 }} contentFit="contain" transition={0} cachePolicy="memory" />
                   <ThemedText type="small" style={{ fontWeight: '500', marginTop: Spacing.xs }}>
                     {t('storage.clearAll')}
                   </ThemedText>

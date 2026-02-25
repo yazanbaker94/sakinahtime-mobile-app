@@ -31,9 +31,9 @@ import { QURAN_CONSTANTS } from '@/constants/quran-constants';
 import { useTranslation } from '@/hooks/useTranslation';
 import { TactileSwitch } from '@/components/TactileSwitch';
 
-const ICON_CURRENT_STREAK = require('../../assets/images/3d-images/currentstreak.png');
-const ICON_LONGEST_STREAK = require('../../assets/images/3d-images/longeststreak.png');
-const ICON_TODAY_PROGRESS = require('../../assets/images/3d-images/todayprogress.png');
+const ICON_CURRENT_STREAK = require('../../assets/images/3d-images/currentstreak.webp');
+const ICON_LONGEST_STREAK = require('../../assets/images/3d-images/longeststreak.webp');
+const ICON_TODAY_PROGRESS = require('../../assets/images/3d-images/todayprogress.webp');
 
 const DUSTY_ROSE = '#C88E8D';
 const DUSTY_ROSE_SHADOW = '#C88E8D';

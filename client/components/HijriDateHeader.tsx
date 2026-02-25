@@ -14,7 +14,7 @@ import { EventWithDate } from '../services/IslamicEventsService';
 import { useTheme } from '../hooks/useTheme';
 import { useTranslation } from '../hooks/useTranslation';
 
-const moon3D = require('../../assets/images/3d-images/moon.png');
+const moon3D = require('../../assets/images/3d-images/moon.webp');
 
 interface HijriDateHeaderProps {
   hijriDate: HijriDate;

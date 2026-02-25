@@ -47,7 +47,7 @@ export function StorageOverview({ storageInfo, onManagePress }: StorageOverviewP
     ]}>
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <Image source={require('../../assets/images/3d-images/Storage.png')} style={{ width: 36, height: 36, marginRight: Spacing.sm }} contentFit="contain" transition={0} cachePolicy="memory" />
+          <Image source={require('../../assets/images/3d-images/Storage.webp')} style={{ width: 36, height: 36, marginRight: Spacing.sm }} contentFit="contain" transition={0} cachePolicy="memory" />
           <View>
             <ThemedText type="body" style={{ fontWeight: '600' }}>
               {t('storageOverview.storageUsed')}

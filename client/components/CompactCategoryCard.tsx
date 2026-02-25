@@ -16,12 +16,12 @@ import { AzkarCategory } from '@/data/azkar';
 
 // Map category IDs to 3D icon assets
 const CATEGORY_3D_ICONS: Record<string, any> = {
-  morning: require('../../assets/images/islamic-calendar-icons/dawn.png'),
-  evening: require('../../assets/images/islamic-calendar-icons/sunset.png'),
-  sleep: require('../../assets/images/islamic-calendar-icons/night.png'),
-  'after-prayer': require('../../assets/images/3d-images/AfterPrayer.png'),
-  waking: require('../../assets/images/3d-images/WakingUp.png'),
-  general: require('../../assets/images/3d-images/GeneralAzkar.png'),
+  morning: require('../../assets/images/islamic-calendar-icons/dawn.webp'),
+  evening: require('../../assets/images/islamic-calendar-icons/sunset.webp'),
+  sleep: require('../../assets/images/islamic-calendar-icons/night.webp'),
+  'after-prayer': require('../../assets/images/3d-images/AfterPrayer.webp'),
+  waking: require('../../assets/images/3d-images/WakingUp.webp'),
+  general: require('../../assets/images/3d-images/GeneralAzkar.webp'),
 };
 
 interface CompactCategoryCardProps {

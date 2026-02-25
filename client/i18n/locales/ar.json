@@ -989,7 +989,10 @@
     "storageFull": "المساحة ممتلئة. يرجى تحرير مساحة على جهازك والمحاولة مرة أخرى.",
     "downloadFailed": "فشل التحميل. يرجى التحقق من الاتصال ومساحة التخزين.",
     "tafsirNotAvailable": "لا يتوفر تفسير",
-    "tafsirNotAvailableVerse": "لا يتوفر تفسير لهذه الآية"
+    "tafsirNotAvailableVerse": "لا يتوفر تفسير لهذه الآية",
+    "downloadQuranTitle": "تحميل صفحات القرآن",
+    "downloadQuranDescription": "قم بتحميل صفحات المصحف بجودة عالية (~٦٥ ميجابايت) للقراءة بدون إنترنت. الصفحات ١-٥ متاحة فوراً.",
+    "downloading": "جاري تحميل المصحف..."
   },
   "mosqueFinder": {
     "nearbyMosques": "المساجد القريبة",

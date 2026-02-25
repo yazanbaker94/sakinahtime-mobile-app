@@ -28,11 +28,11 @@ import { useTranslation } from '@/hooks/useTranslation';
 
 // Reuse 3D celestial icons from the prayer calendar
 const PRAYER_3D_ICONS: Record<PrayerName, any> = {
-    Fajr: require('../../assets/images/islamic-calendar-icons/dawn.png'),
-    Dhuhr: require('../../assets/images/islamic-calendar-icons/noon.png'),
-    Asr: require('../../assets/images/islamic-calendar-icons/afternoon.png'),
-    Maghrib: require('../../assets/images/islamic-calendar-icons/sunset.png'),
-    Isha: require('../../assets/images/islamic-calendar-icons/night.png'),
+    Fajr: require('../../assets/images/islamic-calendar-icons/dawn.webp'),
+    Dhuhr: require('../../assets/images/islamic-calendar-icons/noon.webp'),
+    Asr: require('../../assets/images/islamic-calendar-icons/afternoon.webp'),
+    Maghrib: require('../../assets/images/islamic-calendar-icons/sunset.webp'),
+    Isha: require('../../assets/images/islamic-calendar-icons/night.webp'),
 };
 
 export default function QadaTrackerScreen() {

@@ -61,33 +61,33 @@ const DUA_ICON_MAP: Record<string, keyof typeof Feather.glyphMap> = {
 
 // 3D icon assets for dua categories
 const DUA_3D_ICONS: Record<string, any> = {
-  navigation: require('../../assets/images/3d-images/travel.png'),
-  coffee: require('../../assets/images/3d-images/eating.png'),
-  home: require('../../assets/images/3d-images/entering.png'),
-  moon: require('../../assets/images/3d-images/cloud.png'),
-  star: require('../../assets/images/3d-images/quranstand.png'),
-  heart: require('../../assets/images/3d-images/book.png'),
-  shield: require('../../assets/images/3d-images/globe.png'),
-  compass: require('../../assets/images/3d-images/Guidance.png'),
-  users: require('../../assets/images/3d-images/Family.png'),
-  gift: require('../../assets/images/3d-images/Gratitude.png'),
-  'refresh-cw': require('../../assets/images/3d-images/Forgiveness.png'),
-  cloud: require('../../assets/images/3d-images/Weather.png'),
+  navigation: require('../../assets/images/3d-images/travel.webp'),
+  coffee: require('../../assets/images/3d-images/eating.webp'),
+  home: require('../../assets/images/3d-images/entering.webp'),
+  moon: require('../../assets/images/3d-images/cloud.webp'),
+  star: require('../../assets/images/3d-images/quranstand.webp'),
+  heart: require('../../assets/images/3d-images/book.webp'),
+  shield: require('../../assets/images/3d-images/globe.webp'),
+  compass: require('../../assets/images/3d-images/Guidance.webp'),
+  users: require('../../assets/images/3d-images/Family.webp'),
+  gift: require('../../assets/images/3d-images/Gratitude.webp'),
+  'refresh-cw': require('../../assets/images/3d-images/Forgiveness.webp'),
+  cloud: require('../../assets/images/3d-images/Weather.webp'),
 };
 
-const CUSTOM_DUA_ICON = require('../../assets/images/3d-images/customdua.png');
+const CUSTOM_DUA_ICON = require('../../assets/images/3d-images/customdua.webp');
 
 // 3D icon assets for guide categories
 const GUIDE_3D_ICONS: Record<string, any> = {
-  worship: require('../../assets/images/3d-images/Worship.png'),
-  purification: require('../../assets/images/3d-images/Purification.png'),
-  hajj: require('../../assets/images/3d-images/quranstand.png'),
-  charity: require('../../assets/images/3d-images/Gratitude.png'),
-  fasting: require('../../assets/images/3d-images/cloud.png'),
-  funeral: require('../../assets/images/3d-images/book.png'),
-  character: require('../../assets/images/3d-images/Character.png'),
-  knowledge: require('../../assets/images/3d-images/Knowledge.png'),
-  finance: require('../../assets/images/3d-images/Finance.png'),
+  worship: require('../../assets/images/3d-images/Worship.webp'),
+  purification: require('../../assets/images/3d-images/Purification.webp'),
+  hajj: require('../../assets/images/3d-images/quranstand.webp'),
+  charity: require('../../assets/images/3d-images/Gratitude.webp'),
+  fasting: require('../../assets/images/3d-images/cloud.webp'),
+  funeral: require('../../assets/images/3d-images/book.webp'),
+  character: require('../../assets/images/3d-images/Character.webp'),
+  knowledge: require('../../assets/images/3d-images/Knowledge.webp'),
+  finance: require('../../assets/images/3d-images/Finance.webp'),
 };
 
 // Daily tips — simple rotating hadith reminders

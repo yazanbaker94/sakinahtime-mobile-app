@@ -14,7 +14,7 @@ import { Spacing, BorderRadius } from '@/constants/theme';
 import { useTranslation } from '@/hooks/useTranslation';
 import type { ManualLocation } from '@/types/location';
 
-const locationPin3D = require('../../assets/images/3d-images/location.png');
+const locationPin3D = require('../../assets/images/3d-images/location.webp');
 
 export default function LocationSettingsScreen() {
   const { theme, isDark } = useTheme();

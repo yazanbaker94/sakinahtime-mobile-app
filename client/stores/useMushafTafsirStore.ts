@@ -59,9 +59,9 @@ export const useMushafTafsirStore = create<MushafTafsirState>()(
             tafsirLanguageFilter: null,
             tafsirVerse: null,
             availableTafsirs: [
-                { id: 'jalalayn', name: 'Tafsir Jalalayn', language: 'ar', downloaded: true, url: null },
-                { id: 'abridged', name: 'Abridged Explanation', language: 'en', downloaded: true, url: null },
-                { id: 'sahih-international', name: 'Sahih International', language: 'en', downloaded: true, url: null },
+                { id: 'jalalayn', name: 'Tafsir Jalalayn', language: 'ar', downloaded: false, url: 'https://sakinahtime.com/tafsirs/tafsir-jalalayn.json' },
+                { id: 'abridged', name: 'Abridged Explanation', language: 'en', downloaded: false, url: 'https://sakinahtime.com/tafsirs/abridged-explanation-of-the-quran.json' },
+                { id: 'sahih-international', name: 'Sahih International', language: 'en', downloaded: false, url: 'https://sakinahtime.com/translations/en-sahih-international-inline-footnotes.json' },
                 { id: 'abdul-hameed-baqavi', name: 'Abdul Hameed Baqavi', language: 'ml', downloaded: false, url: 'https://sakinahtime.com/translations/abdul-hameed-baqavi-simple.json' },
                 { id: 'ahl-al-hadith-nepal', name: 'Ahl Al-Hadith Central Society', language: 'ne', downloaded: false, url: 'https://sakinahtime.com/translations/ahl-al-hadith-central-society-of-nepal-simple.json' },
                 { id: 'bayanul-furqan-koshur', name: 'Bayanul Furqan (Koshur)', language: 'ks', downloaded: false, url: 'https://sakinahtime.com/translations/bayanul-furqan-koshur-quran-simple.json' },

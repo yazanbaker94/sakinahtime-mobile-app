@@ -1,0 +1,61 @@
+﻿Starting Metro Bundler
+Android client\index.js ΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæΓûæ  0.0% (0/1)
+| [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+Android client\index.js ΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûæΓûæΓûæΓûæΓûæΓûæΓûæ 59.3% ( 975/1266)
+| [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+| [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+| [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+| [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+| [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+| [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+| [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+Android client\index.js ΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûæΓûæΓûæΓûæ 76.6% (1377/3253)
+| [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+| [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+Android client\index.js ΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûôΓûæΓûæ 93.2% (3310/3429)
+Android Bundling failed 11395ms client\index.js (3900 modules)
+node.exe : SyntaxError: SyntaxError: 
+C:\s\client\screens\AzkarScreen.tsx: Unexpected token 
+(388:29)
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (SyntaxErr 
+   or: Sy... token (388:29):String) [], RemoteExcepti  
+  on
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+[0m [90m 386 |[39m                             
+[33m<[39m[33mImage[39m source[33m=[39m{[33mDUA_3
+D_ICONS[39m[category[33m.[39micon]} 
+style[33m=[39m{{ width[33m:[39m 
+[35m28[39m[33m,[39m height[33m:[39m [35m28[39m 
+}} contentFit[33m=[39m[32m"contain"[39m 
+transition[33m=[39m{[35m0[39m} 
+cachePolicy[33m=[39m[32m"memory"[39m 
+[33m/[39m[33m>[39m
+ [90m 387 |[39m                           ) 
+[33m:[39m (
+[31m[1m>[22m[39m[90m 388 |[39m                   
+          {(() [33m=>[39m { [36mconst[39m 
+[33mIc[39m [33m=[39m 
+[33mDUA_ICON_MAP[39m[category[33m.[39micon] 
+[33m||[39m [33mStar[39m[33m;[39m 
+[36mreturn[39m [33m<[39m[33mIc[39m 
+size[33m=[39m{[35m24[39m} 
+color[33m=[39m{theme[33m.[39mprimary} 
+[33m/[39m[33m>[39m[33m;[39m })()}
+ [90m     |[39m                              
+[31m[1m^[22m[39m
+ [90m 389 |[39m                           )}
+ [90m 390 |[39m                         
+[33m<[39m[33m/[39m[33mView[39m[33m>[39m
+ [90m 391 |[39m                         
+[33m<[39m[33mThemedText[39m 
+type[33m=[39m[32m"small"[39m style[33m=[39m{style
+s[33m.[39mduaCategoryTitle}[33m>[39m{t([32m`duaCat
+egories.${category.id}`[39m)}[33m<[39m[33m/[39m[3
+3mThemedText[39m[33m>[39m[0m

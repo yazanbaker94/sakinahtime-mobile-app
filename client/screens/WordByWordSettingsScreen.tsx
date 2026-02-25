@@ -246,7 +246,7 @@ export default function WordByWordSettingsScreen() {
           borderColor: 'transparent',
         }]}>
           <Image
-            source={require('../../assets/images/3d-images/info.png')}
+            source={require('../../assets/images/3d-images/info.webp')}
             style={{
               width: 28,
               height: 28,

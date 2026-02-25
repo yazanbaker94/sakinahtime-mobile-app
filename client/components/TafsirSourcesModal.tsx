@@ -514,7 +514,7 @@ export const TafsirSourcesModal = React.memo(function TafsirSourcesModal() {
                                 }]}
                             >
                                 <View style={{ width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center', marginRight: 10 }}>
-                                    <Image source={require('../../assets/images/3d-images/globe.png')} style={{ width: 28, height: 28 }} contentFit="contain" transition={0} cachePolicy="memory" />
+                                    <Image source={require('../../assets/images/3d-images/globe.webp')} style={{ width: 28, height: 28 }} contentFit="contain" transition={0} cachePolicy="memory" />
                                 </View>
                                 <ThemedText type="body" style={{ fontWeight: '700', fontSize: 15, letterSpacing: 0.5, opacity: 0.9, flex: 1 }}>
                                     {t('mushaf.myTranslations')}
@@ -539,7 +539,7 @@ export const TafsirSourcesModal = React.memo(function TafsirSourcesModal() {
                                 }]}
                             >
                                 <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: 'transparent', alignItems: 'center', justifyContent: 'center', marginRight: 10 }}>
-                                    <Image source={require('../../assets/images/3d-images/book.png')} style={{ width: 28, height: 28 }} contentFit="contain" transition={0} cachePolicy="memory" />
+                                    <Image source={require('../../assets/images/3d-images/book.webp')} style={{ width: 28, height: 28 }} contentFit="contain" transition={0} cachePolicy="memory" />
                                 </View>
                                 <ThemedText type="body" style={{ fontWeight: '700', fontSize: 15, letterSpacing: 0.5, opacity: 0.9, flex: 1 }}>
                                     {t('mushaf.myTafsirs')}
@@ -564,7 +564,7 @@ export const TafsirSourcesModal = React.memo(function TafsirSourcesModal() {
                                 }]}
                             >
                                 <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: 'transparent', alignItems: 'center', justifyContent: 'center', marginRight: 10 }}>
-                                    <Image source={require('../../assets/images/3d-images/cloud.png')} style={{ width: 28, height: 28 }} contentFit="contain" transition={0} cachePolicy="memory" />
+                                    <Image source={require('../../assets/images/3d-images/cloud.webp')} style={{ width: 28, height: 28 }} contentFit="contain" transition={0} cachePolicy="memory" />
                                 </View>
                                 <ThemedText type="body" style={{ fontWeight: '700', fontSize: 15, letterSpacing: 0.5, opacity: 0.9, flex: 1 }}>
                                     {t('mushaf.availableToDownload')}

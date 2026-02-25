@@ -13,12 +13,12 @@ import { useTranslation } from '@/hooks/useTranslation';
 
 // 3D celestial icons
 const PRAYER_ICONS: Record<string, any> = {
-    Fajr: require('../../assets/images/islamic-calendar-icons/dawn.png'),
-    Sunrise: require('../../assets/images/islamic-calendar-icons/sunrise.png'),
-    Dhuhr: require('../../assets/images/islamic-calendar-icons/noon.png'),
-    Asr: require('../../assets/images/islamic-calendar-icons/afternoon.png'),
-    Maghrib: require('../../assets/images/islamic-calendar-icons/sunset.png'),
-    Isha: require('../../assets/images/islamic-calendar-icons/night.png'),
+    Fajr: require('../../assets/images/islamic-calendar-icons/dawn.webp'),
+    Sunrise: require('../../assets/images/islamic-calendar-icons/sunrise.webp'),
+    Dhuhr: require('../../assets/images/islamic-calendar-icons/noon.webp'),
+    Asr: require('../../assets/images/islamic-calendar-icons/afternoon.webp'),
+    Maghrib: require('../../assets/images/islamic-calendar-icons/sunset.webp'),
+    Isha: require('../../assets/images/islamic-calendar-icons/night.webp'),
 };
 
 const PRAYERS = [

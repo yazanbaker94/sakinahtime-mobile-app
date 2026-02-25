@@ -37,7 +37,6 @@ import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { MainTabParamList } from "@/navigation/MainTabNavigator";
 import { Spacing, BorderRadius } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
-import { Feather } from "@expo/vector-icons";
 import Animated, { SlideInUp, SlideOutDown, SlideInDown, useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as FileSystem from "expo-file-system/legacy";
@@ -66,7 +65,9 @@ import { useFeatureHint } from "@/hooks/useFeatureHint";
 import { useTranslation } from "@/hooks/useTranslation";
 import { NotesHighlightsPanel } from "@/components/mushaf/NotesHighlightsPanel";
 import { BookmarksPanel } from "@/components/mushaf/BookmarksPanel";
-
+import { quranImageService } from "@/services/QuranImageService";
+import { QuranDownloadPrompt } from "@/components/mushaf/QuranDownloadPrompt";
+import { loadTafsirData } from "@/services/TafsirAssetLoader";
 
 // === MODULE-LEVEL STABLE COMPONENTS ===
 // Smart PageSlot: Each slot independently subscribes to the Zustand store.
@@ -126,6 +127,7 @@ import { useMushafAnnotationStore } from "@/stores/useMushafAnnotationStore";
 import { useMushafAudioStore } from "@/stores/useMushafAudioStore";
 import { useMushafSearchStore } from "@/stores/useMushafSearchStore";
 import { useMushafTafsirStore } from "@/stores/useMushafTafsirStore";
+import { Feather } from "@expo/vector-icons";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -192,24 +194,19 @@ function MushafScreenContent() {
   // Network status for offline indicator
   const { isOnline } = useNetworkStatus();
 
+  // Quran image download state
+  const [quranPagesReady, setQuranPagesReady] = useState(false);
+  const [showDownloadPrompt, setShowDownloadPrompt] = useState(false);
 
-
-  // Preload tafsir data in background after 2 seconds (doesn't block startup)
-  React.useEffect(() => {
-    const preloadTimer = setTimeout(() => {
-      // Preload bundled tafsir files in background - they'll be cached by the bundler
-      Promise.all([
-        import("@/data/tafsir-jalalayn.json"),
-        import("@/data/abridged-explanation-of-the-quran.json"),
-        import("@/data/en-sahih-international-inline-footnotes.json"),
-      ]).then(() => {
-        console.log('ðŸ“š Tafsir data preloaded');
-      }).catch(e => {
-        console.log('Tafsir preload skipped:', e.message);
-      });
-    }, 2000);
-
-    return () => clearTimeout(preloadTimer);
+  // Initialize QuranImageService on mount
+  useEffect(() => {
+    quranImageService.initialize().then(() => {
+      if (quranImageService.arePagesDownloaded()) {
+        setQuranPagesReady(true);
+      } else {
+        setShowDownloadPrompt(true);
+      }
+    });
   }, []);
 
   // Log when coordinates are loaded
@@ -372,7 +369,6 @@ function MushafScreenContent() {
   const [isWordScrubberActive, setIsWordScrubberActive] = useState(false);
   const wordScrubberRef = useRef<WordScrubberHandle>(null);
 
-
   // currentAudioWordIndexRef is now computed inside MushafPageInner's local rAF loop.
   // This ref is shared across MushafPageInner instances for the coach mark check.
   const currentAudioWordIndexRef = React.useRef(-1);
@@ -414,8 +410,6 @@ function MushafScreenContent() {
     const timer = setTimeout(checkCoachMark, 2000);
     return () => clearTimeout(timer);
   }, [shouldShowHint]);
-
-
 
   // Function to remove Arabic diacritics and normalize text for better search matching
   const normalizeArabicText = (text: string) => {
@@ -472,9 +466,9 @@ function MushafScreenContent() {
     if (searchTafsir) {
       try {
         const [jalalayn, abridged, sahihInternational] = await Promise.all([
-          import("@/data/tafsir-jalalayn.json"),
-          import("@/data/abridged-explanation-of-the-quran.json"),
-          import("@/data/en-sahih-international-inline-footnotes.json")
+          loadTafsirData('jalalayn'),
+          loadTafsirData('abridged'),
+          loadTafsirData('sahih-international')
         ]);
         tafsirData = { jalalayn, abridged, sahihInternational };
       } catch (e) {
@@ -602,9 +596,6 @@ function MushafScreenContent() {
   }, [searchQuery, includeTafsirInSearch, performSearch]);
   const buttonOpacity = useSharedValue(1);
 
-
-
-
   // Navigation fade overlay animation
   const navigationFadeOpacity = useSharedValue(0);
 
@@ -716,12 +707,6 @@ function MushafScreenContent() {
     pagerViewRef.current?.setPageWithoutAnimation(pageIndex);
   }, []);
 
-
-
-
-
-
-
   const handleVersePress = useCallback((verse: VerseRegion) => {
     setSelectedVerse(verse);
   }, []);
@@ -739,69 +724,50 @@ function MushafScreenContent() {
       const key = selectedVerse.verseKey;
       let tafsirContent: { text: string } | null = null;
 
-      if (savedTafsirId === 'abridged') {
-        console.log('ðŸ“š [MushafScreen] Loading abridged tafsir...');
-        const enTafsir = await import("@/data/abridged-explanation-of-the-quran.json");
-        tafsirContent = { text: (enTafsir as any)[key]?.text || 'No tafsir available' };
-      } else if (savedTafsirId === 'jalalayn') {
-        const arTafsir = await import("@/data/tafsir-jalalayn.json");
-        tafsirContent = { text: (arTafsir as any)[key]?.text || 'No tafsir available' };
-      } else if (savedTafsirId === 'sahih-international') {
-        const sahihTafsir = await import("@/data/en-sahih-international-inline-footnotes.json");
-        tafsirContent = { text: (sahihTafsir as any)[key]?.t || 'No tafsir available' };
-      } else {
-        // Try to load from FileSystem
-        const tafsirPath = `${FileSystem.documentDirectory}tafsirs/${savedTafsirId}.json`;
-        const fileInfo = await FileSystem.getInfoAsync(tafsirPath);
+      // Try loading from downloaded file
+      const tafsirPath = `${FileSystem.documentDirectory}tafsirs/${savedTafsirId}.json`;
+      const fileInfo = await FileSystem.getInfoAsync(tafsirPath);
 
-        if (fileInfo.exists) {
-          const fileContent = await FileSystem.readAsStringAsync(tafsirPath);
-          const response = JSON.parse(fileContent);
-          const tafsirData = response.data || response;
+      if (fileInfo.exists) {
+        const fileContent = await FileSystem.readAsStringAsync(tafsirPath);
+        const response = JSON.parse(fileContent);
+        const tafsirData = response.data || response;
 
-          if (tafsirData.surahs) {
-            const surah = tafsirData.surahs.find((s: any) => s.number === selectedVerse.surah);
-            const ayah = surah?.ayahs?.find((a: any) => a.numberInSurah === selectedVerse.ayah);
-            tafsirContent = ayah ? { text: ayah.text || 'No tafsir available' } : { text: 'No tafsir available for this verse' };
-          } else {
-            const entry = tafsirData[key];
-
-            // Check if it's a word-by-word translation (has keys like "1:1:1", "1:1:2", etc.)
-            if (!entry && key) {
-              const [surah, ayah] = key.split(':');
-              const wordKeys = Object.keys(tafsirData).filter(k => k.startsWith(`${surah}:${ayah}:`));
-
-              if (wordKeys.length > 0) {
-                // Combine all words for this verse
-                const words = wordKeys
-                  .sort((a, b) => {
-                    const aWord = parseInt(a.split(':')[2]);
-                    const bWord = parseInt(b.split(':')[2]);
-                    return aWord - bWord;
-                  })
-                  .map(k => tafsirData[k])
-                  .join(' ');
-                tafsirContent = { text: words };
-              } else {
-                tafsirContent = { text: 'No tafsir available for this verse' };
-              }
-            } else {
-              tafsirContent = entry ? { text: entry.t || entry.text || entry.tafsir || entry.content || 'No tafsir available' } : { text: 'No tafsir available for this verse' };
-            }
-          }
+        if (tafsirData.surahs) {
+          const surah = tafsirData.surahs.find((s: any) => s.number === selectedVerse.surah);
+          const ayah = surah?.ayahs?.find((a: any) => a.numberInSurah === selectedVerse.ayah);
+          tafsirContent = ayah ? { text: ayah.text || 'No tafsir available' } : { text: 'No tafsir available for this verse' };
         } else {
-          // File was deleted - fall back to default tafsir and reset selection
-          console.log(`[MushafScreen] Tafsir file not found: ${savedTafsirId}, falling back to abridged`);
-          setSelectedTafsirId('abridged');
-          await AsyncStorage.setItem('@selectedTafsir', 'abridged');
-          // Mark as not downloaded
-          setAvailableTafsirs(prev => prev.map(t =>
-            t.id === savedTafsirId ? { ...t, downloaded: false } : t
-          ));
-          // Load default tafsir
-          const enTafsir = await import("@/data/abridged-explanation-of-the-quran.json");
-          tafsirContent = { text: (enTafsir as any)[key]?.text || 'No tafsir available' };
+          const entry = tafsirData[key];
+
+          // Check if it's a word-by-word translation (has keys like "1:1:1", "1:1:2", etc.)
+          if (!entry && key) {
+            const [surah, ayah] = key.split(':');
+            const wordKeys = Object.keys(tafsirData).filter(k => k.startsWith(`${surah}:${ayah}:`));
+
+            if (wordKeys.length > 0) {
+              // Combine all words for this verse
+              const words = wordKeys
+                .sort((a, b) => {
+                  const aWord = parseInt(a.split(':')[2]);
+                  const bWord = parseInt(b.split(':')[2]);
+                  return aWord - bWord;
+                })
+                .map(k => tafsirData[k])
+                .join(' ');
+              tafsirContent = { text: words };
+            } else {
+              tafsirContent = { text: 'No tafsir available for this verse' };
+            }
+          } else {
+            tafsirContent = entry ? { text: entry.t || entry.text || entry.tafsir || entry.content || 'No tafsir available' } : { text: 'No tafsir available for this verse' };
+          }
         }
+      } else {
+        // Tafsir not downloaded — open sources modal so user can download it
+        console.log(`[MushafScreen] Tafsir not downloaded: ${savedTafsirId}`);
+        setShowTafsirSources(true);
+        return;
       }
 
       setTafsirData(tafsirContent ? { en: tafsirContent, ar: tafsirContent } : null);
@@ -851,7 +817,7 @@ function MushafScreenContent() {
     highlights, notes, selectedVerse, highlightedVerse, handleVersePress,
     isWordScrubberActive, setIsWordScrubberActive, wordScrubberRef,
     setShowHifzStatusMenu, setHifzMenuVerseKey, setHifzMenuPosition,
-    currentAudioWordIndexRef, setSelectedVerse,
+    currentAudioWordIndexRef, setSelectedVerse, setShowDownloadPrompt,
   };
 
   // Create MushafPageInner ONCE — type is stable forever
@@ -865,7 +831,7 @@ function MushafScreenContent() {
         highlights, notes, selectedVerse, highlightedVerse, handleVersePress,
         isWordScrubberActive, setIsWordScrubberActive, wordScrubberRef,
         setShowHifzStatusMenu, setHifzMenuVerseKey, setHifzMenuPosition,
-        currentAudioWordIndexRef,
+        currentAudioWordIndexRef, setShowDownloadPrompt,
       } = pageInnerDepsRef.current;
 
       const [showOverlays, setShowOverlays] = React.useState(false);
@@ -965,6 +931,59 @@ function MushafScreenContent() {
         ?.ayahs.find((a: any) => a.numberInSurah === firstVerse?.ayah);
       const pageJuz = verseData?.juz || 1;
       const pageHizb = verseData?.hizbQuarter ? Math.ceil(verseData.hizbQuarter / 4) : 1;
+
+      // === SMART PLACEHOLDER: Intercept missing pages ===
+      // If image not available (pages 6-604 not downloaded), render download CTA
+      // instead of Image + interactive overlays. This prevents ghost taps,
+      // blind annotations, and other UX issues on empty pages.
+      const pageSource = mushafImages[pageNum];
+      if (!pageSource) {
+        return (
+          <View style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: 32,
+            gap: 16,
+          }}>
+            <Feather
+              name="cloud"
+              size={56}
+              color={isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.2)'}
+            />
+            <ThemedText type="h4" style={{
+              textAlign: 'center',
+            }}>
+              Mushaf Download Required
+            </ThemedText>
+            <ThemedText type="caption" style={{
+              textAlign: 'center',
+              lineHeight: 20,
+            }}>
+              Page {pageNum} requires the high-resolution Mushaf images (~68 MB).
+            </ThemedText>
+            <Pressable
+              onPress={() => setShowDownloadPrompt(true)}
+              style={({ pressed }) => ({
+                backgroundColor: pressed
+                  ? (isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.08)')
+                  : (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'),
+                paddingHorizontal: 28,
+                paddingVertical: 12,
+                borderRadius: 12,
+                marginTop: 4,
+              })}
+            >
+              <ThemedText type="body" style={{
+                fontWeight: '600',
+                color: theme.primary,
+              }}>
+                Download Now
+              </ThemedText>
+            </Pressable>
+          </View>
+        );
+      }
 
       return (
         <Pressable
@@ -1313,10 +1332,6 @@ function MushafScreenContent() {
   }
   const MushafPageInner = mushafPageInnerRef.current!;
 
-
-
-
-
   return (
     <ThemedView style={styles.container}>
       {/* Safe Area Top Spacer */}
@@ -1636,7 +1651,6 @@ function MushafScreenContent() {
       {/* Tafsir Sources Modal */}
       <TafsirSourcesModal />
 
-
       {/* Reciter Picker Modal */}
       <ReciterPickerModal />
 
@@ -1726,6 +1740,17 @@ function MushafScreenContent() {
         screenWidth={layout.screenWidth}
         imageHeight={layout.imageHeight}
       />
+
+      {/* Quran Download Prompt — shown when pages 6-604 aren't downloaded */}
+      {showDownloadPrompt && !quranPagesReady && (
+        <QuranDownloadPrompt
+          onDownloadComplete={() => {
+            setQuranPagesReady(true);
+            setShowDownloadPrompt(false);
+          }}
+          onDismiss={() => setShowDownloadPrompt(false)}
+        />
+      )}
     </ThemedView >
   );
 }

@@ -20,7 +20,7 @@
     "ios": "expo run:ios"
   },
   "dependencies": {
-    "@expo/vector-icons": "^15.0.2",
+    "@expo/vector-icons": "^15.1.1",
     "@jamsch/expo-speech-recognition": "^0.2.15",
     "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-native-community/datetimepicker": "8.4.4",
@@ -61,6 +61,7 @@
     "http-proxy-middleware": "^3.0.5",
     "i18n-js": "^4.5.2",
     "lodash": "^4.17.23",
+    "lucide-react-native": "^0.575.0",
     "pg": "^8.16.3",
     "react": "19.1.0",
     "react-dom": "19.1.0",
@@ -83,10 +84,10 @@
   "devDependencies": {
     "@expo/config-plugins": "^54.0.4",
     "@react-native-community/cli": "^20.0.2",
+    "@react-native/metro-config": "^0.84.0",
     "@types/express": "^4.17.21",
     "@types/node": "^24.10.0",
     "@types/react": "~19.1.0",
-    "babel-plugin-module-resolver": "^5.0.2",
     "better-sqlite3": "^12.6.2",
     "drizzle-kit": "^0.31.4",
     "eslint": "^9.25.0",
@@ -95,7 +96,9 @@
     "eslint-import-resolver-node": "^0.3.9",
     "eslint-plugin-prettier": "^5.5.4",
     "fast-check": "^4.5.2",
+    "glob": "^13.0.6",
     "prettier": "3.6.2",
+    "reselect": "^5.1.1",
     "sharp": "^0.34.5",
     "typescript": "~5.9.2",
     "vitest": "^4.0.16"
