@@ -5,10 +5,7 @@ import { networkService } from './NetworkService';
 import { offlineStorageService } from './OfflineStorageService';
 import { SURAH_INFO } from '../constants/offline';
 import wordAudioService from './WordAudioService';
-
-// Bundled timing data for Alafasy (loaded from local assets for instant availability)
-// @ts-ignore - JSON import
-import AlafasyTimingData from '../../assets/quran-align-data/Alafasy_128kbps.json';
+import QuranDatabase from './QuranDatabase';
 
 // Word timing data cache - loaded from GitHub or local cache
 interface WordTimingEntry {
@@ -410,10 +407,16 @@ class AudioService {
     try {
       let entries: WordTimingEntry[];
 
-      // Use bundled data for Alafasy (instant, no network required)
+      // Use SQLite data for Alafasy (loaded from quran.db — no inline JSON import)
       if (timingFileName === 'Alafasy_128kbps') {
-        console.log('[AudioService] Using bundled timing data for Alafasy_128kbps');
-        entries = AlafasyTimingData as WordTimingEntry[];
+        console.log('[AudioService] Loading Alafasy timing data from SQLite...');
+        try {
+          entries = await QuranDatabase.getAlafasyTimingData() as WordTimingEntry[];
+          console.log('[AudioService] Loaded', entries.length, 'Alafasy entries from SQLite');
+        } catch (dbError) {
+          console.log('[AudioService] SQLite load failed:', dbError);
+          entries = [];
+        }
       } else {
         // For other reciters, check local cache or download from GitHub
         const localPath = `${FileSystem.documentDirectory}timing-data/${timingFileName}.json`;

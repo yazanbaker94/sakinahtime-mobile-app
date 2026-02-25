@@ -184,6 +184,200 @@ insertCoordsAll();
 const coordCount = db.prepare('SELECT COUNT(*) as cnt FROM verse_coordinates').get();
 console.log(`   ✅ Inserted coordinates for ${coordCount.cnt} pages`);
 
+// ─────────────────────────────────────────────
+// 5. Audio timing data (Alafasy — bundled reciter)
+// ─────────────────────────────────────────────
+db.exec(`
+  CREATE TABLE audio_timing (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    reciter TEXT NOT NULL,
+    surah INTEGER NOT NULL,
+    ayah INTEGER NOT NULL,
+    segments TEXT NOT NULL,
+    deletions INTEGER NOT NULL DEFAULT 0,
+    insertions INTEGER NOT NULL DEFAULT 0,
+    transpositions INTEGER NOT NULL DEFAULT 0
+  )
+`);
+db.exec('CREATE INDEX idx_timing_reciter_surah_ayah ON audio_timing(reciter, surah, ayah)');
+
+const ALAFASY_PATH = path.join(__dirname, '..', 'assets', 'quran-align-data', 'Alafasy_128kbps.json');
+if (fs.existsSync(ALAFASY_PATH)) {
+    console.log('🔊 Loading Alafasy_128kbps.json (timing data)...');
+    const alafasyRaw = fs.readFileSync(ALAFASY_PATH, 'utf8');
+    const alafasyData = JSON.parse(alafasyRaw);
+
+    const insertTiming = db.prepare(
+        'INSERT INTO audio_timing (reciter, surah, ayah, segments, deletions, insertions, transpositions) VALUES (?, ?, ?, ?, ?, ?, ?)'
+    );
+
+    const insertTimingAll = db.transaction(() => {
+        for (const entry of alafasyData) {
+            if (!entry.segments || !Array.isArray(entry.segments)) continue;
+            insertTiming.run(
+                'Alafasy_128kbps',
+                entry.surah || 0,
+                entry.ayah || 0,
+                JSON.stringify(entry.segments),
+                (entry.stats && entry.stats.deletions) || 0,
+                (entry.stats && entry.stats.insertions) || 0,
+                (entry.stats && entry.stats.transpositions) || 0
+            );
+        }
+    });
+    insertTimingAll();
+    const timingCount = db.prepare('SELECT COUNT(*) as cnt FROM audio_timing').get();
+    console.log(`   ✅ Inserted ${timingCount.cnt} audio timing entries`);
+} else {
+    console.log('⚠️  Alafasy timing data not found, skipping');
+}
+
+// ─────────────────────────────────────────────
+// 6. Word meaning data (WBW translation, transliteration, frequencies)
+// ─────────────────────────────────────────────
+const WORDS_DIR = path.join(__dirname, '..', 'assets', 'words');
+
+// 6a. Quran words table
+db.exec(`
+  CREATE TABLE quran_words (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    surah INTEGER NOT NULL,
+    ayah INTEGER NOT NULL,
+    word_index INTEGER NOT NULL,
+    arabic TEXT NOT NULL
+  )
+`);
+db.exec('CREATE INDEX idx_words_surah_ayah ON quran_words(surah, ayah)');
+
+// 6b. Word-by-word translations
+db.exec(`
+  CREATE TABLE wbw_translation (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    surah INTEGER NOT NULL,
+    ayah INTEGER NOT NULL,
+    word_index INTEGER NOT NULL,
+    translation TEXT NOT NULL
+  )
+`);
+db.exec('CREATE INDEX idx_wbw_trans_surah_ayah ON wbw_translation(surah, ayah)');
+
+// 6c. Word-by-word transliteration
+db.exec(`
+  CREATE TABLE wbw_transliteration (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    surah INTEGER NOT NULL,
+    ayah INTEGER NOT NULL,
+    word_index INTEGER NOT NULL,
+    transliteration TEXT NOT NULL
+  )
+`);
+db.exec('CREATE INDEX idx_wbw_translit_surah_ayah ON wbw_transliteration(surah, ayah)');
+
+// 6d. Word frequencies
+db.exec(`
+  CREATE TABLE word_frequencies (
+    word TEXT PRIMARY KEY,
+    count INTEGER NOT NULL
+  )
+`);
+
+// Load and insert word data
+const QURAN_WORDS_PATH = path.join(WORDS_DIR, 'quran_words.json');
+const ENGLISH_WBW_PATH = path.join(WORDS_DIR, 'english-wbw-translation.json');
+const ENGLISH_TRANSLIT_PATH = path.join(WORDS_DIR, 'english-wbw-transliteration.json');
+const WORD_FREQ_PATH = path.join(WORDS_DIR, 'word-frequencies.json');
+
+if (fs.existsSync(QURAN_WORDS_PATH)) {
+    console.log('📝 Loading quran_words.json...');
+    const wordsData = JSON.parse(fs.readFileSync(QURAN_WORDS_PATH, 'utf8'));
+
+    const insertWord = db.prepare(
+        'INSERT INTO quran_words (surah, ayah, word_index, arabic) VALUES (?, ?, ?, ?)'
+    );
+    const insertWordsAll = db.transaction(() => {
+        for (const [key, words] of Object.entries(wordsData)) {
+            const [surah, ayah] = key.split(':').map(Number);
+            if (Array.isArray(words)) {
+                words.forEach((word, idx) => {
+                    insertWord.run(surah, ayah, idx, typeof word === 'string' ? word : JSON.stringify(word));
+                });
+            }
+        }
+    });
+    insertWordsAll();
+    const wordCount = db.prepare('SELECT COUNT(*) as cnt FROM quran_words').get();
+    console.log(`   ✅ Inserted ${wordCount.cnt} Quran words`);
+} else {
+    console.log('⚠️  quran_words.json not found, skipping');
+}
+
+if (fs.existsSync(ENGLISH_WBW_PATH)) {
+    console.log('📝 Loading english-wbw-translation.json...');
+    const transData = JSON.parse(fs.readFileSync(ENGLISH_WBW_PATH, 'utf8'));
+
+    const insertTrans = db.prepare(
+        'INSERT INTO wbw_translation (surah, ayah, word_index, translation) VALUES (?, ?, ?, ?)'
+    );
+    const insertTransAll = db.transaction(() => {
+        for (const [key, words] of Object.entries(transData)) {
+            const [surah, ayah] = key.split(':').map(Number);
+            if (Array.isArray(words)) {
+                words.forEach((word, idx) => {
+                    insertTrans.run(surah, ayah, idx, typeof word === 'string' ? word : JSON.stringify(word));
+                });
+            }
+        }
+    });
+    insertTransAll();
+    const transCount = db.prepare('SELECT COUNT(*) as cnt FROM wbw_translation').get();
+    console.log(`   ✅ Inserted ${transCount.cnt} WBW translations`);
+} else {
+    console.log('⚠️  english-wbw-translation.json not found, skipping');
+}
+
+if (fs.existsSync(ENGLISH_TRANSLIT_PATH)) {
+    console.log('📝 Loading english-wbw-transliteration.json...');
+    const translitData = JSON.parse(fs.readFileSync(ENGLISH_TRANSLIT_PATH, 'utf8'));
+
+    const insertTranslit = db.prepare(
+        'INSERT INTO wbw_transliteration (surah, ayah, word_index, transliteration) VALUES (?, ?, ?, ?)'
+    );
+    const insertTranslitAll = db.transaction(() => {
+        for (const [key, words] of Object.entries(translitData)) {
+            const [surah, ayah] = key.split(':').map(Number);
+            if (Array.isArray(words)) {
+                words.forEach((word, idx) => {
+                    insertTranslit.run(surah, ayah, idx, typeof word === 'string' ? word : JSON.stringify(word));
+                });
+            }
+        }
+    });
+    insertTranslitAll();
+    const translitCount = db.prepare('SELECT COUNT(*) as cnt FROM wbw_transliteration').get();
+    console.log(`   ✅ Inserted ${translitCount.cnt} WBW transliterations`);
+} else {
+    console.log('⚠️  english-wbw-transliteration.json not found, skipping');
+}
+
+if (fs.existsSync(WORD_FREQ_PATH)) {
+    console.log('📝 Loading word-frequencies.json...');
+    const freqData = JSON.parse(fs.readFileSync(WORD_FREQ_PATH, 'utf8'));
+
+    const insertFreq = db.prepare(
+        'INSERT INTO word_frequencies (word, count) VALUES (?, ?)'
+    );
+    const insertFreqAll = db.transaction(() => {
+        for (const [word, count] of Object.entries(freqData)) {
+            insertFreq.run(word, typeof count === 'number' ? count : parseInt(count));
+        }
+    });
+    insertFreqAll();
+    const freqCount = db.prepare('SELECT COUNT(*) as cnt FROM word_frequencies').get();
+    console.log(`   ✅ Inserted ${freqCount.cnt} word frequency entries`);
+} else {
+    console.log('⚠️  word-frequencies.json not found, skipping');
+}
+
 // ═══════════════════════════════════════════════
 //  FINALIZE
 // ═══════════════════════════════════════════════
@@ -202,12 +396,3 @@ const sizeMB = (stats.size / (1024 * 1024)).toFixed(2);
 console.log(`\n✅ quran.db built successfully!`);
 console.log(`   📁 Size: ${sizeMB} MB`);
 console.log(`   📍 Path: ${DB_PATH}`);
-
-// Compare with source JSONs
-const uthmaniSize = fs.statSync(path.join(DATA_DIR, 'quran-uthmani.json')).size;
-const englishSize = fs.statSync(path.join(DATA_DIR, 'quran-english.json')).size;
-const coordsSize = fs.statSync(COORDS_PATH).size;
-const totalJsonMB = ((uthmaniSize + englishSize + coordsSize) / (1024 * 1024)).toFixed(2);
-console.log(`\n   📊 Source JSON total: ${totalJsonMB} MB`);
-console.log(`   📊 SQLite DB:         ${sizeMB} MB`);
-console.log(`   📊 Savings:           ${(totalJsonMB - sizeMB).toFixed(2)} MB (${((1 - sizeMB / totalJsonMB) * 100).toFixed(1)}%)`);

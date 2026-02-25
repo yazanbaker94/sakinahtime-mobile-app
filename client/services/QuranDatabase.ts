@@ -54,6 +54,12 @@ export interface CombinedVerse {
 }
 
 const DB_NAME = 'quran.db';
+// Increment this when the bundled quran.db changes (new tables, data updates)
+// v1 = original (surahs, verses, coordinates)  
+// v2 = added audio_timing, gharib_words, wbw_english, wbw_transliteration, word_frequencies
+// v3 = added tafsir_jalalayn
+const DB_VERSION = 3;
+const DB_VERSION_KEY = '@quran_db_version';
 
 class QuranDatabaseService {
     private db: SQLite.SQLiteDatabase | null = null;
@@ -67,8 +73,7 @@ class QuranDatabaseService {
 
     /**
      * Initialize the database. Copies the pre-built .db from assets
-     * to the document directory on first launch. Subsequent launches
-     * open the existing file directly.
+     * to the document directory on first launch or when DB version changes.
      */
     async init(): Promise<void> {
         if (this.db) return;
@@ -84,8 +89,23 @@ class QuranDatabaseService {
         // Check if DB already exists in document directory
         const fileInfo = await FileSystem.getInfoAsync(dbPath);
 
-        if (!fileInfo.exists) {
-            // First launch: copy from assets
+        // Check DB version — re-copy if version changed (new tables added)
+        let needsCopy = !fileInfo.exists;
+        if (fileInfo.exists) {
+            try {
+                const AsyncStorage = (await import('@react-native-async-storage/async-storage')).default;
+                const storedVersion = await AsyncStorage.getItem(DB_VERSION_KEY);
+                if (!storedVersion || parseInt(storedVersion) < DB_VERSION) {
+                    console.log(`[QuranDB] DB version changed (${storedVersion} → ${DB_VERSION}), re-copying...`);
+                    await FileSystem.deleteAsync(dbPath, { idempotent: true });
+                    needsCopy = true;
+                }
+            } catch (e) {
+                console.log('[QuranDB] Error checking DB version:', e);
+            }
+        }
+
+        if (needsCopy) {
             console.log('[QuranDB] Copying database from assets...');
 
             // Ensure SQLite directory exists
@@ -104,6 +124,14 @@ class QuranDatabaseService {
                     to: dbPath,
                 });
                 console.log('[QuranDB] Database copied successfully');
+
+                // Store the version
+                try {
+                    const AsyncStorage = (await import('@react-native-async-storage/async-storage')).default;
+                    await AsyncStorage.setItem(DB_VERSION_KEY, DB_VERSION.toString());
+                } catch (e) {
+                    console.log('[QuranDB] Error saving DB version:', e);
+                }
             } else {
                 throw new Error('[QuranDB] Failed to download database asset');
             }
@@ -421,8 +449,223 @@ class QuranDatabaseService {
     }
 
     // ─────────────────────────────────────────────
+    // Tafsir data (replaces bundled JSON import)
+    // ─────────────────────────────────────────────
+
+    /**
+     * Get Tafsir Jalalayn text for a specific verse
+     * @param key - verse key in format "surah:ayah"
+     */
+    async getTafsirJalalayn(key: string): Promise<{ text: string } | null> {
+        const db = this.getDb();
+        try {
+            const [surahStr, ayahStr] = key.split(':');
+            const row = await db.getFirstAsync<{ text: string }>(
+                'SELECT text FROM tafsir_jalalayn WHERE surah = ? AND ayah = ?',
+                parseInt(surahStr), parseInt(ayahStr)
+            );
+            return row ? { text: row.text } : null;
+        } catch {
+            return null;
+        }
+    }
+
+    // ─────────────────────────────────────────────
+    // Audio timing data (replaces bundled JSON import)
+    // ─────────────────────────────────────────────
+
+    async getAlafasyTimingData(): Promise<Array<{
+        ayah: number;
+        surah: number;
+        segments: number[][];
+    }>> {
+        const db = this.getDb();
+
+        try {
+            const rows = await db.getAllAsync<{
+                surah: number;
+                ayah: number;
+                segments: string;
+            }>('SELECT surah, ayah, segments FROM audio_timing WHERE reciter = ?', 'Alafasy_128kbps');
+
+            return rows.map(r => ({
+                ayah: r.ayah,
+                surah: r.surah,
+                segments: JSON.parse(r.segments),
+            }));
+        } catch (e) {
+            console.log('[QuranDB] audio_timing table not found, returning empty array');
+            return [];
+        }
+    }
+
+    // ─────────────────────────────────────────────
+    // Word meaning data (replaces bundled JSON imports)
+    // ─────────────────────────────────────────────
+
+    /**
+     * Get Arabic غريب القرآن meanings for a verse
+     */
+    async getGharibWords(surah: number, ayah: number): Promise<Array<{
+        word: string;
+        meaning: string;
+        surah_name: string;
+    }>> {
+        const db = this.getDb();
+        try {
+            return await db.getAllAsync<{
+                word: string;
+                meaning: string;
+                surah_name: string;
+            }>('SELECT word, meaning, surah_name FROM gharib_words WHERE surah = ? AND ayah = ?', surah, ayah);
+        } catch {
+            return [];
+        }
+    }
+
+    /**
+     * Get total count of Arabic gharib words
+     */
+    async getGharibWordCount(): Promise<number> {
+        const db = this.getDb();
+        try {
+            const row = await db.getFirstAsync<{ cnt: number }>('SELECT COUNT(*) as cnt FROM gharib_words');
+            return row?.cnt || 0;
+        } catch {
+            return 0;
+        }
+    }
+
+    /**
+     * Get ALL Arabic gharib words (for building verse index)
+     */
+    async getAllGharibWords(): Promise<Array<{
+        surah: number;
+        ayah: number;
+        surah_name: string;
+        word: string;
+        meaning: string;
+    }>> {
+        const db = this.getDb();
+        try {
+            return await db.getAllAsync<{
+                surah: number;
+                ayah: number;
+                surah_name: string;
+                word: string;
+                meaning: string;
+            }>('SELECT surah, ayah, surah_name, word, meaning FROM gharib_words');
+        } catch {
+            return [];
+        }
+    }
+
+    /**
+     * Get English WBW translation by key (format: "surah:ayah:wordIdx")
+     */
+    async getWbwEnglish(key: string): Promise<string | null> {
+        const db = this.getDb();
+        try {
+            const row = await db.getFirstAsync<{ translation: string }>(
+                'SELECT translation FROM wbw_english WHERE key = ?', key
+            );
+            return row?.translation || null;
+        } catch {
+            return null;
+        }
+    }
+
+    /**
+     * Get all English WBW translations (for eager loading / caching)
+     */
+    async getAllWbwEnglish(): Promise<Record<string, string>> {
+        const db = this.getDb();
+        try {
+            const rows = await db.getAllAsync<{ key: string; translation: string }>(
+                'SELECT key, translation FROM wbw_english'
+            );
+            const result: Record<string, string> = {};
+            for (const row of rows) {
+                result[row.key] = row.translation;
+            }
+            return result;
+        } catch {
+            return {};
+        }
+    }
+
+    /**
+     * Get transliteration by key (format: "surah:ayah:wordIdx")
+     */
+    async getWbwTransliterationByKey(key: string): Promise<string | null> {
+        const db = this.getDb();
+        try {
+            const row = await db.getFirstAsync<{ transliteration: string }>(
+                'SELECT transliteration FROM wbw_transliteration WHERE key = ?', key
+            );
+            return row?.transliteration || null;
+        } catch {
+            return null;
+        }
+    }
+
+    /**
+     * Get all transliterations (for eager loading / caching)
+     */
+    async getAllWbwTransliteration(): Promise<Record<string, string>> {
+        const db = this.getDb();
+        try {
+            const rows = await db.getAllAsync<{ key: string; transliteration: string }>(
+                'SELECT key, transliteration FROM wbw_transliteration'
+            );
+            const result: Record<string, string> = {};
+            for (const row of rows) {
+                result[row.key] = row.transliteration;
+            }
+            return result;
+        } catch {
+            return {};
+        }
+    }
+
+    /**
+     * Get word frequency by normalized Arabic word
+     */
+    async getWordFrequencyCount(word: string): Promise<number> {
+        const db = this.getDb();
+        try {
+            const row = await db.getFirstAsync<{ count: number }>(
+                'SELECT count FROM word_frequencies WHERE word = ?', word
+            );
+            return row?.count || 0;
+        } catch {
+            return 0;
+        }
+    }
+
+    /**
+     * Get all word frequencies (for eager loading / caching)
+     */
+    async getAllWordFrequencies(): Promise<Record<string, number>> {
+        const db = this.getDb();
+        try {
+            const rows = await db.getAllAsync<{ word: string; count: number }>(
+                'SELECT word, count FROM word_frequencies'
+            );
+            const result: Record<string, number> = {};
+            for (const row of rows) {
+                result[row.word] = row.count;
+            }
+            return result;
+        } catch {
+            return {};
+        }
+    }
+
+    // ─────────────────────────────────────────────
     // Utility
     // ─────────────────────────────────────────────
+
 
     clearCache(): void {
         this.surahCache.clear();

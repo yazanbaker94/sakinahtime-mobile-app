@@ -206,8 +206,16 @@ class QuranImageServiceImpl {
             );
 
             const downloadResult = await this.downloadResumable.downloadAsync();
-            if (!downloadResult || downloadResult.status !== 200) {
-                throw new Error(`Download failed with status: ${downloadResult?.status}`);
+
+            // If downloadResult is undefined, the download was paused/cancelled
+            if (!downloadResult) {
+                // cancelDownload() sets downloadResumable to null
+                console.log('[QuranImageService] Download was cancelled');
+                return; // Exit silently — cancelDownload() already reset the state
+            }
+
+            if (downloadResult.status !== 200) {
+                throw new Error(`Download failed with status: ${downloadResult.status}`);
             }
             this.downloadResumable = null;
 

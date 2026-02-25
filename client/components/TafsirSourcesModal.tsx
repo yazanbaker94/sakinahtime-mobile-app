@@ -224,8 +224,9 @@ export const TafsirSourcesModal = React.memo(function TafsirSourcesModal() {
                     const enTafsir = await import("@/data/abridged-explanation-of-the-quran.json");
                     tafsirContent = { text: enTafsir[key]?.text || 'No tafsir available' };
                 } else if (tafsir.id === 'jalalayn') {
-                    const arTafsir = await import("@/data/tafsir-jalalayn.json");
-                    tafsirContent = { text: arTafsir[key]?.text || 'No tafsir available' };
+                    const QuranDatabase = (await import('@/services/QuranDatabase')).default;
+                    const tafsirResult = await QuranDatabase.getTafsirJalalayn(key);
+                    tafsirContent = tafsirResult || { text: 'No tafsir available' };
                 } else if (tafsir.id === 'sahih-international') {
                     const sahihTafsir = await import("@/data/en-sahih-international-inline-footnotes.json");
                     tafsirContent = { text: sahihTafsir[key]?.t || 'No tafsir available' };

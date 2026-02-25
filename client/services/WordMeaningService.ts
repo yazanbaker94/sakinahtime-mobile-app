@@ -2,16 +2,12 @@
  * WordMeaningService - Provides Arabic word meanings from غريب القرآن (Gharib Al-Quran)
  * and word-by-word translations in multiple languages
  * Data sources: 
- * - https://quran.mu.edu.sa/words.html (Arabic meanings)
- * - english-wbw-translation.json (English word-by-word - bundled)
+ * - quran.db SQLite (Arabic meanings, English WBW, transliteration, frequencies)
  * - Other languages downloaded on-demand from CDN
  */
 
-import quranWordsData from '../../assets/words/quran_words.json';
-import englishWbwData from '../../assets/words/english-wbw-translation.json';
-import englishTransliterationData from '../../assets/words/english-wbw-transliteration.json';
-import wordFrequencies from '../../assets/words/word-frequencies.json';
 import { QuranDataBridge } from './QuranDataBridge';
+import QuranDatabase from './QuranDatabase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as FileSystem from 'expo-file-system/legacy';
 
@@ -67,6 +63,40 @@ let cachedLanguage: string | null = null;
 // Cache for selected language (avoid AsyncStorage read on every word)
 let cachedSelectedLanguage: string | null = null;
 
+// In-memory caches loaded from SQLite (replaces inline JSON imports)
+let cachedEnglishWbw: Record<string, string> | null = null;
+let cachedTransliteration: Record<string, string> | null = null;
+let cachedFrequencies: Record<string, number> | null = null;
+let cachedGharibByVerse: Map<string, Array<{ word: string; meaning: string; surah_name: string }>> | null = null;
+let cachedGharibTotal: number | null = null;
+let wordDataInitialized = false;
+
+/**
+ * Initialize word data from SQLite into memory caches.
+ * Call this once at startup or when data is first needed.
+ */
+const initWordData = async (): Promise<void> => {
+  if (wordDataInitialized) return;
+  try {
+    // Load all data from SQLite in parallel
+    const [english, translit, freqs] = await Promise.all([
+      QuranDatabase.getAllWbwEnglish(),
+      QuranDatabase.getAllWbwTransliteration(),
+      QuranDatabase.getAllWordFrequencies(),
+    ]);
+    cachedEnglishWbw = english;
+    cachedTransliteration = translit;
+    cachedFrequencies = freqs;
+    wordDataInitialized = true;
+    console.log('[WordMeaningService] Loaded word data from SQLite:',
+      Object.keys(english).length, 'WBW,',
+      Object.keys(translit).length, 'translit,',
+      Object.keys(freqs).length, 'freq entries');
+  } catch (e) {
+    console.log('[WordMeaningService] Failed to load word data from SQLite:', e);
+  }
+};
+
 // Normalize Arabic text for matching (remove diacritics, normalize letters)
 const normalizeArabic = (text: string): string => {
   return text
@@ -97,18 +127,32 @@ const normalizeArabic = (text: string): string => {
 // Build lookup index by verse key for fast access (Arabic meanings)
 const wordsByVerse: Map<string, WordMeaning[]> = new Map();
 
-// Initialize the lookup index
-const initializeIndex = () => {
+// Initialize the gharib lookup index from SQLite
+const initializeIndex = async (): Promise<void> => {
   if (wordsByVerse.size > 0) return; // Already initialized
 
-  const words = (quranWordsData as any).words as WordMeaning[];
-  words.forEach(word => {
-    const verseKey = `${word.surah_number}:${word.verse}`;
-    if (!wordsByVerse.has(verseKey)) {
-      wordsByVerse.set(verseKey, []);
+  try {
+    // Load all gharib words from SQLite and group by verse
+    const rows = await QuranDatabase.getAllGharibWords();
+
+    for (const row of rows) {
+      const verseKey = `${row.surah}:${row.ayah}`;
+      if (!wordsByVerse.has(verseKey)) {
+        wordsByVerse.set(verseKey, []);
+      }
+      wordsByVerse.get(verseKey)!.push({
+        surah_number: row.surah,
+        surah_name: row.surah_name,
+        verse: row.ayah,
+        word: row.word,
+        meaning: row.meaning,
+      });
     }
-    wordsByVerse.get(verseKey)!.push(word);
-  });
+    cachedGharibTotal = rows.length;
+    console.log('[WordMeaningService] Loaded', rows.length, 'gharib entries from SQLite');
+  } catch (e) {
+    console.log('[WordMeaningService] Failed to load gharib data:', e);
+  }
 };
 
 /**
@@ -206,9 +250,10 @@ const loadWbwData = async (language: string): Promise<Record<string, string>> =>
     return cachedWbwData;
   }
 
-  // English is bundled
+  // English is loaded from SQLite cache
   if (language === 'english') {
-    cachedWbwData = englishWbwData as Record<string, string>;
+    await initWordData();
+    cachedWbwData = cachedEnglishWbw || {};
     cachedLanguage = 'english';
     return cachedWbwData;
   }
@@ -224,8 +269,9 @@ const loadWbwData = async (language: string): Promise<Record<string, string>> =>
   // Try to load downloaded language file
   const filename = WBW_LANGUAGES[language];
   if (!filename) {
-    // Fallback to English if unknown language
-    cachedWbwData = englishWbwData as Record<string, string>;
+    // Fallback to English (from SQLite cache) if unknown language
+    await initWordData();
+    cachedWbwData = cachedEnglishWbw || {};
     cachedLanguage = 'english';
     return cachedWbwData;
   }
@@ -255,8 +301,9 @@ const loadWbwData = async (language: string): Promise<Record<string, string>> =>
     } catch (_) { }
   }
 
-  // Fallback to English if file not found or error
-  cachedWbwData = englishWbwData as Record<string, string>;
+  // Fallback to English (from SQLite cache) if file not found or error
+  await initWordData();
+  cachedWbwData = cachedEnglishWbw || {};
   cachedLanguage = 'english';
   return cachedWbwData;
 };
@@ -287,6 +334,11 @@ export const clearWbwCache = () => {
  * Call this once on mount (e.g., when WordScrubber activates)
  */
 export const ensureWbwDataLoaded = async (): Promise<void> => {
+  // First ensure SQLite data is loaded into memory
+  await initWordData();
+  // Also load gharib index
+  await initializeIndex();
+  // Then load WBW data for selected language
   const lang = await getSelectedLanguage();
   await loadWbwData(lang);
 };
@@ -327,18 +379,18 @@ export const getSelectedWbwLanguageName = async (): Promise<string> => {
  * Get English word-by-word translation for a specific word (legacy sync function)
  */
 const getEnglishTranslation = (surah: number, ayah: number, wordIndex: number): string | null => {
-  // Word index in the JSON is 1-based
+  // Word index is 1-based in the data
   const key = `${surah}:${ayah}:${wordIndex + 1}`;
-  return (englishWbwData as any)[key] || null;
+  return cachedEnglishWbw?.[key] || null;
 };
 
 /**
  * Get transliteration for a specific word
  */
 const getTransliteration = (surah: number, ayah: number, wordIndex: number): string | null => {
-  // Word index in the JSON is 1-based
+  // Word index is 1-based in the data
   const key = `${surah}:${ayah}:${wordIndex + 1}`;
-  return (englishTransliterationData as any)[key] || null;
+  return cachedTransliteration?.[key] || null;
 };
 
 /**
@@ -350,7 +402,7 @@ const findArabicMeaning = (
   wordIndex: number,
   verseWords: string[]
 ): { word: string; meaning: string } | null => {
-  initializeIndex();
+  // Index must already be initialized via initializeIndex()
 
   const verseKey = `${surah}:${ayah}`;
   const meanings = wordsByVerse.get(verseKey);
@@ -400,7 +452,7 @@ const findArabicMeaning = (
  * Get all word meanings for a specific verse (for backward compatibility)
  */
 export const getWordMeaningsForVerse = (surah: number, ayah: number): { word: string; meaning: string; verseKey: string }[] => {
-  initializeIndex();
+  // Index must already be initialized via initializeIndex()
 
   const verseKey = `${surah}:${ayah}`;
   const meanings = wordsByVerse.get(verseKey) || [];
@@ -417,7 +469,7 @@ export const getWordMeaningsForVerse = (surah: number, ayah: number): { word: st
  */
 const getWordFrequency = (arabicWord: string): number => {
   const normalized = normalizeArabic(arabicWord);
-  return (wordFrequencies as Record<string, number>)[normalized] || 0;
+  return cachedFrequencies?.[normalized] || 0;
 };
 
 /**
@@ -483,7 +535,7 @@ export const findWordMeaningByIndex = async (
  * Check if a verse has any word meanings available (Arabic غريب القرآن)
  */
 export const hasWordMeanings = (surah: number, ayah: number): boolean => {
-  initializeIndex();
+  // Index must already be initialized via initializeIndex()
   const verseKey = `${surah}:${ayah}`;
   return wordsByVerse.has(verseKey);
 };
@@ -492,7 +544,7 @@ export const hasWordMeanings = (surah: number, ayah: number): boolean => {
  * Get total count of Arabic word meanings available
  */
 export const getTotalWordMeanings = (): number => {
-  return (quranWordsData as any).total_words || 0;
+  return cachedGharibTotal || 0;
 };
 
 export default {
