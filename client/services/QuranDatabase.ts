@@ -457,6 +457,7 @@ class QuranDatabaseService {
      * @param key - verse key in format "surah:ayah"
      */
     async getTafsirJalalayn(key: string): Promise<{ text: string } | null> {
+        await this.init();
         const db = this.getDb();
         try {
             const [surahStr, ayahStr] = key.split(':');
@@ -479,6 +480,7 @@ class QuranDatabaseService {
         surah: number;
         segments: number[][];
     }>> {
+        await this.init();
         const db = this.getDb();
 
         try {
