@@ -885,7 +885,10 @@
     "cellularWarning": "Вы не подключены к Wi-Fi. Загрузка использует около 65 МБ мобильных данных.",
     "retryDownload": "Повторить загрузку",
     "downloadMushaf": "Скачать Мусхаф",
-    "browseFirstFive": "Просмотреть первые 5 страниц"
+    "browseFirstFive": "Просмотреть первые 5 страниц",
+    "downloadRequired": "Требуется загрузка Мусхафа",
+    "pageRequiresDownload": "Страница {{page}} требует загрузки изображений Мусхафа в высоком разрешении (~65 МБ).",
+    "downloadNow": "Скачать сейчас"
   },
   "mosqueFinder": {
     "nearbyMosques": "Ближайшие мечети",

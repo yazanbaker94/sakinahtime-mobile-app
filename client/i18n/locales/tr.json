@@ -885,7 +885,10 @@
     "cellularWarning": "Wi-Fi'a bağlı değilsiniz. Bu indirme yaklaşık 65 MB mobil veri kullanacaktır.",
     "retryDownload": "Tekrar İndir",
     "downloadMushaf": "Mushaf'ı İndir",
-    "browseFirstFive": "İlk 5 sayfaya göz at"
+    "browseFirstFive": "İlk 5 sayfaya göz at",
+    "downloadRequired": "Mushaf İndirmesi Gerekli",
+    "pageRequiresDownload": "Sayfa {{page}} yüksek çözünürlüklü Mushaf görüntülerini gerektiriyor (~65 MB).",
+    "downloadNow": "Şimdi İndir"
   },
   "mosqueFinder": {
     "nearbyMosques": "Yakındaki Camiler",

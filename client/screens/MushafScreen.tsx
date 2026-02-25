@@ -817,7 +817,7 @@ function MushafScreenContent() {
     highlights, notes, selectedVerse, highlightedVerse, handleVersePress,
     isWordScrubberActive, setIsWordScrubberActive, wordScrubberRef,
     setShowHifzStatusMenu, setHifzMenuVerseKey, setHifzMenuPosition,
-    currentAudioWordIndexRef, setSelectedVerse, setShowDownloadPrompt,
+    currentAudioWordIndexRef, setSelectedVerse, setShowDownloadPrompt, t,
   };
 
   // Create MushafPageInner ONCE — type is stable forever
@@ -831,7 +831,7 @@ function MushafScreenContent() {
         highlights, notes, selectedVerse, highlightedVerse, handleVersePress,
         isWordScrubberActive, setIsWordScrubberActive, wordScrubberRef,
         setShowHifzStatusMenu, setHifzMenuVerseKey, setHifzMenuPosition,
-        currentAudioWordIndexRef, setShowDownloadPrompt,
+        currentAudioWordIndexRef, setShowDownloadPrompt, t,
       } = pageInnerDepsRef.current;
 
       const [showOverlays, setShowOverlays] = React.useState(false);
@@ -954,13 +954,13 @@ function MushafScreenContent() {
             <ThemedText type="h4" style={{
               textAlign: 'center',
             }}>
-              Mushaf Download Required
+              {t('mushaf.downloadRequired')}
             </ThemedText>
             <ThemedText type="caption" style={{
               textAlign: 'center',
               lineHeight: 20,
             }}>
-              Page {pageNum} requires the high-resolution Mushaf images (~68 MB).
+              {t('mushaf.pageRequiresDownload', { page: pageNum })}
             </ThemedText>
             <Pressable
               onPress={() => setShowDownloadPrompt(true)}
@@ -978,7 +978,7 @@ function MushafScreenContent() {
                 fontWeight: '600',
                 color: theme.primary,
               }}>
-                Download Now
+                {t('mushaf.downloadNow')}
               </ThemedText>
             </Pressable>
           </View>

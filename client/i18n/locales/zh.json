@@ -885,7 +885,10 @@
     "cellularWarning": "您未连接Wi-Fi。此下载将使用约65 MB的移动数据。",
     "retryDownload": "重新下载",
     "downloadMushaf": "下载古兰经",
-    "browseFirstFive": "浏览前5页"
+    "browseFirstFive": "浏览前5页",
+    "downloadRequired": "需要下载古兰经",
+    "pageRequiresDownload": "第 {{page}} 页需要下载高分辨率古兰经图片（约65 MB）。",
+    "downloadNow": "立即下载"
   },
   "mosqueFinder": {
     "nearbyMosques": "附近清真寺",

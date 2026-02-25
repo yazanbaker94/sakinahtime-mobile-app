@@ -885,7 +885,10 @@
     "cellularWarning": "Sie sind nicht mit WLAN verbunden. Dieser Download verbraucht ca. 65 MB mobile Daten.",
     "retryDownload": "Erneut herunterladen",
     "downloadMushaf": "Mushaf herunterladen",
-    "browseFirstFive": "Erste 5 Seiten durchsuchen"
+    "browseFirstFive": "Erste 5 Seiten durchsuchen",
+    "downloadRequired": "Mushaf-Download erforderlich",
+    "pageRequiresDownload": "Seite {{page}} erfordert die hochauflösenden Mushaf-Bilder (~65 MB).",
+    "downloadNow": "Jetzt herunterladen"
   },
   "mosqueFinder": {
     "nearbyMosques": "Moscheen in der Nähe",

@@ -885,7 +885,10 @@
     "cellularWarning": "আপনি Wi-Fi তে সংযুক্ত নন। এই ডাউনলোডে প্রায় ৬৫ এমবি মোবাইল ডেটা ব্যবহার হবে।",
     "retryDownload": "পুনরায় ডাউনলোড করুন",
     "downloadMushaf": "মুসহাফ ডাউনলোড করুন",
-    "browseFirstFive": "প্রথম ৫ পৃষ্ঠা দেখুন"
+    "browseFirstFive": "প্রথম ৫ পৃষ্ঠা দেখুন",
+    "downloadRequired": "মুসহাফ ডাউনলোড প্রয়োজন",
+    "pageRequiresDownload": "পৃষ্ঠা {{page}} তে উচ্চ-রেজোলিউশনের মুসহাফ ছবি প্রয়োজন (~৬৫ এমবি)।",
+    "downloadNow": "এখনই ডাউনলোড করুন"
   },
   "mosqueFinder": {
     "nearbyMosques": "কাছের মসজিদ",

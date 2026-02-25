@@ -889,7 +889,10 @@
     "cellularWarning": "أنت غير متصل بشبكة Wi-Fi. سيستهلك هذا التحميل حوالي ٦٥ ميغابايت من بيانات الجوال.",
     "retryDownload": "إعادة التحميل",
     "downloadMushaf": "تحميل المصحف",
-    "browseFirstFive": "تصفح أول ٥ صفحات"
+    "browseFirstFive": "تصفح أول ٥ صفحات",
+    "downloadRequired": "تحميل المصحف مطلوب",
+    "pageRequiresDownload": "الصفحة {{page}} تتطلب تحميل صور المصحف بدقة عالية (~٦٥ ميغابايت).",
+    "downloadNow": "تحميل الآن"
   },
   "mosqueFinder": {
     "nearbyMosques": "المساجد القريبة",

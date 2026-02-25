@@ -892,7 +892,10 @@
     "cellularWarning": "You're not on Wi-Fi. This download will use ~65 MB of cellular data.",
     "retryDownload": "Retry Download",
     "downloadMushaf": "Download Mushaf",
-    "browseFirstFive": "Browse first 5 pages"
+    "browseFirstFive": "Browse first 5 pages",
+    "downloadRequired": "Mushaf Download Required",
+    "pageRequiresDownload": "Page {{page}} requires the high-resolution Mushaf images (~65 MB).",
+    "downloadNow": "Download Now"
   },
   "mosqueFinder": {
     "nearbyMosques": "Nearby Mosques",

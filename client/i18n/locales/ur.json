@@ -885,7 +885,10 @@
     "cellularWarning": "آپ Wi-Fi سے منسلک نہیں ہیں۔ یہ ڈاؤن لوڈ تقریباً ۶۵ ایم بی موبائل ڈیٹا استعمال کرے گا۔",
     "retryDownload": "دوبارہ ڈاؤن لوڈ کریں",
     "downloadMushaf": "مصحف ڈاؤن لوڈ کریں",
-    "browseFirstFive": "پہلے ۵ صفحات دیکھیں"
+    "browseFirstFive": "پہلے ۵ صفحات دیکھیں",
+    "downloadRequired": "مصحف ڈاؤن لوڈ ضروری ہے",
+    "pageRequiresDownload": "صفحہ {{page}} کے لیے اعلیٰ معیار کے مصحف تصاویر ڈاؤن لوڈ کرنا ضروری ہے (~۶۵ ایم بی)۔",
+    "downloadNow": "ابھی ڈاؤن لوڈ کریں"
   },
   "mosqueFinder": {
     "nearbyMosques": "قریبی مساجد",
