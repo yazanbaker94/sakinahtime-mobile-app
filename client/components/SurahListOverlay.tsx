@@ -357,17 +357,13 @@ export const SurahListOverlay = React.memo(function SurahListOverlay({
                     verseData = fullData[result.verseKey];
                 } else {
                     let fullData;
+                    const QuranDatabase = (await import('@/services/QuranDatabase')).default;
                     if (result.tafsirSource === 'jalalayn') {
-                        const QuranDatabase = (await import('@/services/QuranDatabase')).default;
-                        const tafsirResult = await QuranDatabase.getTafsirJalalayn(result.verseKey);
-                        verseData = tafsirResult;
+                        verseData = await QuranDatabase.getTafsirJalalayn(result.verseKey);
                     } else if (result.tafsirSource === 'sahih-international') {
-                        fullData = await import("@/data/en-sahih-international-inline-footnotes.json");
+                        verseData = await QuranDatabase.getTafsirSahihIntl(result.verseKey);
                     } else {
-                        fullData = await import("@/data/abridged-explanation-of-the-quran.json");
-                    }
-                    if (fullData) {
-                        verseData = fullData[result.verseKey];
+                        verseData = await QuranDatabase.getTafsirAbridged(result.verseKey);
                     }
                 }
 

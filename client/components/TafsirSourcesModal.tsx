@@ -220,16 +220,15 @@ export const TafsirSourcesModal = React.memo(function TafsirSourcesModal() {
                 const key = tafsirVerse.verseKey;
                 let tafsirContent = null;
 
-                if (tafsir.id === 'abridged') {
-                    const enTafsir = await import("@/data/abridged-explanation-of-the-quran.json");
-                    tafsirContent = { text: enTafsir[key]?.text || 'No tafsir available' };
-                } else if (tafsir.id === 'jalalayn') {
+                if (tafsir.id === 'abridged' || tafsir.id === 'jalalayn' || tafsir.id === 'sahih-international') {
                     const QuranDatabase = (await import('@/services/QuranDatabase')).default;
-                    const tafsirResult = await QuranDatabase.getTafsirJalalayn(key);
-                    tafsirContent = tafsirResult || { text: 'No tafsir available' };
-                } else if (tafsir.id === 'sahih-international') {
-                    const sahihTafsir = await import("@/data/en-sahih-international-inline-footnotes.json");
-                    tafsirContent = { text: sahihTafsir[key]?.t || 'No tafsir available' };
+                    if (tafsir.id === 'abridged') {
+                        tafsirContent = (await QuranDatabase.getTafsirAbridged(key)) || { text: 'No tafsir available' };
+                    } else if (tafsir.id === 'jalalayn') {
+                        tafsirContent = (await QuranDatabase.getTafsirJalalayn(key)) || { text: 'No tafsir available' };
+                    } else {
+                        tafsirContent = (await QuranDatabase.getTafsirSahihIntl(key)) || { text: 'No tafsir available' };
+                    }
                 } else {
                     const tafsirPath = `${FileSystem.documentDirectory}tafsirs/${tafsir.id}.json`;
                     const fileInfo = await FileSystem.getInfoAsync(tafsirPath);

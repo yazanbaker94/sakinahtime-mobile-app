@@ -58,7 +58,8 @@ const DB_NAME = 'quran.db';
 // v1 = original (surahs, verses, coordinates)  
 // v2 = added audio_timing, gharib_words, wbw_english, wbw_transliteration, word_frequencies
 // v3 = added tafsir_jalalayn
-const DB_VERSION = 3;
+// v4 = added tafsir_abridged, tafsir_sahih_intl
+const DB_VERSION = 4;
 const DB_VERSION_KEY = '@quran_db_version';
 
 class QuranDatabaseService {
@@ -463,6 +464,38 @@ class QuranDatabaseService {
             const [surahStr, ayahStr] = key.split(':');
             const row = await db.getFirstAsync<{ text: string }>(
                 'SELECT text FROM tafsir_jalalayn WHERE surah = ? AND ayah = ?',
+                parseInt(surahStr), parseInt(ayahStr)
+            );
+            return row ? { text: row.text } : null;
+        } catch {
+            return null;
+        }
+    }
+
+    /** Get Abridged Explanation text for a specific verse */
+    async getTafsirAbridged(key: string): Promise<{ text: string } | null> {
+        await this.init();
+        const db = this.getDb();
+        try {
+            const [surahStr, ayahStr] = key.split(':');
+            const row = await db.getFirstAsync<{ text: string }>(
+                'SELECT text FROM tafsir_abridged WHERE surah = ? AND ayah = ?',
+                parseInt(surahStr), parseInt(ayahStr)
+            );
+            return row ? { text: row.text } : null;
+        } catch {
+            return null;
+        }
+    }
+
+    /** Get Sahih International translation for a specific verse */
+    async getTafsirSahihIntl(key: string): Promise<{ text: string } | null> {
+        await this.init();
+        const db = this.getDb();
+        try {
+            const [surahStr, ayahStr] = key.split(':');
+            const row = await db.getFirstAsync<{ text: string }>(
+                'SELECT text FROM tafsir_sahih_intl WHERE surah = ? AND ayah = ?',
                 parseInt(surahStr), parseInt(ayahStr)
             );
             return row ? { text: row.text } : null;
