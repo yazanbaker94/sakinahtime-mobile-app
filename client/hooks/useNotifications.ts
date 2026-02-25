@@ -353,7 +353,12 @@ export function useNotifications() {
     await Notifications.cancelAllScheduledNotificationsAsync();
   };
 
-  const schedulePrayerNotifications = useCallback(async (timings: PrayerTimes, azanEnabled: boolean = false, iqamaSettings?: IqamaSettings) => {
+  const schedulePrayerNotifications = useCallback(async (
+    timings: PrayerTimes,
+    azanEnabled: boolean = false,
+    iqamaSettings?: IqamaSettings,
+    adjustments?: { Fajr?: number; Dhuhr?: number; Asr?: number; Maghrib?: number; Isha?: number }
+  ) => {
     // For expo notifications, we need both enabled and permission
     const canScheduleExpoNotifications = settings.enabled && permission === "granted";
 
@@ -376,6 +381,7 @@ export function useNotifications() {
       azanEnabled,
       iqamaEnabled: iqamaSettings?.enabled,
       iqamaDelay: iqamaSettings?.delayMinutes,
+      adjustments: adjustments,
     });
 
     if (lastScheduledRef.current === scheduleKey && !shouldForceReschedule()) {
@@ -423,6 +429,12 @@ export function useNotifications() {
               iqamaAsrEnabled: iqamaSettings?.prayers?.Asr ?? true,
               iqamaMaghribEnabled: iqamaSettings?.prayers?.Maghrib ?? true,
               iqamaIshaEnabled: iqamaSettings?.prayers?.Isha ?? true,
+              // Adjustments (passed as minutes)
+              offsetFajr: adjustments?.Fajr || 0,
+              offsetDhuhr: adjustments?.Dhuhr || 0,
+              offsetAsr: adjustments?.Asr || 0,
+              offsetMaghrib: adjustments?.Maghrib || 0,
+              offsetIsha: adjustments?.Isha || 0,
             });
             console.log('✅ Native azan + iqama configured and Daisy Chain triggered:', result);
           } else {

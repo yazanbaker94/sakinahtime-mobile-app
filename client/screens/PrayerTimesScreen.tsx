@@ -29,6 +29,7 @@ import { useAzan } from "@/hooks/useAzan";
 import { useIqamaSettings } from "@/hooks/useIqamaSettings";
 import { usePrayerAdjustments, applyAdjustment } from "@/hooks/usePrayerAdjustments";
 import { usePrayerLog } from "@/hooks/usePrayerLog";
+import { widgetDataService } from "@/services/WidgetDataService";
 import { OfflineIndicator } from "@/components/OfflineIndicator";
 import { PrayerStatusIndicator } from "@/components/PrayerStatusIndicator";
 import { StreakCard } from "@/components/StreakCard";
@@ -174,6 +175,14 @@ export default function PrayerTimesScreen() {
     }
   }, [calculationMethod, latitude, longitude, refetch]);
 
+  // Push prayer data to Android home screen widget whenever it refreshes
+  useEffect(() => {
+    if (prayerData?.timings && Platform.OS === 'android') {
+      const locationLabel = city && country ? `${city}, ${country}` : city || country || '';
+      widgetDataService.updatePrayerTimes(prayerData.timings, locationLabel);
+    }
+  }, [prayerData?.timings, city, country]);
+
   // Sync tab bar color with current prayer's time-of-day palette
   const PRAYER_COLORS: Record<string, string> = {
     Fajr: '#5B8FB9',    // Dawn blue
@@ -261,7 +270,7 @@ export default function PrayerTimesScreen() {
         Isha: applyAdjustment(prayerData.timings.Isha, prayerAdjustments.Isha),
       };
 
-      schedulePrayerNotifications(adjustedTimings, azanSettings.enabled);
+      schedulePrayerNotifications(adjustedTimings, azanSettings.enabled, undefined, prayerAdjustments);
     }
   }, [
     prayerData?.timings,

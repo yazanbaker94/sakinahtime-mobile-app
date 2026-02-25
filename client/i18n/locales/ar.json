@@ -992,7 +992,14 @@
     "tafsirNotAvailableVerse": "لا يتوفر تفسير لهذه الآية",
     "downloadQuranTitle": "تحميل صفحات القرآن",
     "downloadQuranDescription": "قم بتحميل صفحات المصحف بجودة عالية (~٦٥ ميجابايت) للقراءة بدون إنترنت. الصفحات ١-٥ متاحة فوراً.",
-    "downloading": "جاري تحميل المصحف..."
+    "downloading": "جاري تحميل المصحف...",
+    "extractingPages": "جاري استخراج الصفحات...",
+    "downloadProgress": "{{downloaded}} ميجابايت من {{total}} ميجابايت",
+    "downloadFailedNetwork": "فشل التحميل. تحقق من الاتصال وحاول مرة أخرى.",
+    "cellularWarning": "أنت غير متصل بشبكة Wi-Fi. سيستهلك هذا التحميل حوالي ٦٥ ميجابايت من بيانات الهاتف.",
+    "retryDownload": "إعادة المحاولة",
+    "downloadMushaf": "تحميل المصحف",
+    "browseFirstFive": "تصفح أول ٥ صفحات فقط"
   },
   "mosqueFinder": {
     "nearbyMosques": "المساجد القريبة",

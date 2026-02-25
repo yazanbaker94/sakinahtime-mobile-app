@@ -128,7 +128,7 @@ class WidgetDataService {
     if (!this.isAvailable) return;
 
     try {
-      await WidgetBridge.updateTasbeehCount(count, target, dhikr);
+      await WidgetBridge.syncTasbeehState(count, target, dhikr);
       console.log('[WidgetDataService] Tasbeeh count updated:', count);
     } catch (error) {
       console.error('[WidgetDataService] Failed to update tasbeeh count:', error);
@@ -142,7 +142,7 @@ class WidgetDataService {
     if (!this.isAvailable) return 0;
 
     try {
-      const count = await WidgetBridge.getTasbeehCount();
+      const count = await WidgetBridge.getWidgetTasbeehCount();
       return count;
     } catch (error) {
       console.error('[WidgetDataService] Failed to get tasbeeh count:', error);

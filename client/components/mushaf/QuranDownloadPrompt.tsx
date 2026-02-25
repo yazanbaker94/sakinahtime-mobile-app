@@ -82,8 +82,11 @@ export const QuranDownloadPrompt = React.memo(function QuranDownloadPrompt({
                 <ThemedText type="body" style={[styles.description, { color: theme.textSecondary }]}>
                     {isDownloading
                         ? progress.phase === 'extract'
-                            ? 'Extracting pages...'
-                            : `${(progress.downloadedBytes / 1024 / 1024).toFixed(1)} MB of ${(progress.totalBytes / 1024 / 1024).toFixed(1)} MB`
+                            ? t('mushaf.extractingPages') || 'Extracting pages...'
+                            : t('mushaf.downloadProgress', {
+                                downloaded: (progress.downloadedBytes / 1024 / 1024).toFixed(1),
+                                total: (progress.totalBytes / 1024 / 1024).toFixed(1)
+                            }) || `${(progress.downloadedBytes / 1024 / 1024).toFixed(1)} MB of ${(progress.totalBytes / 1024 / 1024).toFixed(1)} MB`
                         : t('mushaf.downloadQuranDescription') || 'Download high-resolution Mushaf pages (~65 MB) for offline reading. Pages 1-5 are available immediately.'
                     }
                 </ThemedText>
@@ -100,7 +103,7 @@ export const QuranDownloadPrompt = React.memo(function QuranDownloadPrompt({
                             }]} />
                         </View>
                         <ThemedText type="caption" style={{ marginTop: 8, opacity: 0.6 }}>
-                            {progress.phase === 'extract' ? 'Extracting...' : `${progressPercent}%`}
+                            {progress.phase === 'extract' ? (t('mushaf.extractingPages') || 'Extracting...') : `${progressPercent}%`}
                         </ThemedText>
                     </View>
                 )}
@@ -110,7 +113,7 @@ export const QuranDownloadPrompt = React.memo(function QuranDownloadPrompt({
                     <View style={[styles.errorBox, { backgroundColor: 'rgba(255,59,48,0.1)' }]}>
                         <AlertCircle size={16} color="#FF3B30" />
                         <ThemedText type="caption" style={{ color: '#FF3B30', marginLeft: 8, flex: 1 }}>
-                            {progress.error || 'Download failed. Check your connection and try again.'}
+                            {progress.error || t('mushaf.downloadFailedNetwork') || 'Download failed. Check your connection and try again.'}
                         </ThemedText>
                     </View>
                 )}
@@ -122,7 +125,7 @@ export const QuranDownloadPrompt = React.memo(function QuranDownloadPrompt({
                     }]}>
                         <WifiOff size={14} color="#FF9500" />
                         <ThemedText type="caption" style={{ color: '#FF9500', marginLeft: 8, flex: 1, fontSize: 12 }}>
-                            You&apos;re not on Wi-Fi. This download will use ~65 MB of cellular data.
+                            {t('mushaf.cellularWarning') || "You're not on Wi-Fi. This download will use ~65 MB of cellular data."}
                         </ThemedText>
                     </View>
                 )}
@@ -143,7 +146,7 @@ export const QuranDownloadPrompt = React.memo(function QuranDownloadPrompt({
                         >
                             <Download size={18} color="#FFFFFF" />
                             <ThemedText type="body" style={styles.downloadButtonText}>
-                                {isError ? 'Retry Download' : 'Download Mushaf'}
+                                {isError ? (t('mushaf.retryDownload') || 'Retry Download') : (t('mushaf.downloadMushaf') || 'Download Mushaf')}
                             </ThemedText>
                         </Pressable>
 
@@ -158,7 +161,7 @@ export const QuranDownloadPrompt = React.memo(function QuranDownloadPrompt({
                             ]}
                         >
                             <ThemedText type="body" style={[styles.laterButtonText, { color: theme.textSecondary }]}>
-                                Browse first 5 pages
+                                {t('mushaf.browseFirstFive') || 'Browse first 5 pages'}
                             </ThemedText>
                         </Pressable>
                     </View>
@@ -177,7 +180,7 @@ export const QuranDownloadPrompt = React.memo(function QuranDownloadPrompt({
                         ]}
                     >
                         <ThemedText type="caption" style={{ color: theme.textSecondary }}>
-                            Cancel
+                            {t('common.cancel') || 'Cancel'}
                         </ThemedText>
                     </Pressable>
                 )}

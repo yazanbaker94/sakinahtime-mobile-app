@@ -995,7 +995,14 @@
     "tafsirNotAvailableVerse": "No tafsir available for this verse",
     "downloadQuranTitle": "Download Quran Pages",
     "downloadQuranDescription": "Download high-resolution Mushaf pages (~65 MB) for offline reading. Pages 1-5 are available immediately.",
-    "downloading": "Downloading Mushaf..."
+    "downloading": "Downloading Mushaf...",
+    "extractingPages": "Extracting pages...",
+    "downloadProgress": "{{downloaded}} MB of {{total}} MB",
+    "downloadFailedNetwork": "Download failed. Check your connection and try again.",
+    "cellularWarning": "You're not on Wi-Fi. This download will use ~65 MB of cellular data.",
+    "retryDownload": "Retry Download",
+    "downloadMushaf": "Download Mushaf",
+    "browseFirstFive": "Browse first 5 pages"
   },
   "mosqueFinder": {
     "nearbyMosques": "Nearby Mosques",

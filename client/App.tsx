@@ -104,8 +104,11 @@ async function syncWidgetDataOnLaunch() {
     const moonPhase = moonPhaseService.getCurrentPhase();
     await widgetDataService.updateHijriDate(hijriDate, moonPhase, null, null);
 
-    // 3. Update Tasbeeh widget with default values
-    await widgetDataService.updateTasbeehCount(0, 33, 'سبحان الله');
+    // 3. Tasbeeh: Fetch widget count and push to widget (bidirectional sync on launch)
+    const widgetTasbeehCount = await widgetDataService.getTasbeehCount();
+    if (widgetTasbeehCount > 0) {
+      console.log('[App] Widget tasbeeh count restored:', widgetTasbeehCount);
+    }
 
     console.log('[App] All widget data synced on launch');
   } catch (error) {
