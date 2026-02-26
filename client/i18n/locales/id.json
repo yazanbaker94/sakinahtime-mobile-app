@@ -1,4 +1,4 @@
-﻿{
+{
     "tabs": {
         "qibla": "Kiblat",
         "prayer": "Shalat",
@@ -1011,11 +1011,11 @@
         "radius1km": "1 km",
         "radius5km": "5 km",
         "radius10km": "10 km",
-        "radius25km": "25 km"
-    "somethingWrong": "Terjadi kesalahan"
-    "noMosquesFound": "Tidak ada masjid ditemukan"
-    "expandRadius": "Coba perbesar radius pencarian Anda"
-    "finding": "Mencari masjid terdekat..."
+        "radius25km": "25 km",
+    "somethingWrong": "Terjadi kesalahan",
+    "noMosquesFound": "Tidak ada masjid ditemukan",
+    "expandRadius": "Coba perbesar radius pencarian Anda",
+    "finding": "Mencari masjid terdekat...",
     "inTime": "dalam"
     },
     "calendar": {

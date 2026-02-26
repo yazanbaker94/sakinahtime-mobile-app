@@ -1,4 +1,4 @@
-﻿{
+{
   "tabs": {
     "qibla": "قبلہ",
     "prayer": "نماز",
@@ -1011,11 +1011,11 @@
     "radius1km": "1 کلومیٹر",
     "radius5km": "5 کلومیٹر",
     "radius10km": "10 کلومیٹر",
-    "radius25km": "25 کلومیٹر"
-    "somethingWrong": "کچھ غلط ہو گیا"
-    "noMosquesFound": "کوئی مسجد نہیں ملی"
-    "expandRadius": "تلاش کا دائرہ بڑھانے کی کوشش کریں"
-    "finding": "قریبی مساجد تلاش ہو رہی ہیں..."
+    "radius25km": "25 کلومیٹر",
+    "somethingWrong": "کچھ غلط ہو گیا",
+    "noMosquesFound": "کوئی مسجد نہیں ملی",
+    "expandRadius": "تلاش کا دائرہ بڑھانے کی کوشش کریں",
+    "finding": "قریبی مساجد تلاش ہو رہی ہیں...",
     "inTime": "میں"
   },
   "calendar": {

@@ -1014,11 +1014,11 @@
     "radius1km": "1 km",
     "radius5km": "5 km",
     "radius10km": "10 km",
-    "radius25km": "25 km"
-    "somethingWrong": "Something went wrong"
-    "noMosquesFound": "No mosques found"
-    "expandRadius": "Try expanding your search radius or changing your search query"
-    "finding": "Finding nearby mosques..."
+    "radius25km": "25 km",
+    "somethingWrong": "Something went wrong",
+    "noMosquesFound": "No mosques found",
+    "expandRadius": "Try expanding your search radius or changing your search query",
+    "finding": "Finding nearby mosques...",
     "inTime": "in"
   },
   "calendar": {

@@ -1,4 +1,4 @@
-﻿{
+{
   "tabs": {
     "qibla": "Qibla",
     "prayer": "Gebet",
@@ -1011,11 +1011,11 @@
     "radius1km": "1 km",
     "radius5km": "5 km",
     "radius10km": "10 km",
-    "radius25km": "25 km"
-    "somethingWrong": "Etwas ist schiefgelaufen"
-    "noMosquesFound": "Keine Moscheen gefunden"
-    "expandRadius": "Versuchen Sie, den Suchradius zu erweitern"
-    "finding": "Suche nach Moscheen in der Nähe..."
+    "radius25km": "25 km",
+    "somethingWrong": "Etwas ist schiefgelaufen",
+    "noMosquesFound": "Keine Moscheen gefunden",
+    "expandRadius": "Versuchen Sie, den Suchradius zu erweitern",
+    "finding": "Suche nach Moscheen in der Nähe...",
     "inTime": "in"
   },
   "calendar": {

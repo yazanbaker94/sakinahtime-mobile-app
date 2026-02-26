@@ -1,4 +1,4 @@
-﻿{
+{
   "tabs": {
     "qibla": "朝向",
     "prayer": "礼拜",
@@ -1011,11 +1011,11 @@
     "radius1km": "1公里",
     "radius5km": "5公里",
     "radius10km": "10公里",
-    "radius25km": "25公里"
-    "somethingWrong": "出了点问题"
-    "noMosquesFound": "未找到清真寺"
-    "expandRadius": "尝试扩大搜索半径"
-    "finding": "正在查找附近的清真寺..."
+    "radius25km": "25公里",
+    "somethingWrong": "出了点问题",
+    "noMosquesFound": "未找到清真寺",
+    "expandRadius": "尝试扩大搜索半径",
+    "finding": "正在查找附近的清真寺...",
     "inTime": "后"
   },
   "calendar": {

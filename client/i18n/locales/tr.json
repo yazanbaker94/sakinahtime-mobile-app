@@ -1,4 +1,4 @@
-﻿{
+{
   "tabs": {
     "qibla": "Kıble",
     "prayer": "Namaz",
@@ -1072,11 +1072,11 @@
     "radius1km": "1 km",
     "radius5km": "5 km",
     "radius10km": "10 km",
-    "radius25km": "25 km"
-    "somethingWrong": "Bir şeyler ters gitti"
-    "noMosquesFound": "Cami bulunamadı"
-    "expandRadius": "Arama yarıçapını genişletmeyi deneyin"
-    "finding": "Yakındaki camiler aranıyor..."
+    "radius25km": "25 km",
+    "somethingWrong": "Bir şeyler ters gitti",
+    "noMosquesFound": "Cami bulunamadı",
+    "expandRadius": "Arama yarıçapını genişletmeyi deneyin",
+    "finding": "Yakındaki camiler aranıyor...",
     "inTime": "içinde"
   },
   "calendar": {

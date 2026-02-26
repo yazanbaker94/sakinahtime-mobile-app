@@ -1,4 +1,4 @@
-﻿{
+{
   "tabs": {
     "qibla": "Кибла",
     "prayer": "Намаз",
@@ -1011,11 +1011,11 @@
     "radius1km": "1 км",
     "radius5km": "5 км",
     "radius10km": "10 км",
-    "radius25km": "25 км"
-    "somethingWrong": "Что-то пошло не так"
-    "noMosquesFound": "Мечети не найдены"
-    "expandRadius": "Попробуйте расширить радиус поиска"
-    "finding": "Ищем ближайшие мечети..."
+    "radius25km": "25 км",
+    "somethingWrong": "Что-то пошло не так",
+    "noMosquesFound": "Мечети не найдены",
+    "expandRadius": "Попробуйте расширить радиус поиска",
+    "finding": "Ищем ближайшие мечети...",
     "inTime": "через"
   },
   "calendar": {
