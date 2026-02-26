@@ -283,7 +283,13 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
 
       // Update Y-axis lock shared value (magnifier reads this on UI thread)
       const newLineY = word.wordBounds.top + (word.wordBounds.height / 2);
-      wordLineYShared.value = withSpring(newLineY, { damping: 15, stiffness: 200 });
+      if (wordLineYShared.value === 0) {
+        // First word after activation — snap instantly (no spring from 0)
+        wordLineYShared.value = newLineY;
+      } else {
+        // Subsequent words — smooth spring for line-to-line hops
+        wordLineYShared.value = withSpring(newLineY, { damping: 15, stiffness: 200 });
+      }
 
       // Meaning lookup — only fires on word change (THE GUILLOTINE)
       loadWordMeaning(
