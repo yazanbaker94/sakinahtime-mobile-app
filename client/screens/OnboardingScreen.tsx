@@ -175,12 +175,21 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
         });
     };
 
-    // Pause execution until user returns from Settings app
+    // Pause execution until user returns from Settings app (with timeout)
     const waitForAppToForeground = (): Promise<void> => {
         return new Promise((resolve) => {
+            console.log('[Onboarding] Waiting for app to return to foreground...');
+            const timeout = setTimeout(() => {
+                console.log('[Onboarding] Foreground wait timed out after 5s');
+                subscription.remove();
+                resolve();
+            }, 5000);
             const subscription = AppState.addEventListener('change', (nextAppState) => {
+                console.log('[Onboarding] AppState changed to:', nextAppState);
                 if (nextAppState === 'active') {
+                    clearTimeout(timeout);
                     subscription.remove();
+                    console.log('[Onboarding] App returned to foreground');
                     resolve();
                 }
             });
@@ -202,19 +211,41 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
 
                 // --- 1. Exact Alarm Permission ---
                 try {
-                    if (!(await canScheduleExactAlarms())) {
-                        console.log('[Onboarding] Requesting exact alarm permission');
+                    const canSchedule = await canScheduleExactAlarms();
+                    console.log('[Onboarding] canScheduleExactAlarms:', canSchedule);
+                    if (!canSchedule) {
+                        console.log('[Onboarding] Showing exact alarm alert');
                         const wantsSettings = await showPermissionAlertAsync(
                             t('onboarding.enableExactAlarms'),
                             t('onboarding.exactAlarmsDescription')
                         );
+                        console.log('[Onboarding] User chose Open Settings for exact alarm:', wantsSettings);
                         if (wantsSettings) {
+                            const startTime = Date.now();
                             const result = await requestExactAlarmPermission();
                             console.log('[Onboarding] Exact alarm result:', result);
                             if (result === 'opened' || result === 'opened_fallback') {
                                 await waitForAppToForeground();
+
+                                // Bounce-back: if returned in <1s, OS killed the dialog
+                                const elapsed = Date.now() - startTime;
+                                console.log('[Onboarding] Exact alarm settings elapsed:', elapsed, 'ms');
+                                if (elapsed < 1000) {
+                                    console.warn('[Onboarding] OS auto-dismissed exact alarm dialog. Fallback to App Info.');
+                                    await new Promise<void>((resolve) => {
+                                        Alert.alert(
+                                            t('onboarding.manualSetupRequired') || 'Manual Setup Required',
+                                            t('onboarding.manualSetupDescription') || "Your device blocked the automatic shortcut. Please find 'Alarms & reminders' on the next screen and enable it.",
+                                            [
+                                                { text: t('onboarding.openSettings'), onPress: async () => { await Linking.openSettings(); await waitForAppToForeground(); resolve(); } },
+                                                { text: t('common.skip'), style: 'cancel', onPress: () => resolve() }
+                                            ],
+                                            { cancelable: false }
+                                        );
+                                    });
+                                }
                             } else {
-                                // Native didn't open settings — use Linking fallback
+                                console.log('[Onboarding] Native didnt open settings, using Linking fallback');
                                 await Linking.openSettings();
                                 await waitForAppToForeground();
                             }
@@ -226,18 +257,41 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
 
                 // --- 2. Battery Optimization ---
                 try {
-                    if (await checkBatteryOptimization()) {
-                        console.log('[Onboarding] Requesting battery optimization exemption');
+                    const isBatteryOptimized = await checkBatteryOptimization();
+                    console.log('[Onboarding] isBatteryOptimized:', isBatteryOptimized);
+                    if (isBatteryOptimized) {
+                        console.log('[Onboarding] Showing battery optimization alert');
                         const wantsSettings = await showPermissionAlertAsync(
                             t('onboarding.enableReliableAzan'),
                             t('onboarding.reliableAzanDescription')
                         );
+                        console.log('[Onboarding] User chose Open Settings for battery:', wantsSettings);
                         if (wantsSettings) {
+                            const startTime = Date.now();
                             const result = await requestBatteryOptimizationExemption();
                             console.log('[Onboarding] Battery exemption result:', result);
                             if (result === 'opened' || result === 'opened_fallback') {
                                 await waitForAppToForeground();
+
+                                // Bounce-back: if returned in <1s, OS killed the dialog
+                                const elapsed = Date.now() - startTime;
+                                console.log('[Onboarding] Battery settings elapsed:', elapsed, 'ms');
+                                if (elapsed < 1000) {
+                                    console.warn('[Onboarding] OS auto-dismissed battery dialog. Fallback to App Info.');
+                                    await new Promise<void>((resolve) => {
+                                        Alert.alert(
+                                            t('onboarding.manualSetupRequired') || 'Manual Setup Required',
+                                            t('onboarding.manualBatteryDescription') || "Your device blocked the automatic shortcut. Please tap 'Battery' on the next screen and set it to 'Unrestricted'.",
+                                            [
+                                                { text: t('onboarding.openSettings'), onPress: async () => { await Linking.openSettings(); await waitForAppToForeground(); resolve(); } },
+                                                { text: t('common.skip'), style: 'cancel', onPress: () => resolve() }
+                                            ],
+                                            { cancelable: false }
+                                        );
+                                    });
+                                }
                             } else {
+                                console.log('[Onboarding] Native didnt open settings, using Linking fallback');
                                 await Linking.openSettings();
                                 await waitForAppToForeground();
                             }
@@ -249,6 +303,7 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
             }
 
             // goToNext() ONLY fires after all dialogs and settings visits are complete
+            console.log('[Onboarding] All permission checks done, advancing to next slide');
             goToNext();
         } catch (error) {
             console.warn('[Onboarding] Notification permission error:', error);
