@@ -18,10 +18,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
+  useDerivedValue,
   withTiming,
   withSpring,
   Easing,
   runOnJS,
+  type SharedValue,
 } from 'react-native-reanimated';
 import { ThemedText } from '@/components/ThemedText';
 import { useTheme } from '@/hooks/useTheme';
@@ -55,6 +57,9 @@ interface WordScrubberProps {
   mushafImage?: any;
   screenWidth: number;
   imageHeight: number;
+  // Shared values from parent gesture (UI thread, 120fps)
+  touchX: SharedValue<number>;
+  touchY: SharedValue<number>;
 }
 
 export interface WordScrubberHandle {
@@ -98,6 +103,8 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
   mushafImage,
   screenWidth,
   imageHeight,
+  touchX,
+  touchY,
 }, ref) => {
   const { theme } = useTheme();
   const { t } = useTranslation();
@@ -105,11 +112,8 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
   const lastWordRef = useRef<string | null>(null);
   const wasActiveRef = useRef(false);
   const currentWordIndexRef = useRef<string | null>(null);
-  // fingerPosition state drives magnifier rendering (local re-render only, not parent)
-  const [fingerPosition, setFingerPosition] = useState<{ x: number; y: number } | null>(null);
-  // Y-axis lock: tracks the vertical center of the current word's line
-  // Magnifier follows finger X but locks Y to word line (no jitter from vertical drift)
-  const wordLineCenterY = useRef<number | null>(null);
+  // Y-axis lock: shared value so magnifier animated style can read it on UI thread
+  const wordLineYShared = useSharedValue(0);
 
   // Animated values for smooth word highlight transitions
   const highlightLeft = useSharedValue(0);
@@ -264,11 +268,9 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
     });
   }, []);
 
-  // Core position update — called imperatively from parent via ref
+  // Core position update — called from parent via ref (JS thread, throttled ~30fps)
+  // NO setFingerPosition — magnifier position driven by shared values from parent gesture
   const handlePositionUpdate = useCallback((screenX: number, screenY: number) => {
-    // Update state for magnifier live tracking (only re-renders WordScrubber, not parent)
-    setFingerPosition({ x: screenX, y: screenY });
-
     const word = findWordAtPosition(screenX, screenY);
     if (word && word.wordBounds) {
       // Directly update Reanimated shared values — no setState, no useEffect chain
@@ -279,22 +281,17 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
       highlightHeight.value = withTiming(word.wordBounds.height, timing);
       highlightOpacity.value = withTiming(1, { duration: 80 });
 
-      // Lock magnifier Y-axis to word's vertical center (smooth spring on line jumps)
+      // Update Y-axis lock shared value (magnifier reads this on UI thread)
       const newLineY = word.wordBounds.top + (word.wordBounds.height / 2);
-      if (wordLineCenterY.current !== null && Math.abs(newLineY - wordLineCenterY.current) > 5) {
-        // Line change detected — animate the Y-axis hop
-        wordLineCenterY.current = newLineY;
-      } else {
-        wordLineCenterY.current = newLineY;
-      }
+      wordLineYShared.value = withSpring(newLineY, { damping: 15, stiffness: 200 });
 
-      // Meaning lookup — no timeout, uses wordIndex ref check
+      // Meaning lookup — only fires on word change (THE GUILLOTINE)
       loadWordMeaning(
         word.surah, word.ayah, word.wordIndex,
         word.screenX, word.screenY, word.wordBounds
       );
     }
-  }, [findWordAtPosition, loadWordMeaning, highlightLeft, highlightTop, highlightWidth, highlightHeight, highlightOpacity]);
+  }, [findWordAtPosition, loadWordMeaning, highlightLeft, highlightTop, highlightWidth, highlightHeight, highlightOpacity, wordLineYShared]);
 
   // Expose imperative handle for parent to call
   useImperativeHandle(ref, () => ({
@@ -307,17 +304,34 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
       setCurrentWord(null);
       lastWordRef.current = null;
       currentWordIndexRef.current = null;
-      setFingerPosition(null);
-      wordLineCenterY.current = null;
+      wordLineYShared.value = 0;
       highlightOpacity.value = withTiming(0, { duration: 100 });
     }
   }, [isActive]);
 
   if (!isActive) return null;
 
-  const effectivePosition = fingerPosition;
-  const isFingerInTopHalf = effectivePosition ? effectivePosition.y < SCREEN_HEIGHT / 2 : true;
-  const infoBoxTop = isFingerInTopHalf ? SCREEN_HEIGHT - tabBarHeight - 180 : 100;
+  // Animated style for magnifier image position (reads shared values, runs on UI thread)
+  const magnifierImageStyle = useAnimatedStyle(() => {
+    const imageTop = contentZoneTop + imageOffsetY;
+    const posInImageX = touchX.value;
+    const lockedY = wordLineYShared.value || touchY.value;
+    const posInImageY = lockedY - imageTop;
+    const scaledX = posInImageX * MAGNIFIER_SCALE;
+    const scaledY = posInImageY * MAGNIFIER_SCALE;
+    return {
+      left: -(scaledX - MAGNIFIER_WIDTH / 2),
+      top: -(scaledY - MAGNIFIER_HEIGHT / 2),
+    };
+  });
+
+  // Animated style for info box position (top vs bottom half of screen)
+  const infoBoxPositionStyle = useAnimatedStyle(() => {
+    const isTop = touchY.value < SCREEN_HEIGHT / 2;
+    return {
+      top: isTop ? SCREEN_HEIGHT - tabBarHeight - 180 : 100,
+    };
+  });
 
   const formatFrequency = (freq: number): string => {
     if (freq === 0) return t('mushaf.scrubber.notInData');
@@ -325,45 +339,21 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
     return t('mushaf.scrubber.appearsTimes', { count: freq });
   };
 
-  // Calculate magnifier position
+  // MAGNIFIER_WIDTH/HEIGHT/SCALE constants for animated style (defined above in useAnimatedStyle)
   const MAGNIFIER_WIDTH = 130;
   const MAGNIFIER_HEIGHT = 50;
   const MAGNIFIER_SCALE = 1.5;
 
-  const getMagnifierImagePosition = () => {
-    if (!effectivePosition || !mushafImage) return { left: 0, top: 0 };
-
-    const fingerX = effectivePosition.x;
-    const imageTop = contentZoneTop + imageOffsetY;
-
-    // X follows the finger, Y locks to the word's line center
-    const posInImageX = fingerX;
-    const lockedY = wordLineCenterY.current ?? effectivePosition.y;
-    const posInImageY = lockedY - imageTop;
-
-    const scaledX = posInImageX * MAGNIFIER_SCALE;
-    const scaledY = posInImageY * MAGNIFIER_SCALE;
-
-    const left = -(scaledX - MAGNIFIER_WIDTH / 2);
-    const top = -(scaledY - MAGNIFIER_HEIGHT / 2);
-
-    return { left, top };
-  };
-
-  const magnifierImagePos = getMagnifierImagePosition();
-
   return (
     <View style={StyleSheet.absoluteFill} pointerEvents="box-none">
       {/* Focus scrim — dims the noisy Quran text so popup demands 100% attention */}
-      {effectivePosition && (
-        <View
-          style={[
-            StyleSheet.absoluteFill,
-            { backgroundColor: isDark ? 'rgba(0,0,0,0.55)' : 'rgba(0,0,0,0.35)' }
-          ]}
-          pointerEvents="none"
-        />
-      )}
+      <View
+        style={[
+          StyleSheet.absoluteFill,
+          { backgroundColor: isDark ? 'rgba(0,0,0,0.55)' : 'rgba(0,0,0,0.35)' }
+        ]}
+        pointerEvents="none"
+      />
 
       {/* Word highlight - smooth animation via direct shared values */}
       {isActive && (
@@ -381,127 +371,128 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
         />
       )}
 
-      {/* Info box */}
-      {effectivePosition && (
-        <View
-          style={[
-            styles.infoBox,
-            {
-              top: infoBoxTop,
-              backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
-              // Light mode: massive soft levitation shadow
-              // Dark mode: rim lighting glass-edge
-              ...(isDark ? {
-                borderWidth: 1,
-                borderColor: 'rgba(255, 255, 255, 0.10)',
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 8 },
-                shadowOpacity: 0.5,
-                shadowRadius: 20,
-                elevation: 12,
-              } : {
-                borderWidth: 0,
-                borderColor: 'transparent',
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 12 },
-                shadowOpacity: 0.12,
-                shadowRadius: 40,
-                elevation: 24,
-              }),
-            }
-          ]}
-          pointerEvents="none"
-        >
-          {currentWord ? (
-            <View style={styles.infoContent}>
-              {/* Left side: Glass Lens Magnifier */}
-              <View style={[styles.magnifierBox, {
-                // Exact page bg — dark: pure black (mushaf tinted white on black), light: cream (mushaf paper)
-                backgroundColor: isDark ? '#000000' : '#F5F2EA',
-                // Softened frosted glass rim per mode
-                borderWidth: 1,
-                borderColor: isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.10)',
-              }]}
-              >
-                {mushafImage ? (
-                  <View style={styles.magnifierContent}>
+      {/* Info box — position animated via shared values (UI thread) */}
+      <Animated.View
+        style={[
+          styles.infoBox,
+          infoBoxPositionStyle,
+          {
+            backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
+            // Light mode: massive soft levitation shadow
+            // Dark mode: rim lighting glass-edge
+            ...(isDark ? {
+              borderWidth: 1,
+              borderColor: 'rgba(255, 255, 255, 0.10)',
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 8 },
+              shadowOpacity: 0.5,
+              shadowRadius: 20,
+              elevation: 12,
+            } : {
+              borderWidth: 0,
+              borderColor: 'transparent',
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 12 },
+              shadowOpacity: 0.12,
+              shadowRadius: 40,
+              elevation: 24,
+            }),
+          }
+        ]}
+        pointerEvents="none"
+      >
+        {currentWord ? (
+          <View style={styles.infoContent}>
+            {/* Left side: Glass Lens Magnifier */}
+            <View style={[styles.magnifierBox, {
+              // Exact page bg — dark: pure black (mushaf tinted white on black), light: cream (mushaf paper)
+              backgroundColor: isDark ? '#000000' : '#F5F2EA',
+              // Softened frosted glass rim per mode
+              borderWidth: 1,
+              borderColor: isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.10)',
+            }]}
+            >
+              {mushafImage ? (
+                <View style={styles.magnifierContent}>
+                  <Animated.View style={[{
+                    width: screenWidth * MAGNIFIER_SCALE,
+                    height: imageHeight * MAGNIFIER_SCALE,
+                    position: 'absolute' as const,
+                  }, magnifierImageStyle]}>
                     <Image
                       source={mushafImage}
                       style={{
                         width: screenWidth * MAGNIFIER_SCALE,
                         height: imageHeight * MAGNIFIER_SCALE,
-                        position: 'absolute',
-                        left: magnifierImagePos.left,
-                        top: magnifierImagePos.top,
                         tintColor: isDark ? '#FFFFFF' : undefined,
                       }}
                       contentFit="contain"
                     />
-                    {/* Subtle center dot instead of clinical crosshairs */}
-                    <View style={{
-                      position: 'absolute',
-                      left: '50%',
-                      top: '50%',
-                      width: 6,
-                      height: 6,
-                      borderRadius: 3,
-                      marginLeft: -3,
-                      marginTop: -3,
-                      backgroundColor: isDark ? theme.gold : theme.primary,
-                      opacity: 0.4,
-                    }} />
-                  </View>
-                ) : (
-                  <ThemedText style={[styles.magnifiedWord, { color: isDark ? theme.gold : theme.primary }]}>
-                    {currentWord.arabicWord || '...'}
-                  </ThemedText>
-                )}
-              </View>
-
-              {/* Right side: Word info stacked vertically — centered alongside scrubber */}
-              <View style={styles.infoTextRight}>
-                {/* Arabic word at top */}
-                <ThemedText style={[styles.arabicWordLarge, { color: theme.text }]}>
+                  </Animated.View>
+                  {/* Subtle center dot instead of clinical crosshairs */}
+                  <View style={{
+                    position: 'absolute',
+                    left: '50%',
+                    top: '50%',
+                    width: 6,
+                    height: 6,
+                    borderRadius: 3,
+                    marginLeft: -3,
+                    marginTop: -3,
+                    backgroundColor: isDark ? theme.gold : theme.primary,
+                    opacity: 0.4,
+                  }} />
+                </View>
+              ) : (
+                <ThemedText style={[styles.magnifiedWord, { color: isDark ? theme.gold : theme.primary }]}>
                   {currentWord.arabicWord || '...'}
                 </ThemedText>
+              )}
+            </View>
 
-                {/* Transliteration — secondary, faded */}
-                {currentWord.transliteration && (
-                  <ThemedText style={[styles.transliteration, {
-                    color: isDark ? 'rgba(255, 255, 255, 0.45)' : 'rgba(0, 0, 0, 0.40)'
-                  }]}>
-                    {currentWord.transliteration}
-                  </ThemedText>
-                )}
+            {/* Right side: Word info stacked vertically — centered alongside scrubber */}
+            <View style={styles.infoTextRight}>
+              {/* Arabic word at top */}
+              <ThemedText style={[styles.arabicWordLarge, { color: theme.text }]}>
+                {currentWord.arabicWord || '...'}
+              </ThemedText>
 
-                {/* Translation — primary value, emphasized */}
-                {currentWord.translation && (
-                  <ThemedText style={[styles.translation, { color: theme.text }]} numberOfLines={2}>
-                    {currentWord.translation}
-                  </ThemedText>
-                )}
-
-                {/* Frequency pill — teal in both modes for brand sync */}
-                <View style={[styles.frequencyRow, {
-                  backgroundColor: isDark ? 'rgba(94, 156, 170, 0.15)' : 'rgba(94, 156, 170, 0.10)',
-                  borderTopWidth: 0,
+              {/* Transliteration — secondary, faded */}
+              {currentWord.transliteration && (
+                <ThemedText style={[styles.transliteration, {
+                  color: isDark ? 'rgba(255, 255, 255, 0.45)' : 'rgba(0, 0, 0, 0.40)'
                 }]}>
-                  <Feather name="bar-chart-2" size={11} color={isDark ? 'rgba(94, 156, 170, 0.9)' : '#0F766E'} />
-                  <ThemedText style={[styles.frequency, { color: isDark ? 'rgba(94, 156, 170, 0.9)' : '#0F766E' }]}>
-                    {formatFrequency(currentWord.frequency || 0)}
-                  </ThemedText>
-                </View>
+                  {currentWord.transliteration}
+                </ThemedText>
+              )}
+
+              {/* Translation — primary value, emphasized */}
+              {currentWord.translation && (
+                <ThemedText style={[styles.translation, { color: theme.text }]} numberOfLines={2}>
+                  {currentWord.translation}
+                </ThemedText>
+              )}
+
+              {/* Frequency pill — teal in both modes for brand sync */}
+              <View style={[styles.frequencyRow, {
+                backgroundColor: isDark ? 'rgba(94, 156, 170, 0.15)' : 'rgba(94, 156, 170, 0.10)',
+                borderTopWidth: 0,
+              }]}>
+                <Feather name="bar-chart-2" size={11} color={isDark ? 'rgba(94, 156, 170, 0.9)' : '#0F766E'} />
+                <ThemedText style={[styles.frequency, { color: isDark ? 'rgba(94, 156, 170, 0.9)' : '#0F766E' }]}>
+                  {formatFrequency(currentWord.frequency || 0)}
+                </ThemedText>
               </View>
             </View>
-          ) : (
-            <View style={styles.infoContentEmpty}>
-              <ThemedText style={[styles.hint, { color: theme.textSecondary }]}>
-                {t('mushaf.scrubber.moveToWord')}
-              </ThemedText>
-            </View>
-          )}
-        </View>
-      )}
+          </View>
+        ) : (
+          <View style={styles.infoContentEmpty}>
+            <ThemedText style={[styles.hint, { color: theme.textSecondary }]}>
+              {t('mushaf.scrubber.moveToWord')}
+            </ThemedText>
+          </View>
+        )}
+      </Animated.View>
     </View>
   );
 });

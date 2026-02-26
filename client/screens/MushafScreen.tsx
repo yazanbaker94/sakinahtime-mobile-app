@@ -51,6 +51,7 @@ import { useLayoutDimensions } from "@/hooks/useLayoutDimensions";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { OfflineIndicator } from "@/components/OfflineIndicator";
 import { WordScrubber, WordScrubberHandle } from "@/components/WordScrubber";
+import { ensureWbwDataLoaded } from "@/services/WordMeaningService";
 import { AnimatedAudioWordHighlight } from "@/components/AnimatedAudioWordHighlight";
 // Hifz Mode imports
 import { HifzModeProvider, useHifzMode } from "@/contexts/HifzModeContext";
@@ -368,6 +369,19 @@ function MushafScreenContent() {
   // automatically when the Image component mounts. No prefetch needed.
   const [isWordScrubberActive, setIsWordScrubberActive] = useState(false);
   const wordScrubberRef = useRef<WordScrubberHandle>(null);
+
+  // Shared values for word scrubber — live on UI thread, no React re-renders
+  const scrubberTouchX = useSharedValue(-1000);
+  const scrubberTouchY = useSharedValue(-1000);
+  const scrubberFrameCounter = useSharedValue(0);
+
+  // Pre-load WBW data on mount so first long-press is instant
+  useEffect(() => {
+    const task = InteractionManager.runAfterInteractions(() => {
+      ensureWbwDataLoaded();
+    });
+    return () => task.cancel();
+  }, []);
 
   // currentAudioWordIndexRef is now computed inside MushafPageInner's local rAF loop.
   // This ref is shared across MushafPageInner instances for the coach mark check.
@@ -816,6 +830,7 @@ function MushafScreenContent() {
     isDark, theme, hifzMode, hifzProgress, isVerseDueForRevision,
     highlights, notes, selectedVerse, highlightedVerse, handleVersePress,
     isWordScrubberActive, setIsWordScrubberActive, wordScrubberRef,
+    scrubberTouchX, scrubberTouchY, scrubberFrameCounter,
     setShowHifzStatusMenu, setHifzMenuVerseKey, setHifzMenuPosition,
     currentAudioWordIndexRef, setSelectedVerse, setShowDownloadPrompt, t,
   };
@@ -830,6 +845,7 @@ function MushafScreenContent() {
         isDark, theme, hifzMode, hifzProgress, isVerseDueForRevision,
         highlights, notes, selectedVerse, highlightedVerse, handleVersePress,
         isWordScrubberActive, setIsWordScrubberActive, wordScrubberRef,
+        scrubberTouchX, scrubberTouchY, scrubberFrameCounter,
         setShowHifzStatusMenu, setHifzMenuVerseKey, setHifzMenuPosition,
         currentAudioWordIndexRef, setShowDownloadPrompt, t,
       } = pageInnerDepsRef.current;
@@ -1007,11 +1023,23 @@ function MushafScreenContent() {
         .enabled(!isHifzActive) // Disabled in Hifz mode so Hifz long press works
         .onStart((e) => {
           'worklet';
+          // UI thread: instant magnifier snap
+          scrubberTouchX.value = e.absoluteX;
+          scrubberTouchY.value = e.absoluteY;
+          scrubberFrameCounter.value = 0;
           runOnJS(handleScrubberStart)(e.absoluteX, e.absoluteY);
         })
         .onUpdate((e) => {
           'worklet';
-          runOnJS(handleScrubberUpdate)(e.absoluteX, e.absoluteY);
+          // UI thread: update magnifier position at 120fps (zero bridge crossing)
+          scrubberTouchX.value = e.absoluteX;
+          scrubberTouchY.value = e.absoluteY;
+
+          // Throttle JS bridge to ~30fps (every 2nd frame)
+          scrubberFrameCounter.value += 1;
+          if (scrubberFrameCounter.value % 2 === 0) {
+            runOnJS(handleScrubberUpdate)(e.absoluteX, e.absoluteY);
+          }
         })
         .onEnd(() => {
           'worklet';
@@ -1739,6 +1767,8 @@ function MushafScreenContent() {
         mushafImage={mushafImages[currentPage]}
         screenWidth={layout.screenWidth}
         imageHeight={layout.imageHeight}
+        touchX={scrubberTouchX}
+        touchY={scrubberTouchY}
       />
 
       {/* Quran Download Prompt — shown when pages 6-604 aren't downloaded */}
