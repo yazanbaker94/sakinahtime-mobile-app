@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react';
+import { Linking } from 'react-native';
 import {
     View,
     StyleSheet,
@@ -208,8 +209,15 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
                             t('onboarding.exactAlarmsDescription')
                         );
                         if (wantsSettings) {
-                            await requestExactAlarmPermission();
-                            await waitForAppToForeground();
+                            const result = await requestExactAlarmPermission();
+                            console.log('[Onboarding] Exact alarm result:', result);
+                            if (result === 'opened' || result === 'opened_fallback') {
+                                await waitForAppToForeground();
+                            } else {
+                                // Native didn't open settings — use Linking fallback
+                                await Linking.openSettings();
+                                await waitForAppToForeground();
+                            }
                         }
                     }
                 } catch (e) {
@@ -225,8 +233,14 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
                             t('onboarding.reliableAzanDescription')
                         );
                         if (wantsSettings) {
-                            await requestBatteryOptimizationExemption();
-                            await waitForAppToForeground();
+                            const result = await requestBatteryOptimizationExemption();
+                            console.log('[Onboarding] Battery exemption result:', result);
+                            if (result === 'opened' || result === 'opened_fallback') {
+                                await waitForAppToForeground();
+                            } else {
+                                await Linking.openSettings();
+                                await waitForAppToForeground();
+                            }
                         }
                     }
                 } catch (e) {
