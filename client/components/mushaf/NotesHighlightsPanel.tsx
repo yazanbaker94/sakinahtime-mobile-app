@@ -150,13 +150,9 @@ export const NotesHighlightsPanel = React.memo(function NotesHighlightsPanel({
                                                 padding: Spacing.md,
                                                 borderRadius: 12,
                                                 backgroundColor: isDark ? 'rgba(255, 255, 255, 0.04)' : '#FFFFFF',
-                                                borderWidth: 0,
-                                                borderColor: 'transparent',
-                                                shadowColor: '#000',
-                                                shadowOffset: { width: 0, height: 4 },
-                                                shadowOpacity: 0.05,
-                                                shadowRadius: 12,
-                                                elevation: 2,
+                                                borderWidth: Platform.OS === 'android' ? 1 : 0,
+                                borderColor: Platform.OS === 'android' ? (isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)') : 'transparent',
+                                ...(Platform.OS === 'ios' ? { shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.05, shadowRadius: 12 } : {}),
                                                 opacity: pressed ? 0.7 : 1,
                                             }]}
                                         >
@@ -166,7 +162,7 @@ export const NotesHighlightsPanel = React.memo(function NotesHighlightsPanel({
                                                     {timeAgo && <ThemedText type="caption" style={{ fontSize: 11, opacity: 0.5, marginTop: 2 }}>{timeAgo}</ThemedText>}
                                                 </View>
                                                 {highlights[verseKey] && (
-                                                    <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: highlights[verseKey], marginLeft: 8, shadowColor: highlights[verseKey], shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.6, shadowRadius: 5, elevation: 4 }} />
+                                                    <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: highlights[verseKey], marginLeft: 8, ...(Platform.OS === 'ios' ? { shadowColor: highlights[verseKey], shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.6, shadowRadius: 5 } : {}) }} />
                                                 )}
                                             </View>
                                             <ThemedText type="arabic" style={{ fontFamily: 'AlMushafQuran', fontSize: 16, opacity: 0.7, marginBottom: 8, textAlign: 'right', lineHeight: 28 }}>{verseText}</ThemedText>
@@ -247,13 +243,9 @@ export const NotesHighlightsPanel = React.memo(function NotesHighlightsPanel({
                                                 padding: Spacing.md,
                                                 borderRadius: 12,
                                                 backgroundColor: isDark ? 'rgba(255, 255, 255, 0.04)' : '#FFFFFF',
-                                                borderWidth: 0,
-                                                borderColor: 'transparent',
-                                                shadowColor: '#000',
-                                                shadowOffset: { width: 0, height: 4 },
-                                                shadowOpacity: 0.05,
-                                                shadowRadius: 12,
-                                                elevation: 2,
+                                                borderWidth: Platform.OS === 'android' ? 1 : 0,
+                                borderColor: Platform.OS === 'android' ? (isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)') : 'transparent',
+                                ...(Platform.OS === 'ios' ? { shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.05, shadowRadius: 12 } : {}),
                                                 opacity: pressed ? 0.7 : 1,
                                             }]}
                                         >
@@ -262,7 +254,7 @@ export const NotesHighlightsPanel = React.memo(function NotesHighlightsPanel({
                                                     <ThemedText type="body" style={{ fontWeight: '600', fontSize: 15 }}>{surahInfo?.nameEn} {surah}:{ayah}</ThemedText>
                                                     {timeAgo && <ThemedText type="caption" style={{ fontSize: 11, opacity: 0.5, marginTop: 2 }}>{timeAgo}</ThemedText>}
                                                 </View>
-                                                <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: color, marginLeft: 8, shadowColor: color, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.6, shadowRadius: 5, elevation: 4 }} />
+                                                <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: color, marginLeft: 8, ...(Platform.OS === 'ios' ? { shadowColor: color, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.6, shadowRadius: 5 } : {}) }} />
                                             </View>
                                             <ThemedText type="arabic" style={{ fontFamily: 'AlMushafQuran', fontSize: 16, opacity: 0.7, textAlign: 'right', lineHeight: 28 }}>{verseText}</ThemedText>
                                         </Pressable>
