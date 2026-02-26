@@ -31,6 +31,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { usePrayerColorStore } from "@/stores/usePrayerColorStore";
 import { MosqueApiService } from "@/services/MosqueApiService";
 import { DEFAULT_RADIUS } from "@/constants/mosque";
+import Svg, { Line, Text as SvgText } from 'react-native-svg';
 
 // 3D assets
 const kaabaPng = require('../../assets/images/qibla3d/kaaba.png');
@@ -121,7 +122,16 @@ export default function QiblaScreen() {
     return getRelativeDirection(heading, qiblaDirection);
   }, [heading, qiblaDirection]);
 
-  const isAligned = direction === "aligned";
+  // Asymmetric hysteresis: snap IN at ≤2°, snap OUT at >6°
+  const isAligned = useMemo(() => {
+    if (wasAlignedRef.current) {
+      // Currently aligned — only un-align if drift exceeds 6°
+      return relativeAngle <= 6;
+    } else {
+      // Not aligned — require precision of ≤2° to snap in
+      return relativeAngle <= 2;
+    }
+  }, [relativeAngle]);
   const lastHapticRef = useRef<number>(0);
   const lastHeadingRef = useRef<number | null>(null);
 
@@ -549,33 +559,30 @@ export default function QiblaScreen() {
                 );
               })}
 
-              {/* Tick marks around the ring */}
-              {Array.from({ length: 72 }, (_, i) => {
-                const angle = i * 5;
-                const isMajor = angle % 30 === 0;
-                const angleRad = ((angle - 90) * Math.PI) / 180;
-                const outerR = compassSize * 0.465;
-                const innerR = outerR - (isMajor ? 8 : 4);
-                return (
-                  <View
-                    key={`tick-${i}`}
-                    style={{
-                      position: 'absolute',
-                      left: compassSize / 2,
-                      top: compassSize / 2,
-                      width: isMajor ? 2 : 1,
-                      height: isMajor ? 8 : 4,
-                      backgroundColor: isDark ? `rgba(255,255,255,${isMajor ? 0.2 : 0.08})` : `rgba(0,0,0,${isMajor ? 0.12 : 0.05})`,
-                      borderRadius: 1,
-                      transform: [
-                        { translateX: Math.cos(angleRad) * innerR - (isMajor ? 1 : 0.5) },
-                        { translateY: Math.sin(angleRad) * innerR },
-                        { rotate: `${angle}deg` },
-                      ],
-                    }}
-                  />
-                );
-              })}
+              {/* Tick marks — single SVG layer instead of 72 Views */}
+              <Svg width={compassSize} height={compassSize} style={{ position: 'absolute' }}>
+                {Array.from({ length: 72 }, (_, i) => {
+                  const angle = i * 5;
+                  const isMajor = angle % 30 === 0;
+                  const angleRad = (angle * Math.PI) / 180;
+                  const outerR = compassSize * 0.465;
+                  const innerR = outerR - (isMajor ? 8 : 4);
+                  const cx = compassSize / 2;
+                  const cy = compassSize / 2;
+                  return (
+                    <Line
+                      key={`tick-${i}`}
+                      x1={cx + Math.sin(angleRad) * innerR}
+                      y1={cy - Math.cos(angleRad) * innerR}
+                      x2={cx + Math.sin(angleRad) * outerR}
+                      y2={cy - Math.cos(angleRad) * outerR}
+                      stroke={isDark ? (isMajor ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.08)') : (isMajor ? 'rgba(0,0,0,0.12)' : 'rgba(0,0,0,0.05)')}
+                      strokeWidth={isMajor ? 2 : 1}
+                      strokeLinecap="round"
+                    />
+                  );
+                })}
+              </Svg>
 
             </Animated.View>
 
@@ -768,6 +775,24 @@ export default function QiblaScreen() {
 
 
         </View>
+
+        {/* Figure-8 Calibration Warning */}
+        {compassAvailable && !compassError && accuracy === 'low' && (
+          <View style={[styles.warningContainer, {
+            backgroundColor: isDark ? 'rgba(234, 179, 8, 0.15)' : 'rgba(234, 179, 8, 0.1)',
+            borderColor: isDark ? 'rgba(234, 179, 8, 0.3)' : 'rgba(234, 179, 8, 0.25)',
+          }]}>
+            <Feather name="alert-triangle" size={18} color={isDark ? '#EAB308' : '#CA8A04'} />
+            <ThemedText type="small" style={{
+              marginLeft: 10,
+              color: isDark ? '#EAB308' : '#CA8A04',
+              fontWeight: '600',
+              flex: 1,
+            }}>
+              {t('qibla.calibrationNeeded') || 'Move your phone in a figure-8 pattern to calibrate the compass'}
+            </ThemedText>
+          </View>
+        )}
 
         {/* Warning */}
         {!compassAvailable || compassError ? (
