@@ -94,7 +94,8 @@
     "mosques": "Camiler",
     "gettingLocation": "Konumunuz alınıyor...",
     "initializingCompass": "Pusula başlatılıyor...",
-    "locationRequiredQibla": "Mevcut konumunuzdan Kıble yönünü hesaplamak için konumunuza ihtiyacımız var."
+    "locationRequiredQibla": "Mevcut konumunuzdan Kıble yönünü hesaplamak için konumunuza ihtiyacımız var.",
+    "calibrationNeeded": "Pusulayı kalibre etmek için telefonunuzu 8 şeklinde hareket ettirin"
   },
   "quran": {
     "title": "Kur'an",

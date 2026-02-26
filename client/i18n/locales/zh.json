@@ -94,7 +94,8 @@
     "mosques": "清真寺",
     "gettingLocation": "获取位置...",
     "initializingCompass": "初始化指南针...",
-    "locationRequiredQibla": "我们需要您的位置来计算朝向方向。"
+    "locationRequiredQibla": "我们需要您的位置来计算朝向方向。",
+    "calibrationNeeded": "将手机以8字形移动以校准指南针"
   },
   "quran": {
     "title": "古兰经",

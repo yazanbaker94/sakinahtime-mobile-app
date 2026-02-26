@@ -94,7 +94,8 @@
     "mosques": "Moscheen",
     "gettingLocation": "Standort wird ermittelt...",
     "initializingCompass": "Kompass wird initialisiert...",
-    "locationRequiredQibla": "Wir benötigen Ihren Standort, um die Qibla-Richtung von Ihrer aktuellen Position zu berechnen."
+    "locationRequiredQibla": "Wir benötigen Ihren Standort, um die Qibla-Richtung von Ihrer aktuellen Position zu berechnen.",
+    "calibrationNeeded": "Bewegen Sie Ihr Telefon in einer 8er-Form, um den Kompass zu kalibrieren"
   },
   "quran": {
     "title": "Quran",

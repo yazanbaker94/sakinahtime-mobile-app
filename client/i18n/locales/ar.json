@@ -94,7 +94,8 @@
     "mosques": "المساجد",
     "gettingLocation": "جاري تحديد موقعك...",
     "initializingCompass": "جاري تهيئة البوصلة...",
-    "locationRequiredQibla": "نحتاج إلى موقعك لحساب اتجاه القبلة من موقعك الحالي."
+    "locationRequiredQibla": "نحتاج إلى موقعك لحساب اتجاه القبلة من موقعك الحالي.",
+    "calibrationNeeded": "حرّك هاتفك بشكل رقم 8 لمعايرة البوصلة"
   },
   "quran": {
     "title": "القرآن",

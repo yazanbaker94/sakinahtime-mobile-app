@@ -96,7 +96,8 @@
     "mosques": "Mosques",
     "gettingLocation": "Getting your location...",
     "initializingCompass": "Initializing compass...",
-    "locationRequiredQibla": "We need your location to calculate the Qibla direction from your current position."
+    "locationRequiredQibla": "We need your location to calculate the Qibla direction from your current position.",
+    "calibrationNeeded": "Move your phone in a figure-8 pattern to calibrate the compass"
   },
   "quran": {
     "title": "Quran",

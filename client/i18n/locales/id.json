@@ -94,7 +94,8 @@
         "mosques": "Masjid",
         "gettingLocation": "Mendapatkan lokasi Anda...",
         "initializingCompass": "Menginisialisasi kompas...",
-        "locationRequiredQibla": "Kami memerlukan lokasi Anda untuk menghitung arah Kiblat dari posisi Anda saat ini."
+        "locationRequiredQibla": "Kami memerlukan lokasi Anda untuk menghitung arah Kiblat dari posisi Anda saat ini.",
+    "calibrationNeeded": "Gerakkan ponsel Anda membentuk angka 8 untuk mengkalibrasi kompas"
     },
     "quran": {
         "title": "Quran",
