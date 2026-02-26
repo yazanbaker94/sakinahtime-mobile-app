@@ -1010,7 +1010,13 @@
     "browseFirstFive": "تصفح أول ٥ صفحات",
     "downloadRequired": "تحميل المصحف مطلوب",
     "pageRequiresDownload": "الصفحة {{page}} تتطلب تحميل صور المصحف بدقة عالية (~٦٥ ميغابايت).",
-    "downloadNow": "تحميل الآن"
+    "downloadNow": "تحميل الآن",
+    "scrubber": {
+      "notInData": "غير متوفر",
+      "appearsOnce": "تظهر مرة واحدة",
+      "appearsTimes": "تظهر {{count}} مرات",
+      "moveToWord": "انتقل إلى كلمة..."
+    }
   },
   "mosqueFinder": {
     "nearbyMosques": "المساجد القريبة",

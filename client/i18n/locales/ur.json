@@ -1010,7 +1010,13 @@
     "browseFirstFive": "پہلے ۵ صفحات دیکھیں",
     "downloadRequired": "مصحف ڈاؤن لوڈ ضروری ہے",
     "pageRequiresDownload": "صفحہ {{page}} کے لیے مصحف تصاویر ڈاؤن لوڈ کرنا ضروری ہے (~۶۵ ایم بی)۔",
-    "downloadNow": "ابھی ڈاؤن لوڈ کریں"
+    "downloadNow": "ابھی ڈاؤن لوڈ کریں",
+    "scrubber": {
+      "notInData": "ڈیٹا میں نہیں",
+      "appearsOnce": "ایک بار ظاہر ہوتا ہے",
+      "appearsTimes": "{{count}} بار ظاہر ہوتا ہے",
+      "moveToWord": "ایک لفظ پر جائیں..."
+    }
   },
   "mosqueFinder": {
     "nearbyMosques": "قریبی مساجد",

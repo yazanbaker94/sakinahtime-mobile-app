@@ -1071,7 +1071,13 @@
     "browseFirstFive": "İlk 5 sayfaya göz at",
     "downloadRequired": "Mushaf İndirmesi Gerekli",
     "pageRequiresDownload": "Sayfa {{page}} yüksek çözünürlüklü Mushaf görüntülerini gerektiriyor (~65 MB).",
-    "downloadNow": "Şimdi İndir"
+    "downloadNow": "Şimdi İndir",
+    "scrubber": {
+      "notInData": "Veride yok",
+      "appearsOnce": "Bir kez geçiyor",
+      "appearsTimes": "{{count}} kez geçiyor",
+      "moveToWord": "Bir kelimeye gidin..."
+    }
   },
   "mosqueFinder": {
     "nearbyMosques": "Yakındaki Camiler",

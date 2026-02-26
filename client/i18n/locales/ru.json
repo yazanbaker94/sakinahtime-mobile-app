@@ -1010,7 +1010,13 @@
     "browseFirstFive": "Первые 5 страниц",
     "downloadRequired": "Требуется загрузка Мусхафа",
     "pageRequiresDownload": "Страница {{page}} требует загрузки изображений Мусхафа (~65 МБ).",
-    "downloadNow": "Скачать сейчас"
+    "downloadNow": "Скачать сейчас",
+    "scrubber": {
+      "notInData": "Нет в данных",
+      "appearsOnce": "Встречается один раз",
+      "appearsTimes": "Встречается {{count}} раз",
+      "moveToWord": "Перейдите к слову..."
+    }
   },
   "mosqueFinder": {
     "nearbyMosques": "Ближайшие мечети",

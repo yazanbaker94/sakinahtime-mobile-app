@@ -985,348 +985,339 @@ function MushafScreenContent() {
         );
       }
 
-      return (
-        <Pressable
-          onLongPress={(e) => {
-            const { pageX, pageY } = e.nativeEvent;
-            console.log('[MushafScreen] Long press detected at:', pageX, pageY);
-            setIsWordScrubberActive(true);
-            // Use ref-based position update â€” no setState, no parent re-render
-            setTimeout(() => wordScrubberRef.current?.updatePosition(pageX, pageY), 0);
+      // RNGH scrubber gesture: Pan with activateAfterLongPress runs in C++
+      // Solves Android touch-steal bug where Pressable.onTouchMove dies after onLongPress
+      const isHifzActive = hifzMode.isActive;
+      const scrubberGesture = Gesture.Pan()
+        .activateAfterLongPress(400)
+        .enabled(!isHifzActive) // Disabled in Hifz mode so Hifz long press works
+        .onStart((e) => {
+          'worklet';
+          runOnJS(setIsWordScrubberActive)(true);
+          runOnJS((pos: { x: number, y: number }) => {
+            wordScrubberRef.current?.updatePosition(pos.x, pos.y);
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-          }}
-          onTouchMove={(e) => {
-            // Forward touch moves to WordScrubber when active
-            if (isWordScrubberActive) {
-              const { pageX, pageY } = e.nativeEvent;
-              wordScrubberRef.current?.updatePosition(pageX, pageY);
-            }
-          }}
-          onTouchEnd={() => {
-            // Close WordScrubber when finger lifts
-            if (isWordScrubberActive) {
-              setIsWordScrubberActive(false);
-            }
-          }}
-          delayLongPress={400}
-          style={[styles.pageContainer, {
-            width: screenWidth,
-            height: contentZoneHeight,
-          }]}
-        >
-          <Image
-            source={mushafImages[pageNum]}
-            style={[styles.mushafImage, {
+          })({ x: e.absoluteX, y: e.absoluteY });
+        })
+        .onUpdate((e) => {
+          'worklet';
+          runOnJS((pos: { x: number, y: number }) => {
+            wordScrubberRef.current?.updatePosition(pos.x, pos.y);
+          })({ x: e.absoluteX, y: e.absoluteY });
+        })
+        .onEnd(() => {
+          'worklet';
+          runOnJS(setIsWordScrubberActive)(false);
+        })
+        .onTouchesCancelled(() => {
+          'worklet';
+          runOnJS(setIsWordScrubberActive)(false);
+        });
+
+      return (
+        <GestureDetector gesture={scrubberGesture}>
+          <View
+            style={[styles.pageContainer, {
               width: screenWidth,
-              height: imageHeight,
-              top: imageOffsetY,
-              tintColor: isDark ? '#FFFFFF' : undefined,
+              height: contentZoneHeight,
             }]}
-            contentFit="contain"
-            cachePolicy="memory-disk"
-            transition={0}
-            key={`theme-${isDark}-${pageNum}`}
-          />
-          {showOverlays && Array.from(verseGroups.entries()).flatMap(([verseKey, coords]) => {
-            const [surah, ayah] = verseKey.split(':');
+          >
+            <Image
+              source={mushafImages[pageNum]}
+              style={[styles.mushafImage, {
+                width: screenWidth,
+                height: imageHeight,
+                top: imageOffsetY,
+                tintColor: isDark ? '#FFFFFF' : undefined,
+              }]}
+              contentFit="contain"
+              cachePolicy="memory-disk"
+              transition={0}
+              key={`theme-${isDark}-${pageNum}`}
+            />
+            {showOverlays && Array.from(verseGroups.entries()).flatMap(([verseKey, coords]) => {
+              const [surah, ayah] = verseKey.split(':');
 
-            // Hifz mode state (shared for all rendering modes)
-            const isHifzActive = hifzMode.isActive;
-            const isWordMode = isHifzActive && hifzMode.settings.hideMode === 'word';
-            const isVerseRevealed = hifzMode.isVerseRevealed(verseKey) || hifzMode.revealedVerses.has('__ALL__');
-            const isDueForRevision = isVerseDueForRevision(verseKey);
-            const verseProgress = hifzProgress?.verses?.[verseKey];
-            const hifzActiveColor = theme.primary;
-            const hiddenBgColor = isDark ? HIDDEN_TEXT_BG.dark : HIDDEN_TEXT_BG.light;
+              // Hifz mode state (shared for all rendering modes)
+              const isHifzActive = hifzMode.isActive;
+              const isWordMode = isHifzActive && hifzMode.settings.hideMode === 'word';
+              const isVerseRevealed = hifzMode.isVerseRevealed(verseKey) || hifzMode.revealedVerses.has('__ALL__');
+              const isDueForRevision = isVerseDueForRevision(verseKey);
+              const verseProgress = hifzProgress?.verses?.[verseKey];
+              const hifzActiveColor = theme.primary;
+              const hiddenBgColor = isDark ? HIDDEN_TEXT_BG.dark : HIDDEN_TEXT_BG.light;
 
-            // Word-by-word mode: render individual word overlays
-            if (isWordMode) {
-              // Filter out null ayah entries (verse markers) and render each word
-              const rawWordCoords = coords.filter((c: any) => c.ayah !== null);
-
-              // Deduplicate coords - some verses have duplicate coordinate entries
-              const seenCoords = new Set<string>();
-              const wordCoords = rawWordCoords.filter((c: any) => {
-                const key = `${c.x}-${c.y}-${c.width}-${c.height}`;
-                if (seenCoords.has(key)) return false;
-                seenCoords.add(key);
-                return true;
-              });
-
-              const lastWordIdx = wordCoords.length - 1;
-
-              return wordCoords.map((coord: any, wordIdx: number) => {
-                const wordKey = `${verseKey}:${wordIdx}`;
-                // Check directly against the Set to ensure we get the latest value
-                const isWordRevealed = hifzMode.revealedWords.has(wordKey) || isVerseRevealed;
-                const isWordHidden = !isWordRevealed;
-                const isLastWord = wordIdx === lastWordIdx;
-                const actualBgColor = isWordHidden ? hiddenBgColor : 'transparent';
-
-                return (
-                  <Pressable
-                    key={`word-${wordKey}`}
-                    accessible={true}
-                    accessibilityRole="button"
-                    accessibilityLabel={`Word ${wordIdx + 1} of verse ${surah}:${ayah}${isWordHidden ? ', hidden, tap to reveal' : ''}`}
-                    accessibilityHint="Tap to reveal this word, long press for memorization options"
-                    style={[styles.verseRegion, {
-                      left: (coord.x * imageScale) - 3,
-                      top: (coord.y * imageScale) + imageOffsetY - 2,
-                      width: Math.max(coord.width * imageScale, 20) + 6,
-                      height: Math.max(coord.height * imageScale, 20) + 4,
-                      backgroundColor: actualBgColor,
-                      borderRadius: isWordHidden ? 4 : 6,
-                    }]}
-                    onPress={() => {
-                      if (isWordHidden) {
-                        hifzMode.revealWord(wordKey);
-                      } else {
-                        // If verse is revealed (from full verse mode or reveal all), 
-                        // we need to hide the verse first, then reveal all OTHER words except this one
-                        if (isVerseRevealed) {
-                          hifzMode.hideVerse(verseKey);
-                          for (let i = 0; i < wordCoords.length; i++) {
-                            if (i !== wordIdx) {
-                              hifzMode.revealWord(`${verseKey}:${i}`);
-                            }
-                          }
-                        } else {
-                          hifzMode.hideWord(wordKey);
-                        }
-                      }
-                    }}
-                    onLongPress={(e) => {
-                      // Long press shows Hifz status menu (same as solid mode)
-                      const { pageX, pageY } = e.nativeEvent;
-                      setHifzMenuVerseKey(verseKey);
-                      setHifzMenuPosition({ x: pageX, y: pageY });
-                      setShowHifzStatusMenu(true);
-                    }}
-                    delayLongPress={500}
-                  >
-                    {/* Loop start indicator (A) on first word - right side for RTL */}
-                    {wordIdx === 0 && hifzMode.loopStart === verseKey && (
-                      <View style={[styles.loopIndicator, { backgroundColor: '#3B82F6', right: 0 }]}>
-                        <ThemedText style={styles.loopIndicatorText}>A</ThemedText>
-                      </View>
-                    )}
-                    {/* Loop end indicator (B) on first word - right side for RTL (same position as A but different verse) */}
-                    {wordIdx === 0 && hifzMode.loopEnd === verseKey && (
-                      <View style={[styles.loopIndicator, { backgroundColor: '#3B82F6', right: 16 }]}>
-                        <ThemedText style={styles.loopIndicatorText}>B</ThemedText>
-                      </View>
-                    )}
-                    {/* Memorization status indicator on first word (start of verse in RTL) */}
-                    {wordIdx === 0 && verseProgress && (
-                      <View style={[
-                        styles.memorizationIndicator,
-                        {
-                          backgroundColor: verseProgress.status === 'memorized'
-                            ? theme.primary
-                            : verseProgress.status === 'in_progress'
-                              ? '#F59E0B'
-                              : 'transparent'
-                        }
-                      ]} />
-                    )}
-                    {/* Due for revision badge on first word */}
-                    {wordIdx === 0 && isDueForRevision && (
-                      <View style={[styles.revisionBadge, { backgroundColor: '#EF4444' }]} />
-                    )}
-                  </Pressable>
-                );
-              });
-            } else {
-              // Solid mode (default): render merged verse regions per line
-              const lineGroups = new Map<number, any[]>();
-              coords.forEach((c: any) => {
-                if (!lineGroups.has(c.line)) lineGroups.set(c.line, []);
-                lineGroups.get(c.line)!.push(c);
-              });
-
-              // Check if this verse is currently playing AND has word-level timing data
-              const isCurrentVersePlaying = localAudioState.playingVerseKey === verseKey;
-              const hasWordTiming = isCurrentVersePlaying && localAudioState.segments?.length > 0;
-
-              // Prepare word coordinates for word-level highlighting (if needed)
-              let wordCoords: any[] = [];
-              if (hasWordTiming) {
-                // Filter out null ayah entries (verse markers) and deduplicate
+              // Word-by-word mode: render individual word overlays
+              if (isWordMode) {
+                // Filter out null ayah entries (verse markers) and render each word
                 const rawWordCoords = coords.filter((c: any) => c.ayah !== null);
+
+                // Deduplicate coords - some verses have duplicate coordinate entries
                 const seenCoords = new Set<string>();
-                wordCoords = rawWordCoords.filter((c: any) => {
+                const wordCoords = rawWordCoords.filter((c: any) => {
                   const key = `${c.x}-${c.y}-${c.width}-${c.height}`;
                   if (seenCoords.has(key)) return false;
                   seenCoords.add(key);
                   return true;
                 });
 
-                // Debug: Log word count mismatch
-                const segmentCount = localAudioState.segments?.length || 0;
-                if (wordCoords.length !== segmentCount) {
-                  console.log('[MushafScreen] Word count mismatch:', {
-                    verseKey,
-                    wordCoordsCount: wordCoords.length,
-                    segmentCount,
-                    currentWordIndex: localAudioState.wordIndex,
-                  });
-                }
-              }
+                const lastWordIdx = wordCoords.length - 1;
 
-              // Render line-based verse regions + word-level highlights
-              const lineElements = Array.from(lineGroups.values()).map((lineCoords, idx) => {
-                const minX = Math.min(...lineCoords.map(c => c.x));
-                const minY = Math.min(...lineCoords.map(c => c.y));
-                const maxX = Math.max(...lineCoords.map(c => c.x + c.width));
-                const maxY = Math.max(...lineCoords.map(c => c.y + c.height));
+                return wordCoords.map((coord: any, wordIdx: number) => {
+                  const wordKey = `${verseKey}:${wordIdx}`;
+                  // Check directly against the Set to ensure we get the latest value
+                  const isWordRevealed = hifzMode.revealedWords.has(wordKey) || isVerseRevealed;
+                  const isWordHidden = !isWordRevealed;
+                  const isLastWord = wordIdx === lastWordIdx;
+                  const actualBgColor = isWordHidden ? hiddenBgColor : 'transparent';
 
-                const isAudioPlaying = localAudioState.playingVerseKey === verseKey;
-                const isSelected = selectedVerse?.verseKey === verseKey;
-                const isHighlighted = highlightedVerse === verseKey;
-                const highlightColor = highlights[verseKey] || (notes[verseKey] ? `${theme.primary}26` : null);
-
-                const isHidden = isHifzActive && !isVerseRevealed;
-
-                // Determine background color with Hifz mode priority
-                // When word-level timing is available, use lighter verse highlight (words will be highlighted individually)
-                let bgColor = 'transparent';
-                if (isHidden) {
-                  bgColor = hiddenBgColor;
-                } else if (isHighlighted) {
-                  bgColor = `${theme.primary}80`; // Bright highlight for navigation
-                } else if (isAudioPlaying) {
-                  // Always use subtle verse highlight when audio is playing
-                  // Word overlay provides bright highlight on the current word when timing data is available
-                  // This prevents flash from full verse -> word highlight when segments load
-                  bgColor = `${theme.primary}1A`; // 10% opacity - subtle verse indicator
-                } else if (highlightColor) {
-                  bgColor = highlightColor;
-                } else if (isSelected) {
-                  bgColor = 'rgba(76, 175, 80, 0.2)';
-                } else if (isHifzActive && isDueForRevision) {
-                  bgColor = 'rgba(239, 68, 68, 0.15)'; // Red tint for due revision
-                }
-
-                return (
-                  <Pressable
-                    key={`${verseKey}-${idx}`}
-                    accessible={true}
-                    accessibilityRole="button"
-                    accessibilityLabel={`Verse ${surah}:${ayah}${isHidden ? ', hidden, tap to reveal' : ''}${isDueForRevision ? ', due for revision' : ''}`}
-                    accessibilityHint={isHifzActive ? 'Tap to reveal verse, long press for memorization options' : 'Tap to select verse'}
-                    style={[styles.verseRegion, {
-                      left: (minX * imageScale) - 3,
-                      top: (minY * imageScale) + imageOffsetY - 2,
-                      width: ((maxX - minX) * imageScale) + 6,
-                      height: ((maxY - minY) * imageScale) + 4,
-                      backgroundColor: bgColor,
-                      borderRadius: isHidden ? 4 : 6,
-                    }]}
-                    onPress={(e) => {
-                      const { pageX, pageY } = e.nativeEvent;
-                      // In Hifz mode, tap only reveals/hides verse (no menu)
-                      if (isHifzActive) {
-                        if (isVerseRevealed) {
-                          hifzMode.hideVerse(verseKey);
+                  return (
+                    <Pressable
+                      key={`word-${wordKey}`}
+                      accessible={true}
+                      accessibilityRole="button"
+                      accessibilityLabel={`Word ${wordIdx + 1} of verse ${surah}:${ayah}${isWordHidden ? ', hidden, tap to reveal' : ''}`}
+                      accessibilityHint="Tap to reveal this word, long press for memorization options"
+                      style={[styles.verseRegion, {
+                        left: (coord.x * imageScale) - 3,
+                        top: (coord.y * imageScale) + imageOffsetY - 2,
+                        width: Math.max(coord.width * imageScale, 20) + 6,
+                        height: Math.max(coord.height * imageScale, 20) + 4,
+                        backgroundColor: actualBgColor,
+                        borderRadius: isWordHidden ? 4 : 6,
+                      }]}
+                      onPress={() => {
+                        if (isWordHidden) {
+                          hifzMode.revealWord(wordKey);
                         } else {
-                          hifzMode.revealVerse(verseKey);
+                          // If verse is revealed (from full verse mode or reveal all), 
+                          // we need to hide the verse first, then reveal all OTHER words except this one
+                          if (isVerseRevealed) {
+                            hifzMode.hideVerse(verseKey);
+                            for (let i = 0; i < wordCoords.length; i++) {
+                              if (i !== wordIdx) {
+                                hifzMode.revealWord(`${verseKey}:${i}`);
+                              }
+                            }
+                          } else {
+                            hifzMode.hideWord(wordKey);
+                          }
                         }
-                        return; // Don't open verse menu in Hifz mode
-                      }
-                      // Normal mode: open verse menu
-                      handleVersePress({ surah: parseInt(surah), ayah: parseInt(ayah), verseKey, touchX: pageX, touchY: pageY });
-                    }}
-                    onLongPress={(e) => {
-                      const { pageX, pageY } = e.nativeEvent;
-                      // Long press shows Hifz status menu in Hifz mode
-                      if (isHifzActive) {
+                      }}
+                      onLongPress={(e) => {
+                        // Long press shows Hifz status menu (same as solid mode)
+                        const { pageX, pageY } = e.nativeEvent;
                         setHifzMenuVerseKey(verseKey);
                         setHifzMenuPosition({ x: pageX, y: pageY });
                         setShowHifzStatusMenu(true);
-                      } else {
-                        // Normal mode: activate WordScrubber
-                        console.log('[MushafScreen] Word long press at:', pageX, pageY);
-                        setIsWordScrubberActive(true);
-                        setTimeout(() => wordScrubberRef.current?.updatePosition(pageX, pageY), 0);
-                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                      }
-                    }}
-                    onTouchMove={(e) => {
-                      // Forward touch moves to WordScrubber when active
-                      if (isWordScrubberActive) {
+                      }}
+                      delayLongPress={500}
+                    >
+                      {/* Loop start indicator (A) on first word - right side for RTL */}
+                      {wordIdx === 0 && hifzMode.loopStart === verseKey && (
+                        <View style={[styles.loopIndicator, { backgroundColor: '#3B82F6', right: 0 }]}>
+                          <ThemedText style={styles.loopIndicatorText}>A</ThemedText>
+                        </View>
+                      )}
+                      {/* Loop end indicator (B) on first word - right side for RTL (same position as A but different verse) */}
+                      {wordIdx === 0 && hifzMode.loopEnd === verseKey && (
+                        <View style={[styles.loopIndicator, { backgroundColor: '#3B82F6', right: 16 }]}>
+                          <ThemedText style={styles.loopIndicatorText}>B</ThemedText>
+                        </View>
+                      )}
+                      {/* Memorization status indicator on first word (start of verse in RTL) */}
+                      {wordIdx === 0 && verseProgress && (
+                        <View style={[
+                          styles.memorizationIndicator,
+                          {
+                            backgroundColor: verseProgress.status === 'memorized'
+                              ? theme.primary
+                              : verseProgress.status === 'in_progress'
+                                ? '#F59E0B'
+                                : 'transparent'
+                          }
+                        ]} />
+                      )}
+                      {/* Due for revision badge on first word */}
+                      {wordIdx === 0 && isDueForRevision && (
+                        <View style={[styles.revisionBadge, { backgroundColor: '#EF4444' }]} />
+                      )}
+                    </Pressable>
+                  );
+                });
+              } else {
+                // Solid mode (default): render merged verse regions per line
+                const lineGroups = new Map<number, any[]>();
+                coords.forEach((c: any) => {
+                  if (!lineGroups.has(c.line)) lineGroups.set(c.line, []);
+                  lineGroups.get(c.line)!.push(c);
+                });
+
+                // Check if this verse is currently playing AND has word-level timing data
+                const isCurrentVersePlaying = localAudioState.playingVerseKey === verseKey;
+                const hasWordTiming = isCurrentVersePlaying && localAudioState.segments?.length > 0;
+
+                // Prepare word coordinates for word-level highlighting (if needed)
+                let wordCoords: any[] = [];
+                if (hasWordTiming) {
+                  // Filter out null ayah entries (verse markers) and deduplicate
+                  const rawWordCoords = coords.filter((c: any) => c.ayah !== null);
+                  const seenCoords = new Set<string>();
+                  wordCoords = rawWordCoords.filter((c: any) => {
+                    const key = `${c.x}-${c.y}-${c.width}-${c.height}`;
+                    if (seenCoords.has(key)) return false;
+                    seenCoords.add(key);
+                    return true;
+                  });
+
+                  // Debug: Log word count mismatch
+                  const segmentCount = localAudioState.segments?.length || 0;
+                  if (wordCoords.length !== segmentCount) {
+                    console.log('[MushafScreen] Word count mismatch:', {
+                      verseKey,
+                      wordCoordsCount: wordCoords.length,
+                      segmentCount,
+                      currentWordIndex: localAudioState.wordIndex,
+                    });
+                  }
+                }
+
+                // Render line-based verse regions + word-level highlights
+                const lineElements = Array.from(lineGroups.values()).map((lineCoords, idx) => {
+                  const minX = Math.min(...lineCoords.map(c => c.x));
+                  const minY = Math.min(...lineCoords.map(c => c.y));
+                  const maxX = Math.max(...lineCoords.map(c => c.x + c.width));
+                  const maxY = Math.max(...lineCoords.map(c => c.y + c.height));
+
+                  const isAudioPlaying = localAudioState.playingVerseKey === verseKey;
+                  const isSelected = selectedVerse?.verseKey === verseKey;
+                  const isHighlighted = highlightedVerse === verseKey;
+                  const highlightColor = highlights[verseKey] || (notes[verseKey] ? `${theme.primary}26` : null);
+
+                  const isHidden = isHifzActive && !isVerseRevealed;
+
+                  // Determine background color with Hifz mode priority
+                  // When word-level timing is available, use lighter verse highlight (words will be highlighted individually)
+                  let bgColor = 'transparent';
+                  if (isHidden) {
+                    bgColor = hiddenBgColor;
+                  } else if (isHighlighted) {
+                    bgColor = `${theme.primary}80`; // Bright highlight for navigation
+                  } else if (isAudioPlaying) {
+                    // Always use subtle verse highlight when audio is playing
+                    // Word overlay provides bright highlight on the current word when timing data is available
+                    // This prevents flash from full verse -> word highlight when segments load
+                    bgColor = `${theme.primary}1A`; // 10% opacity - subtle verse indicator
+                  } else if (highlightColor) {
+                    bgColor = highlightColor;
+                  } else if (isSelected) {
+                    bgColor = 'rgba(76, 175, 80, 0.2)';
+                  } else if (isHifzActive && isDueForRevision) {
+                    bgColor = 'rgba(239, 68, 68, 0.15)'; // Red tint for due revision
+                  }
+
+                  return (
+                    <Pressable
+                      key={`${verseKey}-${idx}`}
+                      accessible={true}
+                      accessibilityRole="button"
+                      accessibilityLabel={`Verse ${surah}:${ayah}${isHidden ? ', hidden, tap to reveal' : ''}${isDueForRevision ? ', due for revision' : ''}`}
+                      accessibilityHint={isHifzActive ? 'Tap to reveal verse, long press for memorization options' : 'Tap to select verse'}
+                      style={[styles.verseRegion, {
+                        left: (minX * imageScale) - 3,
+                        top: (minY * imageScale) + imageOffsetY - 2,
+                        width: ((maxX - minX) * imageScale) + 6,
+                        height: ((maxY - minY) * imageScale) + 4,
+                        backgroundColor: bgColor,
+                        borderRadius: isHidden ? 4 : 6,
+                      }]}
+                      onPress={(e) => {
                         const { pageX, pageY } = e.nativeEvent;
-                        wordScrubberRef.current?.updatePosition(pageX, pageY);
-                      }
-                    }}
-                    onTouchEnd={() => {
-                      // Close WordScrubber when finger lifts
-                      if (isWordScrubberActive) {
-                        setIsWordScrubberActive(false);
-                      }
-                    }}
-                    delayLongPress={500}
-                  >
-                    {/* Loop start indicator (A) - right side for RTL (first word position) */}
-                    {isHifzActive && hifzMode.loopStart === verseKey && idx === 0 && (
-                      <View style={[styles.loopIndicator, { backgroundColor: '#3B82F6', right: 0 }]}>
-                        <ThemedText style={styles.loopIndicatorText}>A</ThemedText>
-                      </View>
-                    )}
-                    {/* Loop end indicator (B) - right side for RTL (first word position, offset from A) */}
-                    {isHifzActive && hifzMode.loopEnd === verseKey && idx === 0 && (
-                      <View style={[styles.loopIndicator, { backgroundColor: '#3B82F6', right: 16 }]}>
-                        <ThemedText style={styles.loopIndicatorText}>B</ThemedText>
-                      </View>
-                    )}
-                    {/* Hidden verse indicator */}
-                    {isHidden && (
-                      <View style={styles.hiddenVerseOverlay}>
-                        <View style={[styles.hiddenLine, { backgroundColor: theme.border }]} />
-                        <View style={[styles.hiddenLineShort, { backgroundColor: theme.border }]} />
-                      </View>
-                    )}
-                    {/* Due for revision badge */}
-                    {isHifzActive && isDueForRevision && idx === 0 && (
-                      <View style={[styles.revisionBadge, { backgroundColor: '#EF4444' }]} />
-                    )}
-                    {/* Memorization status indicator */}
-                    {isHifzActive && verseProgress && idx === 0 && (
-                      <View style={[
-                        styles.memorizationIndicator,
-                        {
-                          backgroundColor: verseProgress.status === 'memorized'
-                            ? theme.primary
-                            : verseProgress.status === 'in_progress'
-                              ? '#F59E0B'
-                              : 'transparent'
+                        // In Hifz mode, tap only reveals/hides verse (no menu)
+                        if (isHifzActive) {
+                          if (isVerseRevealed) {
+                            hifzMode.hideVerse(verseKey);
+                          } else {
+                            hifzMode.revealVerse(verseKey);
+                          }
+                          return; // Don't open verse menu in Hifz mode
                         }
-                      ]} />
-                    )}
-                  </Pressable>
-                );
-              });
+                        // Normal mode: open verse menu
+                        handleVersePress({ surah: parseInt(surah), ayah: parseInt(ayah), verseKey, touchX: pageX, touchY: pageY });
+                      }}
+                      onLongPress={(e) => {
+                        const { pageX, pageY } = e.nativeEvent;
+                        // Hifz mode only: long press shows Hifz status menu
+                        // Word scrubber is handled by parent RNGH GestureDetector
+                        if (isHifzActive) {
+                          setHifzMenuVerseKey(verseKey);
+                          setHifzMenuPosition({ x: pageX, y: pageY });
+                          setShowHifzStatusMenu(true);
+                        }
+                      }}
+                      delayLongPress={500}
+                    >
+                      {/* Loop start indicator (A) - right side for RTL (first word position) */}
+                      {isHifzActive && hifzMode.loopStart === verseKey && idx === 0 && (
+                        <View style={[styles.loopIndicator, { backgroundColor: '#3B82F6', right: 0 }]}>
+                          <ThemedText style={styles.loopIndicatorText}>A</ThemedText>
+                        </View>
+                      )}
+                      {/* Loop end indicator (B) - right side for RTL (first word position, offset from A) */}
+                      {isHifzActive && hifzMode.loopEnd === verseKey && idx === 0 && (
+                        <View style={[styles.loopIndicator, { backgroundColor: '#3B82F6', right: 16 }]}>
+                          <ThemedText style={styles.loopIndicatorText}>B</ThemedText>
+                        </View>
+                      )}
+                      {/* Hidden verse indicator */}
+                      {isHidden && (
+                        <View style={styles.hiddenVerseOverlay}>
+                          <View style={[styles.hiddenLine, { backgroundColor: theme.border }]} />
+                          <View style={[styles.hiddenLineShort, { backgroundColor: theme.border }]} />
+                        </View>
+                      )}
+                      {/* Due for revision badge */}
+                      {isHifzActive && isDueForRevision && idx === 0 && (
+                        <View style={[styles.revisionBadge, { backgroundColor: '#EF4444' }]} />
+                      )}
+                      {/* Memorization status indicator */}
+                      {isHifzActive && verseProgress && idx === 0 && (
+                        <View style={[
+                          styles.memorizationIndicator,
+                          {
+                            backgroundColor: verseProgress.status === 'memorized'
+                              ? theme.primary
+                              : verseProgress.status === 'in_progress'
+                                ? '#F59E0B'
+                                : 'transparent'
+                          }
+                        ]} />
+                      )}
+                    </Pressable>
+                  );
+                });
 
-              // Add word-level highlight overlay for the currently playing word (animated)
-              const wordHighlightElements: React.ReactNode[] = [];
-              if (hasWordTiming && wordCoords.length > 0) {
-                wordHighlightElements.push(
-                  <AnimatedAudioWordHighlight
-                    key={`word-highlight-${verseKey}`}
-                    wordCoords={wordCoords}
-                    currentWordIndex={localAudioState.wordIndex}
-                    imageScale={imageScale}
-                    imageOffsetY={imageOffsetY}
-                    primaryColor={theme.primary}
-                    verseKey={verseKey}
-                  />
-                );
+                // Add word-level highlight overlay for the currently playing word (animated)
+                const wordHighlightElements: React.ReactNode[] = [];
+                if (hasWordTiming && wordCoords.length > 0) {
+                  wordHighlightElements.push(
+                    <AnimatedAudioWordHighlight
+                      key={`word-highlight-${verseKey}`}
+                      wordCoords={wordCoords}
+                      currentWordIndex={localAudioState.wordIndex}
+                      imageScale={imageScale}
+                      imageOffsetY={imageOffsetY}
+                      primaryColor={theme.primary}
+                      verseKey={verseKey}
+                    />
+                  );
+                }
+
+                return [...lineElements, ...wordHighlightElements];
               }
-
-              return [...lineElements, ...wordHighlightElements];
-            }
-          })}
-        </Pressable>
+            })}
+          </View>
+        </GestureDetector>
       );
     };
   }

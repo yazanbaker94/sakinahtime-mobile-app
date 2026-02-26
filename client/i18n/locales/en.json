@@ -1013,7 +1013,13 @@
     "browseFirstFive": "Browse first 5 pages",
     "downloadRequired": "Mushaf Download Required",
     "pageRequiresDownload": "Page {{page}} requires the high-resolution Mushaf images (~65 MB).",
-    "downloadNow": "Download Now"
+    "downloadNow": "Download Now",
+    "scrubber": {
+      "notInData": "Not in data",
+      "appearsOnce": "Appears once",
+      "appearsTimes": "Appears {{count}} times",
+      "moveToWord": "Move to a word..."
+    }
   },
   "mosqueFinder": {
     "nearbyMosques": "Nearby Mosques",

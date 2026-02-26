@@ -19,11 +19,13 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
+  withSpring,
   Easing,
   runOnJS,
 } from 'react-native-reanimated';
 import { ThemedText } from '@/components/ThemedText';
 import { useTheme } from '@/hooks/useTheme';
+import { useTranslation } from '@/hooks/useTranslation';
 import { findWordMeaningByIndex, ensureWbwDataLoaded } from '@/services/WordMeaningService';
 import { Feather } from '@expo/vector-icons';
 import wordAudioService from '@/services/WordAudioService';
@@ -98,10 +100,11 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
   imageHeight,
 }, ref) => {
   const { theme } = useTheme();
+  const { t } = useTranslation();
   const [currentWord, setCurrentWord] = useState<WordInfo | null>(null);
   const lastWordRef = useRef<string | null>(null);
   const wasActiveRef = useRef(false);
-  const meaningTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const currentWordIndexRef = useRef<string | null>(null);
   // fingerPosition state drives magnifier rendering (local re-render only, not parent)
   const [fingerPosition, setFingerPosition] = useState<{ x: number; y: number } | null>(null);
   // Y-axis lock: tracks the vertical center of the current word's line
@@ -227,8 +230,8 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
     return null;
   }, [spatialGrid, imageScale, imageOffsetY, contentZoneTop]);
 
-  // Load word meaning with debounce (meaning card fills 80ms after highlight moves)
-  const loadWordMeaningDebounced = useCallback((
+  // Load word meaning — no setTimeout, uses wordIndex ref check + requestAnimationFrame
+  const loadWordMeaning = useCallback((
     surah: number,
     ayah: number,
     wordIndex: number,
@@ -237,19 +240,14 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
     wordBounds?: { left: number; top: number; width: number; height: number }
   ) => {
     const wordKey = `${surah}:${ayah}:${wordIndex}`;
-    if (lastWordRef.current === wordKey) return;
-    lastWordRef.current = wordKey;
+    if (currentWordIndexRef.current === wordKey) return;
+    currentWordIndexRef.current = wordKey;
 
     // Haptic feedback immediately
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
-    // Clear any pending meaning lookup
-    if (meaningTimeoutRef.current) {
-      clearTimeout(meaningTimeoutRef.current);
-    }
-
-    // Debounced meaning lookup — don't block highlight movement
-    meaningTimeoutRef.current = setTimeout(async () => {
+    // Sync meaning lookup to screen's refresh cycle — drops zero frames
+    requestAnimationFrame(async () => {
       try {
         const meaning = await findWordMeaningByIndex(surah, ayah, wordIndex);
         setCurrentWord({
@@ -263,7 +261,7 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
       } catch (e) {
         setCurrentWord({ surah, ayah, wordIndex, screenX, screenY, wordBounds });
       }
-    }, 80);
+    });
   }, []);
 
   // Core position update — called imperatively from parent via ref
@@ -281,16 +279,22 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
       highlightHeight.value = withTiming(word.wordBounds.height, timing);
       highlightOpacity.value = withTiming(1, { duration: 80 });
 
-      // Lock magnifier Y-axis to word's vertical center (prevents line jitter)
-      wordLineCenterY.current = word.wordBounds.top + (word.wordBounds.height / 2);
+      // Lock magnifier Y-axis to word's vertical center (smooth spring on line jumps)
+      const newLineY = word.wordBounds.top + (word.wordBounds.height / 2);
+      if (wordLineCenterY.current !== null && Math.abs(newLineY - wordLineCenterY.current) > 5) {
+        // Line change detected — animate the Y-axis hop
+        wordLineCenterY.current = newLineY;
+      } else {
+        wordLineCenterY.current = newLineY;
+      }
 
-      // Debounced meaning card update
-      loadWordMeaningDebounced(
+      // Meaning lookup — no timeout, uses wordIndex ref check
+      loadWordMeaning(
         word.surah, word.ayah, word.wordIndex,
         word.screenX, word.screenY, word.wordBounds
       );
     }
-  }, [findWordAtPosition, loadWordMeaningDebounced, highlightLeft, highlightTop, highlightWidth, highlightHeight, highlightOpacity]);
+  }, [findWordAtPosition, loadWordMeaning, highlightLeft, highlightTop, highlightWidth, highlightHeight, highlightOpacity]);
 
   // Expose imperative handle for parent to call
   useImperativeHandle(ref, () => ({
@@ -302,13 +306,10 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
     if (!isActive) {
       setCurrentWord(null);
       lastWordRef.current = null;
+      currentWordIndexRef.current = null;
       setFingerPosition(null);
       wordLineCenterY.current = null;
       highlightOpacity.value = withTiming(0, { duration: 100 });
-      if (meaningTimeoutRef.current) {
-        clearTimeout(meaningTimeoutRef.current);
-        meaningTimeoutRef.current = null;
-      }
     }
   }, [isActive]);
 
@@ -319,9 +320,9 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
   const infoBoxTop = isFingerInTopHalf ? SCREEN_HEIGHT - tabBarHeight - 180 : 100;
 
   const formatFrequency = (freq: number): string => {
-    if (freq === 0) return 'Not in data';
-    if (freq === 1) return 'Appears once';
-    return `Appears ${freq} times`;
+    if (freq === 0) return t('mushaf.scrubber.notInData');
+    if (freq === 1) return t('mushaf.scrubber.appearsOnce');
+    return t('mushaf.scrubber.appearsTimes', { count: freq });
   };
 
   // Calculate magnifier position
@@ -495,7 +496,7 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
           ) : (
             <View style={styles.infoContentEmpty}>
               <ThemedText style={[styles.hint, { color: theme.textSecondary }]}>
-                Move to a word...
+                {t('mushaf.scrubber.moveToWord')}
               </ThemedText>
             </View>
           )}

@@ -1010,7 +1010,13 @@
     "browseFirstFive": "Lihat 5 halaman pertama",
     "downloadRequired": "Unduhan Mushaf Diperlukan",
     "pageRequiresDownload": "Halaman {{page}} memerlukan gambar Mushaf resolusi tinggi (~65 MB).",
-    "downloadNow": "Unduh Sekarang"
+    "downloadNow": "Unduh Sekarang",
+    "scrubber": {
+      "notInData": "Tidak ada dalam data",
+      "appearsOnce": "Muncul sekali",
+      "appearsTimes": "Muncul {{count}} kali",
+      "moveToWord": "Pindah ke kata..."
+    }
   },
   "mosqueFinder": {
     "nearbyMosques": "Masjid Terdekat",
