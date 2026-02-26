@@ -309,7 +309,10 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
     }
   }, [isActive]);
 
-  if (!isActive) return null;
+  // Constants for animated styles (must be before hooks)
+  const MAGNIFIER_WIDTH = 130;
+  const MAGNIFIER_HEIGHT = 50;
+  const MAGNIFIER_SCALE = 1.5;
 
   // Animated style for magnifier image position (reads shared values, runs on UI thread)
   const magnifierImageStyle = useAnimatedStyle(() => {
@@ -333,16 +336,13 @@ export const WordScrubber = forwardRef<WordScrubberHandle, WordScrubberProps>(({
     };
   });
 
+  if (!isActive) return null;
+
   const formatFrequency = (freq: number): string => {
     if (freq === 0) return t('mushaf.scrubber.notInData');
     if (freq === 1) return t('mushaf.scrubber.appearsOnce');
     return t('mushaf.scrubber.appearsTimes', { count: freq });
   };
-
-  // MAGNIFIER_WIDTH/HEIGHT/SCALE constants for animated style (defined above in useAnimatedStyle)
-  const MAGNIFIER_WIDTH = 130;
-  const MAGNIFIER_HEIGHT = 50;
-  const MAGNIFIER_SCALE = 1.5;
 
   return (
     <View style={StyleSheet.absoluteFill} pointerEvents="box-none">
