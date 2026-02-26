@@ -988,30 +988,38 @@ function MushafScreenContent() {
       // RNGH scrubber gesture: Pan with activateAfterLongPress runs in C++
       // Solves Android touch-steal bug where Pressable.onTouchMove dies after onLongPress
       const isHifzActive = hifzMode.isActive;
+
+      // Pre-defined handlers — worklets can only pass references to named functions
+      const handleScrubberStart = (x: number, y: number) => {
+        setIsWordScrubberActive(true);
+        wordScrubberRef.current?.updatePosition(x, y);
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      };
+      const handleScrubberUpdate = (x: number, y: number) => {
+        wordScrubberRef.current?.updatePosition(x, y);
+      };
+      const handleScrubberEnd = () => {
+        setIsWordScrubberActive(false);
+      };
+
       const scrubberGesture = Gesture.Pan()
         .activateAfterLongPress(400)
         .enabled(!isHifzActive) // Disabled in Hifz mode so Hifz long press works
         .onStart((e) => {
           'worklet';
-          runOnJS(setIsWordScrubberActive)(true);
-          runOnJS((pos: { x: number, y: number }) => {
-            wordScrubberRef.current?.updatePosition(pos.x, pos.y);
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-          })({ x: e.absoluteX, y: e.absoluteY });
+          runOnJS(handleScrubberStart)(e.absoluteX, e.absoluteY);
         })
         .onUpdate((e) => {
           'worklet';
-          runOnJS((pos: { x: number, y: number }) => {
-            wordScrubberRef.current?.updatePosition(pos.x, pos.y);
-          })({ x: e.absoluteX, y: e.absoluteY });
+          runOnJS(handleScrubberUpdate)(e.absoluteX, e.absoluteY);
         })
         .onEnd(() => {
           'worklet';
-          runOnJS(setIsWordScrubberActive)(false);
+          runOnJS(handleScrubberEnd)();
         })
         .onTouchesCancelled(() => {
           'worklet';
-          runOnJS(setIsWordScrubberActive)(false);
+          runOnJS(handleScrubberEnd)();
         });
 
       return (
