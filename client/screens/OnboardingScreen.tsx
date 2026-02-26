@@ -13,6 +13,8 @@ import {
     FlatList,
     NativeSyntheticEvent,
     NativeScrollEvent,
+    Alert,
+    AppState,
 } from 'react-native';
 import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -157,6 +159,33 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
         }
     };
 
+    // Promise-wrapped Alert so we can await the user's tap
+    const showPermissionAlertAsync = (title: string, message: string): Promise<boolean> => {
+        return new Promise((resolve) => {
+            Alert.alert(
+                title,
+                message,
+                [
+                    { text: t('onboarding.openSettings'), onPress: () => resolve(true) },
+                    { text: t('common.skip'), style: 'cancel', onPress: () => resolve(false) }
+                ],
+                { cancelable: false }
+            );
+        });
+    };
+
+    // Pause execution until user returns from Settings app
+    const waitForAppToForeground = (): Promise<void> => {
+        return new Promise((resolve) => {
+            const subscription = AppState.addEventListener('change', (nextAppState) => {
+                if (nextAppState === 'active') {
+                    subscription.remove();
+                    resolve();
+                }
+            });
+        });
+    };
+
     const requestNotificationPermission = async () => {
         try {
             const { status } = await Notifications.requestPermissionsAsync();
@@ -169,62 +198,43 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
             );
 
             if (status === 'granted' && Platform.OS === 'android') {
-                const { Alert } = require('react-native');
 
-                console.log('[Onboarding] Checking exact alarm permission...');
+                // --- 1. Exact Alarm Permission ---
                 try {
-                    const canSchedule = await canScheduleExactAlarms();
-                    console.log('[Onboarding] Can schedule exact alarms:', canSchedule);
-
-                    if (!canSchedule) {
+                    if (!(await canScheduleExactAlarms())) {
                         console.log('[Onboarding] Requesting exact alarm permission');
-                        Alert.alert(
+                        const wantsSettings = await showPermissionAlertAsync(
                             t('onboarding.enableExactAlarms'),
-                            t('onboarding.exactAlarmsDescription'),
-                            [
-                                {
-                                    text: t('onboarding.openSettings'),
-                                    onPress: async () => {
-                                        const result = await requestExactAlarmPermission();
-                                        console.log('[Onboarding] Exact alarm result:', result);
-                                    }
-                                },
-                                { text: t('common.skip'), style: 'cancel' }
-                            ]
+                            t('onboarding.exactAlarmsDescription')
                         );
+                        if (wantsSettings) {
+                            await requestExactAlarmPermission();
+                            await waitForAppToForeground();
+                        }
                     }
-                } catch (alarmError) {
-                    console.error('[Onboarding] Exact alarm check failed:', alarmError);
+                } catch (e) {
+                    console.error('[Onboarding] Exact alarm check failed:', e);
                 }
 
-                console.log('[Onboarding] Checking battery optimization status...');
+                // --- 2. Battery Optimization ---
                 try {
-                    const isBatteryOptimized = await checkBatteryOptimization();
-                    console.log('[Onboarding] Battery optimized:', isBatteryOptimized);
-                    if (isBatteryOptimized) {
-                        console.log('[Onboarding] Requesting battery optimization exemption for reliable alarms');
-                        Alert.alert(
+                    if (await checkBatteryOptimization()) {
+                        console.log('[Onboarding] Requesting battery optimization exemption');
+                        const wantsSettings = await showPermissionAlertAsync(
                             t('onboarding.enableReliableAzan'),
-                            t('onboarding.reliableAzanDescription'),
-                            [
-                                {
-                                    text: t('onboarding.openSettings'),
-                                    onPress: async () => {
-                                        const result = await requestBatteryOptimizationExemption();
-                                        console.log('[Onboarding] Battery exemption result:', result);
-                                    }
-                                },
-                                { text: t('common.skip'), style: 'cancel' }
-                            ]
+                            t('onboarding.reliableAzanDescription')
                         );
-                    } else {
-                        console.log('[Onboarding] App already exempt from battery optimization');
+                        if (wantsSettings) {
+                            await requestBatteryOptimizationExemption();
+                            await waitForAppToForeground();
+                        }
                     }
-                } catch (batteryError) {
-                    console.error('[Onboarding] Battery optimization check failed:', batteryError);
+                } catch (e) {
+                    console.error('[Onboarding] Battery optimization check failed:', e);
                 }
             }
 
+            // goToNext() ONLY fires after all dialogs and settings visits are complete
             goToNext();
         } catch (error) {
             console.warn('[Onboarding] Notification permission error:', error);
