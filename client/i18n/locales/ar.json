@@ -553,11 +553,7 @@
     "downloadQuran": "تنزيل القرآن",
     "clearAll": "مسح الكل",
     "freeUpSpace": "تحرير مساحة",
-    "refreshInfo": "تحديث معلومات التخزين",
-    "wbwTitle": "كلمة بكلمة",
-    "wbwNone": "لا توجد تنزيلات",
-    "wbwClearTitle": "مسح بيانات كلمة بكلمة؟",
-    "wbwClearDesc": "سيتم حذف {{count}} ملف(ات) ترجمة محملة ({{size}}). يمكنك إعادة تحميلها في أي وقت."
+    "refreshInfo": "تحديث معلومات التخزين"
   },
   "onboarding": {
     "welcome": "مرحباً بك في سكينة تايم",
@@ -990,20 +986,10 @@
     "downloadFailed": "فشل التحميل. يرجى التحقق من الاتصال ومساحة التخزين.",
     "tafsirNotAvailable": "لا يتوفر تفسير",
     "tafsirNotAvailableVerse": "لا يتوفر تفسير لهذه الآية",
-    "downloadQuranTitle": "تحميل صفحات القرآن",
-    "downloadQuranDescription": "قم بتحميل صفحات المصحف بجودة عالية (~٦٥ ميجابايت) للقراءة بدون إنترنت. الصفحات ١-٥ متاحة فوراً.",
-    "downloading": "جاري تحميل المصحف...",
-    "extractingPages": "جاري استخراج الصفحات...",
-    "downloadProgress": "{{downloaded}} ميجابايت من {{total}} ميجابايت",
-    "downloadFailedNetwork": "فشل التحميل. تحقق من الاتصال وحاول مرة أخرى.",
-    "cellularWarning": "أنت غير متصل بشبكة Wi-Fi. سيستهلك هذا التحميل حوالي ٦٥ ميجابايت من بيانات الهاتف.",
-    "retryDownload": "إعادة المحاولة",
-    "downloadMushaf": "تحميل المصحف",
-    "browseFirstFive": "تصفح أول ٥ صفحات فقط",
     "downloadRequired": "تحميل المصحف مطلوب",
     "pageRequiresDownload": "الصفحة {{page}} تتطلب تحميل صور المصحف بدقة عالية (~٦٥ ميغابايت).",
     "downloadNow": "تحميل الآن"
-  },
+},
   "mosqueFinder": {
     "nearbyMosques": "المساجد القريبة",
     "searchPlaceholder": "البحث عن مساجد...",
