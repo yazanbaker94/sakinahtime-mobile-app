@@ -1025,6 +1025,7 @@ function MushafScreenContent() {
       return (
         <GestureDetector gesture={scrubberGesture}>
           <View
+            collapsable={false}
             style={[styles.pageContainer, {
               width: screenWidth,
               height: contentZoneHeight,
