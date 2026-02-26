@@ -1,4 +1,6 @@
 import type { City } from '@/types/location';
+// @ts-ignore — tz-lookup has no type definitions
+import tzlookup from 'tz-lookup';
 
 // Photon API - built for autocomplete, does prefix matching well
 const PHOTON_BASE_URL = 'https://photon.komoot.io/api';
@@ -95,7 +97,7 @@ function transformPhotonResult(feature: any): City | null {
         const countryCode = props.countrycode?.toUpperCase() || '';
 
         // Get timezone from country code
-        const timezone = getTimezoneForCountry(countryCode, latitude, longitude);
+        const timezone = getTimezoneFromCoordinates(latitude, longitude);
 
         return {
             id: `photon-${props.osm_id || `${latitude}-${longitude}`}`,
@@ -114,73 +116,17 @@ function transformPhotonResult(feature: any): City | null {
 }
 
 /**
- * Get timezone for country (with fallback to coordinate-based approximation)
+ * Get timezone from coordinates using tz-lookup (compressed spatial index)
+ * Accurate to sub-degree resolution, works fully offline
  */
-function getTimezoneForCountry(countryCode: string, lat: number, lon: number): string {
-    const countryTimezones: Record<string, string> = {
-        'US': 'America/New_York',
-        'CA': 'America/Toronto',
-        'GB': 'Europe/London',
-        'UK': 'Europe/London',
-        'FR': 'Europe/Paris',
-        'DE': 'Europe/Berlin',
-        'IT': 'Europe/Rome',
-        'ES': 'Europe/Madrid',
-        'JP': 'Asia/Tokyo',
-        'CN': 'Asia/Shanghai',
-        'IN': 'Asia/Kolkata',
-        'AU': 'Australia/Sydney',
-        'BR': 'America/Sao_Paulo',
-        'RU': 'Europe/Moscow',
-        'SA': 'Asia/Riyadh',
-        'AE': 'Asia/Dubai',
-        'EG': 'Africa/Cairo',
-        'TR': 'Europe/Istanbul',
-        'PK': 'Asia/Karachi',
-        'BD': 'Asia/Dhaka',
-        'ID': 'Asia/Jakarta',
-        'MY': 'Asia/Kuala_Lumpur',
-        'TH': 'Asia/Bangkok',
-        'VN': 'Asia/Ho_Chi_Minh',
-        'PH': 'Asia/Manila',
-        'KR': 'Asia/Seoul',
-        'IR': 'Asia/Tehran',
-        'IQ': 'Asia/Baghdad',
-        'JO': 'Asia/Amman',
-        'LB': 'Asia/Beirut',
-        'SY': 'Asia/Damascus',
-        'PS': 'Asia/Gaza',
-        'IL': 'Asia/Jerusalem',
-        'QA': 'Asia/Qatar',
-        'KW': 'Asia/Kuwait',
-        'BH': 'Asia/Bahrain',
-        'OM': 'Asia/Muscat',
-        'YE': 'Asia/Aden',
-        'MA': 'Africa/Casablanca',
-        'DZ': 'Africa/Algiers',
-        'TN': 'Africa/Tunis',
-        'LY': 'Africa/Tripoli',
-        'SD': 'Africa/Khartoum',
-        'NG': 'Africa/Lagos',
-        'KE': 'Africa/Nairobi',
-        'ZA': 'Africa/Johannesburg',
-        'NZ': 'Pacific/Auckland',
-        'SG': 'Asia/Singapore',
-        'HK': 'Asia/Hong_Kong',
-        'TW': 'Asia/Taipei',
-        'AF': 'Asia/Kabul',
-        'UZ': 'Asia/Tashkent',
-        'KZ': 'Asia/Almaty',
-        'AZ': 'Asia/Baku',
-    };
-
-    if (countryCode && countryTimezones[countryCode]) {
-        return countryTimezones[countryCode];
+function getTimezoneFromCoordinates(lat: number, lon: number): string {
+    try {
+        return tzlookup(lat, lon);
+    } catch {
+        // Fallback: approximate from longitude
+        const utcOffset = Math.round(lon / 15);
+        return `Etc/GMT${utcOffset >= 0 ? '-' : '+'}${Math.abs(utcOffset)}`;
     }
-
-    // Fallback: approximate from longitude
-    const utcOffset = Math.round(lon / 15);
-    return `Etc/GMT${utcOffset >= 0 ? '-' : '+'}${Math.abs(utcOffset)}`;
 }
 
 /**

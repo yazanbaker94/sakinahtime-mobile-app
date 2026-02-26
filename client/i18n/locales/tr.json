@@ -426,7 +426,11 @@
     "setManually": "Konumu Manuel Ayarla",
     "searchWorldwide": "Dünya genelinde şehir arayın",
     "recentLocations": "SON KONUMLAR",
-    "info": "Konumunuz doğru namaz vakitlerini ve Kıble yönünü hesaplamak için kullanılır. GPS kullanılamadığında veya doğru olmadığında manuel konum kullanışlıdır."
+    "info": "Konumunuz doğru namaz vakitlerini ve Kıble yönünü hesaplamak için kullanılır. GPS kullanılamadığında veya doğru olmadığında manuel konum kullanışlıdır.",
+    "setYourLocation": "Konumunuzu ayarlayın",
+    "detectingShort": "Algılanıyor...",
+    "setLocation": "Konum ayarla",
+    "tapToSet": "Ayarlamak için dokunun"
   },
   "qada": {
     "title": "Kaza Takipçisi",
@@ -1065,7 +1069,7 @@
     "downloadRequired": "Mushaf İndirmesi Gerekli",
     "pageRequiresDownload": "Sayfa {{page}} yüksek çözünürlüklü Mushaf görüntülerini gerektiriyor (~65 MB).",
     "downloadNow": "Şimdi İndir"
-},
+  },
   "mosqueFinder": {
     "nearbyMosques": "Yakındaki Camiler",
     "searchPlaceholder": "Cami ara...",
@@ -1439,7 +1443,6 @@
     "stop": "Durdur"
   },
   "calendarGrid": {
-    "holiday": "Bayram",
     "holiday": "Bayram",
     "whiteDay": "White Day",
     "event": "Event",

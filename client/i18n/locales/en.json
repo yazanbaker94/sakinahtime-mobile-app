@@ -429,7 +429,11 @@
     "setManually": "Set Location Manually",
     "searchWorldwide": "Search for any city worldwide",
     "recentLocations": "RECENT LOCATIONS",
-    "info": "Your location is used to calculate accurate prayer times and Qibla direction. Manual location is useful when GPS is unavailable or inaccurate."
+    "info": "Your location is used to calculate accurate prayer times and Qibla direction. Manual location is useful when GPS is unavailable or inaccurate.",
+    "setYourLocation": "Set your location",
+    "detectingShort": "Detecting...",
+    "setLocation": "Set location",
+    "tapToSet": "Tap to set"
   },
   "qada": {
     "title": "Qada Tracker",
@@ -1007,7 +1011,7 @@
     "downloadRequired": "Mushaf Download Required",
     "pageRequiresDownload": "Page {{page}} requires the high-resolution Mushaf images (~65 MB).",
     "downloadNow": "Download Now"
-},
+  },
   "mosqueFinder": {
     "nearbyMosques": "Nearby Mosques",
     "searchPlaceholder": "Search mosques...",

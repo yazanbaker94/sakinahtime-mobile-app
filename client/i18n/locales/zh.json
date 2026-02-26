@@ -426,7 +426,11 @@
     "setManually": "手动设置",
     "searchWorldwide": "搜索全球城市",
     "recentLocations": "最近位置",
-    "info": "您的位置用于计算准确的礼拜时间和朝向方向。"
+    "info": "您的位置用于计算准确的礼拜时间和朝向方向。",
+    "setYourLocation": "设置您的位置",
+    "detectingShort": "检测中...",
+    "setLocation": "设置位置",
+    "tapToSet": "点击设置"
   },
   "qada": {
     "title": "补拜追踪",
@@ -1004,7 +1008,7 @@
     "downloadRequired": "需要下载古兰经",
     "pageRequiresDownload": "第 {{page}} 页需要下载高分辨率古兰经图片（约65 MB）。",
     "downloadNow": "立即下载"
-},
+  },
   "mosqueFinder": {
     "nearbyMosques": "附近清真寺",
     "searchPlaceholder": "搜索清真寺...",
@@ -2287,7 +2291,6 @@
   "calendarGrid": {
     "event": "事件",
     "fasting": "斋戒",
-    "holiday": "节日",
     "holiday": "u8282u65e5",
     "whiteDay": "白天日"
   },

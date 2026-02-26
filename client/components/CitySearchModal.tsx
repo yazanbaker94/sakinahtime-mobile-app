@@ -137,16 +137,6 @@ export function CitySearchModal({
   }, [recentLocations]);
 
   const handleSelectCity = useCallback((city: City) => {
-    // If offline and city is not in recent locations, show warning
-    if (!isOnline && !isInRecentLocations(city)) {
-      Alert.alert(
-        t('citySearch.offline'),
-        t('citySearch.offlineMessage'),
-        [{ text: 'OK' }]
-      );
-      return;
-    }
-
     const location: ManualLocation = {
       city: city.name,
       country: city.country,
@@ -157,7 +147,7 @@ export function CitySearchModal({
     onSelectCity(location);
     setSearchQuery('');
     onClose();
-  }, [onSelectCity, onClose, isOnline, isInRecentLocations]);
+  }, [onSelectCity, onClose]);
 
   const handleSelectRecent = useCallback((location: ManualLocation) => {
     onSelectCity(location);

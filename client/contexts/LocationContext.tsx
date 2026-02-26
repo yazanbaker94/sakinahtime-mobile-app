@@ -16,6 +16,21 @@ import {
 import { prayerTimesPreloader } from "@/services/PrayerTimesPreloader";
 import { networkService } from "@/services/NetworkService";
 
+/**
+ * Haversine distance between two coordinates (meters)
+ * Used for GPS delta check to prevent unnecessary re-renders
+ */
+function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371000;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
 interface LocationState {
   // Core location data (works for both GPS and manual)
   latitude: number | null;
@@ -169,6 +184,22 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
       });
 
       const { latitude, longitude } = location.coords;
+
+      // 2km delta check: if fresh GPS is within 2km of cached, skip context update
+      // This prevents React Query from invalidating and double-fetching prayer times
+      const currentGps = gpsStateRef.current;
+      if (currentGps.latitude && currentGps.longitude) {
+        const dist = haversineDistance(
+          currentGps.latitude, currentGps.longitude,
+          latitude, longitude
+        );
+        if (dist < 2000) {
+          // Within 2km — cached location is accurate enough, skip update
+          console.log(`[LocationContext] Fresh GPS within ${Math.round(dist)}m of cached, skipping update`);
+          setLoading(false);
+          return;
+        }
+      }
 
       let city: string | null = null;
       let country: string | null = null;

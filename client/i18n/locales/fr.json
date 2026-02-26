@@ -426,7 +426,11 @@
     "setManually": "Définir la localisation manuellement",
     "searchWorldwide": "Rechercher n'importe quelle ville dans le monde",
     "recentLocations": "EMPLACEMENTS RÉCENTS",
-    "info": "Votre localisation est utilisée pour calculer des horaires de prière et la direction de la Qibla précis. La localisation manuelle est utile quand le GPS est indisponible ou imprécis."
+    "info": "Votre localisation est utilisée pour calculer des horaires de prière et la direction de la Qibla précis. La localisation manuelle est utile quand le GPS est indisponible ou imprécis.",
+    "setYourLocation": "Définir votre position",
+    "detectingShort": "Détection...",
+    "setLocation": "Définir la position",
+    "tapToSet": "Appuyer pour définir"
   },
   "qada": {
     "title": "Suivi des Qada",
@@ -1004,7 +1008,7 @@
     "downloadRequired": "Téléchargement du Mushaf requis",
     "pageRequiresDownload": "La page {{page}} nécessite les images du Mushaf en haute résolution (~65 Mo).",
     "downloadNow": "Télécharger maintenant"
-},
+  },
   "mosqueFinder": {
     "nearbyMosques": "Mosquées à proximité",
     "searchPlaceholder": "Rechercher des mosquées...",
@@ -1329,7 +1333,6 @@
   },
   "calendarGrid": {
     "holiday": "Fête",
-    "holiday": "F\u00eate",
     "whiteDay": "Jour blanc",
     "event": "Événement",
     "fasting": "Jeûne"

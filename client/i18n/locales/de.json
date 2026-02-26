@@ -426,7 +426,11 @@
     "setManually": "Standort manuell festlegen",
     "searchWorldwide": "Suche nach Städten weltweit",
     "recentLocations": "LETZTE STANDORTE",
-    "info": "Ihr Standort wird verwendet, um genaue Gebetszeiten und Qibla-Richtung zu berechnen. Die manuelle Standorteingabe ist nützlich, wenn GPS nicht verfügbar oder ungenau ist."
+    "info": "Ihr Standort wird verwendet, um genaue Gebetszeiten und Qibla-Richtung zu berechnen. Die manuelle Standorteingabe ist nützlich, wenn GPS nicht verfügbar oder ungenau ist.",
+    "setYourLocation": "Standort festlegen",
+    "detectingShort": "Erkennung...",
+    "setLocation": "Standort setzen",
+    "tapToSet": "Zum Setzen tippen"
   },
   "qada": {
     "title": "Qada-Tracker",
@@ -1004,7 +1008,7 @@
     "downloadRequired": "Mushaf-Download erforderlich",
     "pageRequiresDownload": "Seite {{page}} erfordert die hochauflösenden Mushaf-Bilder (~65 MB).",
     "downloadNow": "Jetzt herunterladen"
-},
+  },
   "mosqueFinder": {
     "nearbyMosques": "Moscheen in der Nähe",
     "searchPlaceholder": "Moscheen suchen...",
@@ -2287,7 +2291,6 @@
   "calendarGrid": {
     "event": "Ereignis",
     "fasting": "Fasten",
-    "holiday": "Feiertag",
     "holiday": "Feiertag",
     "whiteDay": "Weißer Tag"
   },

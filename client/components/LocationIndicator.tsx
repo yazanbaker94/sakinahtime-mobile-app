@@ -9,6 +9,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { useTheme } from '@/hooks/useTheme';
 import { useLocation } from '@/contexts/LocationContext';
 import { Spacing, BorderRadius } from '@/constants/theme';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface LocationIndicatorProps {
   variant?: 'default' | 'card';
@@ -16,6 +17,7 @@ interface LocationIndicatorProps {
 
 export function LocationIndicator({ variant = 'default' }: LocationIndicatorProps) {
   const { theme, isDark } = useTheme();
+  const { t } = useTranslation();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const {
     city,
@@ -33,7 +35,7 @@ export function LocationIndicator({ variant = 'default' }: LocationIndicatorProp
 
   const locationText = city && country
     ? `${city}, ${country}`
-    : city || (loading ? 'Detecting location...' : (shouldSuggestManual ? 'Set your location' : 'Location unavailable'));
+    : city || (loading ? t('location.detecting') : (shouldSuggestManual ? t('location.setYourLocation') : t('location.unavailable')));
 
   const handlePress = () => {
     if (Platform.OS !== 'web') {
@@ -44,7 +46,7 @@ export function LocationIndicator({ variant = 'default' }: LocationIndicatorProp
 
   // Card variant - styled for inside the prayer card
   if (variant === 'card') {
-    const shortLocationText = city || (loading ? 'Detecting...' : 'Set location');
+    const shortLocationText = city || (loading ? t('location.detectingShort') : t('location.setLocation'));
 
     return (
       <Pressable
@@ -107,14 +109,14 @@ export function LocationIndicator({ variant = 'default' }: LocationIndicatorProp
         {isManual && (
           <View style={[styles.badge, { backgroundColor: theme.primary }]}>
             <ThemedText type="caption" style={styles.badgeText}>
-              Manual
+              {t('location.manual')}
             </ThemedText>
           </View>
         )}
         {shouldSuggestManual && (
           <View style={[styles.badge, { backgroundColor: theme.gold }]}>
             <ThemedText type="caption" style={styles.badgeText}>
-              Tap to set
+              {t('location.tapToSet')}
             </ThemedText>
           </View>
         )}
