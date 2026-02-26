@@ -603,7 +603,10 @@
     "exactAlarmsDescription": "SakinahTime memerlukan izin untuk menjadwalkan alarm waktu shalat yang tepat.\n\nSilakan aktifkan \"Alarm & pengingat\" pada layar berikutnya.",
     "openSettings": "Buka Pengaturan",
     "enableReliableAzan": "Aktifkan Azan Andal",
-    "reliableAzanDescription": "Untuk memastikan Azan diputar setelah ponsel dihidupkan ulang, silakan ketuk:\n\nBaterai → Tidak Dibatasi\n\nIni memungkinkan aplikasi membangunkan ponsel Anda untuk waktu shalat."
+    "reliableAzanDescription": "Untuk memastikan Azan diputar setelah ponsel dihidupkan ulang, silakan ketuk:\n\nBaterai → Tidak Dibatasi\n\nIni memungkinkan aplikasi membangunkan ponsel Anda untuk waktu shalat.",
+    "manualSetupRequired": "Pengaturan Manual Diperlukan",
+    "manualSetupDescription": "Perangkat Anda memblokir pintasan otomatis. Temukan 'Alarm & pengingat' di layar berikutnya dan aktifkan.",
+    "manualBatteryDescription": "Perangkat Anda memblokir pintasan otomatis. Ketuk 'Baterai' di layar berikutnya dan atur ke 'Tidak dibatasi'."
   },
   "mosque": {
     "title": "Masjid Terdekat",

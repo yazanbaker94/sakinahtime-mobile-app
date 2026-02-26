@@ -606,7 +606,10 @@
     "exactAlarmsDescription": "SakinahTime needs permission to schedule precise prayer time alarms.\n\nPlease enable \"Alarms & reminders\" on the next screen.",
     "openSettings": "Open Settings",
     "enableReliableAzan": "Enable Reliable Azan",
-    "reliableAzanDescription": "To ensure Azan plays after phone restarts, please tap:\n\nBattery → Unrestricted\n\nThis allows the app to wake your phone for prayer times."
+    "reliableAzanDescription": "To ensure Azan plays after phone restarts, please tap:\n\nBattery → Unrestricted\n\nThis allows the app to wake your phone for prayer times.",
+    "manualSetupRequired": "Manual Setup Required",
+    "manualSetupDescription": "Your device blocked the automatic shortcut. Please find 'Alarms & reminders' on the next screen and enable it.",
+    "manualBatteryDescription": "Your device blocked the automatic shortcut. Please tap 'Battery' on the next screen and set it to 'Unrestricted'."
   },
   "mosque": {
     "title": "Nearby Mosques",

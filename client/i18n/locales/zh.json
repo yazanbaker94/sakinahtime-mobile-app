@@ -603,7 +603,10 @@
     "exactAlarmsDescription": "SakinahTime需要权限来设置精确的礼拜闹钟。\n\n请在下一个界面启用'闹钟和提醒'。",
     "openSettings": "打开设置",
     "enableReliableAzan": "启用可靠宣礼",
-    "reliableAzanDescription": "为确保重启后宣礼正常播放，请点击：\n\n电池→不受限制\n\n这允许应用为礼拜时间唤醒手机。"
+    "reliableAzanDescription": "为确保重启后宣礼正常播放，请点击：\n\n电池→不受限制\n\n这允许应用为礼拜时间唤醒手机。",
+    "manualSetupRequired": "需要手动设置",
+    "manualSetupDescription": "您的设备阻止了自动快捷方式。请在下一个屏幕上找到\"闹钟和提醒\"并启用它。",
+    "manualBatteryDescription": "您的设备阻止了自动快捷方式。请在下一个屏幕上点击\"电池\"并设置为\"不受限制\"。"
   },
   "mosque": {
     "title": "附近清真寺",

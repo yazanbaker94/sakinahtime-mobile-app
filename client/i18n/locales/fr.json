@@ -603,7 +603,10 @@
     "exactAlarmsDescription": "SakinahTime a besoin de la permission de programmer des alarmes précises.\n\nVeuillez activer \"Alarmes et rappels\" sur l'écran suivant.",
     "openSettings": "Ouvrir les paramètres",
     "enableReliableAzan": "Activer l'Azan fiable",
-    "reliableAzanDescription": "Pour garantir que l'Azan se joue après le redémarrage du téléphone, veuillez appuyer sur :\n\nBatterie → Sans restriction\n\nCela permet à l'application de réveiller votre téléphone pour les horaires de prière."
+    "reliableAzanDescription": "Pour garantir que l'Azan se joue après le redémarrage du téléphone, veuillez appuyer sur :\n\nBatterie → Sans restriction\n\nCela permet à l'application de réveiller votre téléphone pour les horaires de prière.",
+    "manualSetupRequired": "Configuration manuelle requise",
+    "manualSetupDescription": "Votre appareil a bloqué le raccourci automatique. Trouvez 'Alarmes et rappels' sur l'écran suivant et activez-le.",
+    "manualBatteryDescription": "Votre appareil a bloqué le raccourci automatique. Appuyez sur 'Batterie' sur l'écran suivant et réglez-la sur 'Non restreint'."
   },
   "mosque": {
     "title": "Mosquées à proximité",

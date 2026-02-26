@@ -603,7 +603,10 @@
     "exactAlarmsDescription": "SakinahTime benötigt die Berechtigung, präzise Gebetszeitalarme zu planen.\n\nBitte aktivieren Sie \"Alarme & Erinnerungen\" auf dem nächsten Bildschirm.",
     "openSettings": "Einstellungen öffnen",
     "enableReliableAzan": "Zuverlässigen Adhan aktivieren",
-    "reliableAzanDescription": "Um sicherzustellen, dass der Adhan nach Telefonneustart abgespielt wird, tippen Sie bitte auf:\n\nAkku → Uneingeschränkt\n\nDies erlaubt der App, Ihr Telefon für Gebetszeiten aufzuwecken."
+    "reliableAzanDescription": "Um sicherzustellen, dass der Adhan nach Telefonneustart abgespielt wird, tippen Sie bitte auf:\n\nAkku → Uneingeschränkt\n\nDies erlaubt der App, Ihr Telefon für Gebetszeiten aufzuwecken.",
+    "manualSetupRequired": "Manuelle Einrichtung erforderlich",
+    "manualSetupDescription": "Ihr Gerät hat die automatische Verknüpfung blockiert. Suchen Sie auf dem nächsten Bildschirm 'Alarme & Erinnerungen' und aktivieren Sie es.",
+    "manualBatteryDescription": "Ihr Gerät hat die automatische Verknüpfung blockiert. Tippen Sie auf dem nächsten Bildschirm auf 'Akku' und setzen Sie ihn auf 'Uneingeschränkt'."
   },
   "mosque": {
     "title": "Moscheen in der Nähe",

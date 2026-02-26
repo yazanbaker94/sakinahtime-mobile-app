@@ -603,7 +603,10 @@
     "exactAlarmsDescription": "SakinahTime'ın hassas namaz vakti alarmları planlaması için izne ihtiyacı var.\n\nLütfen sonraki ekranda \"Alarmlar ve hatırlatmalar\"ı etkinleştirin.",
     "openSettings": "Ayarları Aç",
     "enableReliableAzan": "Güvenilir Ezanı Etkinleştir",
-    "reliableAzanDescription": "Telefon yeniden başlatıldıktan sonra ezanın çalmasını sağlamak için lütfen şuna dokunun:\n\nPil → Sınırsız\n\nBu, uygulamanın namaz vakitlerinde telefonunuzu uyandırmasına olanak tanır."
+    "reliableAzanDescription": "Telefon yeniden başlatıldıktan sonra ezanın çalmasını sağlamak için lütfen şuna dokunun:\n\nPil → Sınırsız\n\nBu, uygulamanın namaz vakitlerinde telefonunuzu uyandırmasına olanak tanır.",
+    "manualSetupRequired": "Manuel Kurulum Gerekli",
+    "manualSetupDescription": "Cihazınız otomatik kısayolu engelledi. Sonraki ekranda 'Alarmlar ve hatırlatıcılar'ı bulun ve etkinleştirin.",
+    "manualBatteryDescription": "Cihazınız otomatik kısayolu engelledi. Sonraki ekranda 'Pil'e dokunun ve 'Kısıtlanmamış' olarak ayarlayın."
   },
   "mosque": {
     "title": "Yakındaki Camiler",
