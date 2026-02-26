@@ -553,7 +553,11 @@
     "downloadQuran": "Quran herunterladen",
     "clearAll": "Alles löschen",
     "freeUpSpace": "Speicher freigeben",
-    "refreshInfo": "Speicherinfo aktualisieren"
+    "refreshInfo": "Speicherinfo aktualisieren",
+    "wbwTitle": "Wort-für-Wort Daten",
+    "wbwNone": "Keine Wort-für-Wort Daten heruntergeladen",
+    "wbwClearTitle": "Wort-für-Wort Daten löschen",
+    "wbwClearDesc": "{{size}} Wort-für-Wort Daten löschen ({{count}} Dateien)?"
   },
   "onboarding": {
     "welcome": "Willkommen bei SakinahTime",

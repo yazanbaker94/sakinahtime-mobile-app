@@ -556,7 +556,11 @@
     "downloadQuran": "Download Quran",
     "clearAll": "Clear All",
     "freeUpSpace": "Free up space",
-    "refreshInfo": "Refresh Storage Info"
+    "refreshInfo": "Refresh Storage Info",
+    "wbwTitle": "Word-by-Word Data",
+    "wbwNone": "No word-by-word data downloaded",
+    "wbwClearTitle": "Clear Word-by-Word Data",
+    "wbwClearDesc": "Delete {{size}} of word-by-word data ({{count}} files)?"
   },
   "onboarding": {
     "welcome": "Welcome to SakinahTime",

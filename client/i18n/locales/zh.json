@@ -553,7 +553,11 @@
     "downloadQuran": "下载古兰经",
     "clearAll": "全部清除",
     "freeUpSpace": "释放空间",
-    "refreshInfo": "刷新信息"
+    "refreshInfo": "刷新信息",
+    "wbwTitle": "逐词数据",
+    "wbwNone": "未下载逐词数据",
+    "wbwClearTitle": "清除逐词数据",
+    "wbwClearDesc": "删除 {{size}} 逐词数据（{{count}} 个文件）？"
   },
   "onboarding": {
     "welcome": "欢迎来到SakinahTime",

@@ -553,7 +553,11 @@
     "downloadQuran": "Kur'an İndir",
     "clearAll": "Tümünü Temizle",
     "freeUpSpace": "Yer açın",
-    "refreshInfo": "Depolama Bilgisini Yenile"
+    "refreshInfo": "Depolama Bilgisini Yenile",
+    "wbwTitle": "Kelime Kelime Verisi",
+    "wbwNone": "Kelime kelime verisi indirilmedi",
+    "wbwClearTitle": "Kelime Kelime Verisini Sil",
+    "wbwClearDesc": "{{size}} kelime kelime verisini sil ({{count}} dosya)?"
   },
   "onboarding": {
     "welcome": "SakinahTime'a Hoş Geldiniz",

@@ -553,7 +553,11 @@
     "downloadQuran": "قرآن ڈاؤن لوڈ کریں",
     "clearAll": "سب صاف کریں",
     "freeUpSpace": "جگہ خالی کریں",
-    "refreshInfo": "اسٹوریج معلومات تازہ کریں"
+    "refreshInfo": "اسٹوریج معلومات تازہ کریں",
+    "wbwTitle": "لفظ بلفظ ڈیٹا",
+    "wbwNone": "لفظ بلفظ ڈیٹا ڈاؤن لوڈ نہیں ہوا",
+    "wbwClearTitle": "لفظ بلفظ ڈیٹا صاف کریں",
+    "wbwClearDesc": "{{size}} لفظ بلفظ ڈیٹا حذف کریں ({{count}} فائلیں)؟"
   },
   "onboarding": {
     "welcome": "سکینہ ٹائم میں خوش آمدید",

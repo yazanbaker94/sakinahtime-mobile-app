@@ -553,7 +553,11 @@
         "downloadQuran": "Unduh Quran",
         "clearAll": "Hapus Semua",
         "freeUpSpace": "Bebaskan ruang",
-        "refreshInfo": "Perbarui Info Penyimpanan"
+        "refreshInfo": "Perbarui Info Penyimpanan",
+    "wbwTitle": "Data Kata per Kata",
+    "wbwNone": "Belum ada data kata per kata yang diunduh",
+    "wbwClearTitle": "Hapus Data Kata per Kata",
+    "wbwClearDesc": "Hapus {{size}} data kata per kata ({{count}} file)?"
     },
     "onboarding": {
         "welcome": "Selamat Datang di SakinahTime",

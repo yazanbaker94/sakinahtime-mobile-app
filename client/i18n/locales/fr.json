@@ -553,7 +553,11 @@
     "downloadQuran": "Télécharger le Coran",
     "clearAll": "Tout effacer",
     "freeUpSpace": "Libérer de l'espace",
-    "refreshInfo": "Actualiser les infos de stockage"
+    "refreshInfo": "Actualiser les infos de stockage",
+    "wbwTitle": "Données mot à mot",
+    "wbwNone": "Aucune donnée mot à mot téléchargée",
+    "wbwClearTitle": "Supprimer les données mot à mot",
+    "wbwClearDesc": "Supprimer {{size}} de données mot à mot ({{count}} fichiers) ?"
   },
   "onboarding": {
     "welcome": "Bienvenue sur SakinahTime",

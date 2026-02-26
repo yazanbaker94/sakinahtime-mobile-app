@@ -553,7 +553,11 @@
     "downloadQuran": "تنزيل القرآن",
     "clearAll": "مسح الكل",
     "freeUpSpace": "تحرير مساحة",
-    "refreshInfo": "تحديث معلومات التخزين"
+    "refreshInfo": "تحديث معلومات التخزين",
+    "wbwTitle": "بيانات كلمة بكلمة",
+    "wbwNone": "لم يتم تحميل بيانات كلمة بكلمة",
+    "wbwClearTitle": "مسح بيانات كلمة بكلمة",
+    "wbwClearDesc": "حذف {{size}} من بيانات كلمة بكلمة ({{count}} ملفات)؟"
   },
   "onboarding": {
     "welcome": "مرحباً بك في سكينة تايم",
