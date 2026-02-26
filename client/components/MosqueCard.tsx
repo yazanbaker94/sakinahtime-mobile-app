@@ -1,26 +1,30 @@
 /**
  * MosqueCard - Compact card component for mosque list items
- * Displays mosque name, distance, rating, and open/closed status
+ * Displays mosque name, distance, next prayer time, and directions button
  */
 
 import React from 'react';
-import { View, StyleSheet, Pressable } from 'react-native';
+import { View, StyleSheet, Pressable, Platform } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { Spacing, BorderRadius } from '@/constants/theme';
 import { useTheme } from '@/hooks/useTheme';
 import { Feather } from '@expo/vector-icons';
 import { Mosque } from '@/types/mosque';
 import { formatDistance } from '@/constants/mosque';
+import { useTranslation } from '@/hooks/useTranslation';
 import * as Haptics from 'expo-haptics';
 
 export interface MosqueCardProps {
   mosque: Mosque;
   onPress: () => void;
   onDirections: () => void;
+  nextPrayerName?: string;
+  nextPrayerTimeUntil?: { hours: number; minutes: number };
 }
 
-export function MosqueCard({ mosque, onPress, onDirections }: MosqueCardProps) {
+export function MosqueCard({ mosque, onPress, onDirections, nextPrayerName, nextPrayerTimeUntil }: MosqueCardProps) {
   const { isDark, theme } = useTheme();
+  const { t } = useTranslation();
 
   const handlePress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -32,16 +36,31 @@ export function MosqueCard({ mosque, onPress, onDirections }: MosqueCardProps) {
     onDirections();
   };
 
+  // Format prayer time badge text
+  const prayerBadgeText = nextPrayerName && nextPrayerTimeUntil
+    ? nextPrayerTimeUntil.hours > 0
+      ? `${nextPrayerName} ${t('mosqueFinder.inTime') || 'in'} ${nextPrayerTimeUntil.hours}h ${nextPrayerTimeUntil.minutes}m`
+      : `${nextPrayerName} ${t('mosqueFinder.inTime') || 'in'} ${nextPrayerTimeUntil.minutes}m`
+    : null;
+
   return (
-    /* Shadow wrapper — shadow renders here, not on the card */
+    /* Shadow wrapper — platform-conditional */
     <View style={{
       marginBottom: Spacing.md,
       borderRadius: 16,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.04,
-      shadowRadius: 15,
-      elevation: 3,
+      ...Platform.select({
+        ios: {
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.04,
+          shadowRadius: 15,
+        },
+        android: {
+          borderWidth: 1,
+          borderColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)',
+          backgroundColor: isDark ? theme.backgroundSecondary : '#FFFFFF',
+        },
+      }),
     }}>
       <Pressable
         onPress={handlePress}
@@ -92,26 +111,22 @@ export function MosqueCard({ mosque, onPress, onDirections }: MosqueCardProps) {
                 </View>
               )}
 
-              {/* Open/Closed Status */}
-              {mosque.isOpen !== undefined && (
+              {/* Prayer Time Badge — the killer differentiator */}
+              {prayerBadgeText && (
                 <View style={[
                   styles.statusBadge,
                   {
-                    backgroundColor: mosque.isOpen
-                      ? `${theme.primary}26`
-                      : (isDark ? 'rgba(239, 68, 68, 0.15)' : 'rgba(220, 38, 38, 0.1)'),
+                    backgroundColor: `${theme.primary}15`,
                   }
                 ]}>
                   <ThemedText
                     type="small"
                     style={{
-                      color: mosque.isOpen
-                        ? theme.primary
-                        : '#EF4444',
+                      color: theme.primary,
                       fontWeight: '600',
                     }}
                   >
-                    {mosque.isOpen ? 'Open' : 'Closed'}
+                    {prayerBadgeText}
                   </ThemedText>
                 </View>
               )}
@@ -123,14 +138,18 @@ export function MosqueCard({ mosque, onPress, onDirections }: MosqueCardProps) {
             </ThemedText>
           </View>
 
-          {/* Directions Button — glowing pop */}
+          {/* Directions Button — platform-conditional shadow */}
           <View style={{
             borderRadius: 22,
-            shadowColor: theme.primary,
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.35,
-            shadowRadius: 8,
-            elevation: 5,
+            ...Platform.select({
+              ios: {
+                shadowColor: theme.primary,
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.35,
+                shadowRadius: 8,
+              },
+              android: {},
+            }),
           }}>
             <Pressable
               onPress={handleDirections}

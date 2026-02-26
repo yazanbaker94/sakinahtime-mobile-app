@@ -1012,6 +1012,11 @@
     "radius5km": "٥ كم",
     "radius10km": "١٠ كم",
     "radius25km": "٢٥ كم"
+    "somethingWrong": "حدث خطأ ما"
+    "noMosquesFound": "لم يتم العثور على مساجد"
+    "expandRadius": "حاول توسيع نطاق البحث أو تغيير استعلام البحث"
+    "finding": "جارٍ البحث عن المساجد القريبة..."
+    "inTime": "خلال"
   },
   "calendar": {
     "months": [

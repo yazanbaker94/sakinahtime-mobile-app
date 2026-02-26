@@ -1012,6 +1012,11 @@
     "radius5km": "5 km",
     "radius10km": "10 km",
     "radius25km": "25 km"
+    "somethingWrong": "Une erreur est survenue"
+    "noMosquesFound": "Aucune mosquée trouvée"
+    "expandRadius": "Essayez d'élargir votre rayon de recherche"
+    "finding": "Recherche des mosquées à proximité..."
+    "inTime": "dans"
   },
   "calendar": {
     "months": [

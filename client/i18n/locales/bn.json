@@ -1012,6 +1012,11 @@
     "radius5km": "৫ কিমি",
     "radius10km": "১০ কিমি",
     "radius25km": "২৫ কিমি"
+    "somethingWrong": "কিছু ভুল হয়েছে"
+    "noMosquesFound": "কোনো মসজিদ পাওয়া যায়নি"
+    "expandRadius": "আপনার অনুসন্ধান ব্যাসার্ধ বাড়ানোর চেষ্টা করুন"
+    "finding": "কাছের মসজিদ খুঁজছি..."
+    "inTime": "মধ্যে"
   },
   "calendar": {
     "months": [

@@ -1,11 +1,17 @@
 /**
  * MosqueApiService - Service for fetching mosque data from OpenStreetMap Overpass API
  * Completely free, no API key required
+ * 
+ * Architecture:
+ * - Sequential fallback across 3 Overpass servers (NOT parallel — avoids DDoS/rate-limiting)
+ * - 5-minute in-memory cache with 100m movement tolerance
+ * - Spatial deduplication (merges node+way duplicates within 50m)
+ * - Hard-capped at 100 results per query
  */
 
 import { Mosque, MosqueDetail } from '@/types/mosque';
 
-// Multiple Overpass API endpoints for fallback
+// Overpass servers — tried sequentially, NOT in parallel
 const OVERPASS_SERVERS = [
   'https://overpass-api.de/api/interpreter',
   'https://overpass.kumi.systems/api/interpreter',
@@ -18,7 +24,7 @@ interface SearchParams {
   radiusMeters: number;
 }
 
-// In-memory cache for prefetched mosque data
+// In-memory cache
 interface MosqueCache {
   data: Mosque[];
   latitude: number;
@@ -126,7 +132,6 @@ export function transformOsmToMosque(
   userLat: number,
   userLon: number
 ): Mosque {
-  // Get coordinates (nodes have lat/lon directly, ways/relations have center)
   const lat = element.lat ?? element.center?.lat ?? 0;
   const lon = element.lon ?? element.center?.lon ?? 0;
 
@@ -139,7 +144,6 @@ export function transformOsmToMosque(
     latitude: lat,
     longitude: lon,
     distance,
-    // OSM doesn't have ratings, so these are undefined
     rating: undefined,
     reviewCount: undefined,
     isOpen: undefined,
@@ -148,25 +152,93 @@ export function transformOsmToMosque(
 }
 
 /**
- * Make request to Overpass API — race all servers simultaneously
- * Uses Promise.any() so the fastest responding server wins
+ * Spatial deduplication — merges node+way duplicates within 50m
+ * Prefers 'way' over 'node' (better address metadata from building outlines)
  */
-async function fetchFromOverpass(query: string): Promise<any> {
-  const fetchFromServer = async (server: string): Promise<any> => {
+function deduplicateMosques(mosques: Mosque[]): Mosque[] {
+  const DEDUP_THRESHOLD = 50; // meters
+  const result: Mosque[] = [];
+  const merged = new Set<number>();
+
+  for (let i = 0; i < mosques.length; i++) {
+    if (merged.has(i)) continue;
+
+    let best = mosques[i];
+
+    for (let j = i + 1; j < mosques.length; j++) {
+      if (merged.has(j)) continue;
+
+      const dist = calculateDistance(
+        best.latitude, best.longitude,
+        mosques[j].latitude, mosques[j].longitude
+      );
+
+      if (dist < DEDUP_THRESHOLD) {
+        // Check name similarity (case-insensitive)
+        const nameA = best.name.toLowerCase().trim();
+        const nameB = mosques[j].name.toLowerCase().trim();
+        const similar = nameA === nameB ||
+          nameA.includes(nameB) || nameB.includes(nameA) ||
+          nameA === 'mosque' || nameB === 'mosque';
+
+        if (similar) {
+          merged.add(j);
+          // Prefer 'way' over 'node' for better metadata
+          if (mosques[j].id.includes('-way-') && !best.id.includes('-way-')) {
+            best = { ...mosques[j], distance: best.distance };
+          }
+          // Prefer the one with a real name over generic "Mosque"
+          if (best.name === 'Mosque' && mosques[j].name !== 'Mosque') {
+            best = { ...best, name: mosques[j].name };
+          }
+          // Prefer the one with a real address
+          if (best.address === 'Address not available' && mosques[j].address !== 'Address not available') {
+            best = { ...best, address: mosques[j].address };
+          }
+        }
+      }
+    }
+
+    result.push(best);
+  }
+
+  return result;
+}
+
+/**
+ * Sequential fallback across Overpass servers
+ * Tries each server one at a time — NOT parallel (avoids rate-limiting/DDoS)
+ * Supports AbortSignal for request cancellation
+ */
+async function fetchFromOverpass(query: string, signal?: AbortSignal): Promise<any> {
+  let lastError: Error | null = null;
+
+  for (const server of OVERPASS_SERVERS) {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s timeout per server
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout per server
+
+    // Link external abort signal to this controller
+    const onAbort = () => controller.abort();
+    signal?.addEventListener('abort', onAbort);
 
     try {
+      // Check if already aborted before starting
+      if (signal?.aborted) {
+        throw new Error('Request cancelled');
+      }
+
       const response = await fetch(server, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
+          'User-Agent': 'SakinahTime/1.0 (Islamic Prayer App)',
         },
         body: `data=${encodeURIComponent(query)}`,
         signal: controller.signal,
       });
 
       clearTimeout(timeoutId);
+      signal?.removeEventListener('abort', onAbort);
 
       if (!response.ok) {
         throw new Error(`Server ${server} returned ${response.status}`);
@@ -175,22 +247,27 @@ async function fetchFromOverpass(query: string): Promise<any> {
       return await response.json();
     } catch (error) {
       clearTimeout(timeoutId);
-      throw error;
-    }
-  };
+      signal?.removeEventListener('abort', onAbort);
+      lastError = error instanceof Error ? error : new Error('Unknown error');
 
-  try {
-    // Race all servers — first successful response wins
-    return await Promise.any(OVERPASS_SERVERS.map(fetchFromServer));
-  } catch (aggregateError) {
-    throw new Error('All Overpass servers failed');
+      // If externally aborted, don't try next server
+      if (signal?.aborted) {
+        throw new Error('Request cancelled');
+      }
+
+      // Otherwise, try next server
+      console.log(`[MosqueAPI] Server ${server} failed, trying next...`);
+    }
   }
+
+  throw lastError || new Error('All Overpass servers failed');
 }
 
 /**
  * Search for nearby mosques using OpenStreetMap Overpass API
+ * Results are capped at 100, deduplicated, and sorted by distance
  */
-async function searchNearbyMosques(params: SearchParams): Promise<Mosque[]> {
+async function searchNearbyMosques(params: SearchParams, signal?: AbortSignal): Promise<Mosque[]> {
   const { latitude, longitude, radiusMeters } = params;
 
   // Check cache first
@@ -206,8 +283,7 @@ async function searchNearbyMosques(params: SearchParams): Promise<Mosque[]> {
       .sort((a, b) => a.distance - b.distance);
   }
 
-  // Overpass QL query to find mosques within radius
-  // Searches for amenity=place_of_worship with religion=muslim OR amenity=mosque
+  // Overpass QL query — capped at 100 results
   const query = `
     [out:json][timeout:15];
     (
@@ -216,24 +292,29 @@ async function searchNearbyMosques(params: SearchParams): Promise<Mosque[]> {
       node["amenity"="mosque"](around:${radiusMeters},${latitude},${longitude});
       way["amenity"="mosque"](around:${radiusMeters},${latitude},${longitude});
     );
-    out center;
+    out center 100;
   `;
 
   try {
-    const data = await fetchFromOverpass(query);
+    const data = await fetchFromOverpass(query, signal);
     const elements: OverpassElement[] = data.elements || [];
 
-    // Transform and sort by distance
+    // Transform, deduplicate, and sort by distance
     const mosques = elements
       .filter(el => el.lat || el.center) // Must have coordinates
-      .map(el => transformOsmToMosque(el, latitude, longitude))
+      .map(el => transformOsmToMosque(el, latitude, longitude));
+
+    const deduplicated = deduplicateMosques(mosques)
       .sort((a, b) => a.distance - b.distance);
 
     // Cache the results
-    mosqueCache = { data: mosques, latitude, longitude, radiusMeters, timestamp: Date.now() };
+    mosqueCache = { data: deduplicated, latitude, longitude, radiusMeters, timestamp: Date.now() };
 
-    return mosques;
+    return deduplicated;
   } catch (error) {
+    if (signal?.aborted) {
+      throw new Error('Request cancelled');
+    }
     console.error('Error fetching mosques from OpenStreetMap:', error);
     throw new Error('Failed to fetch nearby mosques. Please try again.');
   }
@@ -241,20 +322,18 @@ async function searchNearbyMosques(params: SearchParams): Promise<Mosque[]> {
 
 /**
  * Get detailed information about a specific mosque
- * For OSM, we fetch the element directly by ID
  */
 async function getMosqueDetails(
   mosqueId: string,
   userLat: number,
   userLon: number
 ): Promise<MosqueDetail> {
-  // Parse the OSM ID (format: osm-type-id)
   const parts = mosqueId.split('-');
   if (parts.length !== 3 || parts[0] !== 'osm') {
     throw new Error('Invalid mosque ID format');
   }
 
-  const osmType = parts[1]; // node, way, or relation
+  const osmType = parts[1];
   const osmId = parts[2];
 
   const query = `
@@ -274,12 +353,11 @@ async function getMosqueDetails(
     const element = elements[0];
     const baseMosque = transformOsmToMosque(element, userLat, userLon);
 
-    // Build MosqueDetail with additional OSM tags
     return {
       ...baseMosque,
       phoneNumber: element.tags?.phone,
       website: element.tags?.website,
-      photos: [], // OSM doesn't provide photos
+      photos: [],
       openingHours: element.tags?.opening_hours ? {
         weekdayText: [element.tags.opening_hours],
         isOpenNow: false,
@@ -300,13 +378,12 @@ function getPhotoUrl(_photoReference: string, _maxWidth: number = 400): string |
 
 /**
  * Prefetch nearby mosques silently (called from Qibla screen)
- * Warms the cache so MosqueFinderScreen loads instantly
  */
 async function prefetchNearbyMosques(latitude: number, longitude: number, radiusMeters: number = 5000): Promise<void> {
   try {
     await searchNearbyMosques({ latitude, longitude, radiusMeters });
   } catch {
-    // Silent fail — this is a background optimization
+    // Silent fail — background optimization
   }
 }
 

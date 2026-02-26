@@ -1,9 +1,9 @@
 /**
  * MosqueFinderScreen - Main screen for discovering nearby mosques
- * Features search, radius filter, and list of mosque cards
+ * Features search, radius filter, prayer time enrichment, and list of mosque cards
  */
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View,
   StyleSheet,
@@ -28,6 +28,9 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/RootStackNavigator';
 import * as Haptics from 'expo-haptics';
 import { useTranslation } from '@/hooks/useTranslation';
+import { useLocation } from '@/contexts/LocationContext';
+import { usePrayerTimes, getNextPrayer, getTimeUntilPrayer } from '@/hooks/usePrayerTimes';
+import { useCalculationMethod } from '@/hooks/usePrayerTimes';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'MosqueFinder'>;
 
@@ -37,6 +40,21 @@ export default function MosqueFinderScreen() {
   const navigation = useNavigation<NavigationProp>();
   const insets = useSafeAreaInsets();
   const [showRadiusPicker, setShowRadiusPicker] = useState(false);
+
+  // Prayer times — compute once, pass to all cards
+  const { latitude, longitude } = useLocation();
+  const { method: calculationMethod } = useCalculationMethod();
+  const { data: prayerData } = usePrayerTimes(latitude, longitude, calculationMethod);
+
+  const nextPrayer = useMemo(() => {
+    if (!prayerData?.timings) return null;
+    return getNextPrayer(prayerData.timings);
+  }, [prayerData?.timings]);
+
+  const timeUntil = useMemo(() => {
+    if (!nextPrayer?.time) return null;
+    return getTimeUntilPrayer(nextPrayer.time);
+  }, [nextPrayer?.time]);
 
   const {
     filteredMosques,
@@ -80,10 +98,10 @@ export default function MosqueFinderScreen() {
             color={theme.textSecondary}
           />
           <ThemedText type="body" style={styles.emptyTitle}>
-            Location Required
+            {t('mosqueFinder.locationRequired')}
           </ThemedText>
           <ThemedText type="small" secondary style={styles.emptyText}>
-            Please enable location services to find nearby mosques
+            {t('mosqueFinder.enableLocation')}
           </ThemedText>
         </View>
       );
@@ -98,7 +116,7 @@ export default function MosqueFinderScreen() {
             color="#EF4444"
           />
           <ThemedText type="body" style={styles.emptyTitle}>
-            Something went wrong
+            {t('mosqueFinder.somethingWrong')}
           </ThemedText>
           <ThemedText type="small" secondary style={styles.emptyText}>
             {error}
@@ -110,7 +128,7 @@ export default function MosqueFinderScreen() {
             }]}
           >
             <ThemedText type="body" style={{ color: '#FFFFFF' }}>
-              Try Again
+              {t('mosqueFinder.tryAgain')}
             </ThemedText>
           </Pressable>
         </View>
@@ -125,10 +143,10 @@ export default function MosqueFinderScreen() {
           color={theme.textSecondary}
         />
         <ThemedText type="body" style={styles.emptyTitle}>
-          No mosques found
+          {t('mosqueFinder.noMosquesFound')}
         </ThemedText>
         <ThemedText type="small" secondary style={styles.emptyText}>
-          Try expanding your search radius or changing your search query
+          {t('mosqueFinder.expandRadius')}
         </ThemedText>
       </View>
     );
@@ -267,7 +285,7 @@ export default function MosqueFinderScreen() {
             color={theme.primary}
           />
           <ThemedText type="small" secondary style={styles.loadingText}>
-            Finding nearby mosques...
+            {t('mosqueFinder.finding')}
           </ThemedText>
         </View>
       ) : (
@@ -280,6 +298,8 @@ export default function MosqueFinderScreen() {
               mosque={item}
               onPress={() => handleMosquePress(item)}
               onDirections={() => handleDirections(item)}
+              nextPrayerName={nextPrayer?.name}
+              nextPrayerTimeUntil={timeUntil ?? undefined}
             />
           )}
           contentContainerStyle={[styles.listContent, { paddingBottom: insets.bottom + Spacing["2xl"] }]}
